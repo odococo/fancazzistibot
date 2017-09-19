@@ -44,7 +44,8 @@ def error(bot, update, error):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-    TOKEN = "333089594:AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
+    ID = "333089594"
+    TOKEN = ID + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
     PORT = int(os.environ.get('PORT', '5000'))
     
     updater = Updater(TOKEN)
@@ -67,7 +68,7 @@ def main():
     updater.start_webhook(listen = "0.0.0.0",
                       port = PORT,
                       url_path = TOKEN)
-    updater.bot.setWebhook("https://<appname>.herokuapp.com/" + TOKEN")
+    updater.bot.setWebhook("https://fancazzistibot.herokuapp.com/" + ID + ".py")
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
