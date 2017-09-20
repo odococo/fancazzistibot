@@ -121,6 +121,6 @@ def main():
               2 = Fancazzistibot""")
 
 if __name__ == '__main__':
-    #main()
-    set_webhook()
+    main()
+    #set_webhook()
     
