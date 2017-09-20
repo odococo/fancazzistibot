@@ -18,7 +18,7 @@ from telegram.ext import (
     CallbackQueryHandler
 )
 
-from utils import new_command
+from utils import new_command, now
 from db_call import add_user, add_bot
 import track_activity
 
@@ -41,7 +41,7 @@ def get_user(user):
 
 def get_bot(bot):
     bot = get_user(bot)
-    bot['date'] = utils.now()
+    bot['date'] = now()
     return bot
 
 def get_info(bot, update):
@@ -70,7 +70,7 @@ def start_bot(token):
     updater = Updater(token)
     
     username = updater.bot.username
-    add_bot(get_bot(updater.bot))
+    #add_bot(get_bot(updater.bot))
     # Create the EventHandler and pass it your bot's token.
 
     # Get the dispatcher to register handlers
