@@ -320,13 +320,3 @@ class Command():
             text = ("Cosa vuoi sapere?\n"
                     "/insubria matricola"
                     "/insubria corso")
-        
-if __name__ == "__main__":
-    #command = command().command_list(admin=True, name_command=True)
-    #for command in command:
-    #    print(command)
-    #user = command().get_user_db("AlanBerti")
-    #print(command().get_user(user))
-    print(Command().getattr("base"))
-    print(Command().convert_value_to(16, 1000, "0123456789ABCDEF"))
-    print(Command().convert_value_to(16, 1000))
