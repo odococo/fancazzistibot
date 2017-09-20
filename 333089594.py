@@ -83,7 +83,7 @@ def start_bot(token):
     
     # on different commands - answer in Telegram
     disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
-    disp.add_handler(CallbackQueryHandler(new_comma, pattern="^[/.!]dice"))
+    disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
 
     # on noncommand i.e message - echo the message on Telegram
     disp.add_handler(MessageHandler(Filters.text, echo))
