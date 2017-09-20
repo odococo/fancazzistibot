@@ -3,21 +3,12 @@
 #
 # Simple Bot to reply to Telegram messages
 # This program is dedicated to the public domain under the CC0 license.
-"""
-This Bot uses the Updater class to handle the bot.
-First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Basic Echobot example, repeats messages.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
 
 import logging
 import json
 import re
 import sys
+import os
 
 from telegram.ext import (
     Updater,
@@ -28,6 +19,8 @@ from telegram.ext import (
 )
 
 from utils import new_command
+from db_call import add_user, add_bot
+import track_activity
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -35,9 +28,38 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+def get_user(user):
+    default_null = "!"
+    user = {
+        'id': user.id,
+        'username': getattr(user, 'username', None),
+        'first_name': getattr(user, 'first_name', None),
+        'last_name': getattr(user, 'last_name', None),
+        'language_code': getattr(user, 'language_code', None),
+    }
+    return user
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
+def get_bot(bot):
+    bot = get_user(bot)
+    bot['date'] = utils.now()
+    return bot
+
+def get_info(bot, update):
+    user = get_user(update.message.from_user)
+    user['date'] = update.message.date
+    bot_id, sep, actual_token = bot.token.partition(':')
+    add_user(user, int(bot_id))
+    if re.search("^[.!/]", update.message.text):
+        track_activity.command(bot, update)
+    elif Filters.all(update.message):
+        track_activity.text(bot, update)
+
+def button(bot, update):
+    query = update.callback_query
+    bot.edit_message_text(text="Selected option: %s" % query.data,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 def echo(bot, update):
     update.message.reply_text(update.message.text)
 
@@ -48,7 +70,7 @@ def start_bot(token):
     updater = Updater(token)
     
     username = updater.bot.username
-    #add_bot(get_bot(updater.bot))
+    add_bot(get_bot(updater.bot))
     # Create the EventHandler and pass it your bot's token.
 
     # Get the dispatcher to register handlers
@@ -76,40 +98,29 @@ def start_bot(token):
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
-
-
-def main():
-    # Create the EventHandler and pass it your bot's token.
-    TOKEN = "333089594:AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
-    PORT = int(os.environ.get('PORT', '5000'))
     
-    updater = Updater(TOKEN)
-
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
-
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
-
-    # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
-
-    # log all errors
-    dp.add_error_handler(error)
-
-    # Start the Bot
-    updater.start_polling()
-    #updater.start_webhook(listen = "0.0.0.0",
-     #                 port = PORT,
-      #                url_path = TOKEN)
-    #updater.bot.setWebhook("https://<appname>.herokuapp.com/" + TOKEN")
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
+def set_webhook(token):
+    updater = Updater(token)
+    # add handlers
+    updater.start_webhook(listen="0.0.0.0",
+                          port=PORT,
+                          url_path=TOKEN)
+    updater.bot.set_webhook("https://<appname>.herokuapp.com/" + TOKEN)
     updater.idle()
-
+    
+def main():
+    bot = len(sys.argv) > 1 and sys.argv[1] or '0'
+    if bot == '1':
+        start_bot("343204077:AAGk5-IjYTzHzyqaK3iSoKXNyu6j71E3DgM") # GiochiDaTavoloBot
+    elif bot == '2':
+        start_bot("333089594:AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0") # Fancazzistibot
+    else:
+        print("""
+        Nessun bot scelto.
+              1 = GiochiDaTavoloBot
+              2 = Fancazzistibot""")
 
 if __name__ == '__main__':
-    main()
+    #main()
+    set_webhook()
+    
