@@ -47,7 +47,7 @@ class Command():
             self.update.message.reply_text(text[:4096], **options)
             text = text[4096:]
             
-    def commands_list(self, admin=False):
+    def command_list(self, admin=False):
         """Ritorna la lista dei comandi disponibili
         
         admin: permette di filtrare i comandi per utente o admin (tutti)"""
@@ -72,12 +72,12 @@ class Command():
 
     def Uhelp(self):
         """Visualizza l'elenco dei comandi con relativa descrizione"""
-        commands = utils.commands_list(self.is_admin(
+        command = utils.command_list(self.is_admin(
             self.update.message.from_user.id))
-        commands = {"/" + command : commands.get(command) 
-            for command in commands}
+        command = {"/" + command : command.get(command) 
+            for command in command}
         text = [key + ": " + str(value) 
-            for key, value in commands.items()]
+            for key, value in command.items()]
         text = "\n".join(text)
         self.answer(text)
 
@@ -277,7 +277,7 @@ class Command():
             text = "Cosa vuoi convertire? /base64 testo"
         self.answer(text)
     
-    # admin commands ------------------------------------------------------------
+    # admin command ------------------------------------------------------------
     def Autente(self):
         """Visualizza le informazioni relative a un utente
         Ricerca tramite username o id"""
@@ -322,11 +322,11 @@ class Command():
                     "/insubria corso")
         
 if __name__ == "__main__":
-    #commands = Commands().commands_list(admin=True, name_command=True)
-    #for command in commands:
+    #command = command().command_list(admin=True, name_command=True)
+    #for command in command:
     #    print(command)
-    #user = Commands().get_user_db("AlanBerti")
-    #print(Commands().get_user(user))
+    #user = command().get_user_db("AlanBerti")
+    #print(command().get_user(user))
     print(Command().getattr("base"))
     print(Command().convert_value_to(16, 1000, "0123456789ABCDEF"))
     print(Command().convert_value_to(16, 1000))
