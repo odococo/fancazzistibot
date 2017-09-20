@@ -32,6 +32,7 @@ class Command():
         
     def execute(self):
         method = self.getattr(self.command[1:], utils.unknown_command)
+        print(method, type(method))
         if (method.startswith("A") and 
             not self.is_admin(update.message.from_user.id)):
             self.answer("Non sei abilitato a usare questo comando")
@@ -326,6 +327,6 @@ if __name__ == "__main__":
     #    print(command)
     #user = Commands().get_user_db("AlanBerti")
     #print(Commands().get_user(user))
-    print(Commands().getattr("base"))
-    print(Commands().convert_value_to(16, 1000, "0123456789ABCDEF"))
-    print(Commands().convert_value_to(16, 1000))
+    print(Command().getattr("base"))
+    print(Command().convert_value_to(16, 1000, "0123456789ABCDEF"))
+    print(Command().convert_value_to(16, 1000))
