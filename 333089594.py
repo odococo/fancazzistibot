@@ -36,9 +36,38 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+def get_user(user):
+    default_null = "!"
+    user = {
+        'id': user.id,
+        'username': getattr(user, 'username', None),
+        'first_name': getattr(user, 'first_name', None),
+        'last_name': getattr(user, 'last_name', None),
+        'language_code': getattr(user, 'language_code', None),
+    }
+    return user
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
+def get_bot(bot):
+    bot = get_user(bot)
+    bot['date'] = now()
+    return bot
+
+def get_info(bot, update):
+    user = get_user(update.message.from_user)
+    user['date'] = update.message.date
+    bot_id, sep, actual_token = bot.token.partition(':')
+    add_user(user, int(bot_id))
+    if re.search("^[.!/]", update.message.text):
+        track_activity.command(bot, update)
+    elif Filters.all(update.message):
+        track_activity.text(bot, update)
+
+def button(bot, update):
+    query = update.callback_query
+    bot.edit_message_text(text="Selected option: %s" % query.data,
+                          chat_id=query.message.chat_id,
+                          message_id=query.message.message_id)
+
 def echo(bot, update):
     update.message.reply_text(update.message.text)
 
