@@ -87,24 +87,25 @@ def main():
     updater = Updater(TOKEN)
 
     # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+    disp = updater.dispatcher
 
+    # Handler to get username and other info
+    # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
+
+    disp.add_handler(RegexHandler("^[.!/]", new_command))
+    
     # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
+    disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
+    disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
 
     # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    disp.add_handler(MessageHandler(Filters.text, echo))
 
     # log all errors
-    dp.add_error_handler(error)
+    disp.add_error_handler(error)
 
     # Start the Bot
     updater.start_polling()
-    #updater.start_webhook(listen = "0.0.0.0",
-     #                 port = PORT,
-      #                url_path = TOKEN)
-    #updater.bot.setWebhook("https://<appname>.herokuapp.com/" + TOKEN")
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
