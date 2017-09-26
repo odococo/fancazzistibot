@@ -73,7 +73,7 @@ class Command():
         """Visualizza l'elenco dei comandi con relativa descrizione"""
         commands = self.command_list(utils.is_admin(
             self.update.message.from_user.id))
-        command = {"/" + command : commands.get(command)
+        commands = {"/" + command : commands.get(command)
             for command in commands}
         text = [key + ": " + str(value)
             for key, value in commands.items()]
