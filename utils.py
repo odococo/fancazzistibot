@@ -76,7 +76,8 @@ def convert_value(to_base, value, values=None, number=False):
         values = [str(n) for n in range(to_base)]
     if is_numeric(value, not number):
         converted_value = []
-        value = convert_value(10, int(value))
+        if to_base != 10:
+          value = convert_value(10, int(value))
         while value > 0:
             converted_value.append(values[value % to_base])
             value //= to_base
