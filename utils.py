@@ -73,13 +73,13 @@ def convert_value(to_base, value, values=None, number=False):
     if not value:
         return None
     if not values:
-        values = [str(n) for n in range(base)]
+        values = [str(n) for n in range(to_base)]
     if is_numeric(value, not number):
         converted_value = []
         value = convert_value(10, int(value))
         while value > 0:
             converted_value.append(values[value % to_base])
-            value //= base
+            value //= to_base
         return reverse(converted_value)
     else:
         return ["".join(convert_value(to_base, ord(char), values)) for char in value]
