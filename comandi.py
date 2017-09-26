@@ -196,7 +196,7 @@ class Command():
             if not self.params:
                 text = "Cosa vuoi convertire? {} valore".format(self.command)
             else:
-                converted_text = utils.convert_value_to(int(base),
+                converted_text = utils.convert_value(int(base),
                     "".join(self.params), values, number)
                 text = "Valore per valore: {}\n\nStringa unica: `{}`".format(
                     " ".join(converted_text), "".join(converted_text))
@@ -259,11 +259,11 @@ class Command():
         command = update.message.text.split(" ")
         text_to_convert = "".join(command[1:])
         if len(command) > 1:
-            text1 = "".join(utils.convert_value_to(64, text_to_convert,
+            text1 = "".join(utils.convert_value(64, text_to_convert,
                 ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                  "abcdefghijklmnopqrstuvwxyz"
                  "0123456789+/")))
-            text2 = "".join(utils.convert_value_to(64, text_to_convert,
+            text2 = "".join(utils.convert_value(64, text_to_convert,
                 ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 "abcdefghijklmnopqrstuvwxyz"
                 "0123456789-_")))
