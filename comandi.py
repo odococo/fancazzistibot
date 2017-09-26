@@ -71,7 +71,7 @@ class Command():
 
     def Uhelp(self):
         """Visualizza l'elenco dei comandi con relativa descrizione"""
-        command = utils.command_list(self.is_admin(
+        command = command_list(self.is_admin(
             self.update.message.from_user.id))
         command = {"/" + command : command.get(command)
             for command in command}
