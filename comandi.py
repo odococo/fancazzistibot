@@ -32,8 +32,7 @@ class Command():
         
     def execute(self):
         method = self.getattr(self.command[1:], utils.unknown_command)
-        print(method, type(method), str(method))
-        if (method.startswith("A") and
+        if (method.__name__.startswith("A") and
             not self.is_admin(update.message.from_user.id)):
             self.answer("Non sei abilitato a usare questo comando")
         else:
