@@ -24,7 +24,7 @@ def unknown_command():
             
 def is_admin(id):
     """Verifica se l'id dell'utente è di un admin o meno"""
-    admin = (89675136, # Odococo 
+    admin = (89675136, # Odococo
              337053854 # AlanBerti
     )
     return id in admin
@@ -50,14 +50,14 @@ def get_user(self, user):
     """Ritorna una stringa riguardante un utente"""
     if not user:
         return None
-    fields = ["*{}*: `{}`".format(key, value) 
+    fields = ["*{}*: `{}`".format(key, value)
             for key, value in user.items() if key != "date"]
     return "\n".join(fields)
     
 def get_user_db(key_value):
     """Cerca un utente nel database"""
     query = """SELECT * FROM users"""
-    key_value = (str(key_value) if is_numeric(key_value, True) 
+    key_value = (str(key_value) if is_numeric(key_value, True)
                 else key_value)
     if is_numeric(key_value):
         query += " WHERE id = %s"
@@ -68,7 +68,7 @@ def get_user_db(key_value):
     return (user[0] if isinstance(user, list) and len(user)
             else user)
     
-def convert_value(from_base, to_base, value, values=None, number=False):
+def convert_value(to_base, value, values=None, number=False):
     """Converte una stringa in una base specifica"""
     if not value:
         return None
@@ -76,13 +76,13 @@ def convert_value(from_base, to_base, value, values=None, number=False):
         values = [str(n) for n in range(base)]
     if is_numeric(value, not number):
         converted_value = []
-        value = convert_value(from_base, 10, int(value))
+        value = convert_value(10, int(value))
         while value > 0:
             converted_value.append(values[value % to_base])
             value //= base
         return reverse(converted_value)
     else:
-        return ["".join(convert_value(from_base, to_base, ord(char), values)) for char in value]
+        return ["".join(convert_value(to_base, ord(char), values)) for char in value]
         
 def now(string=True):
     """Ritorna la data attuale nel formato yyyy-mm-dd h:m:s"""
