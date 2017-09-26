@@ -18,7 +18,7 @@ class Command():
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
-        command_text = (update.callback_query.data 
+        command_text = (update.callback_query.data
                         if update.callback_query else update.message.text).split(" ")
         self.command = command_text[0]
         self.params = command_text[1:]
@@ -32,8 +32,8 @@ class Command():
         
     def execute(self):
         method = self.getattr(self.command[1:], utils.unknown_command)
-        print(method, type(method))
-        if (method.startswith("A") and 
+        print(method, type(method), str(method))
+        if (method.startswith("A") and
             not self.is_admin(update.message.from_user.id)):
             self.answer("Non sei abilitato a usare questo comando")
         else:
@@ -60,7 +60,7 @@ class Command():
             commands = list(filter(
                 lambda command: command.startswith("U"), dir(self)
             ))
-        commands = {command[1:]: getattr(self, command).__doc__ 
+        commands = {command[1:]: getattr(self, command).__doc__
             for command in commands}
         return commands
     
@@ -74,9 +74,9 @@ class Command():
         """Visualizza l'elenco dei comandi con relativa descrizione"""
         command = utils.command_list(self.is_admin(
             self.update.message.from_user.id))
-        command = {"/" + command : command.get(command) 
+        command = {"/" + command : command.get(command)
             for command in command}
-        text = [key + ": " + str(value) 
+        text = [key + ": " + str(value)
             for key, value in command.items()]
         text = "\n".join(text)
         self.answer(text)
@@ -86,14 +86,14 @@ class Command():
         keyboard = [
             [
                 InlineKeyboardButton(
-                    "Option 1",          
+                    "Option 1",
                 callback_data='1'),
                 InlineKeyboardButton(
-                    "Option 2", 
+                    "Option 2",
                     callback_data='2')],
             [
                 InlineKeyboardButton(
-                    "Option 3", 
+                    "Option 3",
                     callback_data='3')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         self.answer('Please choose:', reply_markup=reply_markup)
@@ -121,7 +121,7 @@ class Command():
 
     def Udice(self):
         """Lancia un dado specificando numero di facce e lanci da effettuare"""
-        if (len(self.params) == 2 
+        if (len(self.params) == 2
             and all(utils.is_numeric(param) for param in self.params)):
             text = ""
             for counter in range(int(self.params[1])):
@@ -130,12 +130,12 @@ class Command():
             if self.update.message:
                 self.answer(text)
             else:
-                self.bot.edit_message_text(                   
+                self.bot.edit_message_text(
                 chat_id=self.update.callback_query.message.chat_id,
                     text=text,
                     message_id=self.update.callback_query.message.message_id
                 )
-        elif (len(self.params) == 1 
+        elif (len(self.params) == 1
             and utils.is_numeric(self.params[0])):
             actual_dice = "/dice " + self.params[0]
             keyboard = [
@@ -165,7 +165,7 @@ class Command():
             if self.update.message:
                 self.answer(
                     "Seleziona il numero di lanci "
-                            "da effettuare:", 
+                            "da effettuare:",
                     reply_markup=reply_markup)
             else:
                 self.bot.edit_message_text(
@@ -197,7 +197,7 @@ class Command():
             if not self.params:
                 text = "Cosa vuoi convertire? {} valore".format(self.command)
             else:
-                converted_text = self.convert_value_to(int(base), 
+                converted_text = self.convert_value_to(int(base),
                     "".join(self.params), values, number)
                 text = "Valore per valore: {}\n\nStringa unica: `{}`".format(
                     " ".join(converted_text), "".join(converted_text))
@@ -260,7 +260,7 @@ class Command():
         command = update.message.text.split(" ")
         text_to_convert = "".join(command[1:])
         if len(command) > 1:
-            text1 = "".join(self.convert_value_to(64, text_to_convert, 
+            text1 = "".join(self.convert_value_to(64, text_to_convert,
                 ("ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                  "abcdefghijklmnopqrstuvwxyz"
                  "0123456789+/")))
@@ -294,7 +294,7 @@ class Command():
             
     def Autenti(self):
         """Visualizza gli utenti che utilizzano un determinato bot"""
-        query = """SELECT utenti.id AS user_id, 
+        query = """SELECT utenti.id AS user_id,
                 bot.id AS bot_id
                 FROM bot_users
                 INNER JOIN users AS utenti ON utenti.id = id_user
