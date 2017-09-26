@@ -71,12 +71,12 @@ class Command():
 
     def Uhelp(self):
         """Visualizza l'elenco dei comandi con relativa descrizione"""
-        command = self.command_list(utils.is_admin(
+        commands = self.command_list(utils.is_admin(
             self.update.message.from_user.id))
-        command = {"/" + command : command.get(command)
-            for command in command}
+        command = {"/" + command : commands.get(command)
+            for command in commands}
         text = [key + ": " + str(value)
-            for key, value in command.items()]
+            for key, value in commands.items()]
         text = "\n".join(text)
         self.answer(text)
 
