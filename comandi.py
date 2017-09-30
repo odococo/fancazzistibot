@@ -178,8 +178,8 @@ class Command():
       from_base, to_base, values = convert_params
       text = utils.convert(
         self.params[1:],
-        from_base,
-        to_base,
+        int(from_base) if from_base else None,
+        int(to_base) if to_base else None,
         values
       )
     self.answer(text)
