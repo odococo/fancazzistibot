@@ -30,24 +30,23 @@ def is_admin(id):
     return id in admin
         
 def is_numeric(value, strict_int=False):
-    """Controlla se un valore è numerico oppure è una stringa di un numero"""
-    return isinstance(value, int) or (
-           not strict_int and isinstance(value, str)
-           and value.isnumeric())
+  value = unicode(value) if isinstance(value, str) else value
+  return isinstance(value, int) or (
+    not strict_int and isinstance(value, unicode)
+    and value.isnumeric())
             
-def reverse(self, obj):
-    if isinstance(obj, str):
-        return obj[::-1]
-    elif isinstance(obj, int):
-        return int(str(obj)[::-1])
-    elif isinstance(obj, list):
-        obj.reverse()
-        return obj
-    else:
-        return None
+def reverse(obj):
+  if isinstance(obj, str) or isinstance(obj, unicode):
+    return obj[::-1]
+  elif isinstance(obj, int):
+    return int(str(obj)[::-1])
+  elif isinstance(obj, list):
+    obj.reverse()
+    return obj
+  else:
+    return obj
         
-def get_user(self, user):
-    """Ritorna una stringa riguardante un utente"""
+def get_user(user):
     if not user:
         return None
     fields = ["*{}*: `{}`".format(key, value)
@@ -55,7 +54,6 @@ def get_user(self, user):
     return "\n".join(fields)
     
 def get_user_db(key_value):
-    """Cerca un utente nel database"""
     query = """SELECT * FROM users"""
     key_value = (str(key_value) if is_numeric(key_value, True)
                 else key_value)
@@ -68,22 +66,34 @@ def get_user_db(key_value):
     return (user[0] if isinstance(user, list) and len(user)
             else user)
     
-def convert_value(to_base, value, values=None, number=False):
-    """Converte una stringa in una base specifica"""
-    if not value:
-        return None
-    if not values:
-        values = [str(n) for n in range(to_base)]
-    if is_numeric(value, not number):
-        converted_value = []
-        if to_base != 10:
-          value = convert_value(10, int(value))
-        while value > 0:
-            converted_value.append(values[value % to_base])
-            value //= to_base
-        return reverse(converted_value)
+def convert(value, from_base=None, to_base=None, values=None):
+  if not value:
+    return "Cosa vuoi convertire?"
+  elif isinstance(value, list):
+    return "".join([convert(val, from_base, to_base, values) for val in value])
+  if from_base and not to_base:
+    if from_base != 10:
+      value = convert(value, from_base, 10, values)
+    return unichr(int(value))
+  elif not from_base and to_base:
+    value = str(value)
+    value = [ord(val) for val in value]
+    return convert(value, 10, to_base, values)
+  elif from_base and to_base:
+    if to_base != 10:
+      value = int(convert(value, from_base, 10, values))
+      values = [str(index) for index in range(to_base)]
+      converted_values = []
+      while value > 0:
+        converted_values.append(values[value % to_base])
+        value //= to_base
+      return "".join(reverse(converted_values))
     else:
-        return ["".join(convert_value(to_base, ord(char), values)) for char in value]
+      value = str(value)
+      converted_values = [(from_base**index)*int(val) for index, val in enumerate(reverse(value))]
+      return str(sum(converted_values))
+  else:
+    return "Specifica la base originale (conversione a stringa) oppure la base destinazione (conversione da stringa)"
         
 def now(string=True):
     """Ritorna la data attuale nel formato yyyy-mm-dd h:m:s"""
