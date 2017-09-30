@@ -30,13 +30,12 @@ def is_admin(id):
     return id in admin
         
 def is_numeric(value, strict_int=False):
-  value = unicode(value) if isinstance(value, str) else value
   return isinstance(value, int) or (
-    not strict_int and isinstance(value, unicode)
+    not strict_int and isinstance(value, str)
     and value.isnumeric())
             
 def reverse(obj):
-  if isinstance(obj, str) or isinstance(obj, unicode):
+  if isinstance(obj, str):
     return obj[::-1]
   elif isinstance(obj, int):
     return int(str(obj)[::-1])
