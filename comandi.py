@@ -159,7 +159,7 @@ class Command():
   def Uinfo(self):
     """Ottieni le informazioni riguardo il tuo account"""
     user = self.update.message.from_user
-    user = utils.get_user(utils.get_user_db(unicode(user.id)))
+    user = utils.get_user(utils.get_user_db(str(user.id)))
     self.answer(user)
     
   def Ujson(self):
