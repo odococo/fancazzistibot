@@ -48,7 +48,7 @@ class Command():
             
   def command_list(self, admin=False):
     """Ritorna la lista dei comandi disponibili"""
-    commands = [command for commands in dir(self) 
+    commands = [command for command in dir(self) 
       if command.startswith("U") or (command.startswith("A") and admin)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
