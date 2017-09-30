@@ -176,6 +176,7 @@ class Command():
       text += "Esempio: /convert ,16,0123456789ABCDEF testo -> traduce un testo in esadecimale"
     else:
       text = utils.convert(self.params[1:], convert_params)
+    self.answer(text)
     
     # admin command ------------------------------------------------------------
     def Autente(self):
