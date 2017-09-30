@@ -169,13 +169,19 @@ class Command():
   def Uconvert(self):
     """Converte test/numero da e verso una base arbitraria\n
     Si possono fornire valori di conversione per personalizzare il risultato"""
-    convert_params = self.params[0].split(",") if self.params else []
+    convert_params = self.params[0].split("-") if self.params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
-      text += "/convert base_originale, base_destinazione, valori_di_conversione testo/numero\n"
-      text += "Esempio: /convert ,16,0123456789ABCDEF testo -> traduce un testo in esadecimale"
+      text += "/convert base_originale-base_destinazione-valori_di_conversione testo/numero\n"
+      text += "Esempio: /convert -16-0123456789ABCDEF testo -> traduce un testo in esadecimale"
     else:
-      text = utils.convert(self.params[1:], convert_params)
+      from_base, to_base, values = convert_params
+      text = utils.convert(
+        self.params[1:],
+        from_base,
+        to_base,
+        values
+      )
     self.answer(text)
     
     # admin command ------------------------------------------------------------
