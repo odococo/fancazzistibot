@@ -160,16 +160,16 @@ class Command():
   def Uinfo(self):
     """Ottieni le informazioni riguardo il tuo account"""
     user = self.update.message.from_user
-    self.answer(json.dumps(user))
+    self.answer(user)
     
   def Ujson(self):
     """Ottieni il json dell'update"""
-    self.answer(update.de_json)
+    self.answer(update)
         
   def Uconvert(self):
     """Converte test/numero da e verso una base arbitraria\n
     Si possono fornire valori di conversione per personalizzare il risultato"""
-    convert_params = self.params[0].split(",") if params else []
+    convert_params = self.params[0].split(",") if self.params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
       text += "/convert base_originale, base_destinazione, valori_di_conversione testo/numero\n"
