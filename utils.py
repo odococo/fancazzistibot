@@ -81,7 +81,8 @@ def convert(value, from_base=None, to_base=None, values=None):
   elif from_base and to_base:
     if to_base != 10:
       value = int(convert(value, from_base, 10, values))
-      values = [str(index) for index in range(to_base)]
+      if not values:
+        values = [str(index) for index in range(to_base)]
       converted_values = []
       while value > 0:
         converted_values.append(values[value % to_base])
