@@ -73,7 +73,7 @@ def convert(value, from_base=None, to_base=None, values=None):
   if from_base and not to_base:
     if from_base != 10:
       value = convert(value, from_base, 10, values)
-    return unichr(int(value))
+    return chr(int(value))
   elif not from_base and to_base:
     value = str(value)
     value = [ord(val) for val in value]
