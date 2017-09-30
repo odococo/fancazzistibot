@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import random
+import json
 
 import utils
 from insubria import get_last_exams
@@ -159,7 +160,7 @@ class Command():
   def Uinfo(self):
     """Ottieni le informazioni riguardo il tuo account"""
     user = self.update.message.from_user
-    self.answer(user.de_json)
+    self.answer(json.dumps(user))
     
   def Ujson(self):
     """Ottieni il json dell'update"""
@@ -168,7 +169,7 @@ class Command():
   def Uconvert(self):
     """Converte test/numero da e verso una base arbitraria\n
     Si possono fornire valori di conversione per personalizzare il risultato"""
-    convert_params = self.params[0].split(",")
+    convert_params = self.params[0].split(",") if params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
       text += "/convert base_originale, base_destinazione, valori_di_conversione testo/numero\n"
