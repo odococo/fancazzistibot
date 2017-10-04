@@ -115,6 +115,7 @@ def main():
     PORT = int(os.environ.get('PORT', '5000'))
     
     updater = Updater(TOKEN)
+    print(updater.bot.getWebhookInfo())
 
     # Get the dispatcher to register handlers
     disp = updater.dispatcher
