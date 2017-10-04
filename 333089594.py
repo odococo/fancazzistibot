@@ -138,7 +138,7 @@ def main():
     updater.start_webhook(listen="0.0.0.0",
                       port=PORT,
                       url_path=TOKEN)
-    updater.bot.set_webhook("https://fancazzistibot.herokuapp.com/" + TOKEN + ".py)
+    updater.bot.set_webhook("https://fancazzistibot.herokuapp.com/" + TOKEN + ".py")
     
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
