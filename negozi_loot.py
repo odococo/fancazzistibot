@@ -66,7 +66,7 @@ def value(text):
   if prezzi_mancanti:
     valore += "Prezzi mancanti: {}\n".format("\n".join(prezzi_mancanti))
   valore += "Prezzo craft: {}".format(prezzo_craft)
-  return text
+  return valore
   
 def update():
   global LAST_UPDATE
