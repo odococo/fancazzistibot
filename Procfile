@@ -1,1 +1,1 @@
-web: python3 333089594.py 2
+web: python3 333089594
