@@ -37,7 +37,7 @@ class Command():
     return fallback
         
   def execute(self):
-    method = self.getattr(self.command[1:], utils.unknown_command)
+    method = self.getattr(self.command[1:], self.unknown_command)
     if (method.__name__.startswith("A") and
       not self.is_admin(update.message.from_user.id)):
       self.answer("Non sei abilitato a usare questo comando")
@@ -60,6 +60,9 @@ class Command():
       if command.startswith("U") or (command.startswith("A") and admin)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
+    
+  def unknown_command():
+    self.answer("Ti sembra che {} sia nell'elenco?".format(self.command))
     
   #----------------------------------------------------------------------------------
 
