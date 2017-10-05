@@ -71,7 +71,7 @@ def value(text):
 def update():
   global LAST_UPDATE
   if(not LAST_UPDATE or utils.diff_date(LAST_UPDATE, utils.now()) > 0):
-    LAST_UPDATE = utils.now()
+    LAST_UPDATE = utils.now(False)
     print(LAST_UPDATE)
     set_items()
     set_prices()
