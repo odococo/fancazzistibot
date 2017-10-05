@@ -29,7 +29,6 @@ from telegram.ext import (
 )
 
 from utils import new_command
-from negozi_loot import value
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
