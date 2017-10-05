@@ -56,10 +56,11 @@ def set_prices():
     
 def value(text):
   update()
+  text = "Prezzi per: {}\n".format(text[text.index("per")+4:test.index(":")])
   oggetti = [oggetto.split(" ") for oggetto in text.split("\n") if re.match("^[0-9]", oggetto)]
   prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
   oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
-  text = "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
+  text += "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
   prezzi_mancanti = [oggetto for oggetto in oggetti if OGGETTI[oggetto]['prezzo'] == 0]
   text += "Prezzo negozi: {}\n".format(sum([OGGETTI[oggetto]['prezzo']*oggetti[oggetto] for oggetto in oggetti]))
   if prezzi_mancanti:
@@ -71,5 +72,6 @@ def update():
   global LAST_UPDATE
   if(not LAST_UPDATE or utils.diff_date(LAST_UPDATE, utils.now()) > 0):
     LAST_UPDATE = utils.now()
+    print(LAST_UPDATE)
     set_items()
     set_prices()
