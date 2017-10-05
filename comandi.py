@@ -42,7 +42,7 @@ class Command():
   def answer(self, text, **options):
     """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
     if not 'parse_mode' in options:
-      options['parse_mode'] = "Markdown"
+      options['parse_mode'] = "HTML"
       while text:
         self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
@@ -58,7 +58,7 @@ class Command():
 
   def Ustart(self):
     """Mostra un esempio del markdown di telegram"""
-    self.answer("_Help!_, *Help!*, `Help!`, ```Help```\n/help per ottenere la lista comandi")
+    self.answer("<i>Help!</i>, <b>Help!</b>, <code>Help!</code>, <pre>Help</pre>\n/help per ottenere la lista comandi")
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
@@ -211,7 +211,7 @@ class Command():
         if users:
             text = "Elenco utenti:\n"
             for user in users:
-                text += "*{}*: `{}`\n".format(
+                text += "<b>{}</b>: <code>{}</code>\n".format(
                     user['bot_id'],
                     user['user_id'])
         else:
