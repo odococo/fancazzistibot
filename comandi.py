@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import random
-import json
 
 import utils
 from insubria import get_last_exams
@@ -44,7 +43,7 @@ class Command():
     if not 'parse_mode' in options:
       options['parse_mode'] = "HTML"
       if pretty_json:
-        text = json.dumps(json.loads(utils.valid_json(text)), indent=2)
+        text = utils.get_pretty_json(text)
       while text:
         self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
