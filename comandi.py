@@ -20,8 +20,8 @@ class Command():
     self.update = update
     if update.callback_query:
       command_text = update.callback_query.data
-    elif update.forward_from:
-      if update.forward_from.username == "craftlootbot":
+    elif update.message.forward_from:
+      if update.message.forward_from.username == "craftlootbot":
         command_text = "/loot " + update.message.text
     else:
       command_text = update.message.text
