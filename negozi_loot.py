@@ -34,10 +34,13 @@ OGGETTI = {}
 OGGETTI_DB = {}
 LAST_UPDATE = None
 
+def use_api(url):
+  return utils.get_content(url, True)['res']
+
 def set_items():
     global OGGETTI
     global OGGETTI_DB
-    oggetti = utils.get_content(ITEMS, True)['res']
+    oggetti = use_api(ITEMS)
     OGGETTI = {oggetto['name']: get_item(oggetto) for oggetto in oggetti}
     OGGETTI_DB = {oggetto['id']: oggetto['name'] for oggetto in oggetti}
   
@@ -45,11 +48,12 @@ def get_item(oggetto):
     return {
         'stima': oggetto['estimate'],
         'id': oggetto['id'],
-        'prezzo': 0
+        'prezzo': 0,
+        'base': oggetto['value']
     }
   
 def set_prices():
-    negozi = [utils.get_content(SHOP + str(codice), True)['res'] for codice in NEGOZI]
+    negozi = [use_api(SHOP + str(codice)) for codice in NEGOZI]
     global OGGETTI
     for negozio in negozi:
         for oggetto in negozio:
@@ -57,15 +61,23 @@ def set_prices():
     
 def value(text):
   update()
-  valore = "Prezzi per: {}\n".format(text[text.index("per")+4:text.index(":")])
+  oggetto = text[text.index("per")+4:text.index(":")]
+  
+  valore = "Prezzi per: {}\n".format(oggetto)
+  valore = "Prezzo stima bot: {}\n".format(use_api(ITEMS + "/" + oggetto))
+  
   oggetti = [oggetto.split(" ") for oggetto in text.split("\n") if re.match("^[0-9]", oggetto)]
-  prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
   oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
-  valore += "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
+  prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
+  
+  valore += "Prezzo base bot: {}\n".format(sum([OGGETTI[oggetto]['base']*oggetti[oggetto for oggetto in oggetti]]))
+  valore += "Prezzo somma stima bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
+  
   prezzi_mancanti = [oggetto for oggetto in oggetti if OGGETTI[oggetto]['prezzo'] == 0]
   valore += "Prezzo negozi: {}\n".format(sum([OGGETTI[oggetto]['prezzo']*oggetti[oggetto] for oggetto in oggetti]))
   if prezzi_mancanti:
     valore += "Prezzi mancanti: {}\n".format("\n".join(prezzi_mancanti))
+    
   valore += "Prezzo craft: {}".format(prezzo_craft)
   return valore
   
