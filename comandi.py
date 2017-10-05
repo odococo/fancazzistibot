@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import random
-
 import utils
 from insubria import get_last_exams
+from negozi_loot import value
 
 from telegram import (
     InlineKeyboardButton,
@@ -18,8 +18,14 @@ class Command():
     """Salva bot, update, comando e parametri"""
     self.bot = bot
     self.update = update
-    command_text = (update.callback_query.data 
-      if update.callback_query else update.message.text).split(" ")
+    if update.callback_query:
+      command_text = update.callback_query.data
+    elif update.forward_from:
+      if update.forward_from.username == "craftlootbot":
+        command_text = "/loot " + update.message.text
+    else:
+      command_text = update.message.text
+    command_text = command_text.split(" ")
     self.command = command_text[0]
     self.params = [param.strip() for param in command_text[1:]]
         
@@ -50,7 +56,7 @@ class Command():
             
   def command_list(self, admin=False):
     """Ritorna la lista dei comandi disponibili"""
-    commands = [command for command in dir(self) 
+    commands = [command for command in dir(self)
       if command.startswith("U") or (command.startswith("A") and admin)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
@@ -185,6 +191,10 @@ class Command():
       )
     self.answer(text)
     
+    def Uloot(self):
+      """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
+      self.answer(negozi_loot.value(" ".join(self.param)))
+  
     # admin command ------------------------------------------------------------
     def Autente(self):
         """Visualizza le informazioni relative a un utente
