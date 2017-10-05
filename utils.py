@@ -17,10 +17,7 @@ def new_command(bot, update):
     command.execute()
         
 def unknown_command():
-    if re.search("^[.!/](dec2)?b(b)?\d+$", self.command):
-        self.getattr(self.command[1:self.command.rindex("b")+1])()
-    else:
-        self.answer("Ti sembra che {} sia nell'elenco?".format(self.command))
+    self.answer("Ti sembra che sia nell'elenco?")
 
             
 def is_admin(id):
