@@ -13,15 +13,15 @@ from comandi import Command
 from db_call import execute
 
 def new_command(bot, update):
-    command = Command(bot, update)
-    command.execute()
+  command = Command(bot, update)
+  command.execute()
             
 def is_admin(id):
-    """Verifica se l'id dell'utente è di un admin o meno"""
-    admin = (89675136, # Odococo
-             337053854 # AlanBerti
-    )
-    return id in admin
+  """Verifica se l'id dell'utente è di un admin o meno"""
+  admin = (89675136, # Odococo
+          337053854 # AlanBerti
+  )
+  return id in admin
         
 def is_numeric(value, strict_int=False):
   return isinstance(value, int) or (
@@ -40,24 +40,24 @@ def reverse(obj):
     return obj
         
 def get_user(user):
-    if not user:
-        return None
-    fields = ["*{}*: `{}`".format(key, value)
-            for key, value in user.items() if key != "date"]
-    return "\n".join(fields)
+  if not user:
+    return None
+  fields = ["*{}*: `{}`".format(key, value)
+    for key, value in user.items() if key != "date"]
+  return "\n".join(fields)
     
 def get_user_db(key_value):
-    query = """SELECT * FROM users"""
-    key_value = (str(key_value) if is_numeric(key_value, True)
-                else key_value)
-    if is_numeric(key_value):
-        query += " WHERE id = %s"
-    else:
-        query += " WHERE username = %s"
-    query += " ORDER BY date DESC"
-    user = execute(query, (key_value,))
-    return (user[0] if isinstance(user, list) and len(user)
-            else user)
+  query = """SELECT * FROM users"""
+  key_value = (str(key_value) if is_numeric(key_value, True)
+              else key_value)
+  if is_numeric(key_value):
+    query += " WHERE id = %s"
+  else:
+    query += " WHERE username = %s"
+  query += " ORDER BY date DESC"
+  user = execute(query, (key_value,))
+  return (user[0] if isinstance(user, list) and len(user)
+          else user)
     
 def convert(value, from_base=None, to_base=None, values=None):
   if not value:
@@ -90,27 +90,30 @@ def convert(value, from_base=None, to_base=None, values=None):
     return "Specifica la base originale (conversione a stringa) oppure la base destinazione (conversione da stringa)"
         
 def now(string=True):
-    """Ritorna la data attuale nel formato yyyy-mm-dd h:m:s"""
-    now = datetime.datetime.now()
-    return now.strftime("%Y-%m-%d %H:%M:%S") if string else now
+  """Ritorna la data attuale nel formato yyyy-mm-dd h:m:s"""
+  now = datetime.datetime.now()
+  return now.strftime("%Y-%m-%d %H:%M:%S") if string else now
+    
+def diff_date(date1, date2):
+  return abs(date2-date1).days
     
 def get_proxy():
-    """Ottiene l'ip di un proxy di https://www.sslproxies.org/"""
-    proxies = get_content("https://www.sslproxies.org/").find_all('tr')
-    for proxy in proxies:
-        param = proxy.find_all('td')
-        if not param:
-            continue
-        yield {'https': "http://{ip}:{port}".format(ip=param[0].string, port=param[1].string)}
+  """Ottiene l'ip di un proxy di https://www.sslproxies.org/"""
+  proxies = get_content("https://www.sslproxies.org/").find_all('tr')
+  for proxy in proxies:
+    param = proxy.find_all('td')
+    if not param:
+      continue
+    yield {'https': "http://{ip}:{port}".format(ip=param[0].string, port=param[1].string)}
 
 def get_content(url, parse_json=False, proxies=None):
-    request = requests.get(url, allow_redirects=False, proxies=proxies)
-    if parse_json:
-        return request.json()
-    else:
-        return BeautifulSoup(request.content, "html.parser")
+  request = requests.get(url, allow_redirects=False, proxies=proxies)
+  if parse_json:
+    return request.json()
+  else:
+    return BeautifulSoup(request.content, "html.parser")
     
 def get_pretty_json(value):
-    if not isinstance(value, dict):
-        value = ast.literal_eval(value)
-    return json.dumps(value, indent=2)
+  if not isinstance(value, dict):
+    value = ast.literal_eval(value)
+  return json.dumps(value, indent=2)
