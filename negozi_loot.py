@@ -31,10 +31,11 @@ NEGOZI = (
 
 OGGETTI = {}
 OGGETTI_DB = {}
+LAST_UPDATE = None
 
 def set_items():
-    global OGGETTI 
-    global OGGETTI_DB 
+    global OGGETTI
+    global OGGETTI_DB
     oggetti = utils.get_content(ITEMS, True)['res']
     OGGETTI = {oggetto['name']: get_item(oggetto) for oggetto in oggetti}
     OGGETTI_DB = {oggetto['id']: oggetto['name'] for oggetto in oggetti}
@@ -54,13 +55,21 @@ def set_prices():
             OGGETTI[OGGETTI_DB[oggetto['item_id']]]['prezzo'] = oggetto['price']
     
 def value(text):
-    oggetti = [oggetto.split(" ") for oggetto in text.split("\n") if re.match("^[0-9]", oggetto)]
-    prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
-    oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
-    text = "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
-    prezzi_mancanti = [oggetto for oggetto in oggetti if OGGETTI[oggetto]['prezzo'] == 0]
-    text += "Prezzo negozi: {}\n".format(sum([OGGETTI[oggetto]['prezzo']*oggetti[oggetto] for oggetto in oggetti]))
-    if prezzi_mancanti:
-        text += "Prezzi mancanti: {}\n".format("\n".join(prezzi_mancanti))
-    text += "Prezzo craft: {}".format(prezzo_craft)
-    return text
+  update()
+  oggetti = [oggetto.split(" ") for oggetto in text.split("\n") if re.match("^[0-9]", oggetto)]
+  prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
+  oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
+  text = "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
+  prezzi_mancanti = [oggetto for oggetto in oggetti if OGGETTI[oggetto]['prezzo'] == 0]
+  text += "Prezzo negozi: {}\n".format(sum([OGGETTI[oggetto]['prezzo']*oggetti[oggetto] for oggetto in oggetti]))
+  if prezzi_mancanti:
+    text += "Prezzi mancanti: {}\n".format("\n".join(prezzi_mancanti))
+  text += "Prezzo craft: {}".format(prezzo_craft)
+  return text
+  
+def update():
+  global LAST_UPDATE
+  if(not LAST_UPDATE or utils.diff_date(LAST_UPDATE, utils.now()) > 0):
+    LAST_UPDATE = utils.now()
+    set_items()
+    set_item
