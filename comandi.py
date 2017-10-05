@@ -39,11 +39,11 @@ class Command():
     else:
       method()
             
-  def answer(self, text, json=False, **options):
+  def answer(self, text, pretty_json=False, **options):
     """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
     if not 'parse_mode' in options:
       options['parse_mode'] = "HTML"
-      if json:
+      if pretty_json:
         text = json.dumps(text, indent=2)
       while text:
         self.update.message.reply_text(text[:4096], **options)
