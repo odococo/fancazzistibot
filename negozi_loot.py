@@ -56,7 +56,7 @@ def set_prices():
     
 def value(text):
   update()
-  text = "Prezzi per: {}\n".format(text[text.index("per")+4:test.index(":")])
+  text = "Prezzi per: {}\n".format(text[text.index("per")+4:text.index(":")])
   oggetti = [oggetto.split(" ") for oggetto in text.split("\n") if re.match("^[0-9]", oggetto)]
   prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
   oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
