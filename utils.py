@@ -5,6 +5,7 @@ import re
 import datetime
 import requests
 import json
+import ast
 
 from bs4 import BeautifulSoup
 
@@ -115,3 +116,8 @@ def get_content(url, parse_json=False, proxies=None):
         return request.json()
     else:
         return BeautifulSoup(request.content, "html.parser")
+    
+def get_pretty_json(value):
+    if not isinstance(value, dict):
+        value = ast.literal_eval(value)
+    return json.dumps(value, indent=2)
