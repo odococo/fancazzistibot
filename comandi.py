@@ -62,7 +62,7 @@ class Command():
     return commands
     
   def unknown_command(self):
-    self.answer("Ti sembra che {} sia nell'elenco?".format(self.command))
+    self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
     
   #----------------------------------------------------------------------------------
 
@@ -194,50 +194,48 @@ class Command():
       )
     self.answer(text)
     
-    def Uloot(self):
-      """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
-      self.answer(negozi_loot.value(" ".join(self.param)))
+  def Uloot(self):
+    """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
+    self.answer(negozi_loot.value(" ".join(self.param)))
   
-    # admin command ------------------------------------------------------------
-    def Autente(self):
-        """Visualizza le informazioni relative a un utente
-        Ricerca tramite username o id"""
-        if self.params:
-            result = utils.get_user_db(self.params[0])
-            if result:
-                text = utils.get_user(result)
-            else:
-                text = "Non ci sono utenti che rispondono ai parametri della ricerca"
-        else:
-            text = "Specifica id o username dell'utente che vuoi cercare"
-        self.answer(text, parse_mode="Markdown")
+  # admin command ------------------------------------------------------------
+  def Autente(self):
+    """Visualizza le informazioni relative a un utente
+Ricerca tramite username o id"""
+    if self.params:
+      result = utils.get_user_db(self.params[0])
+      if result:
+        text = utils.get_user(result)
+      else:
+        text = "Non ci sono utenti che rispondono ai parametri della ricerca"
+    else:
+      text = "Specifica id o username dell'utente che vuoi cercare"
+    self.answer(text, parse_mode="Markdown")
                 
-            
-    def Autenti(self):
-        """Visualizza gli utenti che utilizzano un determinato bot"""
-        query = """SELECT utenti.id AS user_id,
-                bot.id AS bot_id
-                FROM bot_users
-                INNER JOIN users AS utenti ON utenti.id = id_user
-                INNER JOIN users AS bot ON bot.id = id_bot
-                GROUP BY utenti.id, bot.id"""
-        users = execute(query)
-        if users:
-            text = "Elenco utenti:\n"
-            for user in users:
-                text += "<b>{}</b>: <code>{}</code>\n".format(
-                    user['bot_id'],
-                    user['user_id'])
-        else:
-            text = "Non ci sono utenti nel database"
-        self.answer(text, parse_mode="Markdown")
-        
+  def Autenti(self):
+    """Visualizza gli utenti che utilizzano un determinato bot"""
+    query = """SELECT utenti.id AS user_id,
+            bot.id AS bot_id
+            FROM bot_users
+            INNER JOIN users AS utenti ON utenti.id = id_user
+            INNER JOIN users AS bot ON bot.id = id_bot
+            GROUP BY utenti.id, bot.id"""
+    users = execute(query)
+    if users:
+      text = "Elenco utenti:\n"
+      for user in users:
+        text += "<b>{}</b>: <code>{}</code>\n".format(
+          user['bot_id'],
+          user['user_id'])
+    else:
+      text = "Non ci sono utenti nel database"
+      self.answer(text, parse_mode="Markdown")
     # TODO /insubriaNUM per specificare quanti esami vedere
-    def Ainsubria(self):
-        """Ottieni informazioni relative ad un esame o uno studente"""
-        if self.params:
-            get_last_exams(" ".join(self.params))
-        else:
-            text = ("Cosa vuoi sapere?\n"
-                    "/insubria matricola"
-                    "/insubria corso")
+  def Ainsubria(self):
+    """Ottieni informazioni relative ad un esame o uno studente"""
+    if self.params:
+      get_last_exams(" ".join(self.params))
+    else:
+      text = ("Cosa vuoi sapere?\n"
+              "/insubria matricola"
+              "/insubria corso")
