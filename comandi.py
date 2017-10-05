@@ -160,6 +160,7 @@ class Command():
   def Uinfo(self):
     """Ottieni le informazioni riguardo il tuo account"""
     user = self.update.message.from_user
+    print(user, type(user), str(user))
     self.answer(user)
     
   def Ujson(self):
