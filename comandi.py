@@ -61,7 +61,7 @@ class Command():
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
     
-  def unknown_command():
+  def unknown_command(self):
     self.answer("Ti sembra che {} sia nell'elenco?".format(self.command))
     
   #----------------------------------------------------------------------------------
