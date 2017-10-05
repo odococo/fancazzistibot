@@ -15,10 +15,6 @@ from db_call import execute
 def new_command(bot, update):
     command = Command(bot, update)
     command.execute()
-        
-def unknown_command():
-    self.answer("Ti sembra che sia nell'elenco?")
-
             
 def is_admin(id):
     """Verifica se l'id dell'utente è di un admin o meno"""
