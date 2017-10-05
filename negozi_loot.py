@@ -56,16 +56,16 @@ def set_prices():
     
 def value(text):
   update()
-  text = "Prezzi per: {}\n".format(text[text.index("per")+4:text.index(":")])
+  valore = "Prezzi per: {}\n".format(text[text.index("per")+4:text.index(":")])
   oggetti = [oggetto.split(" ") for oggetto in text.split("\n") if re.match("^[0-9]", oggetto)]
   prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
   oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
-  text += "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
+  valore += "Prezzo bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
   prezzi_mancanti = [oggetto for oggetto in oggetti if OGGETTI[oggetto]['prezzo'] == 0]
-  text += "Prezzo negozi: {}\n".format(sum([OGGETTI[oggetto]['prezzo']*oggetti[oggetto] for oggetto in oggetti]))
+  valore += "Prezzo negozi: {}\n".format(sum([OGGETTI[oggetto]['prezzo']*oggetti[oggetto] for oggetto in oggetti]))
   if prezzi_mancanti:
-    text += "Prezzi mancanti: {}\n".format("\n".join(prezzi_mancanti))
-  text += "Prezzo craft: {}".format(prezzo_craft)
+    valore += "Prezzi mancanti: {}\n".format("\n".join(prezzi_mancanti))
+  valore += "Prezzo craft: {}".format(prezzo_craft)
   return text
   
 def update():
