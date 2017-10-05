@@ -72,4 +72,4 @@ def update():
   if(not LAST_UPDATE or utils.diff_date(LAST_UPDATE, utils.now()) > 0):
     LAST_UPDATE = utils.now()
     set_items()
-    set_item
+    set_prices()
