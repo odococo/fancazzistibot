@@ -178,7 +178,7 @@ class Command():
         
   def Uconvert(self):
     """Converte test/numero da e verso una base arbitraria\n
-    Si possono fornire valori di conversione per personalizzare il risultato"""
+Si possono fornire valori di conversione per personalizzare il risultato"""
     convert_params = self.params[0].split("-") if self.params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
@@ -196,7 +196,7 @@ class Command():
     
   def Uloot(self):
     """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
-    self.answer(negozi_loot.value(" ".join(self.param)))
+    self.answer(value(" ".join(self.param)))
   
   # admin command ------------------------------------------------------------
   def Autente(self):
