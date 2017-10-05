@@ -196,7 +196,7 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
     
   def Uloot(self):
     """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
-    self.answer(value(" ".join(self.param)))
+    self.answer(value(" ".join(self.params)))
   
   # admin command ------------------------------------------------------------
   def Autente(self):
