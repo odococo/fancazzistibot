@@ -160,12 +160,11 @@ class Command():
   def Uinfo(self):
     """Ottieni le informazioni riguardo il tuo account"""
     user = self.update.message.from_user
-    print(user, type(user), str(user))
-    self.answer(user)
+    self.answer(str(user))
     
   def Ujson(self):
     """Ottieni il json dell'update"""
-    self.answer(update)
+    self.answer(str(update))
         
   def Uconvert(self):
     """Converte test/numero da e verso una base arbitraria\n
