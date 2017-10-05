@@ -70,7 +70,7 @@ def value(text):
   oggetti = {" ".join(oggetto[2:-1]): int(oggetto[0]) for oggetto in oggetti}
   prezzo_craft = int(text[text.rindex(":")+1:text.index("§")].replace("'", ""))
   
-  valore += "Prezzo base bot: {}\n".format(sum([OGGETTI[oggetto]['base']*oggetti[oggetto for oggetto in oggetti]]))
+  valore += "Prezzo base bot: {}\n".format(sum([OGGETTI[oggetto]['base']*oggetti[oggetto] for oggetto in oggetti]]))
   valore += "Prezzo somma stima bot: {}\n".format(sum([OGGETTI[oggetto]['stima']*oggetti[oggetto] for oggetto in oggetti]))
   
   prezzi_mancanti = [oggetto for oggetto in oggetti if OGGETTI[oggetto]['prezzo'] == 0]
