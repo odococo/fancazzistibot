@@ -44,9 +44,7 @@ class Command():
     if not 'parse_mode' in options:
       options['parse_mode'] = "HTML"
       if pretty_json:
-        print(text)
-        text = json.dumps(text, indent=2)
-        print(text)
+        text = json.dumps(json.loads(text), indent=2)
       while text:
         self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
