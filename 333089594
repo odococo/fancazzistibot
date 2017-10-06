@@ -70,6 +70,38 @@ def button(bot, update):
 
 def echo(bot, update):
     update.message.reply_text(update.message.text)
+    
+def set(bot, update, args, job_queue, chat_data):
+    """Adds a job to the queue"""
+    chat_id = update.message.chat_id
+    try:
+      # args[0] should contain the time for the timer in seconds
+      due = int(args[0])
+      if due < 0:
+          update.message.reply_text('Sorry we can not go back to future!')
+          return
+
+      # Add job to queue
+      job = job_queue.run_once(alarm, due, context=chat_id)
+      chat_data['job'] = job
+
+      update.message.reply_text('Timer successfully set!')
+
+    except (IndexError, ValueError):
+      update.message.reply_text('Usage: /set <seconds>')
+      
+def unset(bot, update, chat_data):
+    """Removes the job if the user changed their mind"""
+
+    if 'job' not in chat_data:
+        update.message.reply_text('You have no active timer')
+        return
+
+    job = chat_data['job']
+    job.schedule_removal()
+    del chat_data['job']
+
+    update.message.reply_text('Timer successfully unset!')
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
@@ -121,6 +153,12 @@ def main():
 
     # Handler to get username and other info
     # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
+    
+    dp.add_handler(CommandHandler("set", set,
+                                  pass_args=True,
+                                  pass_job_queue=True,
+                                  pass_chat_data=True))
+    dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
     disp.add_handler(RegexHandler("^Lista oggetti necessari", new_command))
