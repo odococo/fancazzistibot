@@ -154,11 +154,11 @@ def main():
     # Handler to get username and other info
     # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
     
-    dp.add_handler(CommandHandler("set", set,
+    disp.add_handler(CommandHandler("set", set,
                                   pass_args=True,
                                   pass_job_queue=True,
                                   pass_chat_data=True))
-    dp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
+    disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
     disp.add_handler(RegexHandler("^Lista oggetti necessari", new_command))
