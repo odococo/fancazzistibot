@@ -71,6 +71,10 @@ def button(bot, update):
 
 def echo(bot, update):
     update.message.reply_text(update.message.text)
+
+def alarm(bot, job):
+    """Function to send the alarm message"""
+    bot.send_message(job.context, text='Beep!')
     
 def set(bot, update, args, job_queue, chat_data):
     """Adds a job to the queue"""
