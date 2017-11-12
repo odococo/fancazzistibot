@@ -26,7 +26,8 @@ from telegram.ext import (
     MessageHandler,
     RegexHandler,
     Filters,
-    CallbackQueryHandler
+    CallbackQueryHandler,
+    Handler
 )
 
 from utils import new_command
@@ -142,6 +143,7 @@ def start_bot(token):
     disp.add_handler(MessageHandler(Filters.text, echo))
 
     # log all errors
+    disp.add_handler(Handler(unknown))
     disp.add_error_handler(error)
 
     # Start the Bot
