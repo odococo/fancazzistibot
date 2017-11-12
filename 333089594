@@ -113,7 +113,7 @@ def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
     
 def unknown(bot, update):
-    logger.info(update)
+    print(update)
     
 def start_bot(token):
     updater = Updater(token)
