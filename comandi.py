@@ -3,7 +3,6 @@
 
 import random
 import utils
-from insubria import get_last_exams
 from negozi_loot import value
 
 from telegram import (
@@ -230,12 +229,3 @@ Ricerca tramite username o id"""
     else:
       text = "Non ci sono utenti nel database"
       self.answer(text, parse_mode="Markdown")
-    # TODO /insubriaNUM per specificare quanti esami vedere
-  def Ainsubria(self):
-    """Ottieni informazioni relative ad un esame o uno studente"""
-    if self.params:
-      get_last_exams(" ".join(self.params))
-    else:
-      text = ("Cosa vuoi sapere?\n"
-              "/insubria matricola"
-              "/insubria corso")
