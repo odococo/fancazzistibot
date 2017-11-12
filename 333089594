@@ -112,9 +112,6 @@ def unset(bot, update, chat_data):
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
     
-def unknown(bot, update):
-    print(update)
-    
 def start_bot(token):
     updater = Updater(token)
     
