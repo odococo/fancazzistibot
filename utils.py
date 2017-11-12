@@ -19,7 +19,8 @@ def new_command(bot, update):
 def is_admin(id):
   """Verifica se l'id dell'utente è di un admin o meno"""
   admin = (89675136, # Odococo
-          337053854 # AlanBerti
+          337053854, # AlanBerti
+           24978334, #brandimax
   )
   return id in admin
         

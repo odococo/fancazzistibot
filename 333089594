@@ -31,11 +31,16 @@ from telegram.ext import (
 
 from utils import new_command
 
-# Enable logging
+#==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
+                    level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+ID = "333089594"
+TOKEN = ID + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
+PORT = int(os.environ.get('PORT', '5000'))
+
+
+#==================FUNCTIONS==========================================
 
 def get_user(user):
     default_null = "!"
@@ -79,6 +84,7 @@ def alarm(bot, job):
 def set(bot, update, args, job_queue, chat_data):
     """Adds a job to the queue"""
     chat_id = update.message.chat_id
+    print(chat_id)
     try:
       # args[0] should contain the time for the timer in seconds
       due = int(args[0])
@@ -109,7 +115,9 @@ def unset(bot, update, chat_data):
     update.message.reply_text('Timer successfully unset!')
 
 def error(bot, update, error):
-    logger.warn('Update "%s" caused error "%s"' % (update, error))
+    logger.warning('Update "%s" caused error "%s"' % (update, error))
+
+
     
 def start_bot(token):
     updater = Updater(token)
@@ -145,11 +153,12 @@ def start_bot(token):
     updater.idle()
 
 
+#==================MAIN==========================================
+
+
 def main():
     # Create the EventHandler and pass it your bot's token.
-    ID = "333089594"
-    TOKEN = ID + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
-    PORT = int(os.environ.get('PORT', '5000'))
+
     
     updater = Updater(TOKEN)
 
@@ -158,7 +167,6 @@ def main():
 
     # Handler to get username and other info
     # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
-    
     disp.add_handler(CommandHandler("set", set,
                                   pass_args=True,
                                   pass_job_queue=True,
@@ -172,8 +180,6 @@ def main():
     disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
     
-    # on noncommand i.e message - echo the message on Telegram
-    disp.add_handler(MessageHandler(Filters.text, echo))
 
     # log all errors
     disp.add_error_handler(error)
@@ -184,7 +190,7 @@ def main():
                       port=PORT,
                       url_path=ID)
     updater.bot.set_webhook("https://fancazzistibot.herokuapp.com/" + ID)
-    
+
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.

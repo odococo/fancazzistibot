@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import random
-import utils
+import utils, os
 from negozi_loot import value
+from PokerDice import calc_score, consigliami
 
 from telegram import (
     InlineKeyboardButton,
@@ -17,16 +18,24 @@ class Command():
     """Salva bot, update, comando e parametri"""
     self.bot = bot
     self.update = update
+    self.ricerca = False
+    self.stima = False
+
+    #Se ho un messaggio dato da tasto inline
     if update.callback_query:
       command_text = update.callback_query.data
+    # Se il messaggio ricevuto è stato inoltrato
     elif update.message.forward_from:
       if update.message.forward_from.username == "craftlootbot":
         command_text = "/loot " + update.message.text
+    #Altrimenti se si tratta di un semplice messaggio
     else:
       command_text = update.message.text
+
     command_text = command_text.split(" ")
     self.command = command_text[0]
     self.params = [param.strip() for param in command_text[1:]]
+    print(self.command, self.params)
         
   def getattr(self, key, fallback=None):
     """Wrapper per la funzione getattr"""
@@ -196,6 +205,41 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
   def Uloot(self):
     """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
     self.answer(value(" ".join(self.params)))
+
+  def Uwin(self):
+    """Uso: /win 1 2 3 4 5; ti dice quali sono le tue probabilità di vincita contro lo gnomo avversario"""
+    print("win")
+    #se ci sono troppi o pochi numeri non va bene
+    if len(self.params) != 5:
+      self.answer("Devi inserire 5 numeri separati da spazio!")
+      return
+
+    #trasforma i parametri in una lista di int
+    numeri=[int(param) for param in self.params]
+    #calcola il valore della vincita
+    win=(1-calc_score(numeri))*100
+    self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
+
+  def Uconsiglia(self):
+    """Uso: /consiglia 1 2 3 4 5; ti manda una tabella in cui:\n
+    La prima colonna indica il numero che dovresti cambiare seguito da una freccietta '->' e il numero che potrebbe uscirti\n
+    La seconda e terza colonna ti indicano rispettivamente la nuova probabilità di vincita (se cambi il numero) e la vecchia\n
+    La terza indica di quando sale o scende la nuova probabilità"""
+
+    # se ci sono troppi o pochi numeri non va bene
+    if len(self.params) != 5:
+      self.answer("Devi inserire 5 numeri separati da spazio!")
+      return
+    numeri = [int(param) for param in self.params]
+    path2img = consigliami(numeri)
+    if path2img == 0:
+      self.answer("Non Cambiare !")
+      return
+
+    with open(path2img, "rb") as file:
+      self.sendPhoto(file)
+    os.remove(path2img)
+
   
   # admin command ------------------------------------------------------------
   def Autente(self):
