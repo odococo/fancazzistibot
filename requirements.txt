@@ -2,4 +2,4 @@ python-telegram-bot
 requests
 bs4
 psycopg2
-matplotlib==1.5.3
+matplotlib
