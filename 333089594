@@ -27,8 +27,8 @@ from telegram.ext import (
     RegexHandler,
     Filters,
     CallbackQueryHandler,
-    Handler
-)
+    Handler,
+    TypeHandler)
 
 from utils import new_command
 
