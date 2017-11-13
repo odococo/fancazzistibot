@@ -196,7 +196,6 @@ def ricerca(bot, update):
                               "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                               reply_markup=reply_markup)
     stima = True
-    quantita=[]
     costo=[]
     return 1
 
