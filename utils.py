@@ -211,7 +211,7 @@ def stima(bot, update):
     """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
     global stima, costo_craft, quantita
-    
+
     print("\n\nStima\n\n")
 
     if not stima:

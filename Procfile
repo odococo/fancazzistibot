@@ -1,1 +1,1 @@
-web: python3 333089594
+web: python3 main
