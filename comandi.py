@@ -92,10 +92,10 @@ class Command():
         self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
             
-  def command_list(self, admin=False):
+  def command_list(self, admin=False, dev=False):
     """Ritorna la lista dei comandi disponibili"""
     commands = [command for command in dir(self)
-      if command.startswith("U") or (command.startswith("A") and admin)]
+      if command.startswith("U") or (command.startswith("A") and admin) or (command.startswith("D") and dev)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
     
@@ -106,11 +106,23 @@ class Command():
 
   def Ustart(self):
     """Mostra un esempio del markdown di telegram"""
-    self.answer(HELP)
+    self.answer(self.help())
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
-    self.answer(HELP)
+    commands = self.command_list(utils.is_admin(
+      self.update.message.from_user.id), utils.is_dev(self.bot.id))
+    commands = {"/" + command : commands.get(command) for command in commands}
+    text = [key + ": " + str(value) for key, value in commands.items()]
+    text = "\n".join(text)
+    text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
+Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
+/ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
+premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
+Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
+Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
+Crediti: @brandimax @Odococo"""
+    self.answer(text)
 
   # def Uinline(self):
   #   """Esempio di comandi inline"""
