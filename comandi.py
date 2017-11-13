@@ -106,7 +106,7 @@ class Command():
 
   def Ustart(self):
     """Mostra un esempio del markdown di telegram"""
-    self.answer("<i>Help!</i>, <b>Help!</b>, <code>Help!</code>, <pre>Help</pre>\n/help per ottenere la lista comandi")
+    self.answer(HELP)
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
