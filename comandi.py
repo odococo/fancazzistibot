@@ -301,10 +301,9 @@ class CraftBot():
         # Se il messaggio ricevuto è stato inoltrato
         #print(update)
         if update.message.forward_from:
-            print("FORWARD detected!")
-            if update.forward_from.username == "craftlootbot":
+            if update.message.forward_from.username == "craftlootbot":
                 command_text = "/ricerca " + update.message.text
-            elif update.forward_from.username == "lootplusbot":
+            elif update.message.forward_from.username == "lootplusbot":
                 command_text = "/stima " + update.message.text
         # Altrimenti se si tratta di un semplice messaggio
         else:
@@ -318,16 +317,14 @@ class CraftBot():
         """Wrapper per la funzione getattr"""
         for attr in dir(self):
             if attr[1:] == key:
+                print("Found method",attr[1:],key)
                 return getattr(self, attr)
+        print("Method not found",attr[1:])
         return fallback
 
     def execute(self):
         method = self.getattr(self.command[1:], self.unknown_command)
-        if (method.__name__.startswith("A") and
-          not utils.is_admin(self.update.message.from_user.id)):
-          self.answer("Non sei abilitato a usare questo comando")
-        else:
-          method()
+        method()
 
     def unknown_command(self):
         self.answer("C'è qualcosa di errato nel messaggio... sei sicuro di averlo inoltrato correttamente?")
