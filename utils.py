@@ -231,7 +231,7 @@ def stima(bot, update):
             update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
             return annulla(bot, update)
 
-        # print(self.costo, self.quantity)
+        print(costo, quantita)
         tot = 0
         for (much, what) in zip(costo, quantita):
             tot += int(what[0]) * int(much[1])
@@ -270,7 +270,7 @@ def stima_parziale(msg):
     for elem in prov:
         lst.append((elem.split(">")[0].replace("\n", "") + elem.split(">")[1].replace("\n", "")))
 
-    print(lst)
+    #print(lst)
     regex = re.compile(r"(.*):.*\(([0-9 .]+)")
 
     for elem in lst:
@@ -278,4 +278,4 @@ def stima_parziale(msg):
         #print(e)
 
         costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
-    print(costo)
+    #print(costo)
