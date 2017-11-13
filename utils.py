@@ -239,6 +239,7 @@ def stima(bot, update):
             if (len(c) > 0):
                 c = c[0]
                 merged.append((q[0], q[1], c[1]))
+        print(merged)
         tot = 0
         for elem in merged:
             tot += int(elem[0]) * int(elem[2])
