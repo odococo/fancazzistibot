@@ -274,9 +274,8 @@ def consigliami(hand):
     ax.yaxis.set_visible(False)  # hide the y axis
 
     table(ax, df,rowLabels=['']*df.shape[0], loc='center')  # where df is your data frame
-    path="tables/"
-    i=len([f for f in os.listdir(path)  if os.path.isfile(os.path.join(path, f))])
-    path_save_name='tables/mytable'+str(i)+".png"
+    i=len([f for f in os.listdir(".")  if os.path.isfile(os.path.join(".", f))])
+    path_save_name='mytable'+str(i)+".png"
 
     plt.savefig(path_save_name)
     return path_save_name
