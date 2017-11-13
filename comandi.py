@@ -237,7 +237,7 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
       return
 
     with open(path2img, "rb") as file:
-      self.sendPhoto(file)
+      self.bot.sendPhoto(file)
     os.remove(path2img)
 
   
