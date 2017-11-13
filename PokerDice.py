@@ -2,6 +2,8 @@ import collections
 from math import factorial
 import os, os.path
 
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.tools.plotting import table
