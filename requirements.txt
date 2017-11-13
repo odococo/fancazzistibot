@@ -3,4 +3,3 @@ requests
 bs4
 psycopg2
 matplotlib
-tkinter
