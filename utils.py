@@ -137,7 +137,7 @@ def get_pretty_json(value):
 
 # =============================LOOT============================================
 
-global costo_craft, stima, quantita
+global costo_craft, stima, quantita, costo
 
 
 def estrai_oggetti(msg):
@@ -199,6 +199,7 @@ def ricerca(bot, update):
 
 
 def annulla(bot, update):
+    """Annulla la stima"""
     global stima, costo_craft, quantita
 
     print("\n\nAnnulla\n\n")
@@ -214,47 +215,61 @@ def annulla(bot, update):
 def stima(bot, update):
     """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
-    global stima, costo_craft, quantita
+    global stima, costo_craft, quantita, costo
 
     print("\n\nStima\n\n")
     print(update)
 
-    if not stima:
-        update.message.reply_text("Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
-        return
+    if update.message.text=="Anulla":
+        return annulla(bot, update)
+    elif update.message.text=="Stima":
+        if not stima:
+            update.message.reply_text("Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
+            return ConversationHandler.END
 
-    costo = stima_parziale(update.message.text.lower())
-    if len(costo) == 0: return
 
-    # print(self.costo, self.quantity)
-    tot = 0
-    for (much, what) in zip(costo, quantita):
-        tot += int(what[0]) * int(much[1])
-    tot += int(costo_craft)
+        if len(costo) == 0:
+            update.message.reply_text("Si è verificato un errore")
+            return ConversationHandler.END
 
-    update.message.reply_text("Secondo le stime di mercato pagherai " +
-                              "{:,}".format(tot).replace(",", "'") + "§ , (costo craft incluso)")
 
-    costo.sort(key=lambda tup: int(tup[1]), reverse=True)
-    to_print = "I 10 oggetti piu costosi sono:\n"
-    for i in range(1, 11):
-        to_print += costo[i][0] + " : " + costo[i][1] + " §\n"
+        # print(self.costo, self.quantity)
+        tot = 0
+        for (much, what) in zip(costo, quantita):
+            tot += int(what[0]) * int(much[1])
+        tot += int(costo_craft)
 
-    update.message.reply_text(to_print)
+        update.message.reply_text("Secondo le stime di mercato pagherai " +
+                                  "{:,}".format(tot).replace(",", "'") + "§ , (costo craft incluso)")
 
-    m, s = divmod(len(costo) * 10, 60)
+        costo.sort(key=lambda tup: int(tup[1]), reverse=True)
+        to_print = "I 10 oggetti piu costosi sono:\n"
+        for i in range(1, 11):
+            to_print += costo[i][0] + " : " + costo[i][1] + " §\n"
 
-    update.message.reply_text("Se compri tutti gli oggetti dal negozio impiegherai un tempo di circa : "
-                              + str(m) + " minuti e " + str(s) + " secondi\n")
+        update.message.reply_text(to_print)
 
-    costo.clear()
-    quantita.clear()
-    stima = False
-    return ConversationHandler.END
+        m, s = divmod(len(costo) * 10, 60)
+
+        update.message.reply_text("Se compri tutti gli oggetti dal negozio impiegherai un tempo di circa : "
+                                  + str(m) + " minuti e " + str(s) + " secondi\n")
+
+        costo.clear()
+        quantita.clear()
+        stima = False
+        return ConversationHandler.END
+    else:
+        stima_parziale(update.message.text.lower())
+        return 1
+
+
+
+
 
 
 
 def stima_parziale(msg):
+    global costo
     prov = msg.split("negozi per ")[1:]
     lst = []
     for elem in prov:
@@ -263,10 +278,8 @@ def stima_parziale(msg):
     # print(lst)
     regex = re.compile(r"(.*):.*\(([0-9 .]+)")
 
-    costo = []
     for elem in lst:
         e = re.findall(regex, elem)
         # print(e)
 
         costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
-    return costo
