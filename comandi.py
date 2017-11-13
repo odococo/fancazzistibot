@@ -316,10 +316,11 @@ class CraftBot():
     def getattr(self, key, fallback=None):
         """Wrapper per la funzione getattr"""
         for attr in dir(self):
+            print("mathod= "+str(attr)+", key= "+str(key))
             if attr[1:] == key:
                 print("Found method",attr[1:],key)
                 return getattr(self, attr)
-        print("Method not found",attr[1:])
+        print("Method not found")
         return fallback
 
     def execute(self):
