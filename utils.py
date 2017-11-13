@@ -142,7 +142,7 @@ global costo_craft, stima, quantita, costo
 def estrai_oggetti(msg):
     global quantita
 
-    print(msg)
+    #print(msg)
 
     restante = msg.split("già possiedi")[0].split(":")[1]
     aggiornato = ""
@@ -164,7 +164,7 @@ def estrai_oggetti(msg):
         else:
             aggiornato += line + "\n"
 
-    # print(aggiornato)
+    print(aggiornato)
     regex = re.compile(r"di (.*)?\(")
     regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
     lst = re.findall(regex, aggiornato)
