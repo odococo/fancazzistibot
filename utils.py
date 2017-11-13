@@ -149,21 +149,14 @@ def estrai_oggetti(msg):
     print(restante.split("\n"))
 
     for line in restante.split("\n"):
-        if ">" in line:
-            # print(line)
-            first_num = line.split()[1]
-            # print(first_num)
-            second_num = line.split()[3]
-            # print(second_num)
-            what = line.split("di ")[1]
-            # print(what)
-            right_num = str(int(second_num) - int(first_num))
-            right_line = right_num + " su " + right_num + " di " + what
-            # print(right_line)
-            aggiornato += right_line + "\n"
+        if line[2:3] != line[7:8]:
+            new_num = int(line[7:8]) - int(line[2:3])
+            print(new_num)
+            new_line = line.replace(line[7:8], str(new_num))
+            new_line = new_line.replace(line[2:3], str(new_num))
+            aggiornato += new_line + "\n"
         else:
             aggiornato += line + "\n"
-
     print(aggiornato)
     regex = re.compile(r"di (.*)?\(")
     regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
