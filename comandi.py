@@ -221,7 +221,7 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
 
   def Uwin(self):
     """Uso: /win 1 2 3 4 5; ti dice quali sono le tue probabilità di vincita contro lo gnomo avversario"""
-    print("win")
+    #print("win")
     #se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
       self.answer("Devi inserire 5 numeri separati da spazio!")
