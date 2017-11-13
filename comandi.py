@@ -307,12 +307,12 @@ ora -> un'ora qualsiasi"""
     boss = self.params[0]
     giorno = self.params[1]
     ore = self.params[2]
-    nomi_boss = ["Titano", "Phoenix"]
+    nomi_boss = ["il Titano", "Phoenix"]
     giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
     from_id = self.update.message.from_user.id
     if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
         message = self.bot.send_message(chat_id=chat_id, 
-                                        text="Attaccate " + nomi_boss[int(boss)%2] + " " + giorni[int(giorno)%7] + " entro le " + ore)
+                                        text="Attaccate " + nomi_boss[int(boss)%2] + " entro le " + ore + " di " + giorni[int(giorno)%7])
         self.bot.pinChatMessage(chat_id, message.message_id, True)
 
   # admin command ------------------------------------------------------------
