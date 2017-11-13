@@ -39,7 +39,7 @@ from utils import new_command, now, ricerca, annulla, stima
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-ID = "333089594"
+ID = "main"
 TOKEN = ID + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
 PORT = int(os.environ.get('PORT', '5000'))
 ANNULLA, STIMA = range(2)
@@ -86,7 +86,7 @@ def alarm(bot, job):
 def set(bot, update, args, job_queue, chat_data):
     """Adds a job to the queue"""
     chat_id = update.message.chat_id
-    print(chat_id)
+    #print(chat_id)
     try:
       # args[0] should contain the time for the timer in seconds
       due = int(args[0])
