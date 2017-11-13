@@ -302,30 +302,22 @@ class CraftBot():
         #print(update)
         if update.message.forward_from:
             if update.message.forward_from.username == "craftlootbot":
-                command_text = "/ricerca " + update.message.text
+                self.command="ricerca"
+                self.text=update.message.text
             elif update.message.forward_from.username == "lootplusbot":
-                command_text = "/stima " + update.message.text
+                self.command="stima"
+                self.text=update.message.text
         # Altrimenti se si tratta di un semplice messaggio
         else:
-            command_text = "/unknown"
+            self.command = "unknown"
+            self.text=""
 
-        command_text = command_text.split(" ")
-        self.command = command_text[0].strip("/")
-        self.text = update.message.text.replace(command_text[0],"")
 
-    def getattr(self, key, fallback=None):
-        """Wrapper per la funzione getattr"""
-        for attr in dir(self):
-            print("mathod= "+str(attr)+", key= "+str(key))
-            if attr[1:] == key:
-                print("Found method",attr[1:],key)
-                return getattr(self, attr)
-        print("Method not found")
-        return fallback
 
     def execute(self):
-        method = self.getattr(self.command[1:], self.unknown_command)
-        method()
+        if(self.command=="ricerca"): self.Dricerca()
+        elif (self.command=="stima"): self.Ustima()
+        else: self.unknown_command()
 
     def unknown_command(self):
         self.answer("C'è qualcosa di errato nel messaggio... sei sicuro di averlo inoltrato correttamente?")
