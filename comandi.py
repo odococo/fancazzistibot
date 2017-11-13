@@ -78,6 +78,9 @@ class Command():
     if (method.__name__.startswith("A") and
       not utils.is_admin(self.update.message.from_user.id)):
       self.answer("Non sei abilitato a usare questo comando")
+    elif (method.__name__.startswith("D") and
+      not utils.is_dev(self.bot.id)):
+      pass
     else:
       method()
             
@@ -85,11 +88,13 @@ class Command():
     """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
     if not 'parse_mode' in options:
       options['parse_mode'] = "HTML"
+      message_id = None
       if pretty_json:
         text = utils.get_pretty_json(text)
       while text:
-        self.update.message.reply_text(text[:4096], **options)
+        message_id = self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
+      return message_id
             
   def command_list(self, admin=False, dev=False):
     """Ritorna la lista dei comandi disponibili"""
@@ -105,7 +110,7 @@ class Command():
 
   def Ustart(self):
     """Mostra un esempio del markdown di telegram"""
-    self.answer(self.help())
+    self.answer(self.Uhelp())
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
@@ -156,7 +161,7 @@ Crediti: @brandimax @Odococo"""
       "Seleziona il numero di facce:",
       reply_markup=reply_markup)
 
-  def Udice2(self):
+  def Udado(self):
     """Lancia un dado specificando numero di facce e lanci da effettuare"""
     if(len(self.params)!=1 or all(utils.is_numeric(param) for param in self.params)):
         self.answer("Il comando funziona così:\n/dice numero_facce numero_lanci")
@@ -288,7 +293,27 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
     with open(path2img, "rb") as file:
       self.bot.sendPhoto(self.update.message.from_user.id,file)
     os.remove(path2img)
-
+    
+  def Dprova(self):
+    """test dev"""
+    self.answer("ok")
+    
+  def Dboss(self):
+    """Fissa un messaggio per l'attacco del boss. /fissaBoss boss giorno ora
+boss -> 0 (titano) o 1 (phoenix)
+giorno -> da 0 a 6 (da lunedì a domenica)
+ora -> un'ora qualsiasi"""
+    chat_id = -1001284891867 #Bot per i Boss
+    boss = self.params[0]
+    giorno = self.params[1]
+    ore = self.params[2]
+    nomi_boss = ["Titano", "Phoenix"]
+    giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+    from_id = self.update.message.from_user.id
+    if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
+        message = self.bot.send_message(chat_id=chat_id, 
+                                        text="Attaccate " + nomi_boss[int(boss)%2] + " " + giorni[int(giorno)%7] + " entro le " + ore)
+        self.bot.pinChatMessage(chat_id, message.message_id, True)
 
   # admin command ------------------------------------------------------------
   def Autente(self):
