@@ -170,7 +170,7 @@ def estrai_oggetti(msg):
     lst = re.findall(regex, aggiornato)
     quantita = re.findall(regex2, aggiornato)
     commands = []
-    print(quantita)
+    quantita = [(q[0], q[1].strip()) for q in quantita]
     last_ixd = len(lst) - len(lst) % 3
     for i in range(0, (last_ixd) - 2, 3):
         commands.append("/ricerca " + ",".join(lst[i:i + 3]))
@@ -232,11 +232,17 @@ def stima(bot, update):
             update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
             return annulla(bot, update)
 
-        print(costo, quantita)
+        #print(costo, quantita)
+        merged=[]
+        for q in quantita:
+            c = [item for item in costo if item[0] == q[1]]
+            if (len(c) > 0):
+                c = c[0]
+                merged.append((q[0], q[1], c[1]))
         tot = 0
-        for (much, what) in zip(costo, quantita):
-            print(tot)
-            tot += int(what[0]) * int(much[1])
+        for elem in merged:
+            tot += int(elem[0]) * int(elem[2])
+
         tot += int(costo_craft)
 
         update.message.reply_text("Secondo le stime di mercato pagherai " +
