@@ -39,6 +39,7 @@ from utils import new_command, now, ricerca, annulla, stima
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+<<<<<<< HEAD
 DEBUG=True
 if DEBUG:
     ID = "333089594"
@@ -46,6 +47,8 @@ if DEBUG:
 else:
     ID="490902479"
     TOKEN = ID + ":AAGz3rv4M2U2dYG7WJDbiWZoAFFsUVn_ZIE"
+=======
+>>>>>>> 574421da7f72c7889bd08fcfa5f1a3f62b5ea2d0
 
 PORT = int(os.environ.get('PORT', '5000'))
 
@@ -53,6 +56,15 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 
 #==================FUNCTIONS==========================================
+
+def get_token_bot(debug):
+    if debug:
+        id = "333089594"
+        token = id + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
+    else:
+        id = "490902479"
+        token = id + ":AAGz3rv4M2U2dYG7WJDbiWZoAFFsUVn_ZIE"
+    return token
 
 def get_user(user):
     default_null = "!"
@@ -136,9 +148,8 @@ def log_update(bot, update):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-
-    
-    updater = Updater(TOKEN)
+    debug = len(sys.argv) > 1
+    updater = Updater(get_token_bot(debug))
 
     # Get the dispatcher to register handlers
     disp = updater.dispatcher
@@ -173,8 +184,8 @@ def main():
     #updater.start_polling()
     updater.start_webhook(listen="0.0.0.0",
                       port=PORT,
-                      url_path=ID)
-    updater.bot.set_webhook("https://fancazzistibot.herokuapp.com/" + ID)
+                      url_path="main")
+    updater.bot.set_webhook("https://fancazzistibot.herokuapp.com/main")
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since

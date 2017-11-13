@@ -36,7 +36,7 @@ Crediti: @brandimax @Odococo
 
 COMANDI="""
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
-dice - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi
+dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
 consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
 roll - lancia un dado senza specificare nulla
 info - ottini le informazioni riguardanti il tuo account
@@ -50,7 +50,6 @@ class Command():
     """Salva bot, update, comando e parametri"""
     self.bot = bot
     self.update = update
-
     #Se ho un messaggio dato da tasto inline
     if update.callback_query:
       command_text = update.callback_query.data
@@ -92,10 +91,10 @@ class Command():
         self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
             
-  def command_list(self, admin=False):
+  def command_list(self, admin=False, dev=False):
     """Ritorna la lista dei comandi disponibili"""
     commands = [command for command in dir(self)
-      if command.startswith("U") or (command.startswith("A") and admin)]
+      if command.startswith("U") or (command.startswith("A") and admin) or (command.startswith("D") and dev)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
     
@@ -106,11 +105,23 @@ class Command():
 
   def Ustart(self):
     """Mostra un esempio del markdown di telegram"""
-    self.answer(HELP)
+    self.answer(self.help())
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
-    self.answer(HELP)
+    commands = self.command_list(utils.is_admin(
+      self.update.message.from_user.id), utils.is_dev(self.bot.id))
+    commands = {"/" + command : commands.get(command) for command in commands}
+    text = [key + ": " + str(value) for key, value in commands.items()]
+    text = "\n".join(text)
+    text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
+Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
+/ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
+premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
+Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
+Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
+Crediti: @brandimax @Odococo"""
+    self.answer(text)
 
   # def Uinline(self):
   #   """Esempio di comandi inline"""
@@ -242,7 +253,10 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
     self.answer(text)
 
   def Uwin(self):
-    """Uso: /win 1 2 3 4 5; ti dice quali sono le tue probabilità di vincita contro lo gnomo avversario"""
+    """/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo\n
+/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+(la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
+la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)\n"""
     #print("win")
     #se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:

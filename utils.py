@@ -28,6 +28,9 @@ def is_admin(id):
              )
     return id in admin
 
+def is_dev(id):
+    return id == 333089594
+
 
 def is_numeric(value, strict_int=False):
     return isinstance(value, int) or (
