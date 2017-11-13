@@ -29,16 +29,26 @@ def is_admin(id):
     return id in admin
 
 def is_dev(id):
+    """Verifica se l'id del bot è quello del fancazzista supremo"""
     return id == 333089594
+    
+def is_fanca_admin(id):
+    """Verifica se l'id dell'utente è di un admin dei fancazzisti o meno"""
+    admin = (107839625, #IMayonesX
+             241317532, #Osho27
+    )
+    return id in admin
 
 
 def is_numeric(value, strict_int=False):
+    """Verifica se il valore passato è un numerico oppure una stringa che contiere un numerico"""
     return isinstance(value, int) or (
         not strict_int and isinstance(value, str)
         and value.isnumeric())
 
 
 def reverse(obj):
+    """Ribalta l'oggetto passato"""
     if isinstance(obj, str):
         return obj[::-1]
     elif isinstance(obj, int):
