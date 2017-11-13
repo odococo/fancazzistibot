@@ -20,6 +20,7 @@ import re
 import sys
 import os
 
+import telegram
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -30,7 +31,9 @@ from telegram.ext import (
     Handler,
     TypeHandler)
 
-from utils import new_command
+import track_activity
+from db_call import add_user
+from utils import new_command, now
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
