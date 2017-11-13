@@ -50,7 +50,6 @@ class Command():
     """Salva bot, update, comando e parametri"""
     self.bot = bot
     self.update = update
-    print(bot)
     #Se ho un messaggio dato da tasto inline
     if update.callback_query:
       command_text = update.callback_query.data
@@ -254,7 +253,10 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
     self.answer(text)
 
   def Uwin(self):
-    """Uso: /win 1 2 3 4 5; ti dice quali sono le tue probabilità di vincita contro lo gnomo avversario"""
+    """/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo\n
+/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+(la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
+la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)\n"""
     #print("win")
     #se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
