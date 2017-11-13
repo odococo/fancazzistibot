@@ -145,17 +145,10 @@ def main():
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
-    conversation=ConversationHandler(
-        [RegexHandler("^Lista oggetti necessari per",ricerca)],
-        states={
-            ANNULLA : [MessageHandler("Annulla",annulla)],
-            STIMA: [MessageHandler("Stima",stima)]
-        },
-        fallbacks=[CallbackQueryHandler(annulla, pattern="Annulla")]
+    disp.add_handler(RegexHandler("^Lista oggetti necessari per",ricerca))
+    disp.add_handler(RegexHandler("^Annulla",annulla))
+    disp.add_handler(RegexHandler("^Stima",stima))
 
-    )
-    disp.add_handler(conversation)
-    
     # on different commands - answer in Telegram
     disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
