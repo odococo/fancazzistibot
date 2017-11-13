@@ -146,7 +146,7 @@ def estrai_oggetti(msg):
 
     restante = msg.split("già possiedi")[0].split(":")[1]
     aggiornato = ""
-    print(restante.split("\n"))
+    #print(restante.split("\n"))
 
     for line in restante.split("\n"):
         if line[2:3] != line[7:8]:
@@ -157,7 +157,7 @@ def estrai_oggetti(msg):
             aggiornato += new_line + "\n"
         else:
             aggiornato += line + "\n"
-    print(aggiornato)
+    #print(aggiornato)
     regex = re.compile(r"di (.*)?\(")
     regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
     lst = re.findall(regex, aggiornato)
@@ -260,7 +260,7 @@ def stima(bot, update):
         stima = False
         return ConversationHandler.END
     else:
-        print("\n\nStima Parziale\n\n")
+        #print("\n\nStima Parziale\n\n")
         stima_parziale(update.message.text.lower())
         return 1
 

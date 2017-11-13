@@ -13,6 +13,37 @@ from telegram import (
     User
 )
 
+HELP="""Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootbot, di seguito 
+le elencheremo tutte con il seguente formato "ESEMPIO - SPIEGAZIONE":\n
+/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo\n
+/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+(la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
+la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)\n
+/dice numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi\n
+/roll - lancia un dado senza specificare nulla\n
+/info - ottini le informazioni riguardanti il tuo account\n
+/convert base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una 
+base arbitraria, si possono fornire valori di conversione per personalizzare il risultato\n
+/help - mostra questo messaggio\n\n
+Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
+Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
+/ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
+premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
+Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
+Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
+Crediti: @brandimax @Odococo
+"""
+
+COMANDI="""
+win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
+dice - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi
+consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
+roll - lancia un dado senza specificare nulla
+info - ottini le informazioni riguardanti il tuo account
+convert - Converte test/numero da e verso una base arbitraria, si possono fornire valori di conversione per personalizzare il risultato
+help - mostra questo messaggio di help
+"""
+
 class Command():
 
   def __init__(self, bot, update):
@@ -79,27 +110,22 @@ class Command():
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
-    commands = self.command_list(utils.is_admin(
-      self.update.message.from_user.id))
-    commands = {"/" + command : commands.get(command) for command in commands}
-    text = [key + ": " + str(value) for key, value in commands.items()]
-    text = "\n".join(text)
-    self.answer(text)
+    self.answer(HELP)
 
-  def Uinline(self):
-    """Esempio di comandi inline"""
-    keyboard = [
-      [InlineKeyboardButton(
-        "Option 1",
-        callback_data='1'),
-      InlineKeyboardButton(
-        "Option 2",
-        callback_data='2')],
-      [InlineKeyboardButton(
-        "Option 3",
-        callback_data='3')]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    self.answer('Please choose:', reply_markup=reply_markup)
+  # def Uinline(self):
+  #   """Esempio di comandi inline"""
+  #   keyboard = [
+  #     [InlineKeyboardButton(
+  #       "Option 1",
+  #       callback_data='1'),
+  #     InlineKeyboardButton(
+  #       "Option 2",
+  #       callback_data='2')],
+  #     [InlineKeyboardButton(
+  #       "Option 3",
+  #       callback_data='3')]]
+  #   reply_markup = InlineKeyboardMarkup(keyboard)
+  #   self.answer('Please choose:', reply_markup=reply_markup)
 
   def Uroll(self):
     """Lancia un dado"""
@@ -214,10 +240,6 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
         values
       )
     self.answer(text)
-    
-  def Uloot(self):
-    """Inoltra da @craftlootbot /lista item per ottenere il valore dell'oggetto"""
-    self.answer(value(" ".join(self.params)))
 
   def Uwin(self):
     """Uso: /win 1 2 3 4 5; ti dice quali sono le tue probabilità di vincita contro lo gnomo avversario"""
