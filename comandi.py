@@ -123,6 +123,24 @@ class Command():
 
   def Udice(self):
     """Lancia un dado specificando numero di facce e lanci da effettuare"""
+    if(len(self.params)!=2 or all(utils.is_numeric(param) for param in self.params)):
+        self.answer("Il comando funziona così:\n"
+                    "/dice numero_facce numero_lanci")
+        return
+
+    res="Il risultato è ["
+    for counter in range(int(self.params[1])):
+      res+=str(random.randint(1, int(self.params[0])))+","
+
+    res.rstrip(",")
+    res+="]"
+    self.answer(res)
+
+
+      
+
+  def Udice2(self):
+    """Lancia un dado specificando numero di facce e lanci da effettuare"""
     if (len(self.params) == 2
       and all(utils.is_numeric(param) for param in self.params)):
       text = ""
