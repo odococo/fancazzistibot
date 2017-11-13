@@ -146,7 +146,7 @@ def estrai_oggetti(msg):
 
     restante = msg.split("già possiedi")[0].split(":")[1]
     aggiornato = ""
-    print(restante)
+    #print(restante)
 
     for line in restante.split("\n"):
         if ">" in line:
