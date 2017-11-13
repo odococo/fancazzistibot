@@ -168,7 +168,7 @@ def estrai_oggetti(msg):
     lst = re.findall(regex, aggiornato)
     quantita = re.findall(regex2, aggiornato)
     commands = []
-    # print(lst)
+    print(quantita)
     last_ixd = len(lst) - len(lst) % 3
     for i in range(0, (last_ixd) - 2, 3):
         commands.append("/ricerca " + ",".join(lst[i:i + 3]))
@@ -234,6 +234,7 @@ def stima(bot, update):
         print(costo, quantita)
         tot = 0
         for (much, what) in zip(costo, quantita):
+            print(tot)
             tot += int(what[0]) * int(much[1])
         tot += int(costo_craft)
 
