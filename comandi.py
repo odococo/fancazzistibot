@@ -289,7 +289,7 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
       self.bot.sendPhoto(self.update.message.from_user.id,file)
     os.remove(path2img)
 
-  
+
   # admin command ------------------------------------------------------------
   def Autente(self):
     """Visualizza le informazioni relative a un utente
