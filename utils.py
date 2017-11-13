@@ -10,7 +10,7 @@ import ast
 from bs4 import BeautifulSoup
 from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 
-from comandi import Command, CraftBot
+from comandi import Command
 from db_call import execute
 
 
@@ -18,10 +18,6 @@ def new_command(bot, update):
     command = Command(bot, update)
     command.execute()
 
-
-def new_command_loot(bot, update):
-    command_loot = CraftBot(bot, update)
-    command_loot.execute()
 
 
 def is_admin(id):

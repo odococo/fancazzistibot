@@ -33,7 +33,7 @@ from telegram.ext import (
 
 import track_activity
 from db_call import add_user
-from utils import new_command, now, new_command_loot, ricerca, annulla, stima
+from utils import new_command, now, ricerca, annulla, stima
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -78,8 +78,6 @@ def button(bot, update):
                           chat_id=query.message.chat_id,
                           message_id=query.message.message_id)
 
-def echo(bot, update):
-    update.message.reply_text(update.message.text)
 
 def alarm(bot, job):
     """Function to send the alarm message"""
@@ -123,40 +121,6 @@ def error(bot, update, error):
 
 def log_update(bot, update):
     logger.info(update)
-    
-def start_bot(token):
-    updater = Updater(token)
-    
-    username = updater.bot.username
-    #add_bot(get_bot(updater.bot))
-    # Create the EventHandler and pass it your bot's token.
-
-    # Get the dispatcher to register handlers
-    disp = updater.dispatcher
-    
-    # Handler to get username and other info
-    # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
-
-    disp.add_handler(RegexHandler("^[.!/]", new_command))
-    
-    # on different commands - answer in Telegram
-    disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
-    disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
-
-    # on noncommand i.e message - echo the message on Telegram
-    disp.add_handler(MessageHandler(Filters.text, echo))
-
-    # log all errors
-    disp.add_handler(Handler(unknown))
-    disp.add_error_handler(error)
-
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
 
 
 #==================MAIN==========================================
@@ -181,7 +145,6 @@ def main():
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
-    pattern =r"(Lista oggetti necessari per)|(Risultati ricerca di)"
     conversation=ConversationHandler(
         [RegexHandler("^Lista oggetti necessari per",ricerca)],
         states={
