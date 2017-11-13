@@ -299,8 +299,9 @@ class CraftBot():
 
 
         # Se il messaggio ricevuto è stato inoltrato
-        print(update)
-        if update.forward_from:
+        #print(update)
+        if update.message.forward_from:
+            print("FORWARD detected!")
             if update.forward_from.username == "craftlootbot":
                 command_text = "/ricerca " + update.message.text
             elif update.forward_from.username == "lootplusbot":
