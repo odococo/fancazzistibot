@@ -151,9 +151,15 @@ def main():
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
-    disp.add_handler(RegexHandler("^Lista oggetti necessari per",ricerca))
-    disp.add_handler(RegexHandler("^Annulla",annulla))
-    disp.add_handler(RegexHandler("^Stima",stima))
+    coversation=ConversationHandler(
+        [RegexHandler("^Lista oggetti necessari per",ricerca)],
+        states={
+            1 : [MessageHandler(Filters.text, stima)]
+        }
+    )
+
+    disp.add_handler(coversation)
+
 
     # on different commands - answer in Telegram
     disp.add_handler(CallbackQueryHandler(button, pattern="\d"))

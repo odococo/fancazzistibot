@@ -194,6 +194,7 @@ def ricerca(bot, update):
                               "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                               reply_markup=reply_markup)
     stima = True
+    return 1
 
 
 def annulla(bot, update):
@@ -213,6 +214,7 @@ def stima(bot, update):
     global stima, costo_craft, quantita
 
     print("\n\nStima\n\n")
+    print(update)
 
     if not stima:
         update.message.reply_text("Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
