@@ -118,7 +118,8 @@ def unset(bot, update, chat_data):
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
-
+def log_update(bot, update):
+    logger.info(update)
     
 def start_bot(token):
     updater = Updater(token)
@@ -182,8 +183,8 @@ def main():
     disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
     
-
     # log all errors
+    disp.add_handler(TypeHandler(telegram.Update, log_update))
     disp.add_error_handler(error)
 
     # Start the Bot
