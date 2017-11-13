@@ -208,7 +208,6 @@ def annulla(bot, update):
     stima = False
     costo_craft = 0
     quantita = []
-    update.message.reply_text("Ok ho annullato tutto")
     return ConversationHandler.END
 
 
@@ -221,15 +220,16 @@ def stima(bot, update):
     print(update)
 
     if update.message.text == "Anulla":
+        update.message.reply_text("Ok ho annullato tutto")
         return annulla(bot, update)
     elif update.message.text == "Stima":
         if not stima:
             update.message.reply_text("Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
-            return ConversationHandler.END
+            return annulla(bot, update)
 
         if len(costo) == 0:
-            update.message.reply_text("Si è verificato un errore")
-            return ConversationHandler.END
+            update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
+            return annulla(bot, update)
 
         # print(self.costo, self.quantity)
         tot = 0
@@ -240,12 +240,13 @@ def stima(bot, update):
         update.message.reply_text("Secondo le stime di mercato pagherai " +
                                   "{:,}".format(tot).replace(",", "'") + "§ , (costo craft incluso)")
 
-        costo.sort(key=lambda tup: int(tup[1]), reverse=True)
-        to_print = "I 10 oggetti piu costosi sono:\n"
-        for i in range(1, 11):
-            to_print += costo[i][0] + " : " + costo[i][1] + " §\n"
+        if (len(costo)>10):
+            costo.sort(key=lambda tup: int(tup[1]), reverse=True)
+            to_print = "I 10 oggetti piu costosi sono:\n"
+            for i in range(1, 11):
+                to_print += costo[i][0] + " : " + costo[i][1] + " §\n"
 
-        update.message.reply_text(to_print)
+            update.message.reply_text(to_print)
 
         m, s = divmod(len(costo) * 10, 60)
 
