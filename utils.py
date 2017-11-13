@@ -9,6 +9,7 @@ import ast
 
 from bs4 import BeautifulSoup
 from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from telegram.ext import ConversationHandler
 
 from comandi import Command
 from db_call import execute
@@ -206,6 +207,8 @@ def annulla(bot, update):
     costo_craft = 0
     quantita = []
     update.message.reply_text("Ok ho annullato tutto")
+    return ConversationHandler.END
+
 
 
 def stima(bot, update):
@@ -247,6 +250,8 @@ def stima(bot, update):
     costo.clear()
     quantita.clear()
     stima = False
+    return ConversationHandler.END
+
 
 
 def stima_parziale(msg):

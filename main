@@ -155,7 +155,8 @@ def main():
         [RegexHandler("^Lista oggetti necessari per",ricerca)],
         states={
             1 : [MessageHandler(Filters.text, stima)]
-        }
+        },
+        fallbacks=[CommandHandler('Annulla', annulla)]
     )
 
     disp.add_handler(coversation)
