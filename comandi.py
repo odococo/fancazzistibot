@@ -36,7 +36,7 @@ Crediti: @brandimax @Odococo
 
 COMANDI="""
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
-dice - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi
+dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
 consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
 roll - lancia un dado senza specificare nulla
 info - ottini le informazioni riguardanti il tuo account
@@ -50,7 +50,7 @@ class Command():
     """Salva bot, update, comando e parametri"""
     self.bot = bot
     self.update = update
-
+    print(bot)
     #Se ho un messaggio dato da tasto inline
     if update.callback_query:
       command_text = update.callback_query.data
