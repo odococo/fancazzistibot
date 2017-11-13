@@ -142,6 +142,8 @@ global costo_craft, stima, quantita, costo
 def estrai_oggetti(msg):
     global quantita
 
+    print(msg)
+
     restante = msg.split("già possiedi")[0].split(":")[1]
     aggiornato = ""
     # print(restante)
