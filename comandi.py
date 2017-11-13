@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-import utils, os
+import utils, os, re
 from db_call import execute
 from negozi_loot import value
 from PokerDice import calc_score, consigliami
@@ -19,8 +19,6 @@ class Command():
     """Salva bot, update, comando e parametri"""
     self.bot = bot
     self.update = update
-    self.ricerca = False
-    self.stima = False
 
     #Se ho un messaggio dato da tasto inline
     if update.callback_query:
@@ -121,7 +119,7 @@ class Command():
       "Seleziona il numero di facce:",
       reply_markup=reply_markup)
 
-  def Udice(self):
+  def Udice2(self):
     """Lancia un dado specificando numero di facce e lanci da effettuare"""
     if(len(self.params)!=1 or all(utils.is_numeric(param) for param in self.params)):
         self.answer("Il comando funziona così:\n/dice numero_facce numero_lanci")
@@ -135,10 +133,7 @@ class Command():
     res+="]"
     self.answer(res)
 
-
-
-
-  def Udice2(self):
+  def Udice(self):
     """Lancia un dado specificando numero di facce e lanci da effettuare"""
     if (len(self.params) == 2
       and all(utils.is_numeric(param) for param in self.params)):
@@ -291,3 +286,158 @@ Ricerca tramite username o id"""
     else:
       text = "Non ci sono utenti nel database"
       self.answer(text, parse_mode="Markdown")
+
+class CraftBot():
+    def __init__(self, bot, update):
+        """Salva bot, update, comando e parametri"""
+        self.bot = bot
+        self.update = update
+        self.stima = False
+        self.quantity=[]
+        self.costo=[]
+        self.costo_craft=0
+
+
+        # Se il messaggio ricevuto è stato inoltrato
+        if update.message.forward_from:
+            if update.message.forward_from.username == "craftlootbot":
+                command_text = "/ricerca " + update.message.text
+            elif update.message.forward_from.username == "lootplusbot":
+                command_text = "/stima " + update.message.text
+        # Altrimenti se si tratta di un semplice messaggio
+        else:
+            command_text = "/unknown"
+
+        command_text = command_text.split(" ")
+        self.command = command_text[0].strip("/")
+        self.text = update.message.text.replace(command_text.split(" ")[0],"")
+
+    def getattr(self, key, fallback=None):
+        """Wrapper per la funzione getattr"""
+        for attr in dir(self):
+            if attr[1:] == key:
+                return getattr(self, attr)
+        return fallback
+
+    def execute(self):
+        method = self.getattr(self.command[1:], self.unknown_command)
+        if (method.__name__.startswith("A") and
+          not utils.is_admin(self.update.message.from_user.id)):
+          self.answer("Non sei abilitato a usare questo comando")
+        else:
+          method()
+
+    def unknown_command(self):
+        self.answer("C'è qualcosa di errato nel messaggio... sei sicuro di averlo inoltrato correttamente?")
+
+    def answer(self, text, pretty_json=False, **options):
+        """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
+        if not 'parse_mode' in options:
+            options['parse_mode'] = "HTML"
+            if pretty_json:
+                text = utils.get_pretty_json(text)
+            while text:
+                self.update.message.reply_text(text[:4096], **options)
+                text = text[4096:]
+
+    def estrai_oggetti(self):
+
+        restante = self.text.split("già possiedi")[0].split(":")[1]
+        aggiornato = ""
+        # print(restante)
+
+        for line in restante.split("\n"):
+            if ">" in line:
+                # print(line)
+                first_num = line.split()[1]
+                # print(first_num)
+                second_num = line.split()[3]
+                # print(second_num)
+                what = line.split("di ")[1]
+                # print(what)
+                right_num = str(int(second_num) - int(first_num))
+                right_line = right_num + " su " + right_num + " di " + what
+                # print(right_line)
+                aggiornato += right_line + "\n"
+            else:
+                aggiornato += line + "\n"
+
+        # print(aggiornato)
+        regex = re.compile(r"di (.*)?\(")
+        regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
+        lst = re.findall(regex, aggiornato)
+        self.quantity = re.findall(regex2, aggiornato)
+        commands = []
+        # print(lst)
+        last_ixd = len(lst) - len(lst) % 3
+        for i in range(0, (last_ixd) - 2, 3):
+            commands.append("/ricerca " + ",".join(lst[i:i + 3]))
+
+        commands.append("/ricerca " + ",".join(lst[last_ixd:len(lst)]))
+        final_string = ""
+
+        for command in commands:
+            final_string += command + "\n"
+
+        return final_string
+
+    def stima_parziale(self):
+        prov = self.text.split("negozi per ")[1:]
+        lst = []
+        for elem in prov:
+            lst.append((elem.split(">")[0].replace("\n", "") + elem.split(">")[1].replace("\n", "")))
+
+        # print(lst)
+        regex = re.compile(r"(.*):.*\(([0-9 .]+)")
+
+        for elem in lst:
+            e = re.findall(regex, elem)
+            # print(e)
+
+            self.costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
+
+
+    def Dricerca(self):
+        """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
+        to_send = self.estrai_oggetti()
+        self.costo_craft = self.text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
+
+        self.answer(to_send)
+        self.answer("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
+                                "avere il totale dei soldi da spendere. Quando hai finito usa il comando /stima "
+                    "per avere le informazioni.")
+        self.stima = True
+
+    def Ustima(self):
+        """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
+        top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
+        if not self.stima:
+            self.answer("Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
+            return
+        self.stima_parziale()
+        if len(self.costo) == 0: return
+
+        # print(self.costo, self.quantity)
+        tot = 0
+        for (much, what) in zip(self.costo, self.quantity):
+            tot += int(what[0]) * int(much[1])
+        tot += int(self.costo_craft)
+
+        self.answer("Secondo le stime di mercato pagherai " +
+                                "{:,}".format(tot).replace(",", "'") + "§ , (costo craft incluso)")
+
+        self.costo.sort(key=lambda tup: int(tup[1]), reverse=True)
+        to_print = "I 10 oggetti piu costosi sono:\n"
+        for i in range(1, 11):
+            to_print += self.costo[i][0] + " : " + self.costo[i][1] + " §\n"
+
+        self.answer(to_print)
+
+        m, s = divmod(len(self.costo) * 10, 60)
+
+        self.answer("Se compri tutti gli oggetti dal negozio impiegherai un tempo di circa : "
+                                + str(m) + " minuti e " + str(s) + " secondi\n")
+
+        self.costo.clear()
+        self.quantity.clear()
+

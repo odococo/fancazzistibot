@@ -33,7 +33,7 @@ from telegram.ext import (
 
 import track_activity
 from db_call import add_user
-from utils import new_command, now
+from utils import new_command, now, new_command_loot
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -180,7 +180,8 @@ def main():
     disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
-    disp.add_handler(RegexHandler("^Lista oggetti necessari", new_command))
+    pattern =r"(Lista oggetti necessari per)|(Risultati ricerca di)"
+    disp.add_handler(RegexHandler(pattern, new_command_loot))
     
     # on different commands - answer in Telegram
     disp.add_handler(CallbackQueryHandler(button, pattern="\d"))

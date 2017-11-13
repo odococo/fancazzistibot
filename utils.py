@@ -9,13 +9,19 @@ import ast
 
 from bs4 import BeautifulSoup
 
-from comandi import Command
+from comandi import Command, CraftBot
 from db_call import execute
 
 def new_command(bot, update):
   command = Command(bot, update)
   command.execute()
-            
+
+
+def new_command_loot(bot, update):
+  command_loot = CraftBot(bot, update)
+  command_loot.execute()
+
+
 def is_admin(id):
   """Verifica se l'id dell'utente è di un admin o meno"""
   admin = (89675136, # Odococo
