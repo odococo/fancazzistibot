@@ -300,10 +300,10 @@ class CraftBot():
 
         # Se il messaggio ricevuto è stato inoltrato
         print(update)
-        if update.message.forward_from:
-            if update.message.forward_from.username == "craftlootbot":
+        if update.forward_from:
+            if update.forward_from.username == "craftlootbot":
                 command_text = "/ricerca " + update.message.text
-            elif update.message.forward_from.username == "lootplusbot":
+            elif update.forward_from.username == "lootplusbot":
                 command_text = "/stima " + update.message.text
         # Altrimenti se si tratta di un semplice messaggio
         else:
