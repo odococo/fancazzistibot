@@ -39,7 +39,7 @@ from utils import new_command, now, ricerca, annulla, stima
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-DEBUG=False
+DEBUG=True
 if DEBUG:
     ID = "333089594"
     TOKEN = ID + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"

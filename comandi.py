@@ -13,7 +13,7 @@ from telegram import (
     User
 )
 
-HELP="""Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootbot, di seguito 
+HELP="""Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot , di seguito 
 le elencheremo tutte con il seguente formato "ESEMPIO - SPIEGAZIONE":\n
 /win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo\n
 /consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
