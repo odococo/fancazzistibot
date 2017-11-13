@@ -39,7 +39,6 @@ from utils import new_command, now, ricerca, annulla, stima
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-<<<<<<< HEAD
 DEBUG=True
 if DEBUG:
     ID = "333089594"
@@ -47,8 +46,6 @@ if DEBUG:
 else:
     ID="490902479"
     TOKEN = ID + ":AAGz3rv4M2U2dYG7WJDbiWZoAFFsUVn_ZIE"
-=======
->>>>>>> 574421da7f72c7889bd08fcfa5f1a3f62b5ea2d0
 
 PORT = int(os.environ.get('PORT', '5000'))
 
