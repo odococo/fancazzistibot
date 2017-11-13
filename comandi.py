@@ -3,6 +3,7 @@
 
 import random
 import utils, os
+from db_call import execute
 from negozi_loot import value
 from PokerDice import calc_score, consigliami
 
@@ -47,7 +48,7 @@ class Command():
   def execute(self):
     method = self.getattr(self.command[1:], self.unknown_command)
     if (method.__name__.startswith("A") and
-      not self.is_admin(update.message.from_user.id)):
+      not utils.is_admin(self.update.message.from_user.id)):
       self.answer("Non sei abilitato a usare questo comando")
     else:
       method()
