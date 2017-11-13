@@ -310,7 +310,7 @@ class CraftBot():
 
         command_text = command_text.split(" ")
         self.command = command_text[0].strip("/")
-        self.text = update.message.text.replace(command_text.split(" ")[0],"")
+        self.text = update.message.text.replace(command_text[0],"")
 
     def getattr(self, key, fallback=None):
         """Wrapper per la funzione getattr"""
