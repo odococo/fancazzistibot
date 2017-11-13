@@ -20,7 +20,6 @@ def new_command(bot, update):
     command.execute()
 
 
-
 def is_admin(id):
     """Verifica se l'id dell'utente è di un admin o meno"""
     admin = (89675136,  # Odococo
@@ -185,16 +184,18 @@ def estrai_oggetti(msg):
 
 def ricerca(bot, update):
     """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
-    global costo_craft, stima
+    global costo_craft, stima, quantita, costo
     text = update.message.text.lower()
     to_send = estrai_oggetti(text)
     costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
     update.message.reply_text(to_send)
-    reply_markup = ReplyKeyboardMarkup([["Anulla","Stima"]], one_time_keyboard=True)
+    reply_markup = ReplyKeyboardMarkup([["Anulla", "Stima"]], one_time_keyboard=True)
     update.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
                               "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                               reply_markup=reply_markup)
     stima = True
+    quantita=[]
+    costo=[]
     return 1
 
 
@@ -211,7 +212,6 @@ def annulla(bot, update):
     return ConversationHandler.END
 
 
-
 def stima(bot, update):
     """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
@@ -220,18 +220,16 @@ def stima(bot, update):
     print("\n\nStima\n\n")
     print(update)
 
-    if update.message.text=="Anulla":
+    if update.message.text == "Anulla":
         return annulla(bot, update)
-    elif update.message.text=="Stima":
+    elif update.message.text == "Stima":
         if not stima:
             update.message.reply_text("Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
             return ConversationHandler.END
 
-
         if len(costo) == 0:
             update.message.reply_text("Si è verificato un errore")
             return ConversationHandler.END
-
 
         # print(self.costo, self.quantity)
         tot = 0
@@ -261,11 +259,6 @@ def stima(bot, update):
     else:
         stima_parziale(update.message.text.lower())
         return 1
-
-
-
-
-
 
 
 def stima_parziale(msg):

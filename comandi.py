@@ -34,7 +34,7 @@ class Command():
     command_text = command_text.split(" ")
     self.command = command_text[0]
     self.params = [param.strip() for param in command_text[1:]]
-    print(self.command, self.params)
+    #print(self.command, self.params)
         
   def getattr(self, key, fallback=None):
     """Wrapper per la funzione getattr"""
