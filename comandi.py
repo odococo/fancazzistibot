@@ -303,10 +303,10 @@ class CraftBot():
         if update.message.forward_from:
             if update.message.forward_from.username == "craftlootbot":
                 self.command="ricerca"
-                self.text=update.message.text
+                self.text=update.message.text.lower()
             elif update.message.forward_from.username == "lootplusbot":
                 self.command="stima"
-                self.text=update.message.text
+                self.text=update.message.text.lower()
         # Altrimenti se si tratta di un semplice messaggio
         else:
             self.command = "unknown"
