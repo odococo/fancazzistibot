@@ -203,7 +203,7 @@ def annulla(bot, update):
     """Annulla la stima"""
     global stima, costo_craft, quantita
 
-    print("\n\nAnnulla\n\n")
+    #print("\n\nAnnulla\n\n")
 
     stima = False
     costo_craft = 0
@@ -216,8 +216,8 @@ def stima(bot, update):
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
     global stima, costo_craft, quantita, costo
 
-    print("\n\nStima\n\n")
-    print(update)
+    #print("\n\nStima\n\n")
+    #print(update)
 
     if update.message.text == "Anulla":
         update.message.reply_text("Ok ho annullato tutto")
@@ -258,6 +258,7 @@ def stima(bot, update):
         stima = False
         return ConversationHandler.END
     else:
+        print("\n\nStima Parziale\n\n")
         stima_parziale(update.message.text.lower())
         return 1
 
@@ -269,11 +270,12 @@ def stima_parziale(msg):
     for elem in prov:
         lst.append((elem.split(">")[0].replace("\n", "") + elem.split(">")[1].replace("\n", "")))
 
-    # print(lst)
+    print(lst)
     regex = re.compile(r"(.*):.*\(([0-9 .]+)")
 
     for elem in lst:
         e = re.findall(regex, elem)
-        # print(e)
+        #print(e)
 
         costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
+    print(costo)
