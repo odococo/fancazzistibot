@@ -72,7 +72,7 @@ def get_user(user):
 
 def get_user_id(update):
     try:
-        return update.message.get("from").id
+        return update._effective_user.id
     except IndexError:
         return 0
 
@@ -392,7 +392,6 @@ def punteggio(bot, update):
 
 def completa(bot, update):
     """Visualizza la lista completa ti tutte le info"""
-    #Todo: cambia formattazione da markdown a html
     global lista_boss, dict_boss
 
     if not len(lista_boss) > 0:
@@ -402,7 +401,7 @@ def completa(bot, update):
         update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
         return ConversationHandler.END
 
-    to_send="✅ *Hanno attaccato*:\n"
+    to_send="✅ <b>Hanno attaccato</b>:\n"
 
     attaccato=sorted([elem for elem in lista_boss if elem[2]!=0],key=lambda tup: int(tup[2][0]),reverse=True)
     non_attaccato=[elem for elem in lista_boss if elem[2]==0]
@@ -413,14 +412,14 @@ def completa(bot, update):
         elif i==2: to_send+="🥈"+str(i)+") "
         elif i==3: to_send+="🥉"+str(i)+") "
         else: to_send+=str(i)+") "
-        to_send+="@"+str(elem[0])+" : facendo *"+str(elem[2][0])+"* danno a *"+str(elem[2][1])+"* boss\n"
+        to_send+="@"+str(elem[0])+" : facendo <b>"+'{:,}'.format(int(elem[2][0])).replace(',', '\'')+"</b> danno a <b>"+str(elem[2][1])+"</b> boss\n"
         i+=1
 
-    to_send+="\n❌ *Non hanno attaccato*:\n"
+    to_send+="\n❌ <b>Non hanno attaccato</b>:\n"
 
     i=1
     for elem in non_attaccato:
-        to_send+=str(i)+") @"+str(elem[0])+" : il suo punteggio attuale è *"+str(dict_boss[elem[0]])+"*"
+        to_send+=str(i)+") @"+str(elem[0])+" : il suo punteggio attuale è <b>"+str(dict_boss[elem[0]])+"</b>"
         if elem[1]==1:
             to_send+=", può attaccare\n"
         else:
@@ -428,7 +427,7 @@ def completa(bot, update):
         i+=1
 
 
-    update.message.reply_text(to_send,parse_mode="Markdown")
+    update.message.reply_text(to_send,parse_mode="HTML")
     return 1
 
 def fine(bot, update):
