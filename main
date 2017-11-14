@@ -137,7 +137,7 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 def log_update(bot, update):
-    logger.debug(update)
+    logger.info(update)
 
 
 #==================MAIN==========================================
@@ -155,7 +155,7 @@ def main():
 
     # Handler to get username and other info
     disp.add_handler(MessageHandler(Filters.all, get_info), -1)
-    disp.add_handler(TypeHandler(telegram.Update), -1)
+    disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
     #disp.add_handler(CommandHandler("set", set,pass_args=True, pass_job_queue=True,pass_chat_data=True))
     #disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
 
