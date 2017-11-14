@@ -32,7 +32,7 @@ from telegram.ext import (
     TypeHandler, ConversationHandler)
 
 import track_activity
-from db_call import add_user
+from db_call import add_user,  add_bot
 from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio
 
 #==================GLOBAL VARIABLES==========================================
@@ -147,11 +147,10 @@ def main():
     # Create the EventHandler and pass it your bot's token.
     debug = len(sys.argv) > 1
     updater = Updater(get_token_bot(debug))
+    add_bot(get_bot(updater.bot))
 
     # Get the dispatcher to register handlers
     disp = updater.dispatcher
-    
-    #disp.add_handler(TypeHandler(telegram.Update, log_update))
 
     # Handler to get username and other info
     disp.add_handler(MessageHandler(Filters.all, get_info), -1)
