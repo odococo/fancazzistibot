@@ -171,8 +171,7 @@ def main():
     disp.add_handler(coversation)
 
     coversation_boss = ConversationHandler(
-        [RegexHandler("^"
-                      "🏆 I Fancazzisti", boss)],
+        [RegexHandler("^🏆", boss)],
         states={
             1: [MessageHandler(Filters.text, boss_loop)]
         },
