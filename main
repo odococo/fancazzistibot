@@ -85,9 +85,11 @@ def get_info(bot, update):
     bot_id, sep, actual_token = bot.token.partition(':')
     add_user(user, int(bot_id))
     if re.search("^[.!/]", update.message.text):
+        pass
         #non possibile sull'hosting attuale
         #track_activity.command(bot, update) 
     elif Filters.all(update.message):
+        pass
         #non possibile sull'hosting attuale
         #track_activity.text(bot, update)
 
