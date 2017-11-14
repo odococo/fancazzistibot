@@ -109,7 +109,7 @@ def connect_db():
 
 def init():
     execute("""CREATE TABLE id_users(
-          id integer PRIMARY KEY)""");
+          id integer PRIMARY KEY)""")
     execute("""CREATE TABLE users(
           id integer REFERENCES id_users ON DELETE CASCADE,
           username varchar(255),
@@ -117,13 +117,13 @@ def init():
           last_name varchar(255),
           language_code varchar(10),
           date date DEFAULT CURRENT_DATE,
-          PRIMARY KEY(id, date))"""
+          PRIMARY KEY(id, date))""")
     execute("""CREATE TABLE bot_users(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           date date DEFAULT CURRENT_DATE,
           language varchar(10),
-          PRIMARY KEY(id_bot, id_user))"""
+          PRIMARY KEY(id_bot, id_user))""")
     
 if __name__ == "__main__":
     init()
