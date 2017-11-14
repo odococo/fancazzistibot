@@ -1,3 +1,4 @@
+emoji
 python-telegram-bot
 requests
 bs4

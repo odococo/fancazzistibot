@@ -6,6 +6,7 @@ import datetime
 import requests
 import json
 import ast
+import emoji
 
 from bs4 import BeautifulSoup
 from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
@@ -294,3 +295,31 @@ def stima_parziale(msg):
 
         costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
     #print(costo)
+
+# =============================BOSS============================================
+
+def cerca(msg):
+    """Dato il messaggio di attacco ai boss ritorna la lista con elementi nel seguente ordine:\n
+    lista[0]: nome \n
+    lista[1]: Missione/cava + tempo se in missione o cava, 1 altrimenti\n
+    lista[2]: 0 se non c'è stato attacco al boss, tupla altrimenti: tupla[0] danno, tupla[1] numero di boss"""
+    prova = msg.split("Attività membri:\n")[1]
+    prova = emoji.demojize(prova)
+    name_reg = re.compile(r"([0-z_]+) :")
+    obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
+    boss_reg = re.compile(r":boar: ([0-9]+) .*/([0-9])")
+
+    res = []
+
+    for elem in prova.split("\n\n"):
+        name = re.findall(name_reg, elem)[0]
+        obl = re.findall(obl_reg, elem)
+        boss = re.findall(boss_reg, elem)[0]
+        if (len(obl) == 0):
+            obl = 1
+        else:
+            obl = obl[0]
+        if boss[0] == "0": boss = 0
+        res.append((name, obl, boss))
+
+    return res
