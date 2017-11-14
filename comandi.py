@@ -280,7 +280,7 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
         self.answer("""Il comando funziona così /fissa boss giorno ora:\n
 boss -> 0 (titano) o 1 (phoenix)\n
 giorno -> da 0 a 6 (da lunedì a domenica)\n
-ora -> un'ora qualsiasi"""")
+ora -> un'ora qualsiasi""")
 
   # admin command ------------------------------------------------------------
   def Autente(self):
