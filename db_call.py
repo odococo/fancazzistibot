@@ -124,6 +124,13 @@ def init():
           date date DEFAULT CURRENT_DATE,
           language varchar(10),
           PRIMARY KEY(id_bot, id_user))""")
+    execute("""CREATE TABLE activity(
+          id_bot integer REFERENCES id_users ON DELETE CASCADE,
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          content text NOT NULL,
+          date date NOT NULL,
+          type varchar(20),
+          PRIMARY KEY(id_bot, id_user, date))""")
     
 if __name__ == "__main__":
     init()
