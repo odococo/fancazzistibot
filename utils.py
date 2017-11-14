@@ -7,6 +7,8 @@ import requests
 import json
 import ast
 import emoji
+import operator
+
 
 from bs4 import BeautifulSoup
 from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
@@ -298,7 +300,8 @@ def stima_parziale(msg):
 
 # =============================BOSS============================================
 
-def cerca(msg):
+global lista_boss, dict_boss, last_update_id
+def cerca_boss(msg):
     """Dato il messaggio di attacco ai boss ritorna la lista con elementi nel seguente ordine:\n
     lista[0]: nome \n
     lista[1]: Missione/cava + tempo se in missione o cava, 1 altrimenti\n
@@ -323,3 +326,81 @@ def cerca(msg):
         res.append((name, obl, boss))
 
     return res
+
+def boss(bot, update):
+    """Prima volta che viene inoltrato il messaggio del boss, controlla l'id del messaggio e se è uno 
+    nuovo allora aggiorna la lista e il dizionario"""
+    global lista_boss, dict_boss, last_update_id
+
+    #TODO: prendi dizionario e last_update_id dal database
+    dict_boss={}
+    last_update_id=0
+
+    lista_boss=cerca_boss(update.message.text)
+    #aggiunge i memgri nel dizionario se non sono gia presenti
+    for elem in lista_boss:
+        if elem[0] not in dict_boss.keys():
+            dict_boss[elem]=0
+        #TODO: aggiungi condizione di phoenix (+2) o titan (+1)
+        if elem[3]==0: dict_boss[elem]+=1
+    last_update_id=update.message.message_id
+    reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Top Attaccanti"],["Completa","Fine"]], one_time_keyboard=False)
+    update.message.reply_text("Messaggio ricevuto!\n Adesso fammi sapere in che formato vuoi ricevere le info.",
+                              reply_markup=reply_markup)
+
+    #return bossloop
+
+
+def top_attaccanti(bot, update):
+    return 1
+
+def completa(bot, update):
+    return 1
+
+def fine(bot, update):
+    update.message.reply_text("Finito",reply_markup=None)
+    return ConversationHandler.END
+
+
+
+def boss_loop(bot, update):
+    choice=update.message.text
+    if choice=="Non Attaccanti": return non_attaccanti(bot,update)
+    elif choice=="Top Attaccanti":return top_attaccanti(bot,update)
+    elif choice == "Completa":return completa(bot,update)
+    elif choice=="Fine": return fine(bot,update)
+    else:
+        #TODO: elif se manda un altro messaggio boss, aggiorna tutto
+        update.message.reply_text("Non ho capito, ripeti")
+        return 1
+
+
+
+def non_attaccanti(bot, update):
+    global lista_boss, dict_boss
+
+    if not len(lista_boss)>0:
+        update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
+        return ConversationHandler.END
+    if not len(dict_boss.keys)>0:
+        update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+        return ConversationHandler.END
+
+    sortedD=sorted(dict_boss.items(), key=operator.itemgetter(1))
+
+    to_send=""
+    for elem in sortedD:
+        to_send+=elem[0]+" : "+str(elem[1])
+
+    update.message.reply_text(to_send)
+    return 1
+
+
+
+
+
+
+
+
+
+

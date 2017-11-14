@@ -33,7 +33,7 @@ from telegram.ext import (
 
 import track_activity
 from db_call import add_user
-from utils import new_command, now, ricerca, annulla, stima
+from utils import new_command, now, ricerca, annulla, stima, boss, boss_loop, fine
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -170,6 +170,13 @@ def main():
 
     disp.add_handler(coversation)
 
+    coversation = ConversationHandler(
+        [RegexHandler("Attività membri", boss)],
+        states={
+            1: [MessageHandler(Filters.text, boss_loop)]
+        },
+        fallbacks=[CommandHandler('Fine', fine)]
+    )
 
     # on different commands - answer in Telegram
     #disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
