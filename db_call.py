@@ -6,6 +6,8 @@
 
 import logging
 import json
+import os
+from urllib import parse
 import psycopg2
 import psycopg2.extras
 
@@ -89,7 +91,16 @@ def execute(query, param=None):
     
 def connect_db():
     try:
-        conn = psycopg2.connect("dbname='telegram_bot' user='postgres' host='localhost' password='postgres'")
+        parse.uses_netloc.append("postgres")
+        url = parse.urlparse(os.environ["DATABASE_URL"])
+
+        conn = psycopg2.connect(
+          database=url.path[1:],
+          user=url.username,
+          password=url.password,
+          host=url.hostname,
+          port=url.port
+        )
         conn.autocommit = True
         return conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     except Exception as error:
@@ -98,8 +109,17 @@ def connect_db():
 
 def test():
     try:
-        conn = psycopg2.connect("dbname='telegram_bot' user='postgres' host='localhost' password='postgres'")
-        return conn.cursor()
+        parse.uses_netloc.append("postgres")
+        url = parse.urlparse(os.environ["DATABASE_URL"])
+
+        conn = psycopg2.connect(
+          database=url.path[1:],
+          user=url.username,
+          password=url.password,
+          host=url.hostname,
+          port=url.port
+        )
+        logger.info(conn.cursor())
     except Exception as e:
         logger.error("Errore nella connessione al database: {}".format(e))
         return None
