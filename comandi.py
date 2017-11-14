@@ -13,19 +13,7 @@ from telegram import (
     User
 )
 
-
-COMANDI="""
-win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
-dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
-consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
-roll - lancia un dado senza specificare nulla
-info - ottini le informazioni riguardanti il tuo account
-convert - Converte test/numero da e verso una base arbitraria, si possono fornire valori di conversione per personalizzare il risultato
-punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro
-help - mostra questo messaggio di help
-"""
-
-COMANDI_PLUS="""
+COMANDI_FANCA = """
 punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro\n
 """
 
@@ -59,12 +47,13 @@ class Command():
     return fallback
         
   def execute(self):
+    """Esegue il comando contenuto in self.command"""
     method = self.getattr(self.command[1:], self.unknown_command)
     if (method.__name__.startswith("A") and
       not utils.is_admin(self.update.message.from_user.id)):
       self.answer("Non sei abilitato a usare questo comando")
     elif (method.__name__.startswith("D") and
-      not utils.is_dev(self.bot.id)):
+      not utils.is_dev(self.bot.id) and not utils.is_tester(self.update.message.from_user.id)):
       pass
     else:
       method()
@@ -94,7 +83,10 @@ class Command():
   #----------------------------------------------------------------------------------
 
   def Ustart(self):
-    """/start - Inizzializza il bot con la schermata di help"""
+    """Bot dalle moltepliciti funzioni. Usa /help per visualizzarle tutte!
+
+Crediti: @brandimax @Odococo
+"""
     self.answer(self.Uhelp())
 
   def Uhelp(self):
@@ -102,11 +94,10 @@ class Command():
     commands = self.command_list(utils.is_admin(
       self.update.message.from_user.id), utils.is_dev(self.bot.id))
     commands = {"/" + command : commands.get(command) for command in commands}
-    text="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot , di seguito " \
-         "le elencheremo tutte con il seguente formato 'ESEMPIO - SPIEGAZIONE':\n"
+    text="Benvenuto nel FancaBot! Ecco l'elenco dei comandi:\n"
     prov = [key + ": " + str(value) for key, value in commands.items()]
     text += "\n".join(prov)
-    text+=COMANDI_PLUS
+    text += COMANDI_FANCA
     text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
 Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
 /ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
@@ -116,8 +107,7 @@ Pensavi fosse finita? E invece andiamo avanti!\n
 Puoi ottenere anche delle utili informazioni inoltrando il messaggio boss qui! Una volta inoltrato ti verrà chiesto di
 c he boss si tratta (phoenix o titan), in seguito potrai farti inviare le informazioni che ti servono con i bottoni :
 "Non Attaccanti", "Punteggio" e "Completa", per finire la visualizzazione premi "Fine".\n
-Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
-Crediti: @brandimax @Odococo"""
+Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n"""
     self.answer(text)
 
   # def Uinline(self):
@@ -136,7 +126,7 @@ Crediti: @brandimax @Odococo"""
   #   self.answer('Please choose:', reply_markup=reply_markup)
 
   def Uroll(self):
-    """/roll - lancia un dado senza specificare nulla"""
+    """Lancia un dado"""
     keyboard = [
       [InlineKeyboardButton("4", callback_data="/dice 4"),
       InlineKeyboardButton("6", callback_data="/dice 6"),
@@ -154,7 +144,7 @@ Crediti: @brandimax @Odococo"""
       reply_markup=reply_markup)
 
   def Udice(self):
-    """/dice numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi"""
+    """Lancia un dado specificando il numero di facce e il numero di lanci"""
     if (len(self.params) == 2
       and all(utils.is_numeric(param) for param in self.params)):
       text = ""
@@ -218,8 +208,8 @@ Crediti: @brandimax @Odococo"""
     self.answer(str(self.update), pretty_json=True)
         
   def Uconvert(self):
-    """/convert base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una 
-base arbitraria, si possono fornire valori di conversione per personalizzare il risultato"""
+    """Converte testo/numero da e verso una base arbitraria.
+Si possono fornire valori di conversione per personalizzare il risultato"""
     convert_params = self.params[0].split("-") if self.params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
@@ -236,12 +226,11 @@ base arbitraria, si possono fornire valori di conversione per personalizzare il 
     self.answer(text)
 
   def Uwin(self):
-    """/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita 
-    nell'ispezione dello gnomo"""
+    """Verifica le tue possibilità di vincita nell'ispezione dello gnomo"""
     #print("win")
     #se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
-      self.answer("Devi inserire 5 numeri separati da spazio!")
+      self.answer("Devi inserire 5 numeri separati da spazio! Esempio /win 1 2 3 4 5")
       return
 
     #trasforma i parametri in una lista di int
@@ -251,13 +240,13 @@ base arbitraria, si possono fornire valori di conversione per personalizzare il 
     self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
 
   def Uconsiglia(self):
-    """/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+    """Fornisce una tabella di numeri da cambiare
 (la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
 la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)"""
 
     # se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
-      self.answer("Devi inserire 5 numeri separati da spazio!")
+      self.answer("Devi inserire 5 numeri separati da spazio! Esempio /consiglia 1 2 3 4 5")
       return
     numeri = [int(param) for param in self.params]
     path2img = consigliami(numeri)
@@ -274,21 +263,24 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
     self.answer("ok")
     
   def Dboss(self):
-    """/fissaBoss boss giorno ora - Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
+    """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n"""
+    if len(self.params) != 3:
+        chat_id = -1001284891867 #Bot per i Boss
+        boss = self.params[0]
+        giorno = self.params[1]
+        ore = self.params[2]
+        nomi_boss = ["il Titano", "Phoenix"]
+        giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+        from_id = self.update.message.from_user.id
+        if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
+            message = self.bot.send_message(chat_id=chat_id, 
+                                        text="Attaccate " + nomi_boss[int(boss)%2] + " entro le " + ore + " di " + giorni[int(giorno)%7])
+            self.bot.pinChatMessage(chat_id, message.message_id, True)
+    else:
+        self.answer("""Il comando funziona così /fissa boss giorno ora:\n
 boss -> 0 (titano) o 1 (phoenix)\n
 giorno -> da 0 a 6 (da lunedì a domenica)\n
-ora -> un'ora qualsiasi"""
-    chat_id = -1001284891867 #Bot per i Boss
-    boss = self.params[0]
-    giorno = self.params[1]
-    ore = self.params[2]
-    nomi_boss = ["il Titano", "Phoenix"]
-    giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
-    from_id = self.update.message.from_user.id
-    if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
-        message = self.bot.send_message(chat_id=chat_id, 
-                                        text="Attaccate " + nomi_boss[int(boss)%2] + " entro le " + ore + " di " + giorni[int(giorno)%7])
-        self.bot.pinChatMessage(chat_id, message.message_id, True)
+ora -> un'ora qualsiasi"""")
 
   # admin command ------------------------------------------------------------
   def Autente(self):
