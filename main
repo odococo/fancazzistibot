@@ -170,13 +170,16 @@ def main():
 
     disp.add_handler(coversation)
 
-    coversation = ConversationHandler(
-        [RegexHandler("Attività membri", boss)],
+    coversation_boss = ConversationHandler(
+        [RegexHandler("^"
+                      "🏆 I Fancazzisti", boss)],
         states={
             1: [MessageHandler(Filters.text, boss_loop)]
         },
         fallbacks=[CommandHandler('Fine', fine)]
     )
+
+    disp.add_handler(coversation_boss)
 
     # on different commands - answer in Telegram
     #disp.add_handler(CallbackQueryHandler(button, pattern="\d"))

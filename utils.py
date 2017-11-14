@@ -11,7 +11,7 @@ import operator
 
 
 from bs4 import BeautifulSoup
-from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
 from comandi import Command
@@ -300,9 +300,9 @@ def stima_parziale(msg):
 
 # =============================BOSS============================================
 
-global lista_boss, dict_boss, last_update_id
+global lista_boss, dict_boss, last_update_id, phoenix
 def cerca_boss(msg):
-    """Dato il messaggio di attacco ai boss ritorna la lista con elementi nel seguente ordine:\n
+    """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
     lista[0]: nome \n
     lista[1]: Missione/cava + tempo se in missione o cava, 1 altrimenti\n
     lista[2]: 0 se non c'è stato attacco al boss, tupla altrimenti: tupla[0] danno, tupla[1] numero di boss"""
@@ -323,52 +323,83 @@ def cerca_boss(msg):
         else:
             obl = obl[0]
         if boss[0] == "0": boss = 0
-        res.append((name, obl, boss))
+        res.append([name, obl, boss])
 
     return res
 
 def boss(bot, update):
     """Prima volta che viene inoltrato il messaggio del boss, controlla l'id del messaggio e se è uno 
     nuovo allora aggiorna la lista e il dizionario"""
-    global lista_boss, dict_boss, last_update_id
+    global lista_boss, dict_boss, last_update_id, phoenix
 
     #TODO: prendi dizionario e last_update_id dal database
     dict_boss={}
     last_update_id=0
 
     lista_boss=cerca_boss(update.message.text)
-    #aggiunge i memgri nel dizionario se non sono gia presenti
-    for elem in lista_boss:
-        if elem[0] not in dict_boss.keys():
-            dict_boss[elem]=0
-        #TODO: aggiungi condizione di phoenix (+2) o titan (+1)
-        if elem[3]==0: dict_boss[elem]+=1
-    last_update_id=update.message.message_id
-    reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Top Attaccanti"],["Completa","Fine"]], one_time_keyboard=False)
-    update.message.reply_text("Messaggio ricevuto!\n Adesso fammi sapere in che formato vuoi ricevere le info.",
+
+    reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
+    update.message.reply_text("Di quale boss stiamo parlando?",
                               reply_markup=reply_markup)
-
-    #return bossloop
-
-
-def top_attaccanti(bot, update):
     return 1
 
+
+
+def punteggio(bot, update):
+    global lista_boss, dict_boss
+
+    if not len(lista_boss) > 0:
+        update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
+        return ConversationHandler.END
+    if not len(dict_boss.keys()) > 0:
+        update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+        return ConversationHandler.END
+
+    sortedD = sorted(dict_boss.items(), key=operator.itemgetter(1), reverse=True)
+
+    to_send = ""
+    for elem in sortedD:
+        to_send += str(elem[0]) +" : "+ str(elem[1])+"\n"
+
+    update.message.reply_text(to_send)
+    return 1
 def completa(bot, update):
     return 1
 
 def fine(bot, update):
-    update.message.reply_text("Finito",reply_markup=None)
+    update.message.reply_text("Finito",reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
 
 
 def boss_loop(bot, update):
+    global phoenix, lista_boss,last_update_id
+
     choice=update.message.text
     if choice=="Non Attaccanti": return non_attaccanti(bot,update)
-    elif choice=="Top Attaccanti":return top_attaccanti(bot,update)
+    elif choice=="Punteggio":return punteggio(bot,update)
     elif choice == "Completa":return completa(bot,update)
     elif choice=="Fine": return fine(bot,update)
+
+    elif choice=="Phoenix" or choice=="Titan":
+        if choice=="Phoenix": phoenix=True
+        else: phoenix=False
+        # aggiunge i memgri nel dizionario se non sono gia presenti
+        for elem in lista_boss:
+            if elem[0] not in dict_boss.keys():
+                dict_boss[elem[0]] = 0
+            if elem[2] == 0 and phoenix: dict_boss[elem[0]] += 2
+            elif elem[2] == 0 and not phoenix:  dict_boss[elem[0]] += 1
+
+        last_update_id = update.message.message_id
+        #Todo: salva dizionario e last_update
+        reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+                                           one_time_keyboard=False)
+        update.message.reply_text("Messaggio ricevuto!\nAdesso fammi sapere in che formato vuoi ricevere le info.",
+                                  reply_markup=reply_markup)
+
+        return 1
+
     else:
         #TODO: elif se manda un altro messaggio boss, aggiorna tutto
         update.message.reply_text("Non ho capito, ripeti")
@@ -382,15 +413,15 @@ def non_attaccanti(bot, update):
     if not len(lista_boss)>0:
         update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
         return ConversationHandler.END
-    if not len(dict_boss.keys)>0:
+    if not len(dict_boss.keys())>0:
         update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
         return ConversationHandler.END
 
-    sortedD=sorted(dict_boss.items(), key=operator.itemgetter(1))
+    sortedD=sorted(dict_boss.items(), key=operator.itemgetter(1), reverse=True)
 
     to_send=""
     for elem in sortedD:
-        to_send+=elem[0]+" : "+str(elem[1])
+        if(elem[1]>0):to_send+=str(elem[0])+"\n"
 
     update.message.reply_text(to_send)
     return 1
