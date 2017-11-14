@@ -19,6 +19,7 @@ import json
 import re
 import sys
 import os
+import dotenv
 
 import telegram
 from telegram.ext import (
@@ -33,7 +34,8 @@ from telegram.ext import (
 
 import track_activity
 from db_call import add_user
-from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio
+from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio, boss_user, \
+    connect_to_db
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -148,7 +150,8 @@ def main():
     debug = len(sys.argv) > 1
     updater = Updater(get_token_bot(debug))
 
-    # Get the dispatcher to register handlers
+    dotenv.load() #load .env file
+# Get the dispatcher to register handlers
     disp = updater.dispatcher
     
     #disp.add_handler(TypeHandler(telegram.Update, log_update))
@@ -157,6 +160,7 @@ def main():
     # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
     #disp.add_handler(CommandHandler("set", set,pass_args=True, pass_job_queue=True,pass_chat_data=True))
     #disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
+    disp.add_handler(CommandHandler("attacchiBoss",boss_user))
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
@@ -170,16 +174,18 @@ def main():
 
     disp.add_handler(coversation)
 
-    coversation_boss_admin = ConversationHandler(
-        [RegexHandler("^🏆", boss_admin)],
+    #todo: visualizza thread https://github.com/python-telegram-bot/python-telegram-bot/issues/915 per le risposte
+    coversation_boss = ConversationHandler(
+        [CommandHandler("attacchiBoss", boss_user),RegexHandler("^🏆", boss_admin)],
         states={
             1: [MessageHandler(Filters.text, boss_loop)]
         },
         fallbacks=[CommandHandler('Fine', fine)]
     )
 
-    disp.add_handler(coversation_boss_admin)
-    disp.add_handler(CommandHandler("boss",boss_loop))
+
+
+    disp.add_handler(coversation_boss)
 
     # on different commands - answer in Telegram
     #disp.add_handler(CallbackQueryHandler(button, pattern="\d"))

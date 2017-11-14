@@ -8,7 +8,10 @@ import json
 import ast
 import emoji
 import operator
-
+import psycopg2
+import urllib.parse as urlparse
+import os
+import subprocess
 
 from bs4 import BeautifulSoup
 from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -31,15 +34,17 @@ def is_admin(id):
              )
     return id in admin
 
+
 def is_dev(id):
     """Verifica se l'id del bot è quello del fancazzista supremo"""
     return id == 333089594
-    
+
+
 def is_fanca_admin(id):
     """Verifica se l'id dell'utente è di un admin dei fancazzisti o meno"""
-    admin = (107839625, #IMayonesX
-             241317532, #Osho27
-    )
+    admin = (107839625,  # IMayonesX
+             241317532,  # Osho27
+             )
     return id in admin
 
 
@@ -69,6 +74,7 @@ def get_user(user):
     fields = ["*{}*: `{}`".format(key, value)
               for key, value in user.items() if key != "date"]
     return "\n".join(fields)
+
 
 def get_user_id(update):
     try:
@@ -157,18 +163,18 @@ def get_pretty_json(value):
 
 
 # =============================LOOT============================================
-
+#Todo: prova a farci una classe
 global costo_craft, stima, quantita, costo
 
 
 def estrai_oggetti(msg):
     global quantita
 
-    #print(msg)
+    # print(msg)
 
     restante = msg.split("già possiedi")[0].split(":")[1]
     aggiornato = ""
-    #print(restante.split("\n"))
+    # print(restante.split("\n"))
 
     for line in restante.split("\n"):
         if line[2:3] != line[7:8]:
@@ -179,7 +185,7 @@ def estrai_oggetti(msg):
             aggiornato += new_line + "\n"
         else:
             aggiornato += line + "\n"
-    #print(aggiornato)
+    # print(aggiornato)
     regex = re.compile(r"di (.*)?\(")
     regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
     lst = re.findall(regex, aggiornato)
@@ -211,7 +217,7 @@ def ricerca(bot, update):
                               "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                               reply_markup=reply_markup)
     stima = True
-    costo=[]
+    costo = []
     return 1
 
 
@@ -219,7 +225,7 @@ def annulla(bot, update):
     """Annulla la stima"""
     global stima, costo_craft, quantita
 
-    #print("\n\nAnnulla\n\n")
+    # print("\n\nAnnulla\n\n")
 
     stima = False
     costo_craft = 0
@@ -232,8 +238,8 @@ def stima(bot, update):
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
     global stima, costo_craft, quantita, costo
 
-    #print("\n\nStima\n\n")
-    #print(update)
+    # print("\n\nStima\n\n")
+    # print(update)
 
     if update.message.text == "Anulla":
         update.message.reply_text("Ok ho annullato tutto")
@@ -247,8 +253,8 @@ def stima(bot, update):
             update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
             return annulla(bot, update)
 
-        #print(costo, quantita)
-        merged=[]
+        # print(costo, quantita)
+        merged = []
         for q in quantita:
             c = [item for item in costo if item[0] == q[1]]
             if (len(c) > 0):
@@ -264,7 +270,7 @@ def stima(bot, update):
         update.message.reply_text("Secondo le stime di mercato pagherai " +
                                   "{:,}".format(tot).replace(",", "'") + "§ , (costo craft incluso)")
 
-        if (len(costo)>10):
+        if (len(costo) > 10):
             costo.sort(key=lambda tup: int(tup[1]), reverse=True)
             to_print = "I 10 oggetti piu costosi sono:\n"
             for i in range(1, 11):
@@ -282,7 +288,7 @@ def stima(bot, update):
         stima = False
         return ConversationHandler.END
     else:
-        #print("\n\nStima Parziale\n\n")
+        # print("\n\nStima Parziale\n\n")
         stima_parziale(update.message.text.lower())
         return 1
 
@@ -294,23 +300,64 @@ def stima_parziale(msg):
     for elem in prov:
         lst.append((elem.split(">")[0].replace("\n", "") + elem.split(">")[1].replace("\n", "")))
 
-    #print(lst)
+    # print(lst)
     regex = re.compile(r"(.*):.*\(([0-9 .]+)")
 
     for elem in lst:
         e = re.findall(regex, elem)
-        #print(e)
+        # print(e)
 
         costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
-    #print(costo)
+        # print(costo)
+
 
 # =============================BOSS============================================
+#Todo: prova a farci una classe
+#Todo: carica subito il db
 
 global lista_boss, dict_boss, last_update_id, phoenix
 """in ordine, lista data da cerca_boss
  dizionario con chiave nome e valore punteggio
  update id (int) dell'ultimo messaggio inoltrato dall'admin, serve per vedere se non sta inoltrando un doppione
  boolean phoenix, serve all'admin per decidere il sistema di valori"""
+
+def connect_to_db():
+
+
+    url = urlparse.urlparse(os.environ["DATABASE_URL"])
+    dbname = url.path[1:]
+    user = url.username
+    password = url.password
+    host = url.hostname
+    port = url.port
+    #todo: add try except
+    con = psycopg2.connect(
+        dbname=dbname,
+        user=user,
+        password=password,
+        host=host,
+        port=port
+    )
+    cur = con.cursor()
+    namedict = ({"first_name": "Joshua", "last_name": "Drake"},
+                {"first_name": "Steven", "last_name": "Foo"},
+                {"first_name": "David", "last_name": "Bar"})
+    command=""" CREATE TABLE ioboh (
+            vendor_id SERIAL PRIMARY KEY,
+            vendor_name VARCHAR(255) NOT NULL)"""
+    cur.executemany(command, namedict)
+
+    # cur.execute("""SELECT datname from pg_database""")
+    # rows = cur.fetchall()
+    # print(rows)
+
+    cur.close()
+    con.commit()
+    con.close()
+
+
+
+
 def cerca_boss(msg):
     """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
     lista[0]: nome \n
@@ -319,7 +366,7 @@ def cerca_boss(msg):
     prova = msg.split("Attività membri:\n")[1]
     prova = emoji.demojize(prova)
     name_reg1 = re.compile(r"([0-z_]+) :")
-    name_reg2=re.compile(r"^([0-z_]+) .*")
+    name_reg2 = re.compile(r"^([0-z_]+) .*")
     obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
     boss_reg = re.compile(r":boar: ([0-9]+) .*/([0-9])")
 
@@ -329,7 +376,7 @@ def cerca_boss(msg):
         try:
             name = re.findall(name_reg1, elem)[0]
         except IndexError:
-            name=re.findall(name_reg2, elem)[0]
+            name = re.findall(name_reg2, elem)[0]
         obl = re.findall(obl_reg, elem)
         boss = re.findall(boss_reg, elem)[0]
         if (len(obl) == 0):
@@ -341,33 +388,99 @@ def cerca_boss(msg):
 
     return res
 
+
 def boss_admin(bot, update):
     """Inoltra il messaggio del boss, solo per admin"""
+    print("Admin boss")
 
-    #controlla se admin
+    # controlla se admin
     if not is_admin(get_user_id(update)):
         update.message.reply_text("Non sei autorizzato ad inoltrare questi messaggi")
         return ConversationHandler.END
     global lista_boss, dict_boss, last_update_id, phoenix
 
-    #TODO: prendi dizionario e last_update_id dal database
-    #prendi il dizionario, lista  e id
-    dict_boss={}
-    last_update_id=0
+    # TODO: prendi dizionario e last_update_id dal database
+    # prendi il dizionario, lista  e id
+    dict_boss = {}
+    last_update_id = 0
 
-    lista_boss=cerca_boss(update.message.text)
+    lista_boss = cerca_boss(update.message.text)
 
     reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
     update.message.reply_text("Di quale boss stiamo parlando?",
                               reply_markup=reply_markup)
     return 1
 
+
 def boss_user(bot, update):
     """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
+    print("Boss user")
     reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                        one_time_keyboard=False)
     update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
     return 1
+
+def boss_reset(bot, update):
+
+    if not is_admin(get_user_id(update)):
+        update.message.reply_text("Non sei abilitato ad usare a questo comando!")
+        return
+
+    global lista_boss, dict_boss, last_update_id, phoenix
+
+    lista_boss=[]
+    dict_boss={}
+    last_update_id=0
+    phoenix=False
+    #todo: invia sul db
+    update.message.reply_text("Lista dei boss resettata!")
+
+
+def boss_loop(bot, update):
+    """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
+    global phoenix, lista_boss, last_update_id
+
+    print("Boss loop")
+
+    choice = update.message.text
+    if choice == "Non Attaccanti":
+        return non_attaccanti(bot, update)
+    elif choice == "Punteggio":
+        return punteggio(bot, update)
+    elif choice == "Completa":
+        return completa(bot, update)
+    elif choice == "Fine":
+        return fine(bot, update)
+
+    # se l'admin vuole modificare la lista
+    elif choice == "Phoenix" or choice == "Titan" and is_admin(get_user_id(update)):
+        if choice == "Phoenix":
+            phoenix = True
+        else:
+            phoenix = False
+        # aggiunge i membri nel dizionario se non sono gia presenti
+        for elem in lista_boss:
+            if elem[0] not in dict_boss.keys():
+                dict_boss[elem[0]] = 0
+            if elem[2] == 0 and phoenix:
+                dict_boss[elem[0]] += 2
+            elif elem[2] == 0 and not phoenix:
+                dict_boss[elem[0]] += 1
+
+            last_update_id = update.message.message_id
+            # Todo: salva dizionario e last_update
+
+        reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+                                           one_time_keyboard=False)
+        update.message.reply_text("Dati salvati!\nAdesso fammi sapere in che formato vuoi ricevere le info",
+                                  reply_markup=reply_markup)
+
+        return 1
+
+    else:
+        # TODO: elif se manda un altro messaggio  gestisci
+        update.message.reply_text("Non ho capito, ripeti")
+        return 1
 
 
 def punteggio(bot, update):
@@ -385,10 +498,11 @@ def punteggio(bot, update):
 
     to_send = ""
     for elem in sortedD:
-        to_send += str(elem[0]) +" : "+ str(elem[1])+"\n"
+        to_send += str(elem[0]) + " : " + str(elem[1]) + "\n"
 
     update.message.reply_text(to_send)
-    return 1 #1 è l'id del boss_loop nel conversation handler
+    return 1  # 1 è l'id del boss_loop nel conversation handler
+
 
 def completa(bot, update):
     """Visualizza la lista completa ti tutte le info"""
@@ -401,105 +515,62 @@ def completa(bot, update):
         update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
         return ConversationHandler.END
 
-    to_send="✅ <b>Hanno attaccato</b>:\n"
+    to_send = "✅ <b>Hanno attaccato</b>:\n"
 
-    attaccato=sorted([elem for elem in lista_boss if elem[2]!=0],key=lambda tup: int(tup[2][0]),reverse=True)
-    non_attaccato=[elem for elem in lista_boss if elem[2]==0]
+    attaccato = sorted([elem for elem in lista_boss if elem[2] != 0], key=lambda tup: int(tup[2][0]), reverse=True)
+    non_attaccato = [elem for elem in lista_boss if elem[2] == 0]
 
-    i=1
+    i = 1
     for elem in attaccato:
-        if i==1: to_send+="🥇"+str(i)+") "
-        elif i==2: to_send+="🥈"+str(i)+") "
-        elif i==3: to_send+="🥉"+str(i)+") "
-        else: to_send+=str(i)+") "
-        to_send+="@"+str(elem[0])+" : facendo <b>"+'{:,}'.format(int(elem[2][0])).replace(',', '\'')+"</b> danno a <b>"+str(elem[2][1])+"</b> boss\n"
-        i+=1
-
-    to_send+="\n❌ <b>Non hanno attaccato</b>:\n"
-
-    i=1
-    for elem in non_attaccato:
-        to_send+=str(i)+") @"+str(elem[0])+" : il suo punteggio attuale è <b>"+str(dict_boss[elem[0]])+"</b>"
-        if elem[1]==1:
-            to_send+=", può attaccare\n"
+        if i == 1:
+            to_send += "🥇" + str(i) + ") "
+        elif i == 2:
+            to_send += "🥈" + str(i) + ") "
+        elif i == 3:
+            to_send += "🥉" + str(i) + ") "
         else:
-            to_send+=", non può attaccare perchè in "+str(elem[1])+"\n"
-        i+=1
+            to_send += str(i) + ") "
+        to_send += "@" + str(elem[0]) + " : facendo <b>" + '{:,}'.format(int(elem[2][0])).replace(',',
+                                                                                                  '\'') + "</b> danno a <b>" + str(
+            elem[2][1]) + "</b> boss\n"
+        i += 1
 
+    to_send += "\n❌ <b>Non hanno attaccato</b>:\n"
 
-    update.message.reply_text(to_send,parse_mode="HTML")
+    i = 1
+    for elem in non_attaccato:
+        to_send += str(i) + ") @" + str(elem[0]) + " : il suo punteggio attuale è <b>" + str(
+            dict_boss[elem[0]]) + "</b>"
+        if elem[1] == 1:
+            to_send += ", può attaccare\n"
+        else:
+            to_send += ", non può attaccare perchè in " + str(elem[1]) + "\n"
+        i += 1
+
+    update.message.reply_text(to_send, parse_mode="HTML")
     return 1
 
+
 def fine(bot, update):
-    update.message.reply_text("Finito",reply_markup=ReplyKeyboardRemove())
+    update.message.reply_text("Finito", reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
-
-
-
-def boss_loop(bot, update):
-    """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
-    global phoenix, lista_boss,last_update_id
-
-    choice=update.message.text
-    if choice=="Non Attaccanti": return non_attaccanti(bot,update)
-    elif choice=="Punteggio":return punteggio(bot,update)
-    elif choice == "Completa":return completa(bot,update)
-    elif choice=="Fine": return fine(bot,update)
-
-    #se l'admin vuole modificare la lista
-    elif choice=="Phoenix" or choice=="Titan" and is_admin(get_user_id(update)):
-        if choice=="Phoenix": phoenix=True
-        else: phoenix=False
-        # aggiunge i membri nel dizionario se non sono gia presenti
-        for elem in lista_boss:
-            if elem[0] not in dict_boss.keys():
-                dict_boss[elem[0]] = 0
-            if elem[2] == 0 and phoenix: dict_boss[elem[0]] += 2
-            elif elem[2] == 0 and not phoenix:  dict_boss[elem[0]] += 1
-
-            last_update_id = update.message.message_id
-            #Todo: salva dizionario e last_update solo se id è admin
-
-        reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
-                                           one_time_keyboard=False)
-        update.message.reply_text("OK!\nAdesso fammi sapere in che formato vuoi ricevere le info.",
-                                  reply_markup=reply_markup)
-
-        return 1
-
-    else:
-        #TODO: elif se manda un altro messaggio  gestisci
-        update.message.reply_text("Non ho capito, ripeti")
-        return 1
-
-
 
 def non_attaccanti(bot, update):
     """Visualizza solo la lista di chi non ha ancora attaccato"""
     global lista_boss, dict_boss
 
-    if not len(lista_boss)>0:
+    if not len(lista_boss) > 0:
         update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
         return ConversationHandler.END
-    if not len(dict_boss.keys())>0:
+    if not len(dict_boss.keys()) > 0:
         update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
         return ConversationHandler.END
 
-    sortedD=sorted(dict_boss.items(), key=operator.itemgetter(1), reverse=True)
+    sortedD = sorted(dict_boss.items(), key=operator.itemgetter(1), reverse=True)
 
-    to_send=""
+    to_send = ""
     for elem in sortedD:
-        if(elem[1]>0):to_send+=str(elem[0])+"\n"
+        if (elem[1] > 0): to_send += str(elem[0]) + "\n"
 
     update.message.reply_text(to_send)
     return 1
-
-
-
-
-
-
-
-
-
-

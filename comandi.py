@@ -26,7 +26,7 @@ help - mostra questo messaggio di help
 """
 
 COMANDI_PLUS="""
-punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro\n
+attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
 """
 
 class Command():
@@ -94,7 +94,7 @@ class Command():
   #----------------------------------------------------------------------------------
 
   def Ustart(self):
-    """/start - Inizzializza il bot con la schermata di help"""
+    """ - Inizzializza il bot con la schermata di help"""
     self.answer(self.Uhelp())
 
   def Uhelp(self):
@@ -104,18 +104,14 @@ class Command():
     commands = {"/" + command : commands.get(command) for command in commands}
     text="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot , di seguito " \
          "le elencheremo tutte con il seguente formato 'ESEMPIO - SPIEGAZIONE':\n"
-    prov = [key + ": " + str(value) for key, value in commands.items()]
+    prov = [key +" " + str(value) for key, value in commands.items()]
     text += "\n".join(prov)
     text+=COMANDI_PLUS
-    text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
-Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
-/ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
+    text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot:\n
+Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
+/ricerca da inviare a @lootplusbot. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
 premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
 Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
-Pensavi fosse finita? E invece andiamo avanti!\n
-Puoi ottenere anche delle utili informazioni inoltrando il messaggio boss qui! Una volta inoltrato ti verrà chiesto di
-c he boss si tratta (phoenix o titan), in seguito potrai farti inviare le informazioni che ti servono con i bottoni :
-"Non Attaccanti", "Punteggio" e "Completa", per finire la visualizzazione premi "Fine".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
 Crediti: @brandimax @Odococo"""
     self.answer(text)
@@ -136,7 +132,7 @@ Crediti: @brandimax @Odococo"""
   #   self.answer('Please choose:', reply_markup=reply_markup)
 
   def Uroll(self):
-    """/roll - lancia un dado senza specificare nulla"""
+    """ - lancia un dado senza specificare nulla"""
     keyboard = [
       [InlineKeyboardButton("4", callback_data="/dice 4"),
       InlineKeyboardButton("6", callback_data="/dice 6"),
@@ -154,7 +150,7 @@ Crediti: @brandimax @Odococo"""
       reply_markup=reply_markup)
 
   def Udice(self):
-    """/dice numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi"""
+    """ numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi"""
     if (len(self.params) == 2
       and all(utils.is_numeric(param) for param in self.params)):
       text = ""
@@ -218,7 +214,7 @@ Crediti: @brandimax @Odococo"""
     self.answer(str(self.update), pretty_json=True)
         
   def Uconvert(self):
-    """/convert base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una 
+    """ base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una
 base arbitraria, si possono fornire valori di conversione per personalizzare il risultato"""
     convert_params = self.params[0].split("-") if self.params else []
     if len(convert_params) != 3:
@@ -236,7 +232,7 @@ base arbitraria, si possono fornire valori di conversione per personalizzare il 
     self.answer(text)
 
   def Uwin(self):
-    """/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita 
+    """ 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita
     nell'ispezione dello gnomo"""
     #print("win")
     #se ci sono troppi o pochi numeri non va bene
@@ -251,7 +247,7 @@ base arbitraria, si possono fornire valori di conversione per personalizzare il 
     self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
 
   def Uconsiglia(self):
-    """/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+    """ 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
 (la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
 la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)"""
 
@@ -278,6 +274,7 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
 boss -> 0 (titano) o 1 (phoenix)\n
 giorno -> da 0 a 6 (da lunedì a domenica)\n
 ora -> un'ora qualsiasi"""
+    #fixme: verifica del corretto inserimento dei parametri, cambia nome in DfissaBoss
     chat_id = -1001284891867 #Bot per i Boss
     boss = self.params[0]
     giorno = self.params[1]
