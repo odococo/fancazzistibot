@@ -85,9 +85,11 @@ def get_info(bot, update):
     bot_id, sep, actual_token = bot.token.partition(':')
     add_user(user, int(bot_id))
     if re.search("^[.!/]", update.message.text):
-        track_activity.command(bot, update)
+        #non possibile sull'hosting attuale
+        #track_activity.command(bot, update) 
     elif Filters.all(update.message):
-        track_activity.text(bot, update)
+        #non possibile sull'hosting attuale
+        #track_activity.text(bot, update)
 
 def button(bot, update):
     query = update.callback_query
