@@ -33,7 +33,7 @@ from telegram.ext import (
 
 import track_activity
 from db_call import add_user
-from utils import new_command, now, ricerca, annulla, stima, boss, boss_loop, fine
+from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -170,15 +170,16 @@ def main():
 
     disp.add_handler(coversation)
 
-    coversation_boss = ConversationHandler(
-        [RegexHandler("^🏆", boss)],
+    coversation_boss_admin = ConversationHandler(
+        [RegexHandler("^🏆", boss_admin)],
         states={
             1: [MessageHandler(Filters.text, boss_loop)]
         },
         fallbacks=[CommandHandler('Fine', fine)]
     )
 
-    disp.add_handler(coversation_boss)
+    disp.add_handler(coversation_boss_admin)
+    disp.add_handler(CommandHandler("boss",boss_loop))
 
     # on different commands - answer in Telegram
     #disp.add_handler(CallbackQueryHandler(button, pattern="\d"))

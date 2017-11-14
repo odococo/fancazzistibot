@@ -70,6 +70,12 @@ def get_user(user):
               for key, value in user.items() if key != "date"]
     return "\n".join(fields)
 
+def get_user_id(update):
+    try:
+        return update.message.get("from").id
+    except IndexError:
+        return 0
+
 
 def get_user_db(key_value):
     query = """SELECT * FROM users"""
@@ -301,6 +307,10 @@ def stima_parziale(msg):
 # =============================BOSS============================================
 
 global lista_boss, dict_boss, last_update_id, phoenix
+"""in ordine, lista data da cerca_boss
+ dizionario con chiave nome e valore punteggio
+ update id (int) dell'ultimo messaggio inoltrato dall'admin, serve per vedere se non sta inoltrando un doppione
+ boolean phoenix, serve all'admin per decidere il sistema di valori"""
 def cerca_boss(msg):
     """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
     lista[0]: nome \n
@@ -308,14 +318,18 @@ def cerca_boss(msg):
     lista[2]: 0 se non c'è stato attacco al boss, tupla altrimenti: tupla[0] danno, tupla[1] numero di boss"""
     prova = msg.split("Attività membri:\n")[1]
     prova = emoji.demojize(prova)
-    name_reg = re.compile(r"([0-z_]+) :")
+    name_reg1 = re.compile(r"([0-z_]+) :")
+    name_reg2=re.compile(r"^([0-z_]+) .*")
     obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
     boss_reg = re.compile(r":boar: ([0-9]+) .*/([0-9])")
 
     res = []
 
     for elem in prova.split("\n\n"):
-        name = re.findall(name_reg, elem)[0]
+        try:
+            name = re.findall(name_reg1, elem)[0]
+        except IndexError:
+            name=re.findall(name_reg2, elem)[0]
         obl = re.findall(obl_reg, elem)
         boss = re.findall(boss_reg, elem)[0]
         if (len(obl) == 0):
@@ -327,12 +341,17 @@ def cerca_boss(msg):
 
     return res
 
-def boss(bot, update):
-    """Prima volta che viene inoltrato il messaggio del boss, controlla l'id del messaggio e se è uno 
-    nuovo allora aggiorna la lista e il dizionario"""
+def boss_admin(bot, update):
+    """Inoltra il messaggio del boss, solo per admin"""
+
+    #controlla se admin
+    if not is_admin(get_user_id(update)):
+        update.message.reply_text("Non sei autorizzato ad inoltrare questi messaggi")
+        return ConversationHandler.END
     global lista_boss, dict_boss, last_update_id, phoenix
 
     #TODO: prendi dizionario e last_update_id dal database
+    #prendi il dizionario, lista  e id
     dict_boss={}
     last_update_id=0
 
@@ -343,9 +362,16 @@ def boss(bot, update):
                               reply_markup=reply_markup)
     return 1
 
+def boss_user(bot, update):
+    """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
+    reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+                                       one_time_keyboard=False)
+    update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
+    return 1
 
 
 def punteggio(bot, update):
+    """Visualizza la sita di tutti con punteggio annesso"""
     global lista_boss, dict_boss
 
     if not len(lista_boss) > 0:
@@ -362,8 +388,47 @@ def punteggio(bot, update):
         to_send += str(elem[0]) +" : "+ str(elem[1])+"\n"
 
     update.message.reply_text(to_send)
-    return 1
+    return 1 #1 è l'id del boss_loop nel conversation handler
+
 def completa(bot, update):
+    """Visualizza la lista completa ti tutte le info"""
+    #Todo: cambia formattazione da markdown a html
+    global lista_boss, dict_boss
+
+    if not len(lista_boss) > 0:
+        update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
+        return ConversationHandler.END
+    if not len(dict_boss.keys()) > 0:
+        update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+        return ConversationHandler.END
+
+    to_send="✅ *Hanno attaccato*:\n"
+
+    attaccato=sorted([elem for elem in lista_boss if elem[2]!=0],key=lambda tup: int(tup[2][0]),reverse=True)
+    non_attaccato=[elem for elem in lista_boss if elem[2]==0]
+
+    i=1
+    for elem in attaccato:
+        if i==1: to_send+="🥇"+str(i)+") "
+        elif i==2: to_send+="🥈"+str(i)+") "
+        elif i==3: to_send+="🥉"+str(i)+") "
+        else: to_send+=str(i)+") "
+        to_send+="@"+str(elem[0])+" : facendo *"+str(elem[2][0])+"* danno a *"+str(elem[2][1])+"* boss\n"
+        i+=1
+
+    to_send+="\n❌ *Non hanno attaccato*:\n"
+
+    i=1
+    for elem in non_attaccato:
+        to_send+=str(i)+") @"+str(elem[0])+" : il suo punteggio attuale è *"+str(dict_boss[elem[0]])+"*"
+        if elem[1]==1:
+            to_send+=", può attaccare\n"
+        else:
+            to_send+=", non può attaccare perchè in "+str(elem[1])+"\n"
+        i+=1
+
+
+    update.message.reply_text(to_send,parse_mode="Markdown")
     return 1
 
 def fine(bot, update):
@@ -373,6 +438,7 @@ def fine(bot, update):
 
 
 def boss_loop(bot, update):
+    """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
     global phoenix, lista_boss,last_update_id
 
     choice=update.message.text
@@ -381,33 +447,36 @@ def boss_loop(bot, update):
     elif choice == "Completa":return completa(bot,update)
     elif choice=="Fine": return fine(bot,update)
 
-    elif choice=="Phoenix" or choice=="Titan":
+    #se l'admin vuole modificare la lista
+    elif choice=="Phoenix" or choice=="Titan" and is_admin(get_user_id(update)):
         if choice=="Phoenix": phoenix=True
         else: phoenix=False
-        # aggiunge i memgri nel dizionario se non sono gia presenti
+        # aggiunge i membri nel dizionario se non sono gia presenti
         for elem in lista_boss:
             if elem[0] not in dict_boss.keys():
                 dict_boss[elem[0]] = 0
             if elem[2] == 0 and phoenix: dict_boss[elem[0]] += 2
             elif elem[2] == 0 and not phoenix:  dict_boss[elem[0]] += 1
 
-        last_update_id = update.message.message_id
-        #Todo: salva dizionario e last_update
+            last_update_id = update.message.message_id
+            #Todo: salva dizionario e last_update solo se id è admin
+
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)
-        update.message.reply_text("Messaggio ricevuto!\nAdesso fammi sapere in che formato vuoi ricevere le info.",
+        update.message.reply_text("OK!\nAdesso fammi sapere in che formato vuoi ricevere le info.",
                                   reply_markup=reply_markup)
 
         return 1
 
     else:
-        #TODO: elif se manda un altro messaggio boss, aggiorna tutto
+        #TODO: elif se manda un altro messaggio  gestisci
         update.message.reply_text("Non ho capito, ripeti")
         return 1
 
 
 
 def non_attaccanti(bot, update):
+    """Visualizza solo la lista di chi non ha ancora attaccato"""
     global lista_boss, dict_boss
 
     if not len(lista_boss)>0:

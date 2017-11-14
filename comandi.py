@@ -21,7 +21,12 @@ consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tab
 roll - lancia un dado senza specificare nulla
 info - ottini le informazioni riguardanti il tuo account
 convert - Converte test/numero da e verso una base arbitraria, si possono fornire valori di conversione per personalizzare il risultato
+punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro
 help - mostra questo messaggio di help
+"""
+
+COMANDI_PLUS="""
+punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro\n
 """
 
 class Command():
@@ -101,11 +106,16 @@ class Command():
          "le elencheremo tutte con il seguente formato 'ESEMPIO - SPIEGAZIONE':\n"
     prov = [key + ": " + str(value) for key, value in commands.items()]
     text += "\n".join(prov)
+    text+=COMANDI_PLUS
     text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
 Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
 /ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
 premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
 Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
+Pensavi fosse finita? E invece andiamo avanti!\n
+Puoi ottenere anche delle utili informazioni inoltrando il messaggio boss qui! Una volta inoltrato ti verrà chiesto di
+c he boss si tratta (phoenix o titan), in seguito potrai farti inviare le informazioni che ti servono con i bottoni :
+"Non Attaccanti", "Punteggio" e "Completa", per finire la visualizzazione premi "Fine".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
 Crediti: @brandimax @Odococo"""
     self.answer(text)
