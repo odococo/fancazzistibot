@@ -107,22 +107,23 @@ def connect_db():
         logger.error("Errore nella connessione al database: {}".format(error))
         return None
 
-def test():
-    try:
-        parse.uses_netloc.append("postgres")
-        url = parse.urlparse(os.environ["DATABASE_URL"])
-
-        conn = psycopg2.connect(
-          database=url.path[1:],
-          user=url.username,
-          password=url.password,
-          host=url.hostname,
-          port=url.port
-        )
-        logger.info(conn.cursor())
-    except Exception as e:
-        logger.error("Errore nella connessione al database: {}".format(e))
-        return None
+def init():
+    execute("""CREATE TABLE id_users(
+          id integer PRIMARY KEY)""");
+    execute("""CREATE TABLE users(
+          id integer REFERENCES id_users ON DELETE CASCADE,
+          username varchar(255),
+          first_name varchar(255),
+          last_name varchar(255),
+          language_code varchar(10),
+          date date DEFAULT CURRENT_DATE,
+          PRIMARY KEY(id, date))"""
+    execute("""CREATE TABLE bot_users(
+          id_bot integer REFERENCES id_users ON DELETE CASCADE,
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          date date DEFAULT CURRENT_DATE,
+          language varchar(10),
+          PRIMARY KEY(id_bot, id_user))"""
     
 if __name__ == "__main__":
-    test()
+    init()
