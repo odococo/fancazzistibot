@@ -108,6 +108,7 @@ def connect_db():
         return None
 
 def init():
+    execute("""DROP TABLE id_users IF EXISTS CASCADE""")
     execute("""CREATE TABLE IF NOT EXISTS id_users(
           id integer PRIMARY KEY)""")
     execute("""CREATE TABLE IF NOT EXISTS users(
@@ -116,19 +117,19 @@ def init():
           first_name varchar(255),
           last_name varchar(255),
           language_code varchar(10),
-          date date DEFAULT CURRENT_DATE,
+          date timestamp DEFAULT CURRENT_DATE,
           PRIMARY KEY(id, date))""")
     execute("""CREATE TABLE IF NOT EXISTS bot_users(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
-          date date DEFAULT CURRENT_DATE,
+          date timestamp DEFAULT CURRENT_DATE,
           language varchar(10),
           PRIMARY KEY(id_bot, id_user))""")
     execute("""CREATE TABLE IF NOT EXISTS activity(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           content text NOT NULL,
-          date date NOT NULL,
+          date timestamp NOT NULL,
           type varchar(20),
           PRIMARY KEY(id_bot, id_user, date))""")
     
