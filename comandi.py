@@ -13,26 +13,6 @@ from telegram import (
     User
 )
 
-HELP="""Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot , di seguito 
-le elencheremo tutte con il seguente formato "ESEMPIO - SPIEGAZIONE":\n
-/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo\n
-/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
-(la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
-la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)\n
-/dice numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi\n
-/roll - lancia un dado senza specificare nulla\n
-/info - ottini le informazioni riguardanti il tuo account\n
-/convert base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una 
-base arbitraria, si possono fornire valori di conversione per personalizzare il risultato\n
-/help - mostra questo messaggio\n\n
-Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
-Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
-/ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
-premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
-Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
-Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
-Crediti: @brandimax @Odococo
-"""
 
 COMANDI="""
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
@@ -109,7 +89,7 @@ class Command():
   #----------------------------------------------------------------------------------
 
   def Ustart(self):
-    """Mostra un esempio del markdown di telegram"""
+    """/start - Inizzializza il bot con la schermata di help"""
     self.answer(self.Uhelp())
 
   def Uhelp(self):
@@ -117,8 +97,10 @@ class Command():
     commands = self.command_list(utils.is_admin(
       self.update.message.from_user.id), utils.is_dev(self.bot.id))
     commands = {"/" + command : commands.get(command) for command in commands}
-    text = [key + ": " + str(value) for key, value in commands.items()]
-    text = "\n".join(text)
+    text="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot , di seguito " \
+         "le elencheremo tutte con il seguente formato 'ESEMPIO - SPIEGAZIONE':\n"
+    prov = [key + ": " + str(value) for key, value in commands.items()]
+    text += "\n".join(prov)
     text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootbotplus:\n
 Quando hai un lunog elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
 /ricerca da inviare a @lootbotplus. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
@@ -144,7 +126,7 @@ Crediti: @brandimax @Odococo"""
   #   self.answer('Please choose:', reply_markup=reply_markup)
 
   def Uroll(self):
-    """Lancia un dado"""
+    """/roll - lancia un dado senza specificare nulla"""
     keyboard = [
       [InlineKeyboardButton("4", callback_data="/dice 4"),
       InlineKeyboardButton("6", callback_data="/dice 6"),
@@ -161,22 +143,8 @@ Crediti: @brandimax @Odococo"""
       "Seleziona il numero di facce:",
       reply_markup=reply_markup)
 
-  def Udado(self):
-    """Lancia un dado specificando numero di facce e lanci da effettuare"""
-    if(len(self.params)!=1 or all(utils.is_numeric(param) for param in self.params)):
-        self.answer("Il comando funziona così:\n/dice numero_facce numero_lanci")
-        return
-
-    res="Il risultato è ["
-    for counter in range(int(self.params[1])):
-      res+=str(random.randint(1, int(self.params[0])))+", "
-
-    res.rstrip(",")
-    res+="]"
-    self.answer(res)
-
   def Udice(self):
-    """Lancia un dado specificando numero di facce e lanci da effettuare"""
+    """/dice numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi"""
     if (len(self.params) == 2
       and all(utils.is_numeric(param) for param in self.params)):
       text = ""
@@ -240,8 +208,8 @@ Crediti: @brandimax @Odococo"""
     self.answer(str(self.update), pretty_json=True)
         
   def Uconvert(self):
-    """Converte test/numero da e verso una base arbitraria\n
-Si possono fornire valori di conversione per personalizzare il risultato"""
+    """/convert base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una 
+base arbitraria, si possono fornire valori di conversione per personalizzare il risultato"""
     convert_params = self.params[0].split("-") if self.params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
@@ -258,10 +226,8 @@ Si possono fornire valori di conversione per personalizzare il risultato"""
     self.answer(text)
 
   def Uwin(self):
-    """/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo\n
-/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
-(la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
-la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)\n"""
+    """/win 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita 
+    nell'ispezione dello gnomo"""
     #print("win")
     #se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
@@ -275,10 +241,9 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
     self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
 
   def Uconsiglia(self):
-    """Uso: /consiglia 1 2 3 4 5; ti manda una tabella in cui:\n
-    La prima colonna indica il numero che dovresti cambiare seguito da una freccietta '->' e il numero che potrebbe uscirti\n
-    La seconda e terza colonna ti indicano rispettivamente la nuova probabilità di vincita (se cambi il numero) e la vecchia\n
-    La terza indica di quando sale o scende la nuova probabilità"""
+    """/consiglia 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+(la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
+la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)"""
 
     # se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
@@ -299,9 +264,9 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
     self.answer("ok")
     
   def Dboss(self):
-    """Fissa un messaggio per l'attacco del boss. /fissaBoss boss giorno ora
-boss -> 0 (titano) o 1 (phoenix)
-giorno -> da 0 a 6 (da lunedì a domenica)
+    """/fissaBoss boss giorno ora - Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
+boss -> 0 (titano) o 1 (phoenix)\n
+giorno -> da 0 a 6 (da lunedì a domenica)\n
 ora -> un'ora qualsiasi"""
     chat_id = -1001284891867 #Bot per i Boss
     boss = self.params[0]
