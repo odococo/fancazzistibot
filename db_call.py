@@ -109,11 +109,11 @@ def connect_db():
 
 def init():
     execute("""DELETE FROM id_users CASCADE""")
-    execute("""DROP TABLE IF EXISTS id_users""")
-    execute("""DROP TABLE IF EXISTS users""")
-    execute("""DROP TABLE IF EXISTS bot_users""")
-    execute("""DROP TABLE IF EXISTS activity""")
-    execute("""DROP TABLE IF EXISTS valutazione""")
+    execute("""DROP TABLE IF EXISTS id_users CASCADE""")
+    execute("""DROP TABLE IF EXISTS users CASCADE""")
+    execute("""DROP TABLE IF EXISTS bot_users CASCADE""")
+    execute("""DROP TABLE IF EXISTS activity CASCADE""")
+    execute("""DROP TABLE IF EXISTS valutazione CASCADE""")
     execute("""CREATE TABLE IF NOT EXISTS id_users(
           id integer PRIMARY KEY)""")
     execute("""CREATE TABLE IF NOT EXISTS users(
