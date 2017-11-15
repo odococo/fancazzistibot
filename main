@@ -154,9 +154,9 @@ def main():
     # python main 3 il bot dev in polling
     dev = mode % 2 != 0
     debug = mode // 2 == 1
-    logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}".format(mode, dev, debug)) 
     updater = Updater(get_token_bot(dev))
-    print(updater.bot)
+    logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot)) 
+    
     add_bot(get_bot(updater.bot))
 
     #dotenv.load_dotenv() #load .env file
