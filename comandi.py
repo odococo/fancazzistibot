@@ -312,7 +312,9 @@ Ricerca tramite username o id"""
     users = execute(query)
     if users:
       text = "Elenco utenti:\n"
+      print(users)
       for user in users:
+        print(user)
         text += "<b>{}</b>: <code>{}</code>\n".format(
           user['bot_id'],
           user['user_id'])
