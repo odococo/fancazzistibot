@@ -108,7 +108,7 @@ def connect_db():
         return None
 
 def init():
-    execute("""DROP TABLE IF EXISTS id_users CASCADE""")
+    execute("""DELETE FROM id_users CASCADE""")
     execute("""CREATE TABLE IF NOT EXISTS id_users(
           id integer PRIMARY KEY)""")
     execute("""CREATE TABLE IF NOT EXISTS users(
