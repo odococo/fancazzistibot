@@ -313,15 +313,13 @@ Ricerca tramite username o id"""
     if users:
       users = [users] if isinstance(users, dict) else users
       text = "Elenco utenti:\n"
-      print(users)
       for user in users:
-        print(user)
         text += "<b>{}</b>: <code>{}</code>\n".format(
           user['bot_id'],
           user['user_id'])
     else:
       text = "Non ci sono utenti nel database"
-      self.answer(text, parse_mode="Markdown")
+    self.answer(text, parse_mode="Markdown")
 
 
 
