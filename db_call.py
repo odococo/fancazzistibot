@@ -73,6 +73,7 @@ def execute(query, param=None):
         try:
             cursor.execute(query, param)
             if "SELECT" in query:
+                print(query, cursor)
                 if cursor.rowcount == 1:
                     return cursor.fetchone()
                 else:
