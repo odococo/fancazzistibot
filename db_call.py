@@ -44,16 +44,16 @@ def add_user(user, id_bot=None):
     if different_user(user, user_db):
         execute("""INSERT INTO users(
                 id, username, first_name, last_name, language_code, date)
-                VALUES(%s, %s, %s, %s, %s, %s)""",
+                VALUES(%s, %s, %s, %s, %s)""",
                 (user['id'], user['username'], 
                 user['first_name'], user['last_name'], 
-                user['language_code'], user['date']))
+                user['language_code']))
     if id_bot is not None:
         execute("""INSERT INTO bot_users(id_bot, id_user, 
                 date, language)
-                VALUES(%s, %s, %s, %s)
+                VALUES(%s, %s, %s)
                 ON CONFLICT(id_bot, id_user) DO NOTHING;""",
-                (id_bot, user['id'], user['date'], user['language_code'])
+                (id_bot, user['id'], user['language_code'])
         )
 
 def add_bot(bot):
@@ -122,20 +122,20 @@ def init():
     execute("""CREATE TABLE IF NOT EXISTS bot_users(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          date datetime DEFAULT CURRENT_TIMESTAMP,
           language varchar(10),
           PRIMARY KEY(id_bot, id_user))""")
     execute("""CREATE TABLE IF NOT EXISTS activity(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           content text NOT NULL,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          date datetime DEFAULT CURRENT_TIMESTAMP,
           type varchar(20),
           PRIMARY KEY(id_bot, id_user, date))""")
     execute("""CREATE TABLE IF NOT EXISTS valutazione(
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           valutation numeric(1) DEFAULT 0,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          date datetime DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY(id_user, date))""")
     print(execute("""SELECT * from id_users"""))
     print(execute("""SELECT * from users"""))
