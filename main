@@ -141,8 +141,12 @@ def log_update(bot, update):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-    debug = len(sys.argv) > 1
-    updater = Updater(get_token_bot(debug))
+    mode = if len(sys.argv) > 1 sys.argv[1] else 0
+    # python3 main oppure python3 main 0 fanno partire il bot principale
+    # python3 main 1 il bot dev
+    # python3 main 2 il bot principale in polling
+    # python main 3 il bot dev in polling
+    updater = Updater(get_token_bot(mode % 2 != 0))
     add_bot(get_bot(updater.bot))
 
     #dotenv.load_dotenv() #load .env file
@@ -189,7 +193,7 @@ def main():
     disp.add_error_handler(error)
 
     # Start the Bot
-    if DEBUG: updater.start_polling()
+    if mode // 2 == 0: updater.start_polling()
     else:
         updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
