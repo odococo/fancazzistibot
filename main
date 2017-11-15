@@ -33,14 +33,10 @@ from telegram.ext import (
     TypeHandler, ConversationHandler)
 
 import track_activity
-<<<<<<< HEAD
 from db_call import add_user
 from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio, boss_user, \
     connect_to_db
-=======
-from db_call import add_user,  add_bot
-from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio
->>>>>>> f9d3843fca8adbfad9ae9c96318124edf0cb16f0
+
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

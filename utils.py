@@ -42,15 +42,10 @@ def is_dev(id):
 
 def is_fanca_admin(id):
     """Verifica se l'id dell'utente è di un admin dei fancazzisti o meno"""
-<<<<<<< HEAD
     admin = (107839625,  # IMayonesX
              241317532,  # Osho27
              )
-=======
-    admin = (107839625, #IMayonesX
-             241317532, #Osho27
-            )
->>>>>>> f9d3843fca8adbfad9ae9c96318124edf0cb16f0
+
     return id in admin
 
 def is_tester(id):
