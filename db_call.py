@@ -136,7 +136,7 @@ def init():
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           valutation numeric(1) DEFAULT 0,
           date timestamp DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY_KEY(id_user, date))""")
+          PRIMARY KEY(id_user, date))""")
     print(execute("""SELECT * from id_users"""))
     print(execute("""SELECT * from users"""))
     print(execute("""SELECT * from bot_users"""))
