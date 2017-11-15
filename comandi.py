@@ -50,14 +50,14 @@ class Command():
     self.command = command_text[0]
     self.params = [param.strip() for param in command_text[1:]]
     #print(self.command, self.params)
-        
+
   def getattr(self, key, fallback=None):
     """Wrapper per la funzione getattr"""
     for attr in dir(self):
       if attr[1:] == key:
         return getattr(self, attr)
     return fallback
-        
+
   def execute(self):
     method = self.getattr(self.command[1:], self.unknown_command)
     if (method.__name__.startswith("A") and
@@ -68,7 +68,7 @@ class Command():
       pass
     else:
       method()
-            
+
   def answer(self, text, pretty_json=False, **options):
     """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
     if not 'parse_mode' in options:
@@ -80,17 +80,17 @@ class Command():
         message_id = self.update.message.reply_text(text[:4096], **options)
         text = text[4096:]
       return message_id
-            
+
   def command_list(self, admin=False, dev=False):
     """Ritorna la lista dei comandi disponibili"""
     commands = [command for command in dir(self)
       if command.startswith("U") or (command.startswith("A") and admin) or (command.startswith("D") and dev)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
     return commands
-    
+
   def unknown_command(self):
     self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
-    
+
   #----------------------------------------------------------------------------------
 
   def Ustart(self):
@@ -203,16 +203,16 @@ Crediti: @brandimax @Odococo"""
     else:
       self.answer("Il comando funziona così:\n"
                   "/dice numero_facce numero_lanci")
-    
+
   def Uinfo(self):
     """Ottieni le informazioni riguardo il tuo account"""
     user = self.update.message.from_user
     self.answer(str(user), pretty_json=True)
-    
+
   def Ujson(self):
     """Ottieni il json dell'update"""
     self.answer(str(self.update), pretty_json=True)
-        
+
   def Uconvert(self):
     """ base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una
 base arbitraria, si possono fornire valori di conversione per personalizzare il risultato"""
@@ -264,11 +264,11 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
     with open(path2img, "rb") as file:
       self.bot.sendPhoto(self.update.message.from_user.id,file)
     os.remove(path2img)
-    
+
   def Dprova(self):
     """test dev"""
     self.answer("ok")
-    
+
   def Dboss(self):
     """/fissaBoss boss giorno ora - Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
 boss -> 0 (titano) o 1 (phoenix)\n
@@ -283,7 +283,7 @@ ora -> un'ora qualsiasi"""
     giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
     from_id = self.update.message.from_user.id
     if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
-        message = self.bot.send_message(chat_id=chat_id, 
+        message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss)%2] + " entro le " + ore + " di " + giorni[int(giorno)%7])
         self.bot.pinChatMessage(chat_id, message.message_id, True)
 

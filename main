@@ -33,9 +33,14 @@ from telegram.ext import (
     TypeHandler, ConversationHandler)
 
 import track_activity
+<<<<<<< HEAD
 from db_call import add_user
 from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio, boss_user, \
     connect_to_db
+=======
+from db_call import add_user,  add_bot
+from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio
+>>>>>>> f9d3843fca8adbfad9ae9c96318124edf0cb16f0
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -139,7 +144,7 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 def log_update(bot, update):
-    print(update)
+    logger.info(update)
 
 
 #==================MAIN==========================================
@@ -149,15 +154,15 @@ def main():
     # Create the EventHandler and pass it your bot's token.
     debug = len(sys.argv) > 1
     updater = Updater(get_token_bot(debug))
+    add_bot(get_bot(updater.bot))
 
     dotenv.load() #load .env file
 # Get the dispatcher to register handlers
     disp = updater.dispatcher
-    
-    #disp.add_handler(TypeHandler(telegram.Update, log_update))
 
     # Handler to get username and other info
-    # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
+    disp.add_handler(MessageHandler(Filters.all, get_info), -1)
+    disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
     #disp.add_handler(CommandHandler("set", set,pass_args=True, pass_job_queue=True,pass_chat_data=True))
     #disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
     disp.add_handler(CommandHandler("attacchiBoss",boss_user))

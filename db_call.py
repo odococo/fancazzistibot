@@ -6,6 +6,8 @@
 
 import logging
 import json
+import os
+from urllib import parse
 import psycopg2
 import psycopg2.extras
 
@@ -89,20 +91,46 @@ def execute(query, param=None):
     
 def connect_db():
     try:
-        conn = psycopg2.connect("dbname='telegram_bot' user='postgres' host='localhost' password='postgres'")
+        parse.uses_netloc.append("postgres")
+        url = parse.urlparse(os.environ["DATABASE_URL"])
+
+        conn = psycopg2.connect(
+          database=url.path[1:],
+          user=url.username,
+          password=url.password,
+          host=url.hostname,
+          port=url.port
+        )
         conn.autocommit = True
         return conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     except Exception as error:
         logger.error("Errore nella connessione al database: {}".format(error))
         return None
 
-def test():
-    try:
-        conn = psycopg2.connect("dbname='telegram_bot' user='postgres' host='localhost' password='postgres'")
-        return conn.cursor()
-    except Exception as e:
-        logger.error("Errore nella connessione al database: {}".format(e))
-        return None
+def init():
+    execute("""CREATE TABLE IF NOT EXISTS id_users(
+          id integer PRIMARY KEY)""")
+    execute("""CREATE TABLE IF NOT EXISTS users(
+          id integer REFERENCES id_users ON DELETE CASCADE,
+          username varchar(255),
+          first_name varchar(255),
+          last_name varchar(255),
+          language_code varchar(10),
+          date date DEFAULT CURRENT_DATE,
+          PRIMARY KEY(id, date))""")
+    execute("""CREATE TABLE IF NOT EXISTS bot_users(
+          id_bot integer REFERENCES id_users ON DELETE CASCADE,
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          date date DEFAULT CURRENT_DATE,
+          language varchar(10),
+          PRIMARY KEY(id_bot, id_user))""")
+    execute("""CREATE TABLE IF NOT EXISTS activity(
+          id_bot integer REFERENCES id_users ON DELETE CASCADE,
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          content text NOT NULL,
+          date date NOT NULL,
+          type varchar(20),
+          PRIMARY KEY(id_bot, id_user, date))""")
     
 if __name__ == "__main__":
-    test()
+    init()
