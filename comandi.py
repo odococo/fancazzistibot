@@ -13,18 +13,6 @@ from telegram import (
     User
 )
 
-
-COMANDI="""
-win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
-dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
-consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
-roll - lancia un dado senza specificare nulla
-info - ottini le informazioni riguardanti il tuo account
-convert - Converte test/numero da e verso una base arbitraria, si possono fornire valori di conversione per personalizzare il risultato
-punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro
-help - mostra questo messaggio di help
-"""
-
 COMANDI_PLUS="""
 attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
 """
@@ -95,15 +83,16 @@ class Command():
 
   def Ustart(self):
     """ - Inizzializza il bot con la schermata di help"""
-    self.answer(self.Uhelp())
+    self.answer("""Benvenuto al Fancabot. Ha diverse funzionalità! Scoprile con /help!
+    
+Crediti: @brandimax @Odococo""")
 
   def Uhelp(self):
     """Visualizza l'elenco dei comandi con relativa descrizione"""
     commands = self.command_list(utils.is_admin(
       self.update.message.from_user.id), utils.is_dev(self.bot.id))
     commands = {"/" + command : commands.get(command) for command in commands}
-    text="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot , di seguito " \
-         "le elencheremo tutte con il seguente formato 'ESEMPIO - SPIEGAZIONE':\n"
+    text="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n"
     prov = [key +" " + str(value) for key, value in commands.items()]
     text += "\n".join(prov)
     text+=COMANDI_PLUS
@@ -132,7 +121,7 @@ Crediti: @brandimax @Odococo"""
   #   self.answer('Please choose:', reply_markup=reply_markup)
 
   def Uroll(self):
-    """ - lancia un dado senza specificare nulla"""
+    """Lancia un dado senza specificare nulla"""
     keyboard = [
       [InlineKeyboardButton("4", callback_data="/dice 4"),
       InlineKeyboardButton("6", callback_data="/dice 6"),
@@ -150,7 +139,7 @@ Crediti: @brandimax @Odococo"""
       reply_markup=reply_markup)
 
   def Udice(self):
-    """ numeroFaccie, numeroDadi - lancia un dado di numeroFaccie un quantitativo di volte pari a numeroDadi"""
+    """Lancia un dado specificando numero di facce e lanci"""
     if (len(self.params) == 2
       and all(utils.is_numeric(param) for param in self.params)):
       text = ""
@@ -214,8 +203,8 @@ Crediti: @brandimax @Odococo"""
     self.answer(str(self.update), pretty_json=True)
 
   def Uconvert(self):
-    """ base_originale-base_destinazione-valori_di_conversione testo/numero - Converte test/numero da e verso una
-base arbitraria, si possono fornire valori di conversione per personalizzare il risultato"""
+    """Converte testo/numero da e verso unabase arbitraria. 
+Si possono fornire valori di conversione per personalizzare il risultato"""
     convert_params = self.params[0].split("-") if self.params else []
     if len(convert_params) != 3:
       text = "Comando invalido. Sintassi:\n"
@@ -232,12 +221,11 @@ base arbitraria, si possono fornire valori di conversione per personalizzare il 
     self.answer(text)
 
   def Uwin(self):
-    """ 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita
-    nell'ispezione dello gnomo"""
+    """Per avere le tue possibilità di vincita nell'ispezione dello gnomo"""
     #print("win")
     #se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
-      self.answer("Devi inserire 5 numeri separati da spazio!")
+      self.answer("Devi inserire 5 numeri separati da spazio! Esempio: /win 1 2 3 4 5")
       return
 
     #trasforma i parametri in una lista di int
@@ -247,13 +235,13 @@ base arbitraria, si possono fornire valori di conversione per personalizzare il 
     self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
 
   def Uconsiglia(self):
-    """ 1 2 3 4 5 - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare
+    """Per avere una tabella di numeri da cambiare
 (la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
 la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)"""
 
     # se ci sono troppi o pochi numeri non va bene
     if len(self.params) != 5:
-      self.answer("Devi inserire 5 numeri separati da spazio!")
+      self.answer("Devi inserire 5 numeri separati da spazio! Esempio /consiglia 1 2 3 4 5")
       return
     numeri = [int(param) for param in self.params]
     path2img = consigliami(numeri)
@@ -270,7 +258,7 @@ la vecchia probabilità di vincita, la quarta è il decremento o incremento di p
     self.answer("ok")
 
   def Dboss(self):
-    """/fissaBoss boss giorno ora - Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
+    """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
 boss -> 0 (titano) o 1 (phoenix)\n
 giorno -> da 0 a 6 (da lunedì a domenica)\n
 ora -> un'ora qualsiasi"""
