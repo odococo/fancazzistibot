@@ -127,20 +127,20 @@ def init():
     execute("""CREATE TABLE IF NOT EXISTS bot_users(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
-          date datetime DEFAULT CURRENT_TIMESTAMP,
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
           language varchar(10),
           PRIMARY KEY(id_bot, id_user))""")
     execute("""CREATE TABLE IF NOT EXISTS activity(
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           content text NOT NULL,
-          date datetime DEFAULT CURRENT_TIMESTAMP,
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
           type varchar(20),
           PRIMARY KEY(id_bot, id_user, date))""")
     execute("""CREATE TABLE IF NOT EXISTS valutazione(
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           valutation numeric(1) DEFAULT 0,
-          date datetime DEFAULT CURRENT_TIMESTAMP,
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY(id_user, date))""")
     print(execute("""SELECT * from id_users"""))
     print(execute("""SELECT * from users"""))
