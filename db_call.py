@@ -43,14 +43,13 @@ def add_user(user, id_bot=None):
            )
     if different_user(user, user_db):
         execute("""INSERT INTO users(
-                id, username, first_name, last_name, language_code, date)
+                id, username, first_name, last_name, language_code)
                 VALUES(%s, %s, %s, %s, %s)""",
                 (user['id'], user['username'], 
                 user['first_name'], user['last_name'], 
                 user['language_code']))
     if id_bot is not None:
-        execute("""INSERT INTO bot_users(id_bot, id_user, 
-                date, language)
+        execute("""INSERT INTO bot_users(id_bot, id_user, language)
                 VALUES(%s, %s, %s)
                 ON CONFLICT(id_bot, id_user) DO NOTHING;""",
                 (id_bot, user['id'], user['language_code'])
