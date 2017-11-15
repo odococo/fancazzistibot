@@ -73,13 +73,13 @@ class Command():
     """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
     if not 'parse_mode' in options:
       options['parse_mode'] = "HTML"
-      message_id = None
-      if pretty_json:
-        text = utils.get_pretty_json(text)
-      while text:
-        message_id = self.update.message.reply_text(text[:4096], **options)
-        text = text[4096:]
-      return message_id
+    message_id = None
+    if pretty_json:
+      text = utils.get_pretty_json(text)
+    while text:
+      message_id = self.update.message.reply_text(text[:4096], **options)
+      text = text[4096:]
+    return message_id
 
   def command_list(self, admin=False, dev=False):
     """Ritorna la lista dei comandi disponibili"""
@@ -319,7 +319,7 @@ Ricerca tramite username o id"""
           user['user_id'])
     else:
       text = "Non ci sono utenti nel database"
-    self.answer(text, parse_mode="Markdown")
+    self.answer(text)
 
 
 
