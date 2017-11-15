@@ -30,12 +30,18 @@ from telegram.ext import (
     Filters,
     CallbackQueryHandler,
     Handler,
-    TypeHandler, ConversationHandler)
+    TypeHandler, 
+    ConversationHandler
+)
 
 import track_activity
 from db_call import add_user, add_bot
-from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio, boss_user, \
+from utils import (
+    new_command, now, is_numeric,
+    ricerca, annulla, stima, 
+    boss_admin, boss_loop, fine, punteggio, boss_user,
     connect_to_db
+)
 
 
 #==================GLOBAL VARIABLES==========================================
@@ -141,12 +147,11 @@ def log_update(bot, update):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-    mode = sys.argv[1] if len(sys.argv) > 1 else 0
+    mode = int(sys.argv[1]) if len(sys.argv) > 1 and is_numeric(sys.arv[1]) else 0
     # python3 main oppure python3 main 0 fanno partire il bot principale
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python main 3 il bot dev in polling
-    print(sys.argv, mode)
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}".format(mode, dev, debug)) 
