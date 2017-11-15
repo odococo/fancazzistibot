@@ -156,6 +156,7 @@ def main():
     debug = mode // 2 == 1
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}".format(mode, dev, debug)) 
     updater = Updater(get_token_bot(dev))
+    print(updater.bot)
     add_bot(get_bot(updater.bot))
 
     #dotenv.load_dotenv() #load .env file
