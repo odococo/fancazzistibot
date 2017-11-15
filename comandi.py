@@ -311,6 +311,7 @@ Ricerca tramite username o id"""
             GROUP BY utenti.id, bot.id"""
     users = execute(query)
     if users:
+      users = [users] if isinstance(users, dict) else users
       text = "Elenco utenti:\n"
       print(users)
       for user in users:
