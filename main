@@ -146,6 +146,7 @@ def main():
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python main 3 il bot dev in polling
+    print(sys.argv, mode)
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}".format(mode, dev, debug)) 
