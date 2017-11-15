@@ -107,40 +107,40 @@ def connect_db():
         return None
 
 def init():
-    execute("""DELETE FROM id_users CASCADE""")
-    execute("""DROP TABLE IF EXISTS id_users CASCADE""")
-    execute("""DROP TABLE IF EXISTS users CASCADE""")
-    execute("""DROP TABLE IF EXISTS bot_users CASCADE""")
-    execute("""DROP TABLE IF EXISTS activity CASCADE""")
-    execute("""DROP TABLE IF EXISTS valutazione CASCADE""")
-    execute("""CREATE TABLE IF NOT EXISTS id_users(
-          id integer PRIMARY KEY)""")
-    execute("""CREATE TABLE IF NOT EXISTS users(
-          id integer REFERENCES id_users ON DELETE CASCADE,
-          username varchar(255),
-          first_name varchar(255),
-          last_name varchar(255),
-          language_code varchar(10),
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY(id, date))""")
-    execute("""CREATE TABLE IF NOT EXISTS bot_users(
-          id_bot integer REFERENCES id_users ON DELETE CASCADE,
-          id_user integer REFERENCES id_users ON DELETE CASCADE,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          language varchar(10),
-          PRIMARY KEY(id_bot, id_user))""")
-    execute("""CREATE TABLE IF NOT EXISTS activity(
-          id_bot integer REFERENCES id_users ON DELETE CASCADE,
-          id_user integer REFERENCES id_users ON DELETE CASCADE,
-          content text NOT NULL,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          type varchar(20),
-          PRIMARY KEY(id_bot, id_user, date))""")
-    execute("""CREATE TABLE IF NOT EXISTS valutazione(
-          id_user integer REFERENCES id_users ON DELETE CASCADE,
-          valutation numeric(1) DEFAULT 0,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY(id_user, date))""")
+    #execute("""DELETE FROM id_users CASCADE""")
+    #execute("""DROP TABLE IF EXISTS id_users CASCADE""")
+    #execute("""DROP TABLE IF EXISTS users CASCADE""")
+    #execute("""DROP TABLE IF EXISTS bot_users CASCADE""")
+    #execute("""DROP TABLE IF EXISTS activity CASCADE""")
+    #execute("""DROP TABLE IF EXISTS valutazione CASCADE""")
+    #execute("""CREATE TABLE IF NOT EXISTS id_users(
+    #      id integer PRIMARY KEY)""")
+    #execute("""CREATE TABLE IF NOT EXISTS users(
+    #      id integer REFERENCES id_users ON DELETE CASCADE,
+    #      username varchar(255),
+    #      first_name varchar(255),
+    #      last_name varchar(255),
+    #      language_code varchar(10),
+    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
+    #      PRIMARY KEY(id, date))""")
+    #execute("""CREATE TABLE IF NOT EXISTS bot_users(
+    #      id_bot integer REFERENCES id_users ON DELETE CASCADE,
+    #      id_user integer REFERENCES id_users ON DELETE CASCADE,
+    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
+    #      language varchar(10),
+    #      PRIMARY KEY(id_bot, id_user))""")
+    #execute("""CREATE TABLE IF NOT EXISTS activity(
+    #      id_bot integer REFERENCES id_users ON DELETE CASCADE,
+    #      id_user integer REFERENCES id_users ON DELETE CASCADE,
+    #      content text NOT NULL,
+    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
+    #      type varchar(20),
+    #      PRIMARY KEY(id_bot, id_user, date))""")
+    #execute("""CREATE TABLE IF NOT EXISTS valutazione(
+    #      id_user integer REFERENCES id_users ON DELETE CASCADE,
+    #      valutation numeric(1) DEFAULT 0,
+    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
+    #      PRIMARY KEY(id_user, date))""")
     print(execute("""SELECT * from id_users"""))
     print(execute("""SELECT * from users"""))
     print(execute("""SELECT * from bot_users"""))
