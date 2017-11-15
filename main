@@ -50,8 +50,8 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 #==================FUNCTIONS==========================================
 
-def get_token_bot(debug):
-    if debug:
+def get_token_bot(dev):
+    if dev:
         id = "333089594"
         token = id + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
     else:
@@ -142,12 +142,14 @@ def log_update(bot, update):
 def main():
     # Create the EventHandler and pass it your bot's token.
     mode = sys.argv[1] if len(sys.argv) > 1 else 0
-    logger.info("Modalità di avvio: {}".format(mode)) 
     # python3 main oppure python3 main 0 fanno partire il bot principale
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python main 3 il bot dev in polling
-    updater = Updater(get_token_bot(mode % 2 != 0))
+    dev = mode % 2 != 0
+    debug = mode // 2 == 1
+    logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}".format(mode, dev, debug)) 
+    updater = Updater(get_token_bot(dev))
     add_bot(get_bot(updater.bot))
 
     #dotenv.load_dotenv() #load .env file
@@ -194,7 +196,7 @@ def main():
     disp.add_error_handler(error)
 
     # Start the Bot
-    if mode // 2 == 0: updater.start_polling()
+    if debug: updater.start_polling()
     else:
         updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
