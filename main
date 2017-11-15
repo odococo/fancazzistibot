@@ -145,8 +145,7 @@ def main():
     updater = Updater(get_token_bot(debug))
     add_bot(get_bot(updater.bot))
 
-    print(dir(dotenv))
-    dotenv.load() #load .env file
+    dotenv.load_dotenv() #load .env file
 # Get the dispatcher to register handlers
     disp = updater.dispatcher
 
