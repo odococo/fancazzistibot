@@ -129,9 +129,17 @@ def init():
           id_bot integer REFERENCES id_users ON DELETE CASCADE,
           id_user integer REFERENCES id_users ON DELETE CASCADE,
           content text NOT NULL,
-          date timestamp NOT NULL,
+          date timestamp,
           type varchar(20),
           PRIMARY KEY(id_bot, id_user, date))""")
+    execute("""CREATE TABLE IF NOT EXISTS valutazione(
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          valutation numeric(1) DEFAULT 0,
+          date timestamp,
+          PRIMARY_KEY(id_user, date))""")
+    print(execute("""SELECT * from id_users"""))
+    print(execute("""SELECT * from users"""))
+    print(execute("""SELECT * from bot_users"""))
     
 if __name__ == "__main__":
     init()
