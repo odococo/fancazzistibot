@@ -75,7 +75,7 @@ def execute(query, param=None):
             if "SELECT" in query:
                 print(query, cursor.rowcount)
                 if cursor.rowcount == 1:
-                    return tuple(cursor.fetchone())
+                    return dict(cursor.fetchone())
                 else:
                     return [dict(record) for record in cursor]
             elif "RETURNING" in query:
