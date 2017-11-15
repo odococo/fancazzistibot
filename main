@@ -70,13 +70,10 @@ def get_user(user):
     return user
 
 def get_bot(bot):
-    bot = get_user(bot)
-    bot['date'] = now()
-    return bot
+    return get_user(bot)
 
 def get_info(bot, update):
     user = get_user(update.message.from_user)
-    user['date'] = update.message.date
     bot_id, sep, actual_token = bot.token.partition(':')
     add_user(user, int(bot_id))
     if re.search("^[.!/]", update.message.text):
