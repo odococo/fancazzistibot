@@ -20,6 +20,17 @@ from telegram.ext import ConversationHandler
 from comandi import Command
 from db_call import execute
 
+COMANDI_BOT_FATHER="""
+win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
+dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
+consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
+roll - lancia un dado senza specificare nulla
+info - ottini le informazioni riguardanti il tuo account
+convert - Converte test/numero da e verso una base arbitraria, si possono fornire valori di conversione per personalizzare il risultato
+punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro
+help - mostra questo messaggio di help
+start - avvia il bot
+"""
 
 def new_command(bot, update):
     command = Command(bot, update)
@@ -170,7 +181,7 @@ def get_pretty_json(value):
 
 # =============================LOOT============================================
 #Todo: prova a farci una classe
-global costo_craft, stima, quantita, costo
+global costo_craft, stima, quantita, costo, negozi
 
 def estrai_oggetti(msg):
     global quantita
@@ -184,7 +195,7 @@ def estrai_oggetti(msg):
     for line in restante.split("\n"):
         if line[2:3] != line[7:8]:
             new_num = int(line[7:8]) - int(line[2:3])
-            print(new_num)
+            #print(new_num)
             new_line = line.replace(line[7:8], str(new_num))
             new_line = new_line.replace(line[2:3], str(new_num))
             aggiornato += new_line + "\n"
@@ -201,50 +212,47 @@ def estrai_oggetti(msg):
     for i in range(0, (last_ixd) - 2, 3):
         commands.append("/ricerca " + ",".join(lst[i:i + 3]))
 
-    #fixme:rimuoi ultimo ricerca vuoto
-    commands.append("/ricerca " + ",".join(lst[last_ixd:len(lst)]))
-    final_string = ""
-    #print(quantita)
+    if last_ixd< len(lst): commands.append("/ricerca " + ",".join(lst[last_ixd:len(lst)]))
 
-    for command in commands:
-        final_string += command + "\n"
-
-    return final_string
+    return commands
 
 
 def ricerca(bot, update):
     """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
-    global costo_craft, stima, quantita, costo
+    global costo_craft, stima, quantita, costo, negozi
     text = update.message.text.lower()
     to_send = estrai_oggetti(text)
     costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
     #print(costo_craft)
-    update.message.reply_text(to_send)
+    for elem in to_send:
+        update.message.reply_text(elem)
     reply_markup = ReplyKeyboardMarkup([["Anulla", "Stima"]], one_time_keyboard=True)
     update.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
                               "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                               reply_markup=reply_markup)
     stima = True
     costo = []
+    negozi=[]
     return 1
 
 
 def annulla(bot, update):
     """Annulla la stima"""
-    global stima, costo_craft, quantita
+    global stima, costo_craft, quantita, negozi
 
     # print("\n\nAnnulla\n\n")
 
     stima = False
     costo_craft = 0
     quantita = []
+    negozi=[]
     return ConversationHandler.END
 
 
 def stima(bot, update):
     """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
-    global stima, costo_craft, quantita, costo
+    global stima, costo_craft, quantita, costo, negozi
 
     # print("\n\nStima\n\n")
     # print(update)
@@ -268,7 +276,7 @@ def stima(bot, update):
             if (len(c) > 0):
                 c = c[0]
                 merged.append((q[0], q[1], c[1]))
-        print(merged)
+        #print(merged)
         tot = 0
         for elem in merged:
             if is_numeric(elem[0]):
@@ -281,7 +289,7 @@ def stima(bot, update):
 
         if (len(costo) > 10):
             costo.sort(key=lambda tup: int(tup[1]), reverse=True)
-            print(costo)
+            #print(costo)
             to_print = "I 10 oggetti piu costosi sono:\n"
             for i in range(0, 9):
                 to_print += costo[i][0] + " : " + costo[i][1] + " §\n"
@@ -292,9 +300,15 @@ def stima(bot, update):
 
         update.message.reply_text("Se compri tutti gli oggetti dal negozio impiegherai un tempo di circa : "
                                   + str(m) + " minuti e " + str(s) + " secondi\n")
+        to_send=""
+        for elem in negozi:
+            to_send+="@lootplusbot "+str(elem)+"\n"
+
+        update.message.reply_text(to_send)
 
         costo.clear()
         quantita.clear()
+        negozi.clear()
         stima = False
         return ConversationHandler.END
     else:
@@ -304,7 +318,7 @@ def stima(bot, update):
 
 
 def stima_parziale(msg):
-    global costo
+    global costo, negozi
     prov = msg.split("negozi per ")[1:]
     lst = []
     for elem in prov:
@@ -312,12 +326,16 @@ def stima_parziale(msg):
 
     # print(lst)
     regex = re.compile(r"(.*):.*\(([0-9 .]+)")
+    regex_negozio = r"§ - ([0-9]+)"
 
     for elem in lst:
         e = re.findall(regex, elem)
+        neg=re.findall(regex_negozio,elem)
         # print(e)
 
         costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
+        #todo:mantieni reference all'oggetto
+        negozi.append(neg[0])
         # print(costo)
 
 
@@ -330,8 +348,6 @@ global lista_boss, dict_boss, last_update_id, phoenix
  dizionario con chiave nome e valore punteggio
  update id (int) dell'ultimo messaggio inoltrato dall'admin, serve per vedere se non sta inoltrando un doppione
  boolean phoenix, serve all'admin per decidere il sistema di valori"""
-
-
 
 
 def cerca_boss(msg):
@@ -395,6 +411,7 @@ def boss_user(bot, update):
                                        one_time_keyboard=False)
     update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
     return 1
+
 
 def boss_reset(bot, update):
 

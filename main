@@ -151,12 +151,12 @@ def main():
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python3 main 3 il bot dev in polling
+    mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
-    logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot)) 
-    
-    if not debug: add_bot(get_bot(updater.bot))
+    logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
+    add_bot(get_bot(updater.bot))
 
 # Get the dispatcher to register handlers
     disp = updater.dispatcher
@@ -166,9 +166,7 @@ def main():
     disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
     #disp.add_handler(CommandHandler("set", set,pass_args=True, pass_job_queue=True,pass_chat_data=True))
     #disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
-    disp.add_handler(CommandHandler("attacchiBoss",boss_user))
 
-    disp.add_handler(RegexHandler("^[.!/]", new_command))
 
     coversation=ConversationHandler(
         [RegexHandler("^Lista oggetti necessari per",ricerca)],
@@ -188,6 +186,8 @@ def main():
         },
         fallbacks=[CommandHandler('Fine', fine)]
     )
+
+    disp.add_handler(RegexHandler("^[.!/]", new_command))
 
 
 
