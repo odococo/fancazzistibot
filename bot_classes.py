@@ -6,7 +6,7 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
-from utils import is_numeric, is_admin, get_user_id
+from utils import is_numeric, is_admin, get_user_id, request_access
 
 
 class Loot:
@@ -32,6 +32,10 @@ class Loot:
 
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
+        #todo if user_id not in db
+        if False:
+            request_access(bot, update._effective_user)
+            return ConversationHandler.END
         text = update.message.text.lower()
         to_send = self.estrai_oggetti(text)
         self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
@@ -265,7 +269,11 @@ class Boss:
 
     def boss_user(self, bot, update):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
-        print("Boss user")
+        # todo if user_id not in db
+        if False:
+            request_access(bot,update._effective_user)
+            return ConversationHandler.END
+
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)
         update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
@@ -295,6 +303,9 @@ class Boss:
             return self.punteggio(bot, update)
         elif choice == "Completa" and is_admin(get_user_id(update)):
             return self.completa(bot, update)
+        elif choice == "Completa" and not is_admin(get_user_id(update)):
+            update.message.reply_text("Non sei abilitato ad usare questa funzione")
+            return 1
         elif choice == "Fine":
             return self.fine(bot, update)
 

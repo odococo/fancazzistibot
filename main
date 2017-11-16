@@ -39,9 +39,7 @@ from bot_classes import Loot, Boss
 from db_call import add_user, add_bot
 
 from utils import (
-    new_command, now, is_numeric,
-    ricerca, annulla, stima,
-    boss_admin, boss_loop, fine, punteggio, boss_user, send_negozi)
+    new_command, now, is_numeric, grant_deny_access)
 
 
 #==================GLOBAL VARIABLES==========================================
@@ -152,7 +150,7 @@ def main():
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python3 main 3 il bot dev in polling
-    mode=3
+    #mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
@@ -172,6 +170,10 @@ def main():
     #classi per craftlootbot e comandi boss
     Loot(updater.bot, disp)
     Boss(updater.bot, disp)
+
+    #handler per richiedere accesso al bot
+    disp.add_handler(CallbackQueryHandler(grant_deny_access, pattern="/consentiAccesso"))
+
 
 
 

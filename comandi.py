@@ -71,6 +71,11 @@ class Command():
 
   def command_list(self, admin=False, dev=False):
     """Ritorna la lista dei comandi disponibili"""
+    # todo if user_id not in db
+    if False:
+      utils.request_access(self.bot, self.update._effective_user)
+      return
+
     commands = [command for command in dir(self)
       if command.startswith("U") or (command.startswith("A") and admin) or (command.startswith("D") and dev)]
     commands = {command[1:]: getattr(self, command).__doc__ for command in commands}
