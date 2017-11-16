@@ -14,7 +14,8 @@ import os
 import subprocess
 
 from bs4 import BeautifulSoup
-from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, \
+    InlineKeyboardMarkup
 from telegram.ext import ConversationHandler
 
 from comandi import Command
@@ -181,7 +182,7 @@ def get_pretty_json(value):
 
 # =============================LOOT============================================
 #Todo: prova a farci una classe
-global costo_craft, stima, quantita, costo
+global costo_craft, stima, quantita, costo, to_send_negozi
 """costo_craft: intero rappresetnatne 
 costo del craft nel messaggio di craftlootbox
 quantità: lista di tuple in cui:
@@ -191,7 +192,8 @@ costo: lista di triple:
     elem[0]=nome oggetto
     elem[1]= costo minimo singolo oggetto
     elem[2]= numero negozio di oggetto
-stima: bool che serve da flag nel caso l'user volesse effettuare la stima """
+stima: bool che serve da flag nel caso l'user volesse effettuare la stima
+to_send_negozi: stringa di comandi per aprire negozi"""
 
 def estrai_oggetti(msg):
     global quantita
@@ -248,20 +250,22 @@ def ricerca(bot, update):
 
 def annulla(bot, update):
     """Annulla la stima"""
-    global stima, costo_craft, quantita
+    global stima, costo_craft, quantita, to_send_negozi
 
     # print("\n\nAnnulla\n\n")
 
     stima = False
     costo_craft = 0
     quantita = []
+    to_send_negozi=""
+
     return ConversationHandler.END
 
 
 def stima(bot, update):
     """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
-    global stima, costo_craft, quantita, costo
+    global stima, costo_craft, quantita, costo, to_send_negozi
 
     # print("\n\nStima\n\n")
     # print(update)
@@ -302,7 +306,7 @@ def stima(bot, update):
         tot += int(costo_craft)
 
         update.message.reply_text("Secondo le stime di mercato pagherai " +
-                                  "{:,}".format(tot).replace(",", "'") + "§ , (costo craft incluso)")
+                                  "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)")
 
         if (len(costo) > 10):
             costo.sort(key=lambda tup: int(tup[1]), reverse=True)
@@ -318,11 +322,15 @@ def stima(bot, update):
         update.message.reply_text("Comprando gli oggetti dal negozio impiegherai un tempo di circa :\n "
                                   + str(m) + " minuti e " + str(s) + " secondi\n")
 
-        to_send=""
+        to_send_negozi=""
         for elem in merged:
-            to_send+="Compra l'oggetto <b>"+elem[1]+"</b> ("+str(elem[0])+") al negozio:\n@lootplusbot "+str(elem[3])+"\n"
+            to_send_negozi+="Compra l'oggetto <b>"+elem[1]+"</b> ("+str(elem[0])+") al negozio:\n@lootplusbot "+str(elem[3])+"\n"
 
-        update.message.reply_text(to_send,parse_mode="HTML")
+
+        update.message.reply_text("Vuoi visualizzare i negozi?", reply_markup = InlineKeyboardMarkup([[
+            InlineKeyboardButton("Si",callback_data="/mostraNegoziSi"),
+            InlineKeyboardButton("No", callback_data="/mostraNegoziNo")
+        ]]))
 
 
         costo.clear()
@@ -333,6 +341,24 @@ def stima(bot, update):
         # print("\n\nStima Parziale\n\n")
         stima_parziale(update.message.text.lower())
         return 1
+
+def send_negozi(bot, update):
+    global to_send_negozi
+    print("send negozi")
+    if "Si" in update.callback_query.data:
+        if to_send_negozi:
+            text=to_send_negozi
+        else:
+            text="Si è verificato un errore, contatta @brandimax"
+    else:
+        text="Ok"
+    bot.edit_message_text(
+        chat_id=update.callback_query.message.chat_id,
+        text=text,
+        message_id=update.callback_query.message.message_id,
+        parse_mode="HTML"
+    )
+
 
 
 def stima_parziale(msg):

@@ -39,8 +39,8 @@ from db_call import add_user, add_bot
 
 from utils import (
     new_command, now, is_numeric,
-    ricerca, annulla, stima, 
-    boss_admin, boss_loop, fine, punteggio, boss_user)
+    ricerca, annulla, stima,
+    boss_admin, boss_loop, fine, punteggio, boss_user, send_negozi)
 
 
 #==================GLOBAL VARIABLES==========================================
@@ -151,7 +151,6 @@ def main():
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python3 main 3 il bot dev in polling
-    mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
@@ -175,6 +174,8 @@ def main():
         },
         fallbacks=[CommandHandler('Annulla', annulla)]
     )
+    disp.add_handler(CallbackQueryHandler(send_negozi, pattern="^/mostraNegozi"))
+
 
     disp.add_handler(coversation)
 
