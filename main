@@ -30,25 +30,25 @@ from telegram.ext import (
     Filters,
     CallbackQueryHandler,
     Handler,
-    TypeHandler, ConversationHandler)
+    TypeHandler, 
+    ConversationHandler
+)
 
 import track_activity
 from db_call import add_user, add_bot
-from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio, boss_user, \
+
+from utils import (
+    new_command, now, is_numeric,
+    ricerca, annulla, stima, 
+    boss_admin, boss_loop, fine, punteggio, boss_user,
     connect_to_db
+)
 
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-DEBUG=True
-if DEBUG:
-    ID = "333089594"
-    TOKEN = ID + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
-else:
-    ID="490902479"
-    TOKEN = ID + ":AAGz3rv4M2U2dYG7WJDbiWZoAFFsUVn_ZIE"
 
 PORT = int(os.environ.get('PORT', '5000'))
 
@@ -57,8 +57,8 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 #==================FUNCTIONS==========================================
 
-def get_token_bot(debug):
-    if debug:
+def get_token_bot(dev):
+    if dev:
         id = "333089594"
         token = id + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
     else:
@@ -67,7 +67,6 @@ def get_token_bot(debug):
     return token
 
 def get_user(user):
-    default_null = "!"
     user = {
         'id': user.id,
         'username': getattr(user, 'username', None),
@@ -78,13 +77,10 @@ def get_user(user):
     return user
 
 def get_bot(bot):
-    bot = get_user(bot)
-    bot['date'] = now()
-    return bot
+    return get_user(bot)
 
 def get_info(bot, update):
     user = get_user(update.message.from_user)
-    user['date'] = update.message.date
     bot_id, sep, actual_token = bot.token.partition(':')
     add_user(user, int(bot_id))
     if re.search("^[.!/]", update.message.text):
@@ -152,11 +148,19 @@ def log_update(bot, update):
 
 def main():
     # Create the EventHandler and pass it your bot's token.
-    debug = len(sys.argv) > 1
-    updater = Updater(get_token_bot(debug))
+    mode = int(sys.argv[1]) if len(sys.argv) > 1 and is_numeric(sys.argv[1]) else 0
+    # python3 main oppure python3 main 0 fanno partire il bot principale
+    # python3 main 1 il bot dev
+    # python3 main 2 il bot principale in polling
+    # python main 3 il bot dev in polling
+    dev = mode % 2 != 0
+    debug = mode // 2 == 1
+    updater = Updater(get_token_bot(dev))
+    logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot)) 
+    
     add_bot(get_bot(updater.bot))
 
-    dotenv.load() #load .env file
+    #dotenv.load_dotenv() #load .env file
 # Get the dispatcher to register handlers
     disp = updater.dispatcher
 
@@ -200,7 +204,7 @@ def main():
     disp.add_error_handler(error)
 
     # Start the Bot
-    if DEBUG: updater.start_polling()
+    if debug: updater.start_polling()
     else:
         updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
