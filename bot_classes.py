@@ -210,6 +210,8 @@ class Boss:
         )
         dispatcher.add_handler(coversation_boss)
 
+        dispatcher.add_handler(CommandHandler("resetBoss",self.boss_reset))
+
     def cerca_boss(self, msg):
         """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
         lista[0]: nome \n
@@ -279,21 +281,19 @@ class Boss:
         self.lista_boss = []
         self.dict_boss = {}
         self.last_update_id = 0
-        phoenix = False
+        self.phoenix = False
         # todo: invia sul db
         update.message.reply_text("Lista dei boss resettata!")
 
     def boss_loop(self, bot, update):
         """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
 
-        print("Boss loop")
-
         choice = update.message.text
         if choice == "Non Attaccanti":
             return self.non_attaccanti(bot, update)
         elif choice == "Punteggio":
             return self.punteggio(bot, update)
-        elif choice == "Completa":
+        elif choice == "Completa" and is_admin(get_user_id(update)):
             return self.completa(bot, update)
         elif choice == "Fine":
             return self.fine(bot, update)
@@ -301,20 +301,24 @@ class Boss:
         # se l'admin vuole modificare la lista
         elif choice == "Phoenix" or choice == "Titan" and is_admin(get_user_id(update)):
             if choice == "Phoenix":
-                phoenix = True
+                self.phoenix = True
             else:
-                phoenix = False
+                self.phoenix = False
+            if self.last_update_id==update.message.message_id:
+                update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
+                return 1
+
             # aggiunge i membri nel dizionario se non sono gia presenti
             for elem in self.lista_boss:
                 if elem[0] not in self.dict_boss.keys():
                     self.dict_boss[elem[0]] = 0
-                if elem[2] == 0 and phoenix:
+                if elem[2] == 0 and self.phoenix:
                     self.dict_boss[elem[0]] += 2
-                elif elem[2] == 0 and not phoenix:
+                elif elem[2] == 0 and not self.phoenix:
                     self.dict_boss[elem[0]] += 1
 
                 self.last_update_id = update.message.message_id
-                # Todo: salva dizionario e last_update
+                # Todo: salva dizionario e last_update in db
 
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)
@@ -324,18 +328,15 @@ class Boss:
             return 1
 
         else:
-            # TODO: elif se manda un altro messaggio  gestisci
+            # TODO: elif se manda un altro messaggio gestisci
             update.message.reply_text("Non ho capito, ripeti")
             return 1
 
     def punteggio(self, bot, update):
         """Visualizza la sita di tutti con punteggio annesso"""
 
-        if not len(self.lista_boss) > 0:
-            update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
-            return ConversationHandler.END
         if not len(self.dict_boss.keys()) > 0:
-            update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+            update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
         sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
@@ -354,7 +355,7 @@ class Boss:
             update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
             return ConversationHandler.END
         if not len(self.dict_boss.keys()) > 0:
-            update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+            update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
         to_send = "✅ <b>Hanno attaccato</b>:\n"
@@ -394,16 +395,15 @@ class Boss:
 
     def fine(self, bot, update):
         update.message.reply_text("Finito", reply_markup=ReplyKeyboardRemove())
+        self.lista_boss=[]
         return ConversationHandler.END
 
     def non_attaccanti(self, bot, update):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
-        if not len(self.lista_boss) > 0:
-            update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
-            return ConversationHandler.END
+
         if not len(self.dict_boss.keys()) > 0:
-            update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+            update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
         sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
