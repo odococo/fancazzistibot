@@ -181,7 +181,17 @@ def get_pretty_json(value):
 
 # =============================LOOT============================================
 #Todo: prova a farci una classe
-global costo_craft, stima, quantita, costo, negozi
+global costo_craft, stima, quantita, costo
+"""costo_craft: intero rappresetnatne 
+costo del craft nel messaggio di craftlootbox
+quantità: lista di tuple in cui:
+    elem[0]= quantità oggetto
+    elem[1]= nome oggetto
+costo: lista di triple:
+    elem[0]=nome oggetto
+    elem[1]= costo minimo singolo oggetto
+    elem[2]= numero negozio di oggetto
+stima: bool che serve da flag nel caso l'user volesse effettuare la stima """
 
 def estrai_oggetti(msg):
     global quantita
@@ -219,7 +229,7 @@ def estrai_oggetti(msg):
 
 def ricerca(bot, update):
     """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
-    global costo_craft, stima, quantita, costo, negozi
+    global costo_craft, stima, quantita, costo
     text = update.message.text.lower()
     to_send = estrai_oggetti(text)
     costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
@@ -238,21 +248,20 @@ def ricerca(bot, update):
 
 def annulla(bot, update):
     """Annulla la stima"""
-    global stima, costo_craft, quantita, negozi
+    global stima, costo_craft, quantita
 
     # print("\n\nAnnulla\n\n")
 
     stima = False
     costo_craft = 0
     quantita = []
-    negozi=[]
     return ConversationHandler.END
 
 
 def stima(bot, update):
     """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la 
            top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
-    global stima, costo_craft, quantita, costo, negozi
+    global stima, costo_craft, quantita, costo
 
     # print("\n\nStima\n\n")
     # print(update)
@@ -270,12 +279,20 @@ def stima(bot, update):
             return annulla(bot, update)
 
         # print(costo, quantita)
+
+        #merged è una lista di quadruple con i seguenti elementi:
+        #elem[0]= quantità oggetto
+        #elem[1]= nome oggetto
+        #elem[2]= costo oggetto
+        #elem[3]= numero negozio per oggetto
+
         merged = []
+        negozi=[]
         for q in quantita:
             c = [item for item in costo if item[0] == q[1]]
             if (len(c) > 0):
                 c = c[0]
-                merged.append((q[0], q[1], c[1]))
+                merged.append((q[0], q[1], c[1], c[2]))
         #print(merged)
         tot = 0
         for elem in merged:
@@ -298,17 +315,18 @@ def stima(bot, update):
 
         m, s = divmod(len(costo) * 10, 60)
 
-        update.message.reply_text("Se compri tutti gli oggetti dal negozio impiegherai un tempo di circa : "
+        update.message.reply_text("Comprando gli oggetti dal negozio impiegherai un tempo di circa :\n "
                                   + str(m) + " minuti e " + str(s) + " secondi\n")
-        to_send=""
-        for elem in negozi:
-            to_send+="@lootplusbot "+str(elem)+"\n"
 
-        update.message.reply_text(to_send)
+        to_send=""
+        for elem in merged:
+            to_send+="Compra l'oggetto <b>"+elem[1]+"</b> ("+str(elem[0])+") al negozio:\n@lootplusbot "+str(elem[3])+"\n"
+
+        update.message.reply_text(to_send,parse_mode="HTML")
+
 
         costo.clear()
         quantita.clear()
-        negozi.clear()
         stima = False
         return ConversationHandler.END
     else:
@@ -318,7 +336,12 @@ def stima(bot, update):
 
 
 def stima_parziale(msg):
-    global costo, negozi
+    """dato un messaggio in lower inoltrato da lootplusbot rappresentate la risposta la comando ricerca
+    salva la lista costo con una tripla di elementi:
+    elem[0]: nome oggetto
+    elem[1]: costo oggetto
+    elem[2]: numero negozio"""
+    global costo
     prov = msg.split("negozi per ")[1:]
     lst = []
     for elem in prov:
@@ -333,9 +356,7 @@ def stima_parziale(msg):
         neg=re.findall(regex_negozio,elem)
         # print(e)
 
-        costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", "")))
-        #todo:mantieni reference all'oggetto
-        negozi.append(neg[0])
+        costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", ""),neg[0]))
         # print(costo)
 
 

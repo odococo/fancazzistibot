@@ -98,9 +98,9 @@ Crediti: @brandimax @Odococo""")
     text+=COMANDI_PLUS
     text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot:\n
 Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
-/ricerca da inviare a @lootplusbot. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
-premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi e il tempo medio per acquistarli tutti.
-Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
+/ricerca da inoltrare a @lootplusbot. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
+premento "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti 
+e una lista di comandi negozio. Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
 Crediti: @brandimax @Odococo"""
     self.answer(text)
