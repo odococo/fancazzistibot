@@ -36,6 +36,7 @@ class Loot:
         if False:
             request_access(bot, update._effective_user)
             return ConversationHandler.END
+
         text = update.message.text.lower()
         to_send = self.estrai_oggetti(text)
         self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
@@ -104,8 +105,11 @@ class Loot:
                                       + str(m) + " minuti e " + str(s) + " secondi\n")
 
             for elem in merged:
-                self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> (" + str(
+
+                if int(elem[0])>1: self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> (" + str(
                     elem[0]) + ") al negozio:\n@lootplusbot " + str(elem[3]) + "\n"
+                else:
+                    self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> al negozio:\n@lootplusbot (<b>" + str(elem[3]) + "</b>)\n"
 
             update.message.reply_text("Vuoi visualizzare i negozi?", reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
@@ -346,17 +350,37 @@ class Boss:
     def punteggio(self, bot, update):
         """Visualizza la sita di tutti con punteggio annesso"""
 
+
         if not len(self.dict_boss.keys()) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
+
         sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
 
-        to_send = ""
-        for elem in sortedD:
-            to_send += str(elem[0]) + " : " + str(elem[1]) + "\n"
 
-        update.message.reply_text(to_send)
+        to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
+        for elem in sortedD:
+            if elem[1]>3 :to_send += "@"+str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
+
+        to_send += "\n❗️❗️<b>Giocatori a rischio espulsione</b>❗️❗️️\n"
+        for elem in sortedD:
+            if elem[1] == 3: to_send += "@"+str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
+
+        to_send += "\n⚠<b>️Non proprio i migliori</b>⚠️\n"
+        for elem in sortedD:
+            if elem[1] == 2: to_send += "@"+str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
+
+        to_send += "\n✅<b>Buono ma non buonissimo</b>✅\n"
+        for elem in sortedD:
+            if elem[1] == 1: to_send += "@"+str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
+
+        to_send += "\n🎉<b>I nostri best players</b>🎉\n"
+        for elem in sortedD:
+            if elem[1] == 0: to_send += "@"+str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
+
+
+        update.message.reply_text(to_send,parse_mode="HTML")
         return 1  # 1 è l'id del boss_loop nel conversation handler
 
     def completa(self, bot, update):
@@ -393,8 +417,7 @@ class Boss:
 
         i = 1
         for elem in non_attaccato:
-            to_send += str(i) + ") @" + str(elem[0]) + " : il suo punteggio attuale è <b>" + str(
-                self.dict_boss[elem[0]]) + "</b>"
+            to_send += str(i) + ") @" + str(elem[0]) + " : il suo punteggio attuale è <b>" + str(self.dict_boss[elem[0]]) + "</b>"
             if elem[1] == 1:
                 to_send += ", può attaccare\n"
             else:

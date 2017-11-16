@@ -150,7 +150,7 @@ def main():
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python3 main 3 il bot dev in polling
-    #mode=3
+    mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
