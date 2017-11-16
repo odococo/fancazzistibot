@@ -33,7 +33,7 @@ from telegram.ext import (
     TypeHandler, ConversationHandler)
 
 import track_activity
-from db_call import add_user
+from db_call import add_user, add_bot
 from utils import new_command, now, ricerca, annulla, stima, boss_admin, boss_loop, fine, punteggio, boss_user, \
     connect_to_db
 
