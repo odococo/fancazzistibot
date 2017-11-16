@@ -18,10 +18,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-# carattere di default per il database 
-# perché null == null ritorna falso in esso
-DEFAULT_NULL = "!"
-
+# aggiunge un utente al database
 def add_user(user, id_bot=None):
     # salvo l'id dell'utente o del bot
     execute("""INSERT INTO id_users(id) 
@@ -55,9 +52,23 @@ def add_user(user, id_bot=None):
                 (id_bot, user['id'], user['language_code'])
         )
 
+# aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
 def add_bot(bot):
     add_user(bot)
-    
+
+# ritorna l'elenco dei punteggi    
+def get_punteggi():
+  query = """SELECT username, valutazione
+          FROM punteggio JOIN users ON (id_user = id)"""
+  return execute(query)
+
+# aggiungi un punteggio
+def add_punteggio(id, punteggio):
+  query = """INSERT INTO punteggio (id_user, valutazione)
+          VALUES (%s, %s)"""
+  return execute(query, (id, punteggio))
+#------------------------------------------------------------------------------- 
+# essendoci anche la data, non posso fare il controllo direttamente da db
 def different_user(userA, userB):
     if (userB and (userA['id'] == userB['id']) and 
         (userA['username'] == userB['username']) and
@@ -66,7 +77,8 @@ def different_user(userA, userB):
         (userA['language_code'] == userB['language_code'])):
         return False
     return userA
-    
+   
+# esegue una query arbitraria    
 def execute(query, param=None):
     cursor = connect_db();
     if cursor is not None:
@@ -87,7 +99,8 @@ def execute(query, param=None):
         except Exception as error:
             print("ERRORE {} \n{}\n{}".format(error, query, param))
             return False
-    
+
+# connessione al db          
 def connect_db():
     try:
         parse.uses_netloc.append("postgres")
@@ -107,43 +120,57 @@ def connect_db():
         return None
 
 def init():
-    #execute("""DELETE FROM id_users CASCADE""")
-    #execute("""DROP TABLE IF EXISTS id_users CASCADE""")
-    #execute("""DROP TABLE IF EXISTS users CASCADE""")
-    #execute("""DROP TABLE IF EXISTS bot_users CASCADE""")
-    #execute("""DROP TABLE IF EXISTS activity CASCADE""")
-    #execute("""DROP TABLE IF EXISTS valutazione CASCADE""")
-    #execute("""CREATE TABLE IF NOT EXISTS id_users(
-    #      id integer PRIMARY KEY)""")
-    #execute("""CREATE TABLE IF NOT EXISTS users(
-    #      id integer REFERENCES id_users ON DELETE CASCADE,
-    #      username varchar(255),
-    #      first_name varchar(255),
-    #      last_name varchar(255),
-    #      language_code varchar(10),
-    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
-    #      PRIMARY KEY(id, date))""")
-    #execute("""CREATE TABLE IF NOT EXISTS bot_users(
-    #      id_bot integer REFERENCES id_users ON DELETE CASCADE,
-    #      id_user integer REFERENCES id_users ON DELETE CASCADE,
-    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
-    #      language varchar(10),
-    #      PRIMARY KEY(id_bot, id_user))""")
-    #execute("""CREATE TABLE IF NOT EXISTS activity(
-    #      id_bot integer REFERENCES id_users ON DELETE CASCADE,
-    #      id_user integer REFERENCES id_users ON DELETE CASCADE,
-    #      content text NOT NULL,
-    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
-    #      type varchar(20),
-    #      PRIMARY KEY(id_bot, id_user, date))""")
-    #execute("""CREATE TABLE IF NOT EXISTS valutazione(
-    #      id_user integer REFERENCES id_users ON DELETE CASCADE,
-    #      valutation numeric(1) DEFAULT 0,
-    #      date timestamp DEFAULT CURRENT_TIMESTAMP,
-    #      PRIMARY KEY(id_user, date))""")
-    print(execute("""SELECT * from id_users"""))
-    print(execute("""SELECT * from users"""))
-    print(execute("""SELECT * from bot_users"""))
+    drop_queries = [
+      """DROP TABLE IF EXISTS id_users CASCADE""",
+      """DROP TABLE IF EXISTS users CASCADE""",
+      """DROP TABLE IF EXISTS bot_users CASCADE""",
+      """DROP TABLE IF EXISTS activity CASCADE""",
+      """DROP TABLE IF EXISTS valutazione CASCADE"""
+    ]
+    create_queries = [
+      """CREATE TABLE IF NOT EXISTS id_users(
+         id integer PRIMARY KEY,
+         admin boolean DEFAULT false,
+         tester boolean DEFAULT false,
+         loot_user boolean DEFAULT false,
+         loot_admin boolean DEFAULT false)""",
+      """CREATE TABLE IF NOT EXISTS users(
+          id integer REFERENCES id_users ON DELETE CASCADE,
+          username varchar(255),
+          first_name varchar(255),
+          last_name varchar(255),
+          language_code varchar(10),
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY(id, date))""",
+      """CREATE TABLE IF NOT EXISTS bot_users(
+          id_bot integer REFERENCES id_users ON DELETE CASCADE,
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          language varchar(10),
+          PRIMARY KEY(id_bot, id_user))""",
+      """CREATE TABLE IF NOT EXISTS activity(
+          id_bot integer REFERENCES id_users ON DELETE CASCADE,
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          content text NOT NULL,
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          type varchar(20),
+          PRIMARY KEY(id_bot, id_user, date))""",
+      """CREATE TABLE IF NOT EXISTS punteggio(
+          id_user integer REFERENCES id_users ON DELETE CASCADE,
+          valutatione numeric(1) DEFAULT 0,
+          date timestamp DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY(id_user, date))"""
+    ]
+    select_queries = [
+      """SELECT * FROM id_users""",
+      """SELECT * FROM users""",
+      """SELECT * FROM bot_users""",
+      """SELECT * FROM activity""",
+      """SELECT * FROM valutazione"""
+    ]
+    map(lambda query: execute(query), drop_queries)
+    map(lambda query: execute(query), create_queries)
+    map(lambda query: execute(query), select_queries)
     
 if __name__ == "__main__":
     init()
