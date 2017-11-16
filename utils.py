@@ -172,7 +172,6 @@ def get_pretty_json(value):
 #Todo: prova a farci una classe
 global costo_craft, stima, quantita, costo
 
-
 def estrai_oggetti(msg):
     global quantita
 
@@ -202,8 +201,10 @@ def estrai_oggetti(msg):
     for i in range(0, (last_ixd) - 2, 3):
         commands.append("/ricerca " + ",".join(lst[i:i + 3]))
 
+    #fixme:rimuoi ultimo ricerca vuoto
     commands.append("/ricerca " + ",".join(lst[last_ixd:len(lst)]))
     final_string = ""
+    #print(quantita)
 
     for command in commands:
         final_string += command + "\n"
@@ -217,6 +218,7 @@ def ricerca(bot, update):
     text = update.message.text.lower()
     to_send = estrai_oggetti(text)
     costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
+    #print(costo_craft)
     update.message.reply_text(to_send)
     reply_markup = ReplyKeyboardMarkup([["Anulla", "Stima"]], one_time_keyboard=True)
     update.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
@@ -269,7 +271,8 @@ def stima(bot, update):
         print(merged)
         tot = 0
         for elem in merged:
-            tot += int(elem[0]) * int(elem[2])
+            if is_numeric(elem[0]):
+                tot += int(elem[0]) * int(elem[2])
 
         tot += int(costo_craft)
 
@@ -278,8 +281,9 @@ def stima(bot, update):
 
         if (len(costo) > 10):
             costo.sort(key=lambda tup: int(tup[1]), reverse=True)
+            print(costo)
             to_print = "I 10 oggetti piu costosi sono:\n"
-            for i in range(1, 11):
+            for i in range(0, 9):
                 to_print += costo[i][0] + " : " + costo[i][1] + " §\n"
 
             update.message.reply_text(to_print)
@@ -326,40 +330,6 @@ global lista_boss, dict_boss, last_update_id, phoenix
  dizionario con chiave nome e valore punteggio
  update id (int) dell'ultimo messaggio inoltrato dall'admin, serve per vedere se non sta inoltrando un doppione
  boolean phoenix, serve all'admin per decidere il sistema di valori"""
-
-def connect_to_db():
-
-
-    url = urlparse.urlparse(os.environ["DATABASE_URL"])
-    dbname = url.path[1:]
-    user = url.username
-    password = url.password
-    host = url.hostname
-    port = url.port
-    #todo: add try except
-    con = psycopg2.connect(
-        dbname=dbname,
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
-    cur = con.cursor()
-    namedict = ({"first_name": "Joshua", "last_name": "Drake"},
-                {"first_name": "Steven", "last_name": "Foo"},
-                {"first_name": "David", "last_name": "Bar"})
-    command=""" CREATE TABLE ioboh (
-            vendor_id SERIAL PRIMARY KEY,
-            vendor_name VARCHAR(255) NOT NULL)"""
-    cur.executemany(command, namedict)
-
-    # cur.execute("""SELECT datname from pg_database""")
-    # rows = cur.fetchall()
-    # print(rows)
-
-    cur.close()
-    con.commit()
-    con.close()
 
 
 

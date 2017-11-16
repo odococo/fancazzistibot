@@ -40,9 +40,7 @@ from db_call import add_user, add_bot
 from utils import (
     new_command, now, is_numeric,
     ricerca, annulla, stima, 
-    boss_admin, boss_loop, fine, punteggio, boss_user,
-    connect_to_db
-)
+    boss_admin, boss_loop, fine, punteggio, boss_user)
 
 
 #==================GLOBAL VARIABLES==========================================
@@ -152,15 +150,14 @@ def main():
     # python3 main oppure python3 main 0 fanno partire il bot principale
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
-    # python main 3 il bot dev in polling
+    # python3 main 3 il bot dev in polling
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot)) 
     
-    add_bot(get_bot(updater.bot))
+    if not debug: add_bot(get_bot(updater.bot))
 
-    #dotenv.load_dotenv() #load .env file
 # Get the dispatcher to register handlers
     disp = updater.dispatcher
 
