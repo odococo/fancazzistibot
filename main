@@ -35,7 +35,7 @@ from telegram.ext import (
 )
 
 import track_activity
-from bot_classes import Loot
+from bot_classes import Loot, Boss
 from db_call import add_user, add_bot
 
 from utils import (
@@ -152,7 +152,7 @@ def main():
     # python3 main 1 il bot dev
     # python3 main 2 il bot principale in polling
     # python3 main 3 il bot dev in polling
-    #main=3
+    mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
@@ -169,24 +169,17 @@ def main():
     #disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
 
 
-
+    #classi per craftlootbot e comandi boss
     Loot(updater.bot, disp)
+    Boss(updater.bot, disp)
 
 
-    #todo: visualizza thread https://github.com/python-telegram-bot/python-telegram-bot/issues/915 per le risposte
-    coversation_boss = ConversationHandler(
-        [CommandHandler("attacchiBoss", boss_user),RegexHandler("^🏆", boss_admin)],
-        states={
-            1: [MessageHandler(Filters.text, boss_loop)]
-        },
-        fallbacks=[CommandHandler('Fine', fine)]
-    )
+
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
 
 
-    disp.add_handler(coversation_boss)
 
     # on different commands - answer in Telegram
     #disp.add_handler(CallbackQueryHandler(button, pattern="\d"))

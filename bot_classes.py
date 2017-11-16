@@ -1,9 +1,12 @@
+import operator
 import re
-from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
+
+import emoji
+from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
-from utils import is_numeric
+from utils import is_numeric, is_admin, get_user_id
 
 
 class Loot:
@@ -145,7 +148,6 @@ class Loot:
         return ConversationHandler.END
 
     def send_negozi(self, bot, update):
-        print("send negozi")
         if "Si" in update.callback_query.data:
             if self.to_send_negozi:
                 text = self.to_send_negozi
@@ -190,3 +192,227 @@ class Loot:
         if last_ixd < len(lst): commands.append("/ricerca " + ",".join(lst[last_ixd:len(lst)]))
 
         return commands
+
+class Boss:
+    def __init__(self, bot, dispatcher):
+        self.bot = bot
+        self.lista_boss=[]
+        self.dict_boss={}
+        self.last_update_id=0
+        self.phoenix=False
+
+        coversation_boss = ConversationHandler(
+            [CommandHandler("attacchiBoss", self.boss_user), RegexHandler("^🏆", self.boss_admin)],
+            states={
+                1: [MessageHandler(Filters.text, self.boss_loop)]
+            },
+            fallbacks=[CommandHandler('Fine', self.fine)]
+        )
+        dispatcher.add_handler(coversation_boss)
+
+    def cerca_boss(self, msg):
+        """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
+        lista[0]: nome \n
+        lista[1]: Missione/cava + tempo se in missione o cava, 1 altrimenti\n
+        lista[2]: 0 se non c'è stato attacco al boss, tupla altrimenti: tupla[0] danno, tupla[1] numero di boss"""
+        prova = msg.split("Attività membri:\n")[1]
+        prova = emoji.demojize(prova)
+        name_reg1 = re.compile(r"([0-z_]+) :")
+        name_reg2 = re.compile(r"^([0-z_]+) .*")
+        obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
+        boss_reg = re.compile(r":boar: ([0-9]+) .*/([0-9])")
+
+        res = []
+
+        for elem in prova.split("\n\n"):
+            try:
+                name = re.findall(name_reg1, elem)[0]
+            except IndexError:
+                name = re.findall(name_reg2, elem)[0]
+            obl = re.findall(obl_reg, elem)
+            boss = re.findall(boss_reg, elem)[0]
+            if (len(obl) == 0):
+                obl = 1
+            else:
+                obl = obl[0]
+            if boss[0] == "0": boss = 0
+            res.append([name, obl, boss])
+
+        return res
+
+    def boss_admin(self, bot, update):
+        """Inoltra il messaggio del boss, solo per admin"""
+        print("Admin boss")
+
+        # controlla se admin
+        if not is_admin(get_user_id(update)):
+            update.message.reply_text("Non sei autorizzato ad inoltrare questi messaggi")
+            return ConversationHandler.END
+
+        # TODO: prendi dizionario e last_update_id dal database
+        # prendi il dizionario, lista  e id
+        self.dict_boss = {}
+        self.last_update_id = 0
+
+        self.lista_boss = self.cerca_boss(update.message.text)
+
+        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
+        update.message.reply_text("Di quale boss stiamo parlando?",
+                                  reply_markup=reply_markup)
+        return 1
+
+    def boss_user(self, bot, update):
+        """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
+        print("Boss user")
+        reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+                                           one_time_keyboard=False)
+        update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
+        return 1
+
+    def boss_reset(self, bot, update):
+
+        if not is_admin(get_user_id(update)):
+            update.message.reply_text("Non sei abilitato ad usare a questo comando!")
+            return
+
+
+        self.lista_boss = []
+        self.dict_boss = {}
+        self.last_update_id = 0
+        phoenix = False
+        # todo: invia sul db
+        update.message.reply_text("Lista dei boss resettata!")
+
+    def boss_loop(self, bot, update):
+        """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
+
+        print("Boss loop")
+
+        choice = update.message.text
+        if choice == "Non Attaccanti":
+            return self.non_attaccanti(bot, update)
+        elif choice == "Punteggio":
+            return self.punteggio(bot, update)
+        elif choice == "Completa":
+            return self.completa(bot, update)
+        elif choice == "Fine":
+            return self.fine(bot, update)
+
+        # se l'admin vuole modificare la lista
+        elif choice == "Phoenix" or choice == "Titan" and is_admin(get_user_id(update)):
+            if choice == "Phoenix":
+                phoenix = True
+            else:
+                phoenix = False
+            # aggiunge i membri nel dizionario se non sono gia presenti
+            for elem in self.lista_boss:
+                if elem[0] not in self.dict_boss.keys():
+                    self.dict_boss[elem[0]] = 0
+                if elem[2] == 0 and phoenix:
+                    self.dict_boss[elem[0]] += 2
+                elif elem[2] == 0 and not phoenix:
+                    self.dict_boss[elem[0]] += 1
+
+                self.last_update_id = update.message.message_id
+                # Todo: salva dizionario e last_update
+
+            reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+                                               one_time_keyboard=False)
+            update.message.reply_text("Dati salvati!\nAdesso fammi sapere in che formato vuoi ricevere le info",
+                                      reply_markup=reply_markup)
+
+            return 1
+
+        else:
+            # TODO: elif se manda un altro messaggio  gestisci
+            update.message.reply_text("Non ho capito, ripeti")
+            return 1
+
+    def punteggio(self, bot, update):
+        """Visualizza la sita di tutti con punteggio annesso"""
+
+        if not len(self.lista_boss) > 0:
+            update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
+            return ConversationHandler.END
+        if not len(self.dict_boss.keys()) > 0:
+            update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+            return ConversationHandler.END
+
+        sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
+
+        to_send = ""
+        for elem in sortedD:
+            to_send += str(elem[0]) + " : " + str(elem[1]) + "\n"
+
+        update.message.reply_text(to_send)
+        return 1  # 1 è l'id del boss_loop nel conversation handler
+
+    def completa(self, bot, update):
+        """Visualizza la lista completa ti tutte le info"""
+
+        if not len(self.lista_boss) > 0:
+            update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
+            return ConversationHandler.END
+        if not len(self.dict_boss.keys()) > 0:
+            update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+            return ConversationHandler.END
+
+        to_send = "✅ <b>Hanno attaccato</b>:\n"
+
+        attaccato = sorted([elem for elem in self.lista_boss if elem[2] != 0], key=lambda tup: int(tup[2][0]), reverse=True)
+        non_attaccato = [elem for elem in self.lista_boss if elem[2] == 0]
+
+        i = 1
+        for elem in attaccato:
+            if i == 1:
+                to_send += "🥇" + str(i) + ") "
+            elif i == 2:
+                to_send += "🥈" + str(i) + ") "
+            elif i == 3:
+                to_send += "🥉" + str(i) + ") "
+            else:
+                to_send += str(i) + ") "
+            to_send += "@" + str(elem[0]) + " : facendo <b>" + '{:,}'.format(int(elem[2][0])).replace(',',
+                                                                                                      '\'') + "</b> danno a <b>" + str(
+                elem[2][1]) + "</b> boss\n"
+            i += 1
+
+        to_send += "\n❌ <b>Non hanno attaccato</b>:\n"
+
+        i = 1
+        for elem in non_attaccato:
+            to_send += str(i) + ") @" + str(elem[0]) + " : il suo punteggio attuale è <b>" + str(
+                self.dict_boss[elem[0]]) + "</b>"
+            if elem[1] == 1:
+                to_send += ", può attaccare\n"
+            else:
+                to_send += ", non può attaccare perchè in " + str(elem[1]) + "\n"
+            i += 1
+
+        update.message.reply_text(to_send, parse_mode="HTML")
+        return 1
+
+    def fine(self, bot, update):
+        update.message.reply_text("Finito", reply_markup=ReplyKeyboardRemove())
+        return ConversationHandler.END
+
+    def non_attaccanti(self, bot, update):
+        """Visualizza solo la lista di chi non ha ancora attaccato"""
+
+        if not len(self.lista_boss) > 0:
+            update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
+            return ConversationHandler.END
+        if not len(self.dict_boss.keys()) > 0:
+            update.message.reply_text("Il dizionario è vuoto (contatta @brandimax)")
+            return ConversationHandler.END
+
+        sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
+
+        to_send = ""
+        for elem in sortedD:
+            if (elem[1] > 0): to_send += str(elem[0]) + "\n"
+
+        update.message.reply_text(to_send)
+        return 1
+
+
