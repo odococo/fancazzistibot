@@ -290,7 +290,7 @@ Crediti: @brandimax @Odococo"""
         """Visualizza le informazioni relative a un utente
     Ricerca tramite username o id"""
         if self.params:
-            result = utils.get_user_db(self.params[0])
+            result = get_user(self.params[0])
             if result:
                 text = utils.get_user(result)
             else:
