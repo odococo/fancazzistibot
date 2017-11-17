@@ -297,7 +297,7 @@ Crediti: @brandimax @Odococo"""
                 text = "Non ci sono utenti che rispondono ai parametri della ricerca"
         else:
             text = "Specifica id o username dell'utente che vuoi cercare"
-        self.answer(text, parse_mode="Markdown")
+        self.answer(text)
 
     def Autenti(self):
         """Visualizza gli utenti che utilizzano un determinato bot"""
@@ -312,12 +312,11 @@ Crediti: @brandimax @Odococo"""
             users = [users] if isinstance(users, dict) else users
             text = "Elenco utenti:\n"
             for user in users:
-                text += "<b>{}</b>: <code>{}</code>\n".format(
+                text += "<strong><code>{}</code></strong>: <code>{}</code>\n".format(
                     user['bot_id'],
                     user['user_id'])
         else:
             text = "Non ci sono utenti nel database"
-        print(text)
         self.answer(text)
 
 
