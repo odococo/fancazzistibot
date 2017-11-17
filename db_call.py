@@ -55,7 +55,7 @@ def get_user(key_value):
   
 def update_user(user):
   query = TABELLE['id_users']['update']
-  return execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
+  return execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned'], user['id']))
 
 # ritorna l'elenco dei punteggi    
 def get_punteggi():
