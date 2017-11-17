@@ -92,7 +92,7 @@ def reverse(obj):
 def get_user(user):
     if not user:
         return None
-    fields = ["<strong>{}</strong>>: <code>{}</code>".format(key, value)
+    fields = ["<strong>{}</strong>: <code>{}</code>".format(key, value)
               for key, value in user.items() if key != "date"]
     return "\n".join(fields)
 
