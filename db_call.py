@@ -64,8 +64,7 @@ def get_punteggi():
 
 # aggiungi un punteggio
 def add_punteggio(id, punteggio):
-  query = """INSERT INTO punteggio (id_user, valutazione)
-          VALUES (%s, %s)"""
+  query = TABELLE['punteggio']['insert']
   return execute(query, (id, punteggio))
 #------------------------------------------------------------------------------- 
 # essendoci anche la data, non posso fare il controllo direttamente da db
