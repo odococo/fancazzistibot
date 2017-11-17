@@ -217,10 +217,10 @@ TABELLE = {
 }
 
 def init():
-    map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE)
-    print(execute("""SELECT admin FROM id_users"""))
-    #map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE)
-    #map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE)
+    esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
+    esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
+    esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
+    print(esito)
     
 if __name__ == "__main__":
     init()
