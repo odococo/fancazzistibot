@@ -48,6 +48,8 @@ def get_user(key_value):
         key_value = int(key_value)
         query = TABELLE['users']['select']['from_id']
     else:
+        if key_value[0] = '@':
+          key_value = key_value[1:]
         query = TABELLE['users']['select']['from_username']
     user = execute(query, (key_value, key_value))
     return user
