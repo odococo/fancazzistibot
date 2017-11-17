@@ -154,7 +154,7 @@ TABELLE = {
                         WHERE id = %s)""",
       'from_id': """SELECT *
               FROM users
-              WHERE id = %s date >= ALL(SELECT date
+              WHERE id = %s AND date >= ALL(SELECT date
                 FROM users
                 WHERE id = %s)"""
     },
