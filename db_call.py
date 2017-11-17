@@ -41,7 +41,7 @@ def add_bot(bot):
     add_user(bot)
     
 def get_users():
-  return execute(TABELLE['users']['select']['all']
+  return execute(TABELLE['users']['select']['all'])
     
 def get_user(key_value):
     key_value = (str(key_value) if is_numeric(key_value, True)
