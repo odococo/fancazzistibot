@@ -184,7 +184,7 @@ TABELLE = {
               id_user integer REFERENCES id_users ON DELETE CASCADE,
               content text NOT NULL,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
-              type varchar(20),""",
+              type varchar(20))""",
     "drop": """DROP TABLE IF EXISTS activity CASCADE""",
     "select": """SELECT * FROM activity""",
     "insert": """INSERT INTO activity (id_bot, id_user, content, type)
