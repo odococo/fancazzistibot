@@ -228,7 +228,6 @@ def init():
     #esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
     #esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
     #esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
-    esito = execute("ALTER TABLE users ADD COLUMN banned boolean DEFAULT false")
     print(esito)
     
 if __name__ == "__main__":
