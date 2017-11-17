@@ -217,6 +217,7 @@ TABELLE = {
 }
 
 def init():
+    print(TABELLE)
     map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE)
     map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE)
     map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE)
