@@ -314,5 +314,13 @@ Ricerca tramite username o id"""
       text = "Non ci sono utenti nel database"
     self.answer(text)
 
-
+def Aregistra(self):
+    """Aggiorna i permessi di un utente"""
+    if len(self.params) == 2:
+        pass
+    else:
+        text = """Non hai inserito i parametri correttamente! /registra utente permesso
+utente tramite id o username
+permesso tra questi valori: tester admin"""
+    self.answer(text)
 
