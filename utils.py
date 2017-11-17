@@ -21,7 +21,7 @@ from telegram.ext import ConversationHandler
 from comandi import Command
 from db_call import execute
 
-COMANDI_BOT_FATHER="""
+COMANDI_BOT_FATHER = """
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
 dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
 consiglia - Usa questo comando con 5 numeri separati da spazio per avere una tabella di numeri da cambiare (maggiori info nel help)
@@ -33,7 +33,8 @@ help - mostra questo messaggio di help
 start - avvia il bot
 """
 
-developer_dicts={"brandimax":24978334}#, "odococo":89675136}
+developer_dicts = {"brandimax": 24978334}  # , "odococo":89675136}
+
 
 def new_command(bot, update):
     command = Command(bot, update)
@@ -62,9 +63,10 @@ def is_fanca_admin(id):
 
     return id in admin
 
+
 def is_tester(id):
-    tester = (107839625, #IMayonesX
-            )
+    tester = (107839625,  # IMayonesX
+              )
     return is_admin(id) or id in tester
 
 
@@ -95,31 +97,30 @@ def get_user(user):
               for key, value in user.items() if key != "date"]
     return "\n".join(fields)
 
-def grant_deny_access(bot,update):
-    print("granting")
-    text=update.callback_query.data.split(" ")
-    command=text[0]
-    user_id=text[1]
-    if(command.strip("/")=="consentiAccessoSi"):
-        #todo:add user to db
-        bot.send_message(user_id,"Ti è stato garantito l'accesso al bot!")
-        for dev in developer_dicts.values():
-            bot.send_message(dev,"L'accesso a user : "+str(user_id)+", è stato garantito")
-    else:
-        bot.send_message(user_id,"Non ti è stato garantito l'accesso al bot :(")
-        for dev in developer_dicts.values():
-            bot.send_message(dev, "L'accesso a user : "+str(user_id+", è stato negato"))
 
+def grant_deny_access(bot, update):
+    print("granting")
+    text = update.callback_query.data.split(" ")
+    command = text[0]
+    user_id = text[1]
+    if (command.strip("/") == "consentiAccessoSi"):
+        # todo:add user to db
+        bot.send_message(user_id, "Ti è stato garantito l'accesso al bot!")
+        for dev in developer_dicts.values():
+            bot.send_message(dev, "L'accesso a user : " + str(user_id) + ", è stato garantito")
+    else:
+        bot.send_message(user_id, "Non ti è stato garantito l'accesso al bot :(")
+        for dev in developer_dicts.values():
+            bot.send_message(dev, "L'accesso a user : " + str(user_id + ", è stato negato"))
 
 
 def request_access(bot, user):
-    to_send="L'utente :\n"+str(user)+"\nHa richiesto l'accesso a "+str(bot.username)+"\nConsenti?"
+    to_send = "L'utente :\n" + str(user) + "\nHa richiesto l'accesso a " + str(bot.username) + "\nConsenti?"
     for dev in developer_dicts.values():
-        bot.send_message(dev,to_send,reply_markup=InlineKeyboardMarkup([[
-                InlineKeyboardButton("Si", callback_data="/consentiAccessoSi "+str(user.id)),
-                InlineKeyboardButton("No", callback_data="/consentiAccessoNo "+str(user.id))
-            ]]))
-
+        bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
+            InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + str(user.id)),
+            InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + str(user.id))
+        ]]))
 
 
 def get_user_id(update):
@@ -206,4 +207,3 @@ def get_pretty_json(value):
     if not isinstance(value, dict):
         value = ast.literal_eval(value)
     return json.dumps(value, indent=2)
-
