@@ -70,7 +70,7 @@ class Loot:
             elem[0]= quantità oggetto
             elem[1]= nome oggetto
             elem[2]= costo oggetto
-            elem[3]= numero negozio per oggetto"""
+            vifdadelem[3]= numero negozio per oggetto"""
             merged = []
             for q in self.quantita:
                 c = [item for item in self.costo if item[0] == q[1]]
