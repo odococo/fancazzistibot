@@ -3,7 +3,7 @@
 
 import random
 import utils, os, re
-from db_call import execute, get_user, update_user
+from db_call import execute, get_user, update_user_permissions
 from negozi_loot import value
 from PokerDice import calc_score, consigliami
 
@@ -330,7 +330,7 @@ Crediti: @brandimax @Odococo"""
                 text = "Non esiste questo permesso!"
             else:
                 user[permesso] = not user[permesso]
-            update_user(user)
+            update_user_permissions(user)
             text = "Aggiornamento completato!"
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
