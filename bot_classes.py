@@ -177,14 +177,22 @@ class Loot:
         restante = msg.split("già possiedi")[0].split(":")[1]
         aggiornato = ""
 
-        for line in restante.split("\n"):
-            if line[2:3] != line[7:8]:
-                new_num = int(line[7:8]) - int(line[2:3])
+        regex=re.compile(r"> ([0-9]+) su ([0-9]+)")
+        to_loop=restante.split("\n")
+        to_loop.pop(0)
+        for line in to_loop:
+            find=re.findall(regex,line)
+            try:
+                if find[0] != find[1]:
+                    new_num = int(find[0]) - int(find[1])
 
-                new_line = line.replace(line[7:8], str(new_num))
-                new_line = new_line.replace(line[2:3], str(new_num))
-                aggiornato += new_line + "\n"
-            else:
+                    new_line = line.replace(find[0], str(new_num))
+                    new_line = new_line.replace(find[1], str(new_num))
+                    aggiornato += new_line + "\n"
+                else:
+                    aggiornato += line + "\n"
+
+            except IndexError:
                 aggiornato += line + "\n"
 
         regex = re.compile(r"di (.*)?\(")
