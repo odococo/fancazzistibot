@@ -118,56 +118,104 @@ def connect_db():
     except Exception as error:
         logger.error("Errore nella connessione al database: {}".format(error))
         return None
+      
+TABELLE = {
+  "id_users": {
+    "create": """CREATE TABLE IF NOT EXISTS id_users(
+              id integer PRIMARY KEY,
+              admin boolean DEFAULT false,
+              tester boolean DEFAULT false,
+              loot_user boolean DEFAULT false,
+              loot_admin boolean DEFAULT false)""",
+    "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
+    "select": """SELECT * FROM id_users""",
+    "insert": """INSERT INTO id_users (id) 
+              VALUES(%s)
+              ON CONFLICT(id) DO NOTHING""",
+    "update": """UPDATE id_users
+              SET admin = %s, tester = %s, loot_user = %s, loot_admin = %s
+              WHERE id = %s""",
+    "delete": """DELETE FROM id_users
+              WHERE id = %s"""
+  },
+  "users": {
+    "create": """CREATE TABLE IF NOT EXISTS users(
+              id integer REFERENCES id_users ON DELETE CASCADE,
+              username varchar(255),
+              first_name varchar(255),
+              last_name varchar(255),
+              language_code varchar(10),
+              date timestamp DEFAULT CURRENT_TIMESTAMP,
+              PRIMARY KEY(id, date))""",
+    "drop": """DROP TABLE IF EXISTS users CASCADE""",
+    "select": """SELECT * FROM users""",
+    "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
+              VALUES (%s, %s, %s, %s ,%s)
+              ON CONFLICT (id) DO NOTHING""",
+    "update": """UPDATE users
+              SET username = %s, first_name = %s, last_name = %s, language_code = %s
+              WHERE id = %s""",
+    "delete": """DELETE FROM users
+              WHERE id = %s"""
+  },
+  "bot_users": {
+    "create": """CREATE TABLE IF NOT EXISTS bot_users(
+              id_bot integer REFERENCES id_users ON DELETE CASCADE,
+              id_user integer REFERENCES id_users ON DELETE CASCADE,
+              date timestamp DEFAULT CURRENT_TIMESTAMP,
+              language varchar(10),
+              PRIMARY KEY(id_bot, id_user))""",
+    "drop": """DROP TABLE IF EXISTS bot_users CASCADE""",
+    "select": """SELECT * FROM bot_users""",
+    "insert": """INSERT INTO bot_users (id_bot, id_user, language)
+              VALUES (%s, %s, %s)
+              ON CONFLICT (id_bot, id_user) DO UPDATE
+              SET language = EXCLUDED.language""",
+    "update": """UPDATE bot_users
+              SET language = %s
+              WHERE id_bot = %s AND id_user = %s""",
+    "delete": """DELETE FROM bot_users
+              WHERE id_bot = %s AND id_user = %s"""
+  },
+  "activity": {
+    "create": """CREATE TABLE IF NOT EXISTS activity(
+              id serial PRIMARY KEY,
+              id_bot integer REFERENCES id_users ON DELETE CASCADE,
+              id_user integer REFERENCES id_users ON DELETE CASCADE,
+              content text NOT NULL,
+              date timestamp DEFAULT CURRENT_TIMESTAMP,
+              type varchar(20),""",
+    "drop": """DROP TABLE IF EXISTS activity CASCADE""",
+    "select": """SELECT * FROM activity""",
+    "insert": """INSERT INTO activity (id_bot, id_user, content, type)
+              VALUES (%s, %s, %s ,%s)""",
+    "update": """UPDATE activity
+              SET type = %s
+              WHERE id = %s""",
+    "delete": """DELETE FROM activity
+              WHERE id = %s"""
+  },
+  "punteggio": {
+    "create": """CREATE TABLE IF NOT EXISTS punteggio(
+              id_user integer REFERENCES id_users ON DELETE CASCADE,
+              valutatione numeric(1) DEFAULT 0,
+              date timestamp DEFAULT CURRENT_TIMESTAMP,
+              PRIMARY KEY(id_user))""",
+    "drop": """DROP TABLE IF EXISTS valutazione CASCADE""",
+    "select": """SELECT * FROM valutazione""",
+    "insert": """INSERT INTO punteggio (id_user, valutazione)
+              VALUES (%s, %s)
+              ON CONFLICT(id_user) DO UPDATE
+              SET valutazione = EXCLUDED.valutazione, date = CURRENT_TIMESTAMP""",
+    "update": """UPDATE punteggio
+              SET valutazione = %s
+              WHERE id_user = %s""",
+    "delete": """DELETE FROM punteggio
+              WHERE id_user = %s"""
+  }
+}
 
 def init():
-    drop_queries = [
-      """DROP TABLE IF EXISTS id_users CASCADE""",
-      """DROP TABLE IF EXISTS users CASCADE""",
-      """DROP TABLE IF EXISTS bot_users CASCADE""",
-      """DROP TABLE IF EXISTS activity CASCADE""",
-      """DROP TABLE IF EXISTS valutazione CASCADE"""
-    ]
-    create_queries = [
-      """CREATE TABLE IF NOT EXISTS id_users(
-         id integer PRIMARY KEY,
-         admin boolean DEFAULT false,
-         tester boolean DEFAULT false,
-         loot_user boolean DEFAULT false,
-         loot_admin boolean DEFAULT false)""",
-      """CREATE TABLE IF NOT EXISTS users(
-          id integer REFERENCES id_users ON DELETE CASCADE,
-          username varchar(255),
-          first_name varchar(255),
-          last_name varchar(255),
-          language_code varchar(10),
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY(id, date))""",
-      """CREATE TABLE IF NOT EXISTS bot_users(
-          id_bot integer REFERENCES id_users ON DELETE CASCADE,
-          id_user integer REFERENCES id_users ON DELETE CASCADE,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          language varchar(10),
-          PRIMARY KEY(id_bot, id_user))""",
-      """CREATE TABLE IF NOT EXISTS activity(
-          id_bot integer REFERENCES id_users ON DELETE CASCADE,
-          id_user integer REFERENCES id_users ON DELETE CASCADE,
-          content text NOT NULL,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          type varchar(20),
-          PRIMARY KEY(id_bot, id_user, date))""",
-      """CREATE TABLE IF NOT EXISTS punteggio(
-          id_user integer REFERENCES id_users ON DELETE CASCADE,
-          valutatione numeric(1) DEFAULT 0,
-          date timestamp DEFAULT CURRENT_TIMESTAMP,
-          PRIMARY KEY(id_user, date))"""
-    ]
-    select_queries = [
-      """SELECT * FROM id_users""",
-      """SELECT * FROM users""",
-      """SELECT * FROM bot_users""",
-      """SELECT * FROM activity""",
-      """SELECT * FROM valutazione"""
-    ]
     map(lambda query: execute(query), drop_queries)
     map(lambda query: execute(query), create_queries)
     map(lambda query: execute(query), select_queries)
