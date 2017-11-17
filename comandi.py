@@ -317,6 +317,7 @@ Crediti: @brandimax @Odococo"""
                     user['user_id'])
         else:
             text = "Non ci sono utenti nel database"
+        print(text)
         self.answer(text)
 
 
