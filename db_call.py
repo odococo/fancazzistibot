@@ -59,8 +59,7 @@ def update_user(user):
 
 # ritorna l'elenco dei punteggi    
 def get_punteggi():
-  query = """SELECT username, valutazione
-          FROM punteggio JOIN users ON (id_user = id)"""
+  query = TABELLE['punteggio']['select']['all']
   return execute(query)
 
 # aggiungi un punteggio
@@ -129,7 +128,9 @@ TABELLE = {
               loot_admin boolean DEFAULT false,
               banned boolean DEFAULT false)""",
     "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
-    "select": """SELECT * FROM id_users""",
+    "select": {
+      'all': """SELECT * FROM id_users"""
+    },
     "insert": """INSERT INTO id_users (id) 
               VALUES(%s)
               ON CONFLICT(id) DO NOTHING""",
@@ -178,7 +179,9 @@ TABELLE = {
               language varchar(10),
               PRIMARY KEY(id_bot, id_user))""",
     "drop": """DROP TABLE IF EXISTS bot_users CASCADE""",
-    "select": """SELECT * FROM bot_users""",
+    "select": {
+       'all': """SELECT * FROM bot_users"""
+    },
     "insert": """INSERT INTO bot_users (id_bot, id_user, language)
               VALUES (%s, %s, %s)
               ON CONFLICT (id_bot, id_user) DO UPDATE
@@ -198,7 +201,9 @@ TABELLE = {
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               type varchar(20))""",
     "drop": """DROP TABLE IF EXISTS activity CASCADE""",
-    "select": """SELECT * FROM activity""",
+    "select": {
+      'all': """SELECT * FROM activity"""
+    },
     "insert": """INSERT INTO activity (id_bot, id_user, content, type)
               VALUES (%s, %s, %s ,%s)""",
     "update": """UPDATE activity
@@ -214,7 +219,9 @@ TABELLE = {
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY(id_user))""",
     "drop": """DROP TABLE IF EXISTS punteggio CASCADE""",
-    "select": """SELECT * FROM punteggio""",
+    "select": {
+      'all': """SELECT * FROM punteggio"""
+    },
     "insert": """INSERT INTO punteggio (id_user, valutazione)
               VALUES (%s, %s)
               ON CONFLICT(id_user) DO UPDATE
@@ -231,8 +238,7 @@ def init():
     esito = {}
     #esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
     #esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
-    esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
-    esito['alter'] = execute("""ALTER TABLE id_users ADD COLUMN banned boolean DEFAULT false""")
+    esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select']['all'])), TABELLE))
     print(esito)
     
 if __name__ == "__main__":
