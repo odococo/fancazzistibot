@@ -27,7 +27,7 @@ def add_user(user, id_bot=None):
     # queste informazioni potrebbero cambiare nel tempo, quindi
     # prima di tutto selezione le ultime informazioni note dal database
     # se sono uguali ignoro, altrimenti effettuo un inserimento
-    user_db = execute(TABELLE['users']['select']['from_id'], (user['id'],))
+    user_db = get_user(user['id'])
     if different_user(user, user_db):
         execute(TABELLE['users']['insert'], 
                 (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
@@ -45,7 +45,7 @@ def get_user(key_value):
         query = TABELLE['users']['select']['from_id']
     else:
         query = TABELLE['users']['select']['from_username']
-    user = execute(query, (key_value,))
+    user = execute(query, (key_value, key_value))
     return user
   
 def update_user(user):
