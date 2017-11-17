@@ -19,7 +19,6 @@ from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, Key
 from telegram.ext import ConversationHandler
 
 from comandi import Command
-from db_call import execute
 
 COMANDI_BOT_FATHER = """
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
