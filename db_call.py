@@ -29,7 +29,8 @@ def add_user(user, id_bot=None):
     # se sono uguali ignoro, altrimenti effettuo un inserimento
     user_db = execute(TABELLE['users']['select']['from_id'], (user['id'],))
     if different_user(user, user_db):
-        execute(TABELLE['users']['insert'], (**user))
+        execute(TABELLE['users']['insert'], 
+                (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
     if id_bot is not None:
         execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
 
