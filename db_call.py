@@ -155,7 +155,7 @@ TABELLE = {
                        FROM users NATURAL JOIN id_users
                        WHERE username = %s AND date >= ALL(SELECT date
                         FROM users
-                        WHERE id = %s)""",
+                        WHERE username = %s)""",
       'from_id': """SELECT *
               FROM users NATURAL JOIN id_users
               WHERE id = %s AND date >= ALL(SELECT date
