@@ -11,6 +11,8 @@ from urllib import parse
 import psycopg2
 import psycopg2.extras
 
+from utils import is_numeric
+
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
