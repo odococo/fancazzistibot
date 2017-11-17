@@ -57,9 +57,6 @@ def update_user(user):
   query = TABELLE['id_users']['update']
   return execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
 
-def update_user_permissions(user):
-  
-
 # ritorna l'elenco dei punteggi    
 def get_punteggi():
   query = """SELECT username, valutazione
