@@ -157,8 +157,7 @@ TABELLE = {
                 WHERE id = %s)"""
     },
     "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
-              VALUES (%s, %s, %s, %s ,%s)
-              ON CONFLICT (id) DO NOTHING""",
+              VALUES (%s, %s, %s, %s ,%s)""",
     "update": """UPDATE users
               SET username = %s, first_name = %s, last_name = %s, language_code = %s
               WHERE id = %s""",
