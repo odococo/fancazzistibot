@@ -27,21 +27,11 @@ def add_user(user, id_bot=None):
     # queste informazioni potrebbero cambiare nel tempo, quindi
     # prima di tutto selezione le ultime informazioni note dal database
     # se sono uguali ignoro, altrimenti effettuo un inserimento
-    user_db = execute(TABELLE['users']['select']['last'], (user['id'],)
-           )
+    user_db = execute(TABELLE['users']['select']['from_id'], (user['id'],))
     if different_user(user, user_db):
-        execute("""INSERT INTO users(
-                id, username, first_name, last_name, language_code)
-                VALUES(%s, %s, %s, %s, %s)""",
-                (user['id'], user['username'], 
-                user['first_name'], user['last_name'], 
-                user['language_code']))
+        execute(TABELLE['users']['insert'], (**user))
     if id_bot is not None:
-        execute("""INSERT INTO bot_users(id_bot, id_user, language)
-                VALUES(%s, %s, %s)
-                ON CONFLICT(id_bot, id_user) DO NOTHING;""",
-                (id_bot, user['id'], user['language_code'])
-        )
+        execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
 
 # aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
 def add_bot(bot):
