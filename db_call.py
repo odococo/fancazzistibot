@@ -227,7 +227,7 @@ def init():
     esito = {}
     #esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
     #esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
-    #esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
+    esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
     print(esito)
     
 if __name__ == "__main__":
