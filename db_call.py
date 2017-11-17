@@ -44,9 +44,8 @@ def get_users():
   return execute(TABELLE['users']['select']['all'])
     
 def get_user(key_value):
-    key_value = (str(key_value) if utils.is_numeric(key_value, True)
-                 else key_value)
     if utils.is_numeric(key_value):
+        key_value = int(key_value)
         query = TABELLE['users']['select']['from_id']
     else:
         query = TABELLE['users']['select']['from_username']
@@ -236,8 +235,8 @@ TABELLE = {
 
 def init():
     esito = {}
-    #esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
-    #esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
+    esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
+    esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
     esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select']['all'])), TABELLE))
     print(esito)
     
