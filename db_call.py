@@ -21,22 +21,13 @@ logger = logging.getLogger(__name__)
 # aggiunge un utente al database
 def add_user(user, id_bot=None):
     # salvo l'id dell'utente o del bot
-    execute("""INSERT INTO id_users(id) 
-            VALUES(%s)
-            ON CONFLICT(id) DO NOTHING""", (user['id'],)
+    execute(TABELLE['id_users']['insert'], (user['id'],)
     )
     # salvo le altre informazioni relative ad utenti o bot
     # queste informazioni potrebbero cambiare nel tempo, quindi
     # prima di tutto selezione le ultime informazioni note dal database
     # se sono uguali ignoro, altrimenti effettuo un inserimento
-    user_db = execute("""SELECT a.*
-                   FROM users AS a
-                   INNER JOIN (
-                        SELECT id, MAX(date) AS date
-                        FROM users
-                        GROUP BY id
-                   ) b ON a.id = b.id AND a.date = b.date
-                   WHERE a.id = %s""", (user['id'],)
+    user_db = execute(TABELLE['users']['select']['last'], (user['id'],)
            )
     if different_user(user, user_db):
         execute("""INSERT INTO users(
@@ -55,6 +46,20 @@ def add_user(user, id_bot=None):
 # aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
 def add_bot(bot):
     add_user(bot)
+    
+def get_user(key_value):
+    key_value = (str(key_value) if is_numeric(key_value, True)
+                 else key_value)
+    if is_numeric(key_value):
+        query = TABELLE['users']['select']['from_id']
+    else:
+        query = TABELLE['users']['select']['from_username']
+    user = execute(query, (key_value,))
+    return user
+  
+def update_user(user):
+  query = TABELLE['users']['update']
+  return execute(query, (user['username'], user['first_name'], user['last_name'], user['language_code'], user['id']))
 
 # ritorna l'elenco dei punteggi    
 def get_punteggi():
@@ -147,7 +152,19 @@ TABELLE = {
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY(id, date))""",
     "drop": """DROP TABLE IF EXISTS users CASCADE""",
-    "select": """SELECT * FROM users""",
+    "select": {
+      'all': """SELECT * FROM users""",
+      'from_username': """SELECT * 
+                       FROM users
+                       WHERE username = %s AND date >= ALL(SELECT date
+                        FROM users
+                        WHERE id = %s)""",
+      'from_id': """SELECT *
+              FROM users
+              WHERE id = %s date >= ALL(SELECT date
+                FROM users
+                WHERE id = %s)"""
+    },
     "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
               VALUES (%s, %s, %s, %s ,%s)
               ON CONFLICT (id) DO NOTHING""",
@@ -216,9 +233,10 @@ TABELLE = {
 
 def init():
     esito = {}
-    esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
-    esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
-    esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
+    #esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
+    #esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
+    #esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
+    esito = execute("ALTER TABLE users ADD COLUMN banned boolean DEFAULT false")
     print(esito)
     
 if __name__ == "__main__":
