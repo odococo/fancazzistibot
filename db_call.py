@@ -11,7 +11,7 @@ from urllib import parse
 import psycopg2
 import psycopg2.extras
 
-from utils import is_numeric
+import utils
 
 
 # Enable logging
@@ -44,9 +44,9 @@ def get_users():
   return execute(TABELLE['users']['select']['all'])
     
 def get_user(key_value):
-    key_value = (str(key_value) if is_numeric(key_value, True)
+    key_value = (str(key_value) if utils.is_numeric(key_value, True)
                  else key_value)
-    if is_numeric(key_value):
+    if utils.is_numeric(key_value):
         query = TABELLE['users']['select']['from_id']
     else:
         query = TABELLE['users']['select']['from_username']
