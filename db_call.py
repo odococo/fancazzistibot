@@ -216,9 +216,9 @@ TABELLE = {
 }
 
 def init():
-    map(lambda query: execute(query), drop_queries)
-    map(lambda query: execute(query), create_queries)
-    map(lambda query: execute(query), select_queries)
+    map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE)
+    map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE)
+    map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE)
     
 if __name__ == "__main__":
     init()
