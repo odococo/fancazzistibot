@@ -80,7 +80,6 @@ def different_user(userA, userB):
    
 # esegue una query arbitraria    
 def execute(query, param=None):
-    print(query)
     cursor = connect_db();
     if cursor is not None:
         try:
@@ -217,6 +216,7 @@ TABELLE = {
 }
 
 def init():
+    esito = {}
     esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
     esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
     esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
