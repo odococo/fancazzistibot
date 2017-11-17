@@ -66,12 +66,11 @@ class Loot:
                 update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
                 return self.annulla(bot, update)
 
-            # merged è una lista di quadruple con i seguenti elementi:
-            # elem[0]= quantità oggetto
-            # elem[1]= nome oggetto
-            # elem[2]= costo oggetto
-            # elem[3]= numero negozio per oggetto
-
+            """"merged è una lista di quadruple con i seguenti elementi:
+            elem[0]= quantità oggetto
+            elem[1]= nome oggetto
+            elem[2]= costo oggetto
+            elem[3]= numero negozio per oggetto"""
             merged = []
             for q in self.quantita:
                 c = [item for item in self.costo if item[0] == q[1]]
@@ -103,6 +102,7 @@ class Loot:
             update.message.reply_text("Comprando gli oggetti dal negozio impiegherai un tempo di circa :\n "
                                       + str(m) + " minuti e " + str(s) + " secondi\n")
 
+            #fixme: dividi il send negozi in parti da 30 perche l'HTML semtte di funzionare al 39-esimo
             for elem in merged:
 
                 if int(elem[0])>1: self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
@@ -114,6 +114,7 @@ class Loot:
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
                 InlineKeyboardButton("No", callback_data="/mostraNegoziNo")
             ]]))
+
 
             self.costo.clear()
             self.quantita.clear()
