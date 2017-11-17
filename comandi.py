@@ -329,7 +329,7 @@ Crediti: @brandimax @Odococo"""
             if permesso not in user:
                 text = "Non esiste questo permesso!"
             else:
-                user[permesso] = !user[permesso]
+                user[permesso] = not user[permesso]
             text = "Aggiornamento completato!"
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
