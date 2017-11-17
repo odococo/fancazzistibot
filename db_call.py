@@ -80,6 +80,7 @@ def different_user(userA, userB):
    
 # esegue una query arbitraria    
 def execute(query, param=None):
+    print(query)
     cursor = connect_db();
     if cursor is not None:
         try:
