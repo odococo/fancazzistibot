@@ -57,6 +57,10 @@ def update_user(user):
   query = TABELLE['users']['update']
   return execute(query, (user['username'], user['first_name'], user['last_name'], user['language_code'], user['id']))
 
+def update_user_permissions(user):
+  query = TABELLE['id_users']['update']
+  return execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
+
 # ritorna l'elenco dei punteggi    
 def get_punteggi():
   query = """SELECT username, valutazione
@@ -126,14 +130,15 @@ TABELLE = {
               admin boolean DEFAULT false,
               tester boolean DEFAULT false,
               loot_user boolean DEFAULT false,
-              loot_admin boolean DEFAULT false)""",
+              loot_admin boolean DEFAULT false,
+              banned boolean DEFAULT false)""",
     "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
     "select": """SELECT * FROM id_users""",
     "insert": """INSERT INTO id_users (id) 
               VALUES(%s)
               ON CONFLICT(id) DO NOTHING""",
     "update": """UPDATE id_users
-              SET admin = %s, tester = %s, loot_user = %s, loot_admin = %s
+              SET admin = %s, tester = %s, loot_user = %s, loot_admin = %s, banned = %s
               WHERE id = %s""",
     "delete": """DELETE FROM id_users
               WHERE id = %s"""
