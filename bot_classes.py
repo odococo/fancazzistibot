@@ -55,7 +55,6 @@ class Loot:
                top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
 
         if update.message.text == "Anulla":
-            update.message.reply_text("Ok ho annullato tutto")
             return self.annulla(bot, update)
         elif update.message.text == "Stima":
             if not self.stima_flag:
@@ -106,10 +105,10 @@ class Loot:
 
             for elem in merged:
 
-                if int(elem[0])>1: self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> (" + str(
-                    elem[0]) + ") al negozio:\n@lootplusbot " + str(elem[3]) + "\n"
+                if int(elem[0])>1: self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
+                    elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n"
                 else:
-                    self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> al negozio:\n@lootplusbot (<b>" + str(elem[3]) + "</b>)\n"
+                    self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n"
 
             update.message.reply_text("Vuoi visualizzare i negozi?", reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
@@ -145,13 +144,14 @@ class Loot:
 
             self.costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
 
-    def annulla(self,bot, update):
+    def annulla(self , bot, update):
         """Annulla la stima"""
 
         self.stima_flag = False
         self.costo_craft = 0
         self.quantita = []
         self.to_send_negozi = ""
+        update.message.reply_text("Ok ho annullato tutto",reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
 
