@@ -312,7 +312,7 @@ Crediti: @brandimax @Odococo"""
             users = [users] if isinstance(users, dict) else users
             text = "Elenco utenti:\n"
             for user in users:
-                text += "<strong><code>{}</code></strong>: <code>{}</code>\n".format(
+                text += "<code>{}</code>: <code>{}</code>\n".format(
                     user['bot_id'],
                     user['user_id'])
         else:
