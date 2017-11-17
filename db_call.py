@@ -54,9 +54,8 @@ def get_user(key_value):
     return user
   
 def update_user(user):
-  query = TABELLE['users']['update']query = TABELLE['id_users']['update']
-  return (execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
-    and execute(query, (user['username'], user['first_name'], user['last_name'], user['language_code'], user['id'])))
+  query = TABELLE['id_users']['update']
+  return execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
 
 def update_user_permissions(user):
   
