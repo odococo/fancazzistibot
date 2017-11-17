@@ -70,6 +70,12 @@ Per questo ti sarà chiesta la conferma
     * *qualeBoss*: 0 -> Titan, 1 -> Phoenix
     * *giorno*: numero compreso tra 0 e 6, (0 -> Lunedi, 1 -> Martedi....6-> Domenica)
     * *ora* : un'ora qualsiasi
+    
+## Altri comandi Admin
+Boss apparte ci sono altri comandi riservati ai soli admin:
+* */utente username* : visualizza le informazioni correlate all'utente
+* */utenti*: visualizza tutti gli utenti che stanno utilizzando il bot
+
 
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉
