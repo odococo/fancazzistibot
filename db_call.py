@@ -201,8 +201,8 @@ TABELLE = {
               valutatione numeric(1) DEFAULT 0,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY(id_user))""",
-    "drop": """DROP TABLE IF EXISTS valutazione CASCADE""",
-    "select": """SELECT * FROM valutazione""",
+    "drop": """DROP TABLE IF EXISTS punteggio CASCADE""",
+    "select": """SELECT * FROM punteggio""",
     "insert": """INSERT INTO punteggio (id_user, valutazione)
               VALUES (%s, %s)
               ON CONFLICT(id_user) DO UPDATE
