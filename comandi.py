@@ -3,7 +3,7 @@
 
 import random
 import utils, os, re
-from db_call import execute
+from db_call import execute, get_user
 from negozi_loot import value
 from PokerDice import calc_score, consigliami
 
@@ -111,7 +111,7 @@ In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per 
 e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai 
 finito premi "Fine".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
-Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️"""
+Crediti: @brandimax @Odococo"""
         self.answer(text)
 
     # def Uinline(self):
@@ -323,10 +323,17 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Aregistra(self):
         """Aggiorna i permessi di un utente"""
         if len(self.params) == 2:
-            pass
+            key = self.params[0]
+            permesso = self.params[1]
+            user = get_user(key)
+            if permesso not in user:
+                text = "Non esiste questo permesso!"
+            else:
+                user[permesso] = !user[permesso]
+            text = "Aggiornamento completato!"
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
     utente tramite id o username
-    permesso tra questi valori: tester admin"""
+    permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
 
