@@ -64,8 +64,7 @@ def get_punteggi():
 
 # aggiungi un punteggio
 def add_punteggio(id, punteggio):
-  query = """INSERT INTO punteggio (id_user, valutazione)
-          VALUES (%s, %s)"""
+  query = TABELLE['punteggio']['insert']
   return execute(query, (id, punteggio))
 #------------------------------------------------------------------------------- 
 # essendoci anche la data, non posso fare il controllo direttamente da db
@@ -80,7 +79,6 @@ def different_user(userA, userB):
    
 # esegue una query arbitraria    
 def execute(query, param=None):
-    print(query)
     cursor = connect_db();
     if cursor is not None:
         try:
@@ -185,7 +183,7 @@ TABELLE = {
               id_user integer REFERENCES id_users ON DELETE CASCADE,
               content text NOT NULL,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
-              type varchar(20),""",
+              type varchar(20))""",
     "drop": """DROP TABLE IF EXISTS activity CASCADE""",
     "select": """SELECT * FROM activity""",
     "insert": """INSERT INTO activity (id_bot, id_user, content, type)
@@ -202,8 +200,8 @@ TABELLE = {
               valutatione numeric(1) DEFAULT 0,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY(id_user))""",
-    "drop": """DROP TABLE IF EXISTS valutazione CASCADE""",
-    "select": """SELECT * FROM valutazione""",
+    "drop": """DROP TABLE IF EXISTS punteggio CASCADE""",
+    "select": """SELECT * FROM punteggio""",
     "insert": """INSERT INTO punteggio (id_user, valutazione)
               VALUES (%s, %s)
               ON CONFLICT(id_user) DO UPDATE
@@ -217,10 +215,11 @@ TABELLE = {
 }
 
 def init():
-    map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE)
-    print(execute("""SELECT admin FROM id_users"""))
-    #map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE)
-    #map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE)
+    esito = {}
+    esito['drop'] = list(map(lambda tabella: execute(TABELLE[tabella]['drop']), TABELLE))
+    esito['create'] = list(map(lambda tabella: execute(TABELLE[tabella]['create']), TABELLE))
+    esito['select'] = list(map(lambda tabella: print(execute(TABELLE[tabella]['select'])), TABELLE))
+    print(esito)
     
 if __name__ == "__main__":
     init()
