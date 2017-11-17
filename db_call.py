@@ -54,12 +54,12 @@ def get_user(key_value):
     return user
   
 def update_user(user):
-  query = TABELLE['users']['update']
-  return execute(query, (user['username'], user['first_name'], user['last_name'], user['language_code'], user['id']))
+  query = TABELLE['users']['update']query = TABELLE['id_users']['update']
+  return (execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
+    and execute(query, (user['username'], user['first_name'], user['last_name'], user['language_code'], user['id'])))
 
 def update_user_permissions(user):
-  query = TABELLE['id_users']['update']
-  return execute(query, (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned']))
+  
 
 # ritorna l'elenco dei punteggi    
 def get_punteggi():
@@ -156,12 +156,12 @@ TABELLE = {
     "select": {
       'all': """SELECT * FROM users""",
       'from_username': """SELECT * 
-                       FROM users
+                       FROM users NATURAL JOIN id_users
                        WHERE username = %s AND date >= ALL(SELECT date
                         FROM users
                         WHERE id = %s)""",
       'from_id': """SELECT *
-              FROM users
+              FROM users NATURAL JOIN id_users
               WHERE id = %s AND date >= ALL(SELECT date
                 FROM users
                 WHERE id = %s)"""
