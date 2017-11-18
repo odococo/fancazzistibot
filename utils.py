@@ -19,7 +19,6 @@ from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, Key
 from telegram.ext import ConversationHandler
 
 from comandi import Command
-from db_call import execute
 
 COMANDI_BOT_FATHER = """
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
@@ -93,7 +92,7 @@ def reverse(obj):
 def get_user(user):
     if not user:
         return None
-    fields = ["*{}*: `{}`".format(key, value)
+    fields = ["<strong>{}</strong>: <code>{}</code>".format(key, value)
               for key, value in user.items() if key != "date"]
     return "\n".join(fields)
 
@@ -128,21 +127,6 @@ def get_user_id(update):
         return update._effective_user.id
     except IndexError:
         return 0
-
-
-def get_user_db(key_value):
-    query = """SELECT * FROM users"""
-    key_value = (str(key_value) if is_numeric(key_value, True)
-                 else key_value)
-    if is_numeric(key_value):
-        query += " WHERE id = %s"
-    else:
-        query += " WHERE username = %s"
-    query += " ORDER BY date DESC"
-    user = execute(query, (key_value,))
-    return (user[0] if isinstance(user, list) and len(user)
-            else user)
-
 
 def convert(value, from_base=None, to_base=None, values=None):
     if not value:

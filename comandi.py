@@ -3,7 +3,12 @@
 
 import random
 import utils, os, re
+<<<<<<< HEAD
 from db_call import execute
+=======
+from db_call import execute, get_user, update_user
+from negozi_loot import value
+>>>>>>> e8698b5ae14a2135a307760328838e2b558427fd
 from PokerDice import calc_score, consigliami
 
 from telegram import (
@@ -110,7 +115,7 @@ In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per 
 e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai 
 finito premi "Fine".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
-Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️"""
+Crediti: @brandimax @Odococo"""
         self.answer(text)
 
     # def Uinline(self):
@@ -289,14 +294,14 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """Visualizza le informazioni relative a un utente
     Ricerca tramite username o id"""
         if self.params:
-            result = utils.get_user_db(self.params[0])
+            result = get_user(self.params[0])
             if result:
                 text = utils.get_user(result)
             else:
                 text = "Non ci sono utenti che rispondono ai parametri della ricerca"
         else:
             text = "Specifica id o username dell'utente che vuoi cercare"
-        self.answer(text, parse_mode="Markdown")
+        self.answer(text)
 
     def Autenti(self):
         """Visualizza gli utenti che utilizzano un determinato bot"""
@@ -311,7 +316,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             users = [users] if isinstance(users, dict) else users
             text = "Elenco utenti:\n"
             for user in users:
-                text += "<b>{}</b>: <code>{}</code>\n".format(
+                text += "<code>{}</code>: <code>{}</code>\n".format(
                     user['bot_id'],
                     user['user_id'])
         else:
@@ -322,10 +327,18 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Aregistra(self):
         """Aggiorna i permessi di un utente"""
         if len(self.params) == 2:
-            pass
+            key = self.params[0]
+            permesso = self.params[1]
+            user = get_user(key)
+            if permesso not in user:
+                text = "Non esiste questo permesso!"
+            else:
+                user[permesso] = not user[permesso]
+            update_user(user)
+            text = "Aggiornamento completato!"
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
     utente tramite id o username
-    permesso tra questi valori: tester admin"""
+    permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
 

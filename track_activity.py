@@ -1,7 +1,5 @@
 import datetime
 
-from db_call import execute
-
 def track(type, id_bot, id_user, activity_content, date):
     execute("""INSERT INTO activity(
             id_bot, id_user, content, date, type)
