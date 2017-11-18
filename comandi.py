@@ -4,7 +4,6 @@
 import random
 import utils, os, re
 from db_call import execute
-from negozi_loot import value
 from PokerDice import calc_score, consigliami
 
 from telegram import (
