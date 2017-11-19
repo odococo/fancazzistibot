@@ -132,11 +132,13 @@ def request_access(bot, user):
 
 
 def get_user_id(update):
+
     try:
         return str(update._effective_user.id)
-    except IndexError:
-        return str(0)
-
+    except AttributeError :
+        return str(update['message']['from'])
+    finally:
+        return 0
 def convert(value, from_base=None, to_base=None, values=None):
     if not value:
         return "Cosa vuoi convertire?"
