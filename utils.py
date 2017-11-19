@@ -89,12 +89,14 @@ def grant_deny_access(bot, update):
     user_lst = text[1:]
     user={"id":user_lst[0],"username":user_lst[1],"first_name":user_lst[2],"last_name":user_lst[3],"language_code":user_lst[4]}
     if (command.strip("/") == "consentiAccessoSi"):
+        print("Accesso garantito")
         # todo:add user to db
         db_call.add_user(user)
         bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
         for dev in developer_dicts.values():
             bot.send_message(dev, "L'accesso a user : " + str(user["username"]) + ", è stato garantito")
     else:
+        print("Accesso garantito")
         bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
         db_call.add_banned_user(user)
         for dev in developer_dicts.values():

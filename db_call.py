@@ -36,8 +36,9 @@ def add_user(user, id_bot=None):
     if id_bot is not None:
         execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
 
-def add_banned_user(user, id_bot=None):
+def add_banned_user(user):
     # salvo l'id dell'utente o del bot
+    print("Sto negando l'accesso all'user "+str(user['id']))
     execute(TABELLE['id_users']['create']['banned'], (user['id']))
 
 def reset_punteggio():
