@@ -86,6 +86,7 @@ def get_user(user):
 def check_if_user_can_interact(bot, update):
     """Questa funzione ritorna true se l'user puo interagire, altrimenti false
     inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+    print(update)
     print("cerco user con id " + get_user_id(update) + ", nel database")
     user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (get_user_id(update),))
     print("ho trovato : " + str(user))
