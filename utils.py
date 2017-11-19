@@ -104,6 +104,7 @@ def grant_deny_access(bot, update):
 def request_access(bot, user):
     to_send = "L'utente :\n" + str(user) + "\nHa richiesto l'accesso a " + str(bot.username) + "\nConsenti?"
     user=str(user["id"])+" "+str(user["username"])+" "+str(user["first_name"])+" "+str(user["last_name"])+" "+str(user["language_code"])
+    to_send= "L'utente :\n" + str(user[0])+"\n" + str(user[1])+"\n"+ str(user[2])+"\n"+ str(user[3])+"\n"+ "\nHa richiesto l'accesso a " + str(bot.username) + "\nConsenti?"
     for dev in developer_dicts.values():
         bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
