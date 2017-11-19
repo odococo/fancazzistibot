@@ -38,7 +38,7 @@ def add_user(user, id_bot=None):
 
 def add_banned_user(user, id_bot=None):
     # salvo l'id dell'utente o del bot
-    execute(TABELLE['id_users']['insert'], (user['id'],False, False, False, True))
+    execute(TABELLE['id_users']['insert'], (user['id'],"false", "false", "false", "true"))
 
 def reset_punteggio():
     execute("DELETE FROM punteggio")
