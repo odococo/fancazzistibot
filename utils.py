@@ -97,6 +97,7 @@ def grant_deny_access(bot, update):
             bot.send_message(dev, "L'accesso a user : " + str(user["username"]) + ", è stato garantito")
     else:
         bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
+        db_call.add_banned_user(user)
         for dev in developer_dicts.values():
             bot.send_message(dev, "L'accesso a user : " + str(user["username"] + ", è stato negato"))
 

@@ -6,19 +6,19 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
+import db_call
 from db_call import get_user, get_users
 from utils import is_numeric, is_admin, get_user_id, request_access
 
 
 class Loot:
-    def __init__(self, bot, dispatcher, user_lst):
+    def __init__(self, bot, dispatcher):
         self.bot = bot
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
         self.costo = []
         self.to_send_negozi = ""
-        self.user_lst=user_lst
 
         # adding dispatchers
         coversation = ConversationHandler(
@@ -32,25 +32,20 @@ class Loot:
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
     def check_user(self, id):
-        self.update_db()
-        for elem in self.user_lst:
-            if elem["id"]==id: return True
-        return False
-
-    #todo: al posto di chiamare l'update user ogni volta che devi usare la user list nella classe prova
-    #todo: aggiornandolo ogni volta che viene modificato (db_call classe?)
-    def update_db(self):
-        self.user_lst=get_users()
+        db_call.execute(db_call.TABELLE["users"]["from_id"],id)
 
 
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
-        # todo if user_id not in db
-        #bot.sendMessage(24978334,str(update))
-        print(get_user(get_user_id(update)))
-        if not self.check_user(get_user_id(update)):
+        user= db_call.execute(db_call.TABELLE["users"]["from_id"],id)
+
+        if not user:
             request_access(bot, update._effective_user)
             return ConversationHandler.END
+        elif user["banned"]:
+            update.message.reply_text("Spiacente sei stato bannato dal bot")
+            return 
+
 
         text = update.message.text.lower()
         to_send = self.estrai_oggetti(text)

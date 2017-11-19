@@ -158,21 +158,11 @@ def main():
     disp.add_handler(MessageHandler(Filters.all, get_info), -1)
     disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
 
-    users_lst=get_users()
-    """lista di dizionari del con le seguenti chiavi:
-    id
-    username
-    first_name
-    last_name
-    language_code
-    date
-    """
-    print(users_lst)
-    if not users_lst: users_lst=[]
+
 
 
     #classi per craftlootbot e comandi boss
-    Loot(updater.bot, disp, users_lst)
+    Loot(updater.bot, disp)
     Boss(updater.bot, disp)
 
     #handler per richiedere accesso al bot
