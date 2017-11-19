@@ -173,6 +173,7 @@ def main():
     #resetto il database
     for elem in users_lst:
         delete_user(elem)
+    users_lst = []
 
     #classi per craftlootbot e comandi boss
     Loot(updater.bot, disp, users_lst)
