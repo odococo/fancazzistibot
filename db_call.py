@@ -163,7 +163,8 @@ TABELLE = {
               banned boolean DEFAULT true)"""},
         "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
         "select": {
-            'all': """SELECT * FROM id_users"""
+            'all': """SELECT * FROM id_users""",
+            'from_id':"""SELECT * FROM id_users WHERE id = %s"""
         },
         "insert": """INSERT INTO id_users (id) 
               VALUES(%s)
@@ -196,6 +197,7 @@ TABELLE = {
               WHERE id = %s AND date >= ALL(SELECT date
                 FROM users
                 WHERE id = %s)"""
+
         },
         "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
               VALUES (%s, %s, %s, %s ,%s)""",
