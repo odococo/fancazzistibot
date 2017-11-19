@@ -6,7 +6,7 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
-from db_call import get_user
+from db_call import get_user, get_users
 from utils import is_numeric, is_admin, get_user_id, request_access
 
 
@@ -18,6 +18,7 @@ class Loot:
         self.quantita = []
         self.costo = []
         self.to_send_negozi = ""
+        bot.sendMessage(24978334,get_users())
 
         # adding dispatchers
         coversation = ConversationHandler(
@@ -33,8 +34,8 @@ class Loot:
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
         # todo if user_id not in db
-        bot.sendMessage(24978334,update)
-        bot.sendMessage(24978334,get_user(get_user_id(update)))
+        bot.sendMessage(24978334,str(update))
+        bot.sendMessage(24978334,str(get_user(get_user_id(update))))
         if not get_user(get_user_id(update)):
             request_access(bot, update._effective_user)
             return ConversationHandler.END
