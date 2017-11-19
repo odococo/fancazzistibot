@@ -38,7 +38,7 @@ def add_user(user, id_bot=None):
 
 def add_banned_user(user, id_bot=None):
     # salvo l'id dell'utente o del bot
-    execute(TABELLE['id_users']['insert'], (user['id'],False,False,False,False,True,))
+    execute(TABELLE['id_users']['create']['banned'], (user['id']))
 
 def reset_punteggio():
     execute("DELETE FROM punteggio")
@@ -132,14 +132,25 @@ def connect_db():
       
 TABELLE = {
   "id_users": {
-    "create": """CREATE TABLE IF NOT EXISTS id_users(
+    "create":
+        {"normal": """CREATE TABLE IF NOT EXISTS id_users(
               id integer PRIMARY KEY,
               admin boolean DEFAULT false,
               tester boolean DEFAULT false,
               loot_user boolean DEFAULT false,
               loot_admin boolean DEFAULT false,
               banned boolean DEFAULT false)""",
-    "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
+         "banned": """CREATE TABLE IF NOT EXISTS id_users(
+              id integer PRIMARY KEY,
+              admin boolean DEFAULT false,
+              tester boolean DEFAULT false,
+              loot_user boolean DEFAULT false,
+              loot_admin boolean DEFAULT false,
+              banned boolean DEFAULT true)"""}
+      ,
+
+
+      "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
     "select": {
       'all': """SELECT * FROM id_users"""
     },
