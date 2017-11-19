@@ -83,6 +83,21 @@ def get_user(user):
     return "\n".join(fields)
 
 
+def check_if_user_can_interact(bot, update):
+    """Questa funzione ritorna true se l'user puo interagire, altrimenti false
+    inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+    print("cerco user con id " + get_user_id(update) + ", nel database")
+    user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (get_user_id(update),))
+    print("ho trovato : " + str(user))
+    if not user:
+        request_access(bot, update._effective_user)
+        return False
+    elif user["banned"]:
+        update.message.reply_text("Spiacente sei stato bannato dal bot")
+        return False
+    else:
+        return True
+
 def grant_deny_access(bot, update):
     text = update.callback_query.data.split(" ")
     command = text[0]
@@ -90,7 +105,6 @@ def grant_deny_access(bot, update):
     user={"id":user_lst[0],"username":user_lst[1],"first_name":user_lst[2],"last_name":user_lst[3],"language_code":user_lst[4]}
     if (command.strip("/") == "consentiAccessoSi"):
         print("Accesso garantito")
-        # todo:add user to db
         db_call.save_id_user(user)
         bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
         for dev in developer_dicts.values():

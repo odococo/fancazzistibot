@@ -8,7 +8,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
 
 import db_call
 from db_call import get_user, get_users
-from utils import is_numeric, is_admin, get_user_id, request_access
+from utils import is_numeric, is_admin, get_user_id, request_access, check_if_user_can_interact
 
 
 class Loot:
@@ -34,15 +34,8 @@ class Loot:
 
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
-        print("cerco user con id "+get_user_id(update)+", nel database")
-        user= db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"],(get_user_id(update),))
-        print("ho trovato : "+str(user))
-        if not user:
-            request_access(bot, update._effective_user)
-            return ConversationHandler.END
-        elif user["banned"]:
-            update.message.reply_text("Spiacente sei stato bannato dal bot")
-            return
+
+        if not check_if_user_can_interact(bot, update): return
 
 
         text = update.message.text.lower()
