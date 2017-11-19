@@ -283,5 +283,5 @@ def init():
     print(esito)
 
 
-if __name__ == "__main__":
-    init()
+#if __name__ == "__main__":
+   # init()
