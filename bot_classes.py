@@ -13,7 +13,7 @@ from utils import is_numeric, is_admin, get_user_id, request_access
 
 
 class Loot:
-    def __init__(self, bot, dispatcher): 
+    def __init__(self, bot, dispatcher):
         self.bot = bot
         self.costo_craft = 0
         self.stima_flag = False
