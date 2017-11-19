@@ -91,7 +91,7 @@ def restricted(func):
         inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
         user_id = update._effective_user
         print("cerco user con id " + str(user_id) + ", nel database")
-        user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
+        user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id,))
         print("ho trovato : " + str(user))
         if not user:
             request_access(bot, user_id)
@@ -101,14 +101,55 @@ def restricted(func):
             return
         else:
             return func(bot, update, *args, **kwargs)
+
     return check_if_user_can_interact
+
+
+def restricted2(self):
+    def real_decorator(func):
+
+        def no_self(bot, update, *args, **kwargs):
+            """Questa funzione ritorna true se l'user puo interagire, altrimenti false
+            inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+            user_id = update._effective_user
+            print("cerco user con id " + str(user_id) + ", nel database")
+            user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id,))
+            print("ho trovato : " + str(user))
+            if not user:
+                request_access(bot, user_id)
+                return
+            elif user["banned"]:
+                update.message.reply_text("Spiacente sei stato bannato dal bot")
+                return
+            else:
+                return func(bot, update, *args, **kwargs)
+
+        def yes_self(self, bot, update, *args, **kwargs):
+            """Questa funzione ritorna true se l'user puo interagire, altrimenti false
+            inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+            user_id = update._effective_user
+            print("cerco user con id " + str(user_id) + ", nel database")
+            user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id,))
+            print("ho trovato : " + str(user))
+            if not user:
+                request_access(bot, user_id)
+                return
+            elif user["banned"]:
+                update.message.reply_text("Spiacente sei stato bannato dal bot")
+                return
+            else:
+                return func(bot, update, *args, **kwargs)
+
+        if self: return yes_self
+        else : return no_self
 
 
 def grant_deny_access(bot, update):
     text = update.callback_query.data.split(" ")
     command = text[0]
     user_lst = text[1:]
-    user={"id":user_lst[0],"username":user_lst[1],"first_name":user_lst[2],"last_name":user_lst[3],"language_code":user_lst[4]}
+    user = {"id": user_lst[0], "username": user_lst[1], "first_name": user_lst[2], "last_name": user_lst[3],
+            "language_code": user_lst[4]}
     if (command.strip("/") == "consentiAccessoSi"):
         print("Accesso garantito")
         db_call.save_id_user(user)
@@ -124,10 +165,12 @@ def grant_deny_access(bot, update):
 
 
 def request_access(bot, user):
-    to_send= "L'utente :\nid: " + str(user["id"])+"\nusername: " + str(user["username"])+"\nfirst_name: "+\
-             str(user["first_name"])+"\nlast_name: "+ str(user["last_name"])+"\n"+ "\nHa richiesto l'accesso a " +\
-             str(bot.username) + "\nConsenti?"
-    user=str(user["id"])+" "+str(user["username"])+" "+str(user["first_name"])+" "+str(user["last_name"])+" "+str(user["language_code"])
+    to_send = "L'utente :\nid: " + str(user["id"]) + "\nusername: " + str(user["username"]) + "\nfirst_name: " + \
+              str(user["first_name"]) + "\nlast_name: " + str(
+        user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \
+              str(bot.username) + "\nConsenti?"
+    user = str(user["id"]) + " " + str(user["username"]) + " " + str(user["first_name"]) + " " + str(
+        user["last_name"]) + " " + str(user["language_code"])
     print(to_send)
     for dev in developer_dicts.values():
         bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
@@ -137,13 +180,13 @@ def request_access(bot, user):
 
 
 def get_user_id(update):
-
     try:
         return str(update._effective_user.id)
-    except AttributeError :
+    except AttributeError:
         return str(update['message']['from'])
     finally:
         return 0
+
 
 def convert(value, from_base=None, to_base=None, values=None):
     if not value:

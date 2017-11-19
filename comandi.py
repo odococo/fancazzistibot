@@ -340,7 +340,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         self.answer(text)
 
 
-@utils.restricted
+@utils.restricted2
 def new_command(bot, update):
     command = Command(bot, update)
     command.execute()
