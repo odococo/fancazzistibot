@@ -32,7 +32,7 @@ from telegram.ext import (
 from bot_classes import Loot, Boss
 from comandi import new_command
 from db_call import add_user, add_bot, get_users, delete_user
-from utils import (is_numeric, grant_deny_access, check_if_user_can_interact)
+from utils import (is_numeric, grant_deny_access)
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
