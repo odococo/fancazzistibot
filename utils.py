@@ -142,6 +142,7 @@ def restricted2(self):
 
         if self: return yes_self
         else : return no_self
+    return real_decorator
 
 
 def grant_deny_access(bot, update):
