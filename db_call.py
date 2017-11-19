@@ -40,7 +40,7 @@ def add_user(user, id_bot=None):
 def ban_user(user):
     # salvo l'id dell'utente o del bot
     print("Sto negando l'accesso all'user " + str(user['id']))
-    execute(TABELLE['id_users']['create']['banned'], user['id'])
+    execute(TABELLE['id_users']['insert']['banned_user'], user['id'])
 
 
 def reset_punteggio():
@@ -147,14 +147,14 @@ def connect_db():
 
 TABELLE = {
     "id_users": {
-        "create":{"normal": """CREATE TABLE IF NOT EXISTS id_users(
+        "create": {"normal": """CREATE TABLE IF NOT EXISTS id_users(
               id integer PRIMARY KEY,
               admin boolean DEFAULT false,
               tester boolean DEFAULT false,
               loot_user boolean DEFAULT false,
               loot_admin boolean DEFAULT false,
               banned boolean DEFAULT false)""",
-             "banned": """CREATE TABLE IF NOT EXISTS id_users(
+                   "banned": """CREATE TABLE IF NOT EXISTS id_users(
               id integer PRIMARY KEY,
               admin boolean DEFAULT false,
               tester boolean DEFAULT false,
@@ -164,11 +164,15 @@ TABELLE = {
         "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
         "select": {
             'all': """SELECT * FROM id_users""",
-            'from_id':"""SELECT * FROM id_users WHERE id = %s"""
+            'from_id': """SELECT * FROM id_users WHERE id = %s"""
         },
-        "insert": """INSERT INTO id_users (id) 
+        "insert": {
+            'single_id': """INSERT INTO id_users (id) 
               VALUES(%s)
               ON CONFLICT(id) DO NOTHING""",
+            'banned_user': """INSERT INTO id_users (id ,admin, tester, loot_user, loot_admin, banned)
+        VALUES
+         (%s,false,false,false,false,true);"""},
         "update": """UPDATE id_users
               SET admin = %s, tester = %s, loot_user = %s, loot_admin = %s, banned = %s
               WHERE id = %s""",
