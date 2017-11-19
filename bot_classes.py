@@ -35,7 +35,7 @@ class Loot:
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
         print("cerco user con id "+get_user_id(update)+", nel database")
-        user= db_call.execute(db_call.TABELLE["users"]["select"]["from_id"],get_user_id(update))
+        user= db_call.execute(db_call.TABELLE["users"]["select"]["from_id"],(get_user_id(update),get_user_id(update)))
         print("ho trovato : "+str(user))
         if not user:
             request_access(bot, update._effective_user)
