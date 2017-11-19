@@ -44,7 +44,7 @@ class Loot:
             return ConversationHandler.END
         elif user["banned"]:
             update.message.reply_text("Spiacente sei stato bannato dal bot")
-            return 
+            return
 
 
         text = update.message.text.lower()

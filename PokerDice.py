@@ -149,6 +149,7 @@ def get_key_by_value(dic, val):
         print("error")
         print(dic,val)
 
+#todo: cambia combinazioni possibili (se cambi non può uscire lo stesso numero ancora, 1/6->1/5)
 def consigliami(hand):
     my_dict = {i: hand.count(i) for i in hand}
     values = []
