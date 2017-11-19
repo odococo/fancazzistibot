@@ -18,7 +18,7 @@ class Loot:
         self.quantita = []
         self.costo = []
         self.to_send_negozi = ""
-        bot.sendMessage(24978334,get_users())
+        print(get_users())
 
         # adding dispatchers
         coversation = ConversationHandler(
