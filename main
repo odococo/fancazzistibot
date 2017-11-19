@@ -156,7 +156,7 @@ def main():
 
     # Handler to get username and other info
     #disp.add_handler(MessageHandler(Filters.all, get_info), -1)
-    disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
+    #disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
 
 
 
