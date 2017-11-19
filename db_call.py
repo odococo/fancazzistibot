@@ -105,7 +105,6 @@ def connect_db():
     try:
         parse.uses_netloc.append("postgres")
         url = parse.urlparse(os.environ["DATABASE_URL"])
-        pri
 
         conn = psycopg2.connect(
           database=url.path[1:],

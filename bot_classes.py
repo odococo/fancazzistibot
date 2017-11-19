@@ -51,7 +51,7 @@ class Loot:
 
         for elem in to_send:
             update.message.reply_text(elem)
-        reply_markup = ReplyKeyboardMarkup([["Anulla", "Stima"]], one_time_keyboard=True)
+        reply_markup = ReplyKeyboardMarkup([["Annulla", "Stima"]], one_time_keyboard=True)
         update.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
                                   "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                                   reply_markup=reply_markup)
