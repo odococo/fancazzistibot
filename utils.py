@@ -116,9 +116,9 @@ def request_access(bot, user):
 
 def get_user_id(update):
     try:
-        return update._effective_user.id
+        return str(update._effective_user.id)
     except IndexError:
-        return 0
+        return str(0)
 
 def convert(value, from_base=None, to_base=None, values=None):
     if not value:
