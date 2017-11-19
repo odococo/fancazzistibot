@@ -42,6 +42,9 @@ def add_bot(bot):
     
 def get_users():
   return execute(TABELLE['users']['select']['all'])
+
+def delete_user(user):
+    execute(TABELLE['id_users']["delete"], user["id"])
     
 def get_user(key_value):
     if utils.is_numeric(key_value):
