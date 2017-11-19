@@ -86,12 +86,12 @@ def get_user(user):
 def check_if_user_can_interact(bot, update):
     """Questa funzione ritorna true se l'user puo interagire, altrimenti false
     inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
-    print(update)
-    print("cerco user con id " + get_user_id(update) + ", nel database")
-    user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (get_user_id(update),))
+    user_id=update['message']['from']
+    print("cerco user con id " + str(user_id['id']) + ", nel database")
+    user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id,))
     print("ho trovato : " + str(user))
     if not user:
-        request_access(bot, update._effective_user)
+        request_access(bot, user_id)
         return False
     elif user["banned"]:
         update.message.reply_text("Spiacente sei stato bannato dal bot")
@@ -139,6 +139,7 @@ def get_user_id(update):
         return str(update['message']['from'])
     finally:
         return 0
+
 def convert(value, from_base=None, to_base=None, values=None):
     if not value:
         return "Cosa vuoi convertire?"
