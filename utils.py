@@ -84,7 +84,6 @@ def get_user(user):
 
 
 def grant_deny_access(bot, update):
-    print("granting")
     text = update.callback_query.data.split(" ")
     command = text[0]
     user_lst = text[1:]
@@ -103,7 +102,9 @@ def grant_deny_access(bot, update):
 
 
 def request_access(bot, user):
-    to_send= "L'utente :\nid: " + str(user["id"])+"\nusername: " + str(user["username"])+"\nfirst_name: "+ str(user["first_name"])+"\nlast_name: "+ str(user["last_name"])+"\n"+ "\nHa richiesto l'accesso a " + str(bot.username) + "\nConsenti?"
+    to_send= "L'utente :\nid: " + str(user["id"])+"\nusername: " + str(user["username"])+"\nfirst_name: "+\
+             str(user["first_name"])+"\nlast_name: "+ str(user["last_name"])+"\n"+ "\nHa richiesto l'accesso a " +\
+             str(bot.username) + "\nConsenti?"
     user=str(user["id"])+" "+str(user["username"])+" "+str(user["first_name"])+" "+str(user["last_name"])+" "+str(user["language_code"])
     print(to_send)
     for dev in developer_dicts.values():

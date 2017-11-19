@@ -31,9 +31,6 @@ class Loot:
         dispatcher.add_handler(coversation)
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
-    def check_user(self, id):
-        db_call.execute(db_call.TABELLE["users"]["from_id"],id)
-
 
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
