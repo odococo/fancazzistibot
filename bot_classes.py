@@ -32,9 +32,16 @@ class Loot:
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
     def check_user(self, id):
+        self.update_db()
         for elem in self.user_lst:
             if elem["id"]==id: return True
         return False
+
+    #todo: al posto di chiamare l'update user ogni volta che devi usare la user list nella classe prova
+    #todo: aggiornandolo ogni volta che viene modificato (db_call classe?)
+    def update_db(self):
+        self.user_lst=get_users()
+
 
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""

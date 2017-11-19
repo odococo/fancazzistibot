@@ -9,6 +9,8 @@ import requests
 from bs4 import BeautifulSoup
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
+import db_call
+
 COMANDI_BOT_FATHER = """
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
 dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
@@ -22,7 +24,6 @@ start - avvia il bot
 """
 
 developer_dicts = {"brandimax": 24978334}  # , "odococo":89675136}
-
 
 
 def is_admin(id):
@@ -86,24 +87,27 @@ def grant_deny_access(bot, update):
     print("granting")
     text = update.callback_query.data.split(" ")
     command = text[0]
-    user_id = text[1]
+    user_lst = text[1:]
+    user={"id":user_lst[0],"username":user_lst[1],"first_name":user_lst[2],"last_name":user_lst[3],"language_code":user_lst[4]}
     if (command.strip("/") == "consentiAccessoSi"):
         # todo:add user to db
-        bot.send_message(user_id, "Ti è stato garantito l'accesso al bot!")
+        db_call.add_user(user)
+        bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
         for dev in developer_dicts.values():
-            bot.send_message(dev, "L'accesso a user : " + str(user_id) + ", è stato garantito")
+            bot.send_message(dev, "L'accesso a user : " + str(user["username"]) + ", è stato garantito")
     else:
-        bot.send_message(user_id, "Non ti è stato garantito l'accesso al bot :(")
+        bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
         for dev in developer_dicts.values():
-            bot.send_message(dev, "L'accesso a user : " + str(user_id + ", è stato negato"))
+            bot.send_message(dev, "L'accesso a user : " + str(user["username"] + ", è stato negato"))
 
 
 def request_access(bot, user):
     to_send = "L'utente :\n" + str(user) + "\nHa richiesto l'accesso a " + str(bot.username) + "\nConsenti?"
+    user=str(user["id"])+" "+str(user["username"])+" "+str(user["first_name"])+" "+str(user["last_name"])+" "+str(user["language_code"])
     for dev in developer_dicts.values():
         bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
-            InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + str(user.id)),
-            InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + str(user.id))
+            InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
+            InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + user)
         ]]))
 
 
