@@ -8,7 +8,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
 
 import db_call
 from db_call import get_user, get_users
-from utils import is_numeric, is_admin, get_user_id, request_access, check_if_user_can_interact
+from utils import is_numeric, is_admin, get_user_id, request_access
 
 
 class Loot:
