@@ -144,7 +144,7 @@ def main():
     python3 main 2 il bot principale in polling
     python3 main 3 il bot dev in polling
     """
-    #mode=3
+    mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
@@ -157,7 +157,6 @@ def main():
     # Handler to get username and other info
     #disp.add_handler(MessageHandler(Filters.all, get_info), -1)
     #disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
-    disp.add_handler(MessageHandler(Filters.all, check_if_user_can_interact),-1)
 
 
 
