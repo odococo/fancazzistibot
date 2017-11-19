@@ -11,14 +11,14 @@ from utils import is_numeric, is_admin, get_user_id, request_access
 
 
 class Loot:
-    def __init__(self, bot, dispatcher):
+    def __init__(self, bot, dispatcher, user_lst):
         self.bot = bot
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
         self.costo = []
         self.to_send_negozi = ""
-        print(get_users())
+        self.user_lst=user_lst
 
         # adding dispatchers
         coversation = ConversationHandler(
@@ -31,12 +31,17 @@ class Loot:
         dispatcher.add_handler(coversation)
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
+    def check_user(self, id):
+        for elem in self.user_lst:
+            if elem["id"]==id: return True
+        return False
+
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
         # todo if user_id not in db
         #bot.sendMessage(24978334,str(update))
         print(get_user(get_user_id(update)))
-        if not get_user(get_user_id(update)):
+        if not self.check_user(get_user_id(update)):
             request_access(bot, update._effective_user)
             return ConversationHandler.END
 
