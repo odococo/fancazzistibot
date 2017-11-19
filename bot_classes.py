@@ -7,6 +7,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 
 import db_call
+import utils
 from db_call import get_user, get_users
 from utils import is_numeric, is_admin, get_user_id, request_access
 
@@ -31,12 +32,9 @@ class Loot:
         dispatcher.add_handler(coversation)
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
-
+    @utils.restricted
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
-
-        if not check_if_user_can_interact(bot, update): return
-
 
         text = update.message.text.lower()
         to_send = self.estrai_oggetti(text)
@@ -263,6 +261,7 @@ class Boss:
 
         return res
 
+    @utils.restricted
     def boss_admin(self, bot, update):
         """Inoltra il messaggio del boss, solo per admin"""
         print("Admin boss")
@@ -284,6 +283,7 @@ class Boss:
                                   reply_markup=reply_markup)
         return 1
 
+    @utils.restricted
     def boss_user(self, bot, update):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
         # todo if user_id not in db
