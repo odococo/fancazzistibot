@@ -149,7 +149,7 @@ def main():
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
-    add_bot(get_bot(updater.bot))
+    #add_bot(get_bot(updater.bot))
 
 # Get the dispatcher to register handlers
     disp = updater.dispatcher

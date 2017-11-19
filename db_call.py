@@ -40,7 +40,11 @@ def add_user(user, id_bot=None):
 def ban_user(user):
     # salvo l'id dell'utente o del bot
     print("Sto negando l'accesso all'user " + str(user['id']))
-    execute(TABELLE['id_users']['insert']['banned_user'],( user['id'],False,False,False,False,True))
+    execute(TABELLE['id_users']['insert']['complete_user'],( user['id'],False,False,False,False,True))
+
+def save_id_user(user):
+    print("Sto negando l'accesso all'user " + str(user['id']))
+    execute(TABELLE['id_users']['insert']['complete_user'], (user['id'], False, False,True, False, False))
 
 
 def reset_punteggio():
@@ -170,7 +174,7 @@ TABELLE = {
             'single_id': """INSERT INTO id_users (id) 
               VALUES(%s)
               ON CONFLICT(id) DO NOTHING""",
-            'banned_user': """INSERT INTO id_users (id ,admin, tester, loot_user, loot_admin, banned)
+            'complete_user': """INSERT INTO id_users (id ,admin, tester, loot_user, loot_admin, banned)
         VALUES
          (%s,%s,%s,%s,%s,%s);"""},
         "update": """UPDATE id_users
