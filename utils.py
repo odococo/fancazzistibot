@@ -91,7 +91,7 @@ def restricted(func):
         inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
         user_id = update._effective_user
         print("cerco user con id " + str(user_id) + ", nel database")
-        user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id,))
+        user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
         print("ho trovato : " + str(user))
         if not user:
             request_access(bot, user_id)
