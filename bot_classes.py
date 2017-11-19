@@ -6,6 +6,7 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
+from db_call import get_user
 from utils import is_numeric, is_admin, get_user_id, request_access
 
 
@@ -32,7 +33,7 @@ class Loot:
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
         # todo if user_id not in db
-        if False:
+        if not get_user(get_user_id(update)):
             request_access(bot, update._effective_user)
             return ConversationHandler.END
 

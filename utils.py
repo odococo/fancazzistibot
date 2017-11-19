@@ -1,24 +1,13 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import re
-import datetime
-import requests
-import json
 import ast
-import emoji
-import operator
-import psycopg2
-import urllib.parse as urlparse
-import os
-import subprocess
+import datetime
+import json
 
+import requests
 from bs4 import BeautifulSoup
-from telegram import ReplyMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, \
-    InlineKeyboardMarkup
-from telegram.ext import ConversationHandler
-
-from comandi import Command
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 COMANDI_BOT_FATHER = """
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
@@ -34,10 +23,6 @@ start - avvia il bot
 
 developer_dicts = {"brandimax": 24978334}  # , "odococo":89675136}
 
-
-def new_command(bot, update):
-    command = Command(bot, update)
-    command.execute()
 
 
 def is_admin(id):

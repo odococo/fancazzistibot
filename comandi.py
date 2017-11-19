@@ -3,12 +3,9 @@
 
 import random
 import utils, os, re
-<<<<<<< HEAD
-from db_call import execute
-=======
+
 from db_call import execute, get_user, update_user
 from negozi_loot import value
->>>>>>> e8698b5ae14a2135a307760328838e2b558427fd
 from PokerDice import calc_score, consigliami
 
 from telegram import (
@@ -115,7 +112,7 @@ In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per 
 e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai 
 finito premi "Fine".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
-Crediti: @brandimax @Odococo"""
+Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato <3"""
         self.answer(text)
 
     # def Uinline(self):
@@ -341,4 +338,10 @@ Crediti: @brandimax @Odococo"""
     utente tramite id o username
     permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
+
+
+
+def new_command(bot, update):
+    command = Command(bot, update)
+    command.execute()
 

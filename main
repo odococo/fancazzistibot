@@ -15,32 +15,24 @@ bot.
 """
 
 import logging
-import json
+import os
 import re
 import sys
-import os
-import dotenv
 
 import telegram
 from telegram.ext import (
     Updater,
-    CommandHandler,
     MessageHandler,
     RegexHandler,
     Filters,
     CallbackQueryHandler,
-    Handler,
-    TypeHandler, 
-    ConversationHandler
+    TypeHandler
 )
 
-import track_activity
 from bot_classes import Loot, Boss
+from comandi import new_command
 from db_call import add_user, add_bot
-
-from utils import (
-    new_command, now, is_numeric, grant_deny_access)
-
+from utils import ( is_numeric, grant_deny_access)
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -146,10 +138,12 @@ def log_update(bot, update):
 def main():
     # Create the EventHandler and pass it your bot's token.
     mode = int(sys.argv[1]) if len(sys.argv) > 1 and is_numeric(sys.argv[1]) else 0
-    # python3 main oppure python3 main 0 fanno partire il bot principale
-    # python3 main 1 il bot dev
-    # python3 main 2 il bot principale in polling
-    # python3 main 3 il bot dev in polling
+    """
+    python3 main oppure python3 main 0 fanno partire il bot principale
+    python3 main 1 il bot dev
+    python3 main 2 il bot principale in polling
+    python3 main 3 il bot dev in polling
+    """
     #mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
@@ -163,8 +157,7 @@ def main():
     # Handler to get username and other info
     disp.add_handler(MessageHandler(Filters.all, get_info), -1)
     disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
-    #disp.add_handler(CommandHandler("set", set,pass_args=True, pass_job_queue=True,pass_chat_data=True))
-    #disp.add_handler(CommandHandler("unset", unset, pass_chat_data=True))
+
 
 
     #classi per craftlootbot e comandi boss
@@ -183,8 +176,7 @@ def main():
 
 
 
-    # on different commands - answer in Telegram
-    #disp.add_handler(CallbackQueryHandler(button, pattern="\d"))
+
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
     
     # log all errors
