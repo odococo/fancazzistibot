@@ -31,7 +31,7 @@ from telegram.ext import (
 
 from bot_classes import Loot, Boss
 from comandi import new_command
-from db_call import add_user, add_bot
+from db_call import add_user, add_bot, get_users
 from utils import ( is_numeric, grant_deny_access)
 
 #==================GLOBAL VARIABLES==========================================
@@ -159,9 +159,19 @@ def main():
     disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
 
 
+    users_lst=get_users()
+    if not users_lst: users_lst=[]
+    """lista di dizionari del con le seguenti chiavi:
+    id
+    username
+    first_name
+    last_name
+    language_code
+    date
+    """
 
     #classi per craftlootbot e comandi boss
-    Loot(updater.bot, disp)
+    Loot(updater.bot, disp, users_lst)
     Boss(updater.bot, disp)
 
     #handler per richiedere accesso al bot
