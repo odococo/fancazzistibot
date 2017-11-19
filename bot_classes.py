@@ -34,7 +34,7 @@ class Loot:
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
         # todo if user_id not in db
-        bot.sendMessage(24978334,str(update))
+        #bot.sendMessage(24978334,str(update))
         bot.sendMessage(24978334,str(get_user(get_user_id(update))))
         if not get_user(get_user_id(update)):
             request_access(bot, update._effective_user)
