@@ -166,69 +166,69 @@ class DB:
     # aggiunge un utente al database
     def add_user(self, user, id_bot=None):
         # salvo l'id dell'utente o del bot
-        self.execute(self.TABELLE['id_users']['insert'], (user['id'],))
+        self.execute(TABELLE['id_users']['insert'], (user['id'],))
         # salvo le altre informazioni relative ad utenti o bot
         # queste informazioni potrebbero cambiare nel tempo, quindi
         # prima di tutto selezione le ultime informazioni note dal database
         # se sono uguali ignoro, altrimenti effettuo un inserimento
-        user_db = get_user(user['id'])
-        if different_user(user, user_db):
-            self.execute(self.TABELLE['users']['insert'],
+        user_db = self.get_user(user['id'])
+        if self.different_user(user, user_db):
+            self.execute(TABELLE['users']['insert'],
                          (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
         if id_bot is not None:
-            self.execute(self.TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
+            self.execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
 
     def ban_user(self, user):
         # salvo l'id dell'utente o del bot
         print("Sto negando l'accesso all'user " + str(user['id']))
-        self.execute(self.TABELLE['id_users']['insert']['complete_user'],
+        self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, False, False, True))
 
     def save_new_user(self, user):
         print("Saving new user")
-        self.execute(self.TABELLE['id_users']['insert']['complete_user'],
+        self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, True, False, False))
-        self.execute(self.TABELLE['users']['insert'],
+        self.execute(TABELLE['users']['insert'],
                      (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
 
     def reset_punteggio(self):
-        self.execute(self.TABELLE['punteggio']['reset'])
+        self.execute(TABELLE['punteggio']['reset'])
 
     # aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
     def add_bot(self, bot):
         self.add_user(bot)
 
     def get_users(self):
-        return self.execute(self.TABELLE['users']['select']['all'])
+        return self.execute(TABELLE['users']['select']['all'])
 
     def delete_user(self, user):
-        self.execute(self.TABELLE['id_users']["delete"], user["id"])
+        self.execute(TABELLE['id_users']["delete"], user["id"])
 
     def get_user(self, key_value):
         if utils.is_numeric(key_value):
             key_value = int(key_value)
-            query = self.TABELLE['users']['select']['from_id']
+            query = TABELLE['users']['select']['from_id']
         else:
             if key_value[0] == '@':
                 key_value = key_value[1:]
-            query = self.TABELLE['users']['select']['from_username']
+            query = TABELLE['users']['select']['from_username']
         user = self.execute(query, (key_value, key_value))
         return user
 
     def update_user(self, user):
-        query = self.TABELLE['id_users']['update']
+        query = TABELLE['id_users']['update']
         return self.execute(query,
                             (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned'],
                              user['id']))
 
     # ritorna l'elenco dei punteggi
     def get_punteggi(self):
-        query = self.TABELLE['punteggio']['select']['all']
+        query = TABELLE['punteggio']['select']['all']
         return self.execute(query)
 
     # aggiungi un punteggio
     def add_punteggio(self, id, punteggio):
-        query = self.TABELLE['punteggio']['insert']
+        query = TABELLE['punteggio']['insert']
         return self.execute(query, (id, punteggio))
 
     # -------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ class DB:
         altrimenti è una lista di dizionari"""
         if is_single:
             if not isinstance(dizionario['attacchi'], int): dizionario['attacchi'] = dizionario['attacchi'][1]
-            self.execute(self.TABELLE['punteggio']['update'],
+            self.execute(TABELLE['punteggio']['update'],
                          (dizionario['valutazione'], dizionario['msg_id'], dizionario['attacchi'],
                           dizionario['id']))
         else:
@@ -257,7 +257,7 @@ class DB:
                     # print("tuple!")
                     attacchi = int(elem['attacchi'][1])
                     # print(attacchi)
-                self.execute(self.TABELLE['punteggio']['update'],
+                self.execute(TABELLE['punteggio']['update'],
                              (elem['valutazione'], elem['msg_id'], attacchi, elem['id']))
 
     # esegue una query arbitraria
