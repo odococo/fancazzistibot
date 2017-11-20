@@ -22,7 +22,7 @@ class Loot:
         self.to_send_negozi = ""
 
         # adding dispatchers
-        ricerca_decor=db.elegible_user_func(self.ricerca)
+        ricerca_decor=db.elegible_user(self.ricerca)
         coversation = ConversationHandler(
             [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
             states={
@@ -239,9 +239,9 @@ class Boss:
         self.single_dict=True
 
 
-        boss_user_decor=db.elegible_user_method(self.boss_user)
-        boss_admin_decor=db.elegible_admin_func(self.boss_admin)
-        reset_boss_ask_decor=db.elegible_admin_func(self.boss_reset_ask)
+        boss_user_decor=db.elegible_user(self.boss_user)
+        boss_admin_decor=db.elegible_admin(self.boss_admin)
+        reset_boss_ask_decor=db.elegible_admin(self.boss_reset_ask)
 
         coversation_boss = ConversationHandler(
             [CommandHandler("attacchiBoss", boss_user_decor), RegexHandler("^🏆", boss_admin_decor)],
