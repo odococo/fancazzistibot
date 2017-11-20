@@ -19,7 +19,7 @@ class Loot:
         self.stima_flag = False
         self.quantita = []
         self.costo = []
-        self.to_send_negozi = ""
+        self.to_send_negozi = []
 
         # adding dispatchers
         ricerca_decor=db.elegible_user(self.ricerca)
@@ -106,11 +106,11 @@ class Loot:
             for elem in merged:
 
                 if int(elem[0]) > 1:
-                    self.to_send_negozi += "Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
-                        elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n"
+                    self.to_send_negozi.append( "Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
+                        elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
                 else:
-                    self.to_send_negozi += "Compra l'oggetto <b>" + elem[
-                        1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n"
+                    self.to_send_negozi.append("Compra l'oggetto <b>" + elem[
+                        1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
 
             update.message.reply_text("Vuoi visualizzare i negozi?", reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
@@ -151,27 +151,39 @@ class Loot:
         self.stima_flag = False
         self.costo_craft = 0
         self.quantita = []
-        self.to_send_negozi = ""
+        self.to_send_negozi = []
         update.message.reply_text("Ok ho annullato tutto", reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
 
     def send_negozi(self, bot, update):
+        to_change=""
+        addon=""
+
         if "Si" in update.callback_query.data:
-            if self.to_send_negozi:
-                text = self.to_send_negozi
+
+            if len(self.to_send_negozi)>0 and len(self.to_send_negozi)<31:
+                to_change = "".join(self.to_send_negozi)
+            elif len(self.to_send_negozi)>0:
+                to_change = "".join(self.to_send_negozi[:29])
+                addon="".join(self.to_send_negozi[29:])
+
+
+
             else:
-                text = "Si è verificato un errore, contatta @brandimax"
+                to_change = "Si è verificato un errore, contatta @brandimax"
         else:
-            text = "Ok"
+            to_change = "Ok"
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
-            text=text,
+            text=to_change,
             message_id=update.callback_query.message.message_id,
             parse_mode="HTML"
         )
+        if addon:
+            update.message.reply_text(addon,  parse_mode="HTML")
 
-        self.to_send_negozi = ""
+        self.to_send_negozi = []
 
     def estrai_oggetti(self, msg):
 
@@ -302,7 +314,6 @@ class Boss:
                 id=boss["msg_id"]
 
 
-        print("\n\n ID = "+str(id)+"\n\n")
         self.punteggi = boss
         self.last_update_id = id
 
@@ -371,8 +382,7 @@ class Boss:
             else:
                 self.phoenix = False
 
-            #fixme: non funziona
-            print("\n\n update.id = " + str(update.message.message_id)+" last update id = " +str(self.last_update_id)+ "\n\n")
+            #todo: trova un'equivalente di id che non cambia ongi volta che rinvii lo stesso messaggio
 
             if self.last_update_id == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
