@@ -147,9 +147,10 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             reply_markup=reply_markup)
 
     def UhelpLink(self):
-        """/helpLink - ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
+        """ - ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
 
         self.answer("https://github.com/odococo/fancazzistibot/blob/master/README.md")
+        self.update.message.reply_text()
 
     def Udice(self):
         """Lancia un dado specificando numero di facce e lanci"""
