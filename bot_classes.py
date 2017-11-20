@@ -218,6 +218,7 @@ class Boss:
         self.dict_boss = {}
         self.last_update_id = 0
         self.phoenix = False
+        self.single_dict=True #serve come falg per sapere se il dizionario del database contiene un solo utente sotto la tabella punteggio
 
         coversation_boss = ConversationHandler(
             [CommandHandler("attacchiBoss", self.boss_user), RegexHandler("^🏆", self.boss_admin)],
@@ -267,14 +268,23 @@ class Boss:
        # print("Admin boss")
 
 
-
-        # TODO: prendi dizionario e last_update_id dal database
         # prendi il dizionario, lista  e id
         boss=db_call.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
-        if not boss: boss={}
+        if not boss:
+            boss={}
+            id=0
+        else:
+            id=0
+            try:
+                id=boss[0]["msg_id"]
+                self.single_dict=False
+            except IndexError:
+                id=boss["msg_id"]
+
+
         print(boss)
         self.dict_boss = boss
-        self.last_update_id = 0
+        self.last_update_id = id
 
         self.lista_boss = self.cerca_boss(update.message.text)
 
@@ -344,26 +354,58 @@ class Boss:
             return self.fine(bot, update)
 
         # se l'admin vuole modificare la lista
-        elif choice == "Phoenix" or choice == "Titan" and is_admin(get_user_id(update)):
+        elif choice == "Phoenix" or choice == "Titan":
             if choice == "Phoenix":
                 self.phoenix = True
             else:
                 self.phoenix = False
+
             if self.last_update_id == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
                 return 1
+            else:
+                self.last_update_id = update.message.message_id
 
             # aggiunge i membri nel dizionario se non sono gia presenti
-            for elem in self.lista_boss:
-                if elem[0] not in self.dict_boss.keys():
-                    self.dict_boss[elem[0]] = 0
-                if elem[2] == 0 and self.phoenix:
-                    self.dict_boss[elem[0]] += 2
-                elif elem[2] == 0 and not self.phoenix:
-                    self.dict_boss[elem[0]] += 1
+            skipped=[]
+            if self.single_dict:#in questo caso ho un dizionario con un solo utente
+                for elem in self.lista_boss:
+                    if elem[0] not in self.dict_boss['username']:
+                        skipped.append(elem[0])
+                    elif elem[2] == 0 and self.phoenix:
+                        self.dict_boss['valutazione'] += 2
+                    elif elem[2] == 0 and not self.phoenix:
+                        self.dict_boss['valutazione'] += 1
+                    self.dict_boss['msg_id']=self.last_update_id
 
-                self.last_update_id = update.message.message_id
-                # Todo: salva dizionario e last_update in db
+            else:#altrimenti ho una lista di dizionari
+                found=False
+                for username in self.lista_boss:
+                    for single_dict in self.dict_boss:
+                        if single_dict['username']==username:
+                            found=True
+                            single_dict['msg_id'] = self.last_update_id
+                            if self.phoenix:
+                                single_dict['valutazione']+=2
+                            else:
+                                single_dict['valutazione']+=1
+
+                    if not found:
+                        skipped.append(username)
+                    found=False
+
+            print(self.dict_boss)
+
+            if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
+                db_call.salva_punteggi_in_db(self.dict_boss, self.single_dict)
+
+            elif len(skipped)>0:
+                to_send = "I seguenti users non sono salvati nel bot :\n"
+                for users in skipped:
+                    to_send+=users[0]+"\n"
+                to_send+="Chiedigli di inviare /start al bot"
+                update.message.reply_text(to_send)
+
 
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)

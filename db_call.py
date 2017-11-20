@@ -149,6 +149,9 @@ def connect_db():
         logger.error("Errore nella connessione al database: {}".format(error))
         return None
 
+def salva_punteggi_in_db(dizionario, is_single):
+    """Salva il i punteggi aggiornati, se is_single==True allora dizionario è un semplice dizionario
+    altrimenti è una lista di dizionari"""
 
 TABELLE = {
     "id_users": {
