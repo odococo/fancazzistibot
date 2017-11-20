@@ -386,6 +386,7 @@ class Boss:
             users_name=[elem["username"] for elem in users]
             users_name_id=[(elem["username"], elem['id']) for elem in users]
 
+            if self.single_dict: self.single_dict=[self.single_dict]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in self.lista_boss:
                 if username[0] in users_name and\
@@ -395,7 +396,6 @@ class Boss:
                                          'valutazione': 0,
                                           'attacchi':0} )#aggiungo l'user alla lista
 
-            if self.single_dict: self.single_dict=[self.single_dict]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             else:#altrimenti ho una lista di dizionari
                 found=False
