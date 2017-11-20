@@ -358,7 +358,7 @@ class Boss:
             return self.non_attaccanti(bot, update)
         elif choice == "Punteggio":
             return self.punteggio(bot, update)
-        elif choice == "Completa" and is_admin(get_user_id(update)):
+        elif choice == "Completa":
             return self.completa(bot, update)
         elif choice == "Fine":
             return self.fine(bot, update)
@@ -429,6 +429,7 @@ class Boss:
 
         else:
             # TODO: elif se manda un altro messaggio gestisci
+            print(choice)
             update.message.reply_text("Non ho capito, ripeti")
             return 1
 
