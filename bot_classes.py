@@ -214,6 +214,7 @@ class Loot:
         regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
         lst = re.findall(regex, aggiornato)
         quantita = re.findall(regex2, aggiornato)
+        if not quantita: quantita=re.findall(r"> ([0-9]+) di ([A-z ]+)", aggiornato)# se cerchi con lo zaino vuoto cambia il messaggio
         commands = []
         self.quantita = [(q[0], q[1].strip()) for q in quantita]
         last_ixd = len(lst) - len(lst) % 3
