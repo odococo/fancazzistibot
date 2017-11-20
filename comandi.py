@@ -3,6 +3,7 @@
 
 import random
 import utils, os, re
+from db_call import DB
 
 from negozi_loot import value
 from PokerDice import calc_score, consigliami
@@ -19,10 +20,11 @@ attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team
 
 
 class Command():
-    def __init__(self, bot, update):
+    def __init__(self, bot, update, db):
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
+        self.db=db
         # Se ho un messaggio dato da tasto inline
         if update.callback_query:
             command_text = update.callback_query.data
@@ -71,10 +73,7 @@ class Command():
 
     def command_list(self, admin=False, dev=False):
         """Ritorna la lista dei comandi disponibili"""
-        # todo if user_id not in db
-        if False:
-            utils.request_access(self.bot, self.update._effective_user)
-            return
+
 
         commands = [command for command in dir(self)
                     if
@@ -290,7 +289,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """Visualizza le informazioni relative a un utente
     Ricerca tramite username o id"""
         if self.params:
-            result = get_user(self.params[0])
+            result = self.db.get_user(self.params[0])
             if result:
                 text = utils.get_user(result)
             else:
@@ -307,7 +306,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             INNER JOIN users AS utenti ON utenti.id = id_user
             INNER JOIN users AS bot ON bot.id = id_bot
             GROUP BY utenti.id, bot.id"""
-        users = execute(query)
+        users = self.db.execute(query)
         if users:
             users = [users] if isinstance(users, dict) else users
             text = "Elenco utenti:\n"
@@ -325,12 +324,12 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         if len(self.params) == 2:
             key = self.params[0]
             permesso = self.params[1]
-            user = get_user(key)
+            user = self.db.get_user(key)
             if permesso not in user:
                 text = "Non esiste questo permesso!"
             else:
                 user[permesso] = not user[permesso]
-            update_user(user)
+                self.db.update_user(user)
             text = "Aggiornamento completato!"
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
@@ -339,8 +338,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         self.answer(text)
 
 
-@utils.elegible_user_func
 def new_command(bot, update):
-    command = Command(bot, update)
+    command = Command(bot, update, DB())
     command.execute()
 
