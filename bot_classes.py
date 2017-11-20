@@ -360,9 +360,6 @@ class Boss:
             return self.punteggio(bot, update)
         elif choice == "Completa" and is_admin(get_user_id(update)):
             return self.completa(bot, update)
-        elif choice == "Completa" and not is_admin(get_user_id(update)):
-            update.message.reply_text("Non sei abilitato ad usare questa funzione")
-            return 1
         elif choice == "Fine":
             return self.fine(bot, update)
 
@@ -418,8 +415,8 @@ class Boss:
             if len(skipped)>0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
                 for users in skipped:
-                    to_send+=users[0]+"\n"
-                to_send+="Chiedigli di inviare /start al bot"
+                    to_send+="@"+users[0]+"\n"
+                to_send+="Chiedigli di inviare /start a @"+bot.username
                 update.message.reply_text(to_send)
 
 
@@ -460,7 +457,7 @@ class Boss:
         for elem in sortedD:
             if elem[1] == 2: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
-        if 31 in num: to_send += "\n✅<b>Buono ma non buonissimo</b>✅\n"
+        if 1 in num: to_send += "\n✅<b>Buono ma non buonissimo</b>✅\n"
         for elem in sortedD:
             if elem[1] == 1: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
@@ -471,7 +468,7 @@ class Boss:
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1  # 1 è l'id del boss_loop nel conversation handler
 
-
+    @utils.elegible_admin_method
     def completa(self, bot, update):
         """Visualizza la lista completa ti tutte le info"""
 
