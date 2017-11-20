@@ -311,10 +311,8 @@ class Boss:
     @utils.elegible_user_method
     def boss_user(self, bot, update):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
-        # todo if user_id not in db
-        if False:
-            request_access(bot, update._effective_user)
-            return ConversationHandler.END
+
+        self.punteggi=db_call.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
 
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)
@@ -387,11 +385,16 @@ class Boss:
                 for elem in self.lista_boss:
                     if elem[0] not in self.punteggi['username']:
                         skipped.append(elem[0])
+                        pass
                     elif elem[2] == 0 and self.phoenix:
                         self.punteggi['valutazione'] += 2
                     elif elem[2] == 0 and not self.phoenix:
                         self.punteggi['valutazione'] += 1
                     self.punteggi['msg_id']=self.last_update_id
+                    self.punteggi['attacchi'] = elem[2]
+
+
+
 
             else:#altrimenti ho una lista di dizionari
                 found=False
@@ -400,6 +403,7 @@ class Boss:
                         if single_dict['username'] == username[0]:
                             found = True
                             single_dict['msg_id'] = self.last_update_id
+                            single_dict['attacchi']=username[2]
                             if self.phoenix:
                                 single_dict['valutazione'] += 2
                             else:
@@ -437,12 +441,12 @@ class Boss:
     def punteggio(self, bot, update):
         """Visualizza la sita di tutti con punteggio annesso"""
 
-        if not len(self.punteggi) > 0:
+        if not self.punteggi:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
         #fixme: aggiorna tutto in base al nuovo db
-        sortedD = sorted([(elem['username'],elem['valutazione'])  for elem in self.punteggi], reverse=True)
+        sortedD = sorted([(elem['username'],elem['attacchi']) for elem in self.punteggi], reverse=True)
 
         to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
         for elem in sortedD:
