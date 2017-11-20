@@ -53,7 +53,7 @@ class Loot:
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
                top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
 
-        if update.message.text == "Anulla":
+        if update.message.text == "Annulla":
             return self.annulla(bot, update)
         #fixme: alcune parti non vengono considerate
         elif update.message.text == "Stima":
@@ -122,7 +122,6 @@ class Loot:
             self.stima_flag = False
             return ConversationHandler.END
         else:
-
             self.stima_parziale(update.message.text.lower())
             return 1
 
