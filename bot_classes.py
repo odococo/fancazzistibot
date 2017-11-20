@@ -379,6 +379,7 @@ class Boss:
 
             # aggiunge i membri nel dizionario se non sono gia presenti
             skipped=[]
+            print(self.lista_boss)
             if self.single_dict:#in questo caso ho un dizionario con un solo utente
                 for elem in self.lista_boss:
                     if elem[0] not in self.punteggi['username']:
