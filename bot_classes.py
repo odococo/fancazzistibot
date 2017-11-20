@@ -261,15 +261,12 @@ class Boss:
 
         return res
 
-    @utils.elegible_user_method
+    @utils.elegible_admin_method
     def boss_admin(self, bot, update):
         """Inoltra il messaggio del boss, solo per admin"""
-        print("Admin boss")
+       # print("Admin boss")
 
-        # controlla se admin
-        if not is_admin(get_user_id(update)):
-            update.message.reply_text("Non sei autorizzato ad inoltrare questi messaggi")
-            return ConversationHandler.END
+
 
         # TODO: prendi dizionario e last_update_id dal database
         # prendi il dizionario, lista  e id

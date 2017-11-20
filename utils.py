@@ -90,9 +90,9 @@ def elegible_user_func(func):
         """Questa funzione ritorna true se l'user puo interagire, altrimenti false
         inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
         user_id = update._effective_user
-        print("cerco user con id " + str(user_id) + ", nel database")
+        #print("cerco user con id " + str(user_id) + ", nel database")
         user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
-        print("ho trovato : " + str(user))
+        #print("ho trovato : " + str(user))
         if not user:
             request_access(bot, user_id)
             return
@@ -110,9 +110,9 @@ def elegible_user_method(func):
         """Questa funzione ritorna true se l'user puo interagire, altrimenti false
         inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
         user_id = update._effective_user
-        print("cerco user con id " + str(user_id) + ", nel database")
+       # print("cerco user con id " + str(user_id) + ", nel database")
         user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
-        print("ho trovato : " + str(user))
+        #print("ho trovato : " + str(user))
         if not user:
             request_access(bot, user_id)
             return
@@ -124,6 +124,29 @@ def elegible_user_method(func):
 
     return check_if_user_can_interact
 
+def elegible_admin_method(func):
+    @wraps(func)
+    def check_if_admin(self, bot, update, *args, **kwargs):
+        """Questa funzione ritorna true se l'user puo interagire, altrimenti false
+        inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+        user_id = update._effective_user
+        # print("cerco user con id " + str(user_id) + ", nel database")
+        user = db_call.execute(db_call.TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
+        # print("ho trovato : " + str(user))
+        if not user:
+            request_access(bot, user_id)
+            return
+        elif user["banned"]:
+            update.message.reply_text("Spiacente sei stato bannato dal bot")
+            return
+        elif user["admin"]:
+            return func(self, bot, update, *args, **kwargs)
+        else:
+            update.message.reply_text("Non sei abilitato ad usare questo comando")
+            return
+
+    return check_if_admin
+
 
 
 def grant_deny_access(bot, update):
@@ -133,13 +156,13 @@ def grant_deny_access(bot, update):
     user = {"id": user_lst[0], "username": user_lst[1], "first_name": user_lst[2], "last_name": user_lst[3],
             "language_code": user_lst[4]}
     if (command.strip("/") == "consentiAccessoSi"):
-        print("Accesso garantito")
-        db_call.save_id_user(user)
+        #print("Accesso garantito")
+        db_call.save_new_user(user)
         bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
         for dev in developer_dicts.values():
             bot.send_message(dev, "L'accesso a user : " + str(user["username"]) + ", è stato garantito")
     else:
-        print("Accesso negato")
+        #print("Accesso negato")
         bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
         db_call.ban_user(user)
         for dev in developer_dicts.values():
@@ -153,7 +176,7 @@ def request_access(bot, user):
               str(bot.username) + "\nConsenti?"
     user = str(user["id"]) + " " + str(user["username"]) + " " + str(user["first_name"]) + " " + str(
         user["last_name"]) + " " + str(user["language_code"])
-    print(to_send)
+    #print(to_send)
     for dev in developer_dicts.values():
         bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),

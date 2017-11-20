@@ -13,6 +13,7 @@ import psycopg2.extras
 
 import utils
 
+#todo: db_call dovrebbe diventare una calsse
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -23,8 +24,7 @@ logger = logging.getLogger(__name__)
 # aggiunge un utente al database
 def add_user(user, id_bot=None):
     # salvo l'id dell'utente o del bot
-    execute(TABELLE['id_users']['insert'], (user['id'],)
-            )
+    execute(TABELLE['id_users']['insert'], (user['id'],) )
     # salvo le altre informazioni relative ad utenti o bot
     # queste informazioni potrebbero cambiare nel tempo, quindi
     # prima di tutto selezione le ultime informazioni note dal database
@@ -42,9 +42,9 @@ def ban_user(user):
     print("Sto negando l'accesso all'user " + str(user['id']))
     execute(TABELLE['id_users']['insert']['complete_user'],( user['id'],False,False,False,False,True))
 
-def save_id_user(user):
-    print("Sto negando l'accesso all'user " + str(user['id']))
+def save_new_user(user):
     execute(TABELLE['id_users']['insert']['complete_user'], (user['id'], False, False,True, False, False))
+    execute(TABELLE['users']['insert'],(user['id'],user['username'],user['first_name'],user['last_name'],user['language_code']))
 
 
 def reset_punteggio():
@@ -172,11 +172,10 @@ TABELLE = {
         },
         "insert": {
             'single_id': """INSERT INTO id_users (id) 
-              VALUES(%s)
-              ON CONFLICT(id) DO NOTHING""",
+                            VALUES(%s)
+                            ON CONFLICT(id) DO NOTHING""",
             'complete_user': """INSERT INTO id_users (id ,admin, tester, loot_user, loot_admin, banned)
-        VALUES
-         (%s,%s,%s,%s,%s,%s);"""},
+                                VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT(id) DO NOTHING;"""},
         "update": """UPDATE id_users
               SET admin = %s, tester = %s, loot_user = %s, loot_admin = %s, banned = %s
               WHERE id = %s""",
