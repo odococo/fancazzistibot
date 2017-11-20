@@ -157,8 +157,10 @@ def salva_punteggi_in_db(dizionario, is_single):
         execute(TABELLE['punteggio']['update'], (dizionario['valutazione'],dizionario['msg_id'],dizionario['id'],dizionario['attacchi']))
     else:
         for elem in dizionario:
-            if str(elem['attacchi']) != '0': elem['attacchi'] = elem['attacchi'][1]
-            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id'],elem['attacchi']))
+            print(elem['attacchi'])
+            attacchi=0
+            if elem['attacchi'] != 0: attacchi = elem['attacchi'][1]
+            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id'],attacchi))
 
 
 TABELLE = {
