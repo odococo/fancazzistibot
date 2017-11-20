@@ -215,6 +215,9 @@ class DB:
         user = self.execute(query, (key_value, key_value))
         return user
 
+    def get_id_users(self):
+        return self.execute(TABELLE['id_users']['select']['all'])
+
     def update_user(self, user):
         query = TABELLE['id_users']['update']
         return self.execute(query,
@@ -243,6 +246,9 @@ class DB:
         return userA
 
     def salva_punteggi_in_db(self, dizionario, is_single):
+        print("DIZIONARIO\n\n")
+        print(dizionario)
+        print("\n\n")
         """Salva il i punteggi aggiornati, se is_single==True allora dizionario è un semplice dizionario
         altrimenti è una lista di dizionari"""
         if is_single:

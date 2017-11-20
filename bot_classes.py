@@ -382,41 +382,34 @@ class Boss:
             # aggiunge i membri nel dizionario se non sono gia presenti
             skipped=[]
             #print(self.lista_boss)
-            if self.single_dict:#in questo caso ho un dizionario con un solo utente
-                for elem in self.lista_boss:
-                    print(elem)
-                    if elem[0] not in self.punteggi['username']:
-                        skipped.append(elem)
-                        pass
-                    elif isinstance(elem[2], int) and self.phoenix:
-                        self.punteggi['valutazione'] += 2
-                    elif isinstance(elem[2], int) and not self.phoenix:
-                        self.punteggi['valutazione'] += 1
-                    elif isinstance(elem[2], tuple):
-                        self.punteggi['attacchi'] += elem[2]
+            users=self.db.get_users()
+            users_name=[elem["username"] for elem in users]
+            users_name_id=[(elem["username"], elem['id']) for elem in users]
 
-                    self.punteggi['msg_id']=self.last_update_id
-
-
+            if self.single_dict: self.single_dict=[self.single_dict]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             else:#altrimenti ho una lista di dizionari
                 found=False
                 for username in self.lista_boss:
                     for single_dict in self.punteggi:
-                        if single_dict['username'] == username[0]:
+                        if username[0] in users_name and not username[0] in single_dict['username']:# se il giocatore non è nella tabella punteggio ma in quella users
+                            single_dict['id']=[elem[1] for elem in users_name_id if elem[0]==username[0]].pop(0)#aggiungo l'id associato
+                            single_dict['username']=username[0]# aggiungo il suo nome, per cui la condizione sotto diventa vera
+                        if single_dict['username'] == username[0]:# se è gia presente nel db
                             found = True
                             single_dict['msg_id'] = self.last_update_id
-                            if self.phoenix and isinstance(username[2], int):
+                            if self.phoenix and isinstance(username[2], int):#non ha attaccato ed è phoenix
                                 single_dict['valutazione'] += 2
-                            elif not self.phoenix and isinstance(username[2], int):
+                            elif not self.phoenix and isinstance(username[2], int):# non ha attaccato ed è titan
                                 single_dict['valutazione'] += 1
-                            elif isinstance(username[2], tuple):
+                            elif isinstance(username[2], tuple):# ha attaccato
                                 single_dict['attacchi'] = username[2][1]
                     if not found:
                         skipped.append(username)
                     found = False
 
-            print(self.punteggi, self.single_dict)
+
+            #print(self.punteggi, self.single_dict)
             if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
                 self.db.salva_punteggi_in_db(self.punteggi, self.single_dict)
 
