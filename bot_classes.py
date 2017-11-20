@@ -32,7 +32,7 @@ class Loot:
         dispatcher.add_handler(coversation)
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
-    @utils.restricted2
+    @utils.elegible_user_method
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
 
@@ -261,7 +261,7 @@ class Boss:
 
         return res
 
-    @utils.restricted2
+    @utils.elegible_user_method
     def boss_admin(self, bot, update):
         """Inoltra il messaggio del boss, solo per admin"""
         print("Admin boss")
@@ -283,7 +283,7 @@ class Boss:
                                   reply_markup=reply_markup)
         return 1
 
-    @utils.restricted2
+    @utils.elegible_user_method
     def boss_user(self, bot, update):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
         # todo if user_id not in db
