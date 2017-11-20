@@ -50,14 +50,14 @@ class Command():
 
     def execute(self):
         method = self.getattr(self.command[1:], self.unknown_command)
-        if (method.__name__.startswith("A") and
-                not utils.is_admin(self.update.message.from_user.id)):
-            self.answer("Non sei abilitato a usare questo comando")
+        if (method.__name__.startswith("A")):
+            method=self.db.elegible_admin(method)
         elif (method.__name__.startswith("D") and
                   not utils.is_dev(self.bot.id)):
             pass
         else:
-            method()
+            method=self.db.elegible_user(method)
+        method()
 
     def answer(self, text, pretty_json=False, **options):
         """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
@@ -336,7 +336,6 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     utente tramite id o username
     permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
-
 
 def new_command(bot, update):
     command = Command(bot, update, DB())

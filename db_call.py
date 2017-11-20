@@ -323,8 +323,6 @@ class DB:
         return check_if_user_can_interact
 
 
-
-
     def elegible_admin(self, func):
         @wraps(func)
         def check_if_admin(bot, update, *args, **kwargs):

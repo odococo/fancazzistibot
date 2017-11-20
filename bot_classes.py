@@ -436,9 +436,8 @@ class Boss:
             return 1
 
         else:
-            # TODO: elif se manda un altro messaggio gestisci
-            print(choice)
-            update.message.reply_text("Non ho capito, ripeti")
+            #print(choice)
+            update.message.reply_text("Non ho capito")
             return self.fine(bot, update)
 
 
