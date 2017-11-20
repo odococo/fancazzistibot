@@ -15,7 +15,6 @@ class Loot:
     def __init__(self, bot, dispatcher, db):
         self.bot = bot
         self.db=db
-        self.ricerca_decor=db.elegible_user_func( self.ricerca)
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
@@ -23,8 +22,9 @@ class Loot:
         self.to_send_negozi = ""
 
         # adding dispatchers
+        ricerca_decor=db.elegible_user_func(self.ricerca)
         coversation = ConversationHandler(
-            [RegexHandler("^Lista oggetti necessari per", self.ricerca_decor)],
+            [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
             states={
                 1: [MessageHandler(Filters.text, self.stima)]
             },
@@ -238,8 +238,13 @@ class Boss:
         self.phoenix = False
         self.single_dict=True
 
+
+        boss_user_decor=db.elegible_user_method(self.boss_user)
+        boss_admin_decor=db.elegible_admin_method(self.boss_admin)
+        reset_boss_ask_decor=db.elegible_admin_method(self.boss_reset_ask)
+
         coversation_boss = ConversationHandler(
-            [CommandHandler("attacchiBoss", self.boss_user), RegexHandler("^🏆", self.boss_admin)],
+            [CommandHandler("attacchiBoss", boss_user_decor), RegexHandler("^🏆", boss_admin_decor)],
             states={
                 1: [MessageHandler(Filters.text, self.boss_loop)]
             },
@@ -247,7 +252,7 @@ class Boss:
         )
         dispatcher.add_handler(coversation_boss)
 
-        dispatcher.add_handler(CommandHandler("resetBoss", self.boss_reset_ask))
+        dispatcher.add_handler(CommandHandler("resetBoss", reset_boss_ask_decor))
         dispatcher.add_handler(CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss"))
 
     def cerca_boss(self, msg):
