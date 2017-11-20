@@ -1,4 +1,3 @@
-import operator
 import re
 
 import emoji
@@ -7,14 +6,13 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 
 import db_call
-import utils
-from utils import is_numeric, is_admin, get_user_id
+from utils import is_numeric
 
 
 class Loot:
     def __init__(self, bot, dispatcher, db):
         self.bot = bot
-        self.db=db
+        self.db = db
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
@@ -22,7 +20,7 @@ class Loot:
         self.to_send_negozi = []
 
         # adding dispatchers
-        ricerca_decor=db.elegible_user(self.ricerca)
+        ricerca_decor = db.elegible_user(self.ricerca)
         coversation = ConversationHandler(
             [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
             states={
@@ -55,7 +53,6 @@ class Loot:
 
         if update.message.text == "Annulla":
             return self.annulla(bot, update)
-        #fixme: alcune parti non vengono considerate
         elif update.message.text == "Stima":
             if not self.stima_flag:
                 update.message.reply_text(
@@ -104,11 +101,10 @@ class Loot:
             update.message.reply_text("Comprando gli oggetti dal negozio impiegherai un tempo di circa :\n "
                                       + str(m) + " minuti e " + str(s) + " secondi\n")
 
-            # fixme: dividi il send negozi in parti da 30 perche l'HTML semtte di funzionare al 39-esimo
             for elem in merged:
 
                 if int(elem[0]) > 1:
-                    self.to_send_negozi.append( "Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
+                    self.to_send_negozi.append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
                         elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
                 else:
                     self.to_send_negozi.append("Compra l'oggetto <b>" + elem[
@@ -160,16 +156,16 @@ class Loot:
         return ConversationHandler.END
 
     def send_negozi(self, bot, update):
-        addon=""
+        addon = ""
 
         if "Si" in update.callback_query.data:
             print(self.to_send_negozi)
 
-            if len(self.to_send_negozi)>0 and len(self.to_send_negozi)<31:
+            if len(self.to_send_negozi) > 0 and len(self.to_send_negozi) < 31:
                 to_change = "".join(self.to_send_negozi)
-            elif len(self.to_send_negozi)>0:
+            elif len(self.to_send_negozi) > 0:
                 to_change = "".join(self.to_send_negozi[:29])
-                addon="".join(self.to_send_negozi[29:])
+                addon = "".join(self.to_send_negozi[29:])
 
             else:
                 to_change = "Si è verificato un errore, contatta @brandimax"
@@ -184,7 +180,7 @@ class Loot:
         )
         if addon:
             bot.sendMessage(update.callback_query.message.chat_id, addon, parse_mode="HTML")
-            update.message.reply_text(addon,  parse_mode="HTML")
+            update.message.reply_text(addon, parse_mode="HTML")
 
         self.to_send_negozi = []
 
@@ -215,7 +211,8 @@ class Loot:
         regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
         lst = re.findall(regex, aggiornato)
         quantita = re.findall(regex2, aggiornato)
-        if not quantita: quantita=re.findall(r"> ([0-9]+) di ([A-z ]+)", aggiornato)# se cerchi con lo zaino vuoto cambia il messaggio
+        if not quantita: quantita = re.findall(r"> ([0-9]+) di ([A-z ]+)",
+                                               aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
         commands = []
         self.quantita = [(q[0], q[1].strip()) for q in quantita]
         last_ixd = len(lst) - len(lst) % 3
@@ -246,17 +243,16 @@ class Boss:
                 
         """
         self.bot = bot
-        self.db=db
+        self.db = db
         self.lista_boss = []
         self.punteggi = []
         self.last_update_id = 0
         self.phoenix = False
-        self.single_dict=True
+        self.single_dict = True
 
-
-        boss_user_decor=db.elegible_user(self.boss_user)
-        boss_admin_decor=db.elegible_admin(self.boss_admin)
-        reset_boss_ask_decor=db.elegible_admin(self.boss_reset_ask)
+        boss_user_decor = db.elegible_user(self.boss_user)
+        boss_admin_decor = db.elegible_admin(self.boss_admin)
+        reset_boss_ask_decor = db.elegible_admin(self.boss_reset_ask)
 
         coversation_boss = ConversationHandler(
             [CommandHandler("attacchiBoss", boss_user_decor), RegexHandler("^🏆", boss_admin_decor)],
@@ -302,21 +298,20 @@ class Boss:
 
     def boss_admin(self, bot, update):
         """Inoltra il messaggio del boss, solo per admin"""
-       # print("Admin boss")
+        # print("Admin boss")
 
 
         # prendi il dizionario, lista  e id
-        boss=self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        boss = self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
         if not boss:
-            boss={}
-            id=0
+            boss = {}
+            id = 0
         else:
             try:
-                id=boss[0]["msg_id"]
-                self.single_dict=False
+                id = boss[0]["msg_id"]
+                self.single_dict = False
             except KeyError:
-                id=boss["msg_id"]
-
+                id = boss["msg_id"]
 
         self.punteggi = boss
         self.last_update_id = id
@@ -331,7 +326,7 @@ class Boss:
     def boss_user(self, bot, update):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
 
-        self.punteggi=self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        self.punteggi = self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
 
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)
@@ -344,7 +339,6 @@ class Boss:
             self.punteggi = {}
             self.last_update_id = 0
             self.phoenix = False
-            # todo: invia sul db
             self.db.reset_punteggio()
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
@@ -364,7 +358,6 @@ class Boss:
                                       InlineKeyboardButton("Si", callback_data="/resetBossSi"),
                                       InlineKeyboardButton("No", callback_data="/resetBossNo")
                                   ]]))
-
 
     def boss_loop(self, bot, update):
         """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
@@ -386,7 +379,7 @@ class Boss:
             else:
                 self.phoenix = False
 
-            #todo: trova un'equivalente di id che non cambia ongi volta che rinvii lo stesso messaggio
+            # todo: trova un'equivalente di id che non cambia ongi volta che rinvii lo stesso messaggio
 
             if self.last_update_id == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
@@ -395,60 +388,62 @@ class Boss:
                 self.last_update_id = update.message.message_id
 
             # aggiunge i membri nel dizionario se non sono gia presenti
-            skipped=[]
-            #print(self.lista_boss)
-            users=self.db.get_users()
-            users_name=[elem["username"] for elem in users]
-            users_name_id=[(elem["username"], elem['id']) for elem in users]
+            skipped = []
+            # print(self.lista_boss)
+            users = self.db.get_users()
+            users_name = [elem["username"] for elem in users]
+            users_name_id = [(elem["username"], elem['id']) for elem in users]
 
-            if self.single_dict: self.punteggi=[self.punteggi]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
+            if self.single_dict: self.punteggi = [
+                self.punteggi]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             print(self.punteggi)
             for username in self.lista_boss:
-                if username[0] in users_name and not bool(self.punteggi.pop(0)):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                if username[0] in users_name and not bool(self.punteggi.pop(
+                        0)):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
                     self.punteggi.append({'username': username[0],
                                           'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
                                           # aggiungo l'id associato
                                           'valutazione': 0,
                                           'attacchi': 0})  # aggiungo l'user alla lista
-                elif username[0] in users_name and\
-                        not username[0] in [elem['username'] for elem in self.punteggi]:# se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
-                    self.punteggi.append({'username':username[0],
-                                          'id':[elem[1] for elem in users_name_id if elem[0]==username[0]].pop(0),#aggiungo l'id associato
-                                         'valutazione': 0,
-                                          'attacchi':0} )#aggiungo l'user alla lista
+                elif username[0] in users_name and \
+                        not username[0] in [elem['username'] for elem in
+                                            self.punteggi]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
+                    self.punteggi.append({'username': username[0],
+                                          'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
+                                          # aggiungo l'id associato
+                                          'valutazione': 0,
+                                          'attacchi': 0})  # aggiungo l'user alla lista
 
 
-            else:#altrimenti ho una lista di dizionari
-                found=False
+            else:  # altrimenti ho una lista di dizionari
+                found = False
 
                 for username in self.lista_boss:
                     for single_dict in self.punteggi:
-                        if single_dict['username'] == username[0]:# se è gia presente nel db
+                        if single_dict['username'] == username[0]:  # se è gia presente nel db
                             found = True
                             single_dict['msg_id'] = self.last_update_id
-                            if self.phoenix and isinstance(username[2], int):#non ha attaccato ed è phoenix
+                            if self.phoenix and isinstance(username[2], int):  # non ha attaccato ed è phoenix
                                 single_dict['valutazione'] += 2
-                            elif not self.phoenix and isinstance(username[2], int):# non ha attaccato ed è titan
+                            elif not self.phoenix and isinstance(username[2], int):  # non ha attaccato ed è titan
                                 single_dict['valutazione'] += 1
-                            elif isinstance(username[2], tuple):# ha attaccato
+                            elif isinstance(username[2], tuple):  # ha attaccato
                                 single_dict['attacchi'] = username[2][1]
                     if not found:
                         skipped.append(username)
                     found = False
 
-
-            #print(self.punteggi, self.single_dict)
-            if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
+            # print(self.punteggi, self.single_dict)
+            if not len(skipped) == len(self.lista_boss):  # se non ho saltato tutti gli username
                 self.db.salva_punteggi_in_db(self.punteggi)
 
-            if len(skipped)>0:
+            if len(skipped) > 0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
                 for users in skipped:
-                    to_send+="@"+users[0]+"\n"
-                to_send+="Chiedigli di inviare /start a @"+bot.username
+                    to_send += "@" + users[0] + "\n"
+                to_send += "Chiedigli di inviare /start a @" + bot.username
                 update.message.reply_text(to_send)
-
 
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)
@@ -458,10 +453,9 @@ class Boss:
             return 1
 
         else:
-            #print(choice)
+            # print(choice)
             update.message.reply_text("Non ho capito")
             return self.fine(bot, update)
-
 
     def punteggio(self, bot, update):
         """Visualizza la sita di tutti con punteggio annesso"""
@@ -470,12 +464,12 @@ class Boss:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        sortedD = sorted([(elem['username'],elem['valutazione']) for elem in self.punteggi], reverse=True)
+        sortedD = sorted([(elem['username'], elem['valutazione']) for elem in self.punteggi], reverse=True)
         num = [elem[1] for elem in sortedD]
 
-        to_send=""
+        to_send = ""
 
-        if any(elem >3 for elem in num) :to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
+        if any(elem > 3 for elem in num): to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
         for elem in sortedD:
             if elem[1] > 3: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
@@ -504,7 +498,6 @@ class Boss:
         if not len(self.lista_boss) > 0:
             update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
             return ConversationHandler.END
-
 
         to_send = "✅ <b>Hanno attaccato</b>:\n"
 
@@ -541,12 +534,10 @@ class Boss:
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1
 
-
     def fine(self, bot, update):
         update.message.reply_text("Finito", reply_markup=ReplyKeyboardRemove())
         self.lista_boss = []
         return ConversationHandler.END
-
 
     def non_attaccanti(self, bot, update):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
@@ -555,9 +546,8 @@ class Boss:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-
         to_send = ""
-        for elem in [(elem['attacchi'],elem['username']) for elem in self.punteggi]:
+        for elem in [(elem['attacchi'], elem['username']) for elem in self.punteggi]:
             if (elem[0] == 0): to_send += str(elem[1]) + "\n"
 
         update.message.reply_text(to_send)

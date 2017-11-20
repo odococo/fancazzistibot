@@ -5,18 +5,16 @@
 #
 
 import logging
-import json
 import os
 from functools import wraps
 from inspect import signature
 from urllib import parse
+
 import psycopg2
 import psycopg2.extras
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 import utils
-
-# todo: db_call dovrebbe diventare una calsse
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -24,42 +22,41 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-
 TABELLE = {
-            "id_users": {
-                "create": {"normal": """CREATE TABLE IF NOT EXISTS id_users(
+    "id_users": {
+        "create": {"normal": """CREATE TABLE IF NOT EXISTS id_users(
               id integer PRIMARY KEY,
               admin boolean DEFAULT false,
               tester boolean DEFAULT false,
               loot_user boolean DEFAULT false,
               loot_admin boolean DEFAULT false,
               banned boolean DEFAULT false)""",
-                           "banned": """CREATE TABLE IF NOT EXISTS id_users(
+                   "banned": """CREATE TABLE IF NOT EXISTS id_users(
               id integer PRIMARY KEY,
               admin boolean DEFAULT false,
               tester boolean DEFAULT false,
               loot_user boolean DEFAULT false,
               loot_admin boolean DEFAULT false,
               banned boolean DEFAULT true)"""},
-                "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
-                "select": {
-                    'all': """SELECT * FROM id_users""",
-                    'from_id': """SELECT * FROM id_users WHERE id = %s"""
-                },
-                "insert": {
-                    'single_id': """INSERT INTO id_users (id) 
+        "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
+        "select": {
+            'all': """SELECT * FROM id_users""",
+            'from_id': """SELECT * FROM id_users WHERE id = %s"""
+        },
+        "insert": {
+            'single_id': """INSERT INTO id_users (id) 
                             VALUES(%s)
                             ON CONFLICT(id) DO NOTHING""",
-                    'complete_user': """INSERT INTO id_users (id ,admin, tester, loot_user, loot_admin, banned)
+            'complete_user': """INSERT INTO id_users (id ,admin, tester, loot_user, loot_admin, banned)
                                 VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT(id) DO NOTHING;"""},
-                "update": """UPDATE id_users
+        "update": """UPDATE id_users
               SET admin = %s, tester = %s, loot_user = %s, loot_admin = %s, banned = %s
               WHERE id = %s""",
-                "delete": """DELETE FROM id_users
+        "delete": """DELETE FROM id_users
               WHERE id = %s"""
-            },
-            "users": {
-                "create": """CREATE TABLE IF NOT EXISTS users(
+    },
+    "users": {
+        "create": """CREATE TABLE IF NOT EXISTS users(
               id integer REFERENCES id_users ON DELETE CASCADE,
               username varchar(255),
               first_name varchar(255),
@@ -67,100 +64,99 @@ TABELLE = {
               language_code varchar(10),
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY(id, date))""",
-                "drop": """DROP TABLE IF EXISTS users CASCADE""",
-                "select": {
-                    'all': """SELECT * FROM users""",
-                    'from_username': """SELECT * 
+        "drop": """DROP TABLE IF EXISTS users CASCADE""",
+        "select": {
+            'all': """SELECT * FROM users""",
+            'from_username': """SELECT * 
                        FROM users NATURAL JOIN id_users
                        WHERE username = %s AND date >= ALL(SELECT date
                         FROM users
                         WHERE username = %s)""",
-                    'from_id': """SELECT *
+            'from_id': """SELECT *
               FROM users NATURAL JOIN id_users
               WHERE id = %s AND date >= ALL(SELECT date
                 FROM users
                 WHERE id = %s)"""
 
-                },
-                "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
+        },
+        "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
               VALUES (%s, %s, %s, %s ,%s)""",
-                "update": """UPDATE users
+        "update": """UPDATE users
               SET username = %s, first_name = %s, last_name = %s, language_code = %s
               WHERE id = %s""",
-                "delete": """DELETE FROM users
+        "delete": """DELETE FROM users
               WHERE id = %s"""
-            },
-            "bot_users": {
-                "create": """CREATE TABLE IF NOT EXISTS bot_users(
+    },
+    "bot_users": {
+        "create": """CREATE TABLE IF NOT EXISTS bot_users(
               id_bot integer REFERENCES id_users ON DELETE CASCADE,
               id_user integer REFERENCES id_users ON DELETE CASCADE,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               language varchar(10),
               PRIMARY KEY(id_bot, id_user))""",
-                "drop": """DROP TABLE IF EXISTS bot_users CASCADE""",
-                "select": {
-                    'all': """SELECT * FROM bot_users"""
-                },
-                "insert": """INSERT INTO bot_users (id_bot, id_user, language)
+        "drop": """DROP TABLE IF EXISTS bot_users CASCADE""",
+        "select": {
+            'all': """SELECT * FROM bot_users"""
+        },
+        "insert": """INSERT INTO bot_users (id_bot, id_user, language)
               VALUES (%s, %s, %s)
               ON CONFLICT (id_bot, id_user) DO UPDATE
               SET language = EXCLUDED.language""",
-                "update": """UPDATE bot_users
+        "update": """UPDATE bot_users
               SET language = %s
               WHERE id_bot = %s AND id_user = %s""",
-                "delete": """DELETE FROM bot_users
+        "delete": """DELETE FROM bot_users
               WHERE id_bot = %s AND id_user = %s"""
-            },
-            "activity": {
-                "create": """CREATE TABLE IF NOT EXISTS activity(
+    },
+    "activity": {
+        "create": """CREATE TABLE IF NOT EXISTS activity(
               id serial PRIMARY KEY,
               id_bot integer REFERENCES id_users ON DELETE CASCADE,
               id_user integer REFERENCES id_users ON DELETE CASCADE,
               content text NOT NULL,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               type varchar(20))""",
-                "drop": """DROP TABLE IF EXISTS activity CASCADE""",
-                "select": {
-                    'all': """SELECT * FROM activity"""
-                },
-                "insert": """INSERT INTO activity (id_bot, id_user, content, type)
+        "drop": """DROP TABLE IF EXISTS activity CASCADE""",
+        "select": {
+            'all': """SELECT * FROM activity"""
+        },
+        "insert": """INSERT INTO activity (id_bot, id_user, content, type)
               VALUES (%s, %s, %s ,%s)""",
-                "update": """UPDATE activity
+        "update": """UPDATE activity
               SET type = %s
               WHERE id = %s""",
-                "delete": """DELETE FROM activity
+        "delete": """DELETE FROM activity
               WHERE id = %s"""
-            },
-            "punteggio": {
-                "create": """CREATE TABLE IF NOT EXISTS punteggio(
+    },
+    "punteggio": {
+        "create": """CREATE TABLE IF NOT EXISTS punteggio(
               id_user integer REFERENCES id_users ON DELETE CASCADE,
               valutazione numeric(1) DEFAULT 0,
               msg_id integer DEFAULT 0,
               PRIMARY KEY(id_user))""",
-                "drop": """DROP TABLE IF EXISTS punteggio CASCADE""",
-                "select": {
-                    'all': """SELECT * FROM punteggio """,
-                    'all_and_users': """SELECT * FROM punteggio NATURAL JOIN users"""
-                },
-                "insert": """INSERT INTO punteggio (id, valutazione, msg_id, attacchi)
+        "drop": """DROP TABLE IF EXISTS punteggio CASCADE""",
+        "select": {
+            'all': """SELECT * FROM punteggio """,
+            'all_and_users': """SELECT * FROM punteggio NATURAL JOIN users"""
+        },
+        "insert": """INSERT INTO punteggio (id, valutazione, msg_id, attacchi)
               VALUES (%s, %s, %s, %s)
               ON CONFLICT(id) DO UPDATE
               SET valutazione = EXCLUDED.valutazione, msg_id = 0""",
-                "update": """UPDATE punteggio 
+        "update": """UPDATE punteggio 
                     SET valutazione = %s ,msg_id =%s, attacchi=%s   
                     WHERE id = %s;""",
-                "reset": """update punteggio set (msg_id , valutazione, attacchi) = (0 ,0,0)""",
-                "delete": """DELETE FROM punteggio
+        "reset": """update punteggio set (msg_id , valutazione, attacchi) = (0 ,0,0)""",
+        "delete": """DELETE FROM punteggio
               WHERE id_user = %s"""
-            }
-        }
+    }
+}
 
 developer_dicts = {"brandimax": 24978334}  # , "odococo":89675136}
 
 
 class DB:
     def __init__(self):
-
 
         self.connect_db()
 
@@ -247,11 +243,7 @@ class DB:
         return userA
 
     def salva_punteggi_in_db(self, dizionario):
-        print("DIZIONARIO\n\n")
-        print(dizionario)
-        print("\n\n")
-        """Salva il i punteggi aggiornati, se is_single==True allora dizionario è un semplice dizionario
-        altrimenti è una lista di dizionari"""
+        """Salva il i punteggi aggiornati aggiornandoli in caso gia fossero presenti oppure aggiungendoli altrimenti"""
 
         for elem in dizionario:
             self.execute(TABELLE['punteggio']['insert'],
@@ -301,9 +293,13 @@ class DB:
             logger.error("Errore nella connessione al database: {}".format(error))
             return None
 
-#==============================ACCESS METHODS=======================================================
+            # ==============================ACCESS METHODS=======================================================
 
     def elegible_user(self, func):
+        """questa funzione ha il compito di verificare se l'id utente è abilitato a chiamare il comando
+        il suo utilizzo è il seguente:
+        data la funzione command che deve essere wrappata, si può creare una nuova funzione elegible_user(command) """
+
         @wraps(func)
         def check_if_user_can_interact(bot, update, *args, **kwargs):
             """Questa funzione ritorna true se l'user puo interagire, altrimenti false
@@ -320,16 +316,16 @@ class DB:
                 return
             else:
                 sig = signature(func)
-                if len(sig.parameters)>1:
+                if len(sig.parameters) > 1:
                     return func(bot, update, *args, **kwargs)
                 else:
                     return func(*args, **kwargs)
 
-
         return check_if_user_can_interact
 
-
     def elegible_admin(self, func):
+        """stesso compito della funzione elegible_user, solo che verifica anche se l'id è admin"""
+
         @wraps(func)
         def check_if_admin(bot, update, *args, **kwargs):
             """Questa funzione ritorna true se l'user puo interagire, altrimenti false
@@ -346,7 +342,7 @@ class DB:
                 return
             elif user["admin"]:
                 sig = signature(func)
-                if len(sig.parameters)>1:
+                if len(sig.parameters) > 1:
                     return func(bot, update, *args, **kwargs)
                 else:
                     return func(*args, **kwargs)
@@ -356,7 +352,8 @@ class DB:
 
         return check_if_admin
 
-    def grant_deny_access(self ,bot, update):
+    def grant_deny_access(self, bot, update):
+        """Funziona tramite callback query e serve a garantire l'accesso o meno all'udente id"""
         text = update.callback_query.data.split(" ")
         command = text[0]
         user_lst = text[1:]
@@ -376,6 +373,7 @@ class DB:
                 bot.send_message(dev, "L'accesso a user : " + str(user["username"] + ", è stato negato"))
 
     def request_access(self, bot, user):
+        """Invia la richiesta di accesso ai comandi agli id presenti in veleloper_dict"""
         to_send = "L'utente :\nid: " + str(user["id"]) + "\nusername: " + str(user["username"]) + "\nfirst_name: " + \
                   str(user["first_name"]) + "\nlast_name: " + str(
             user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \

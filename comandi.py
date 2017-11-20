@@ -2,17 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import random
-import utils, os, re
-from db_call import DB
-
-from negozi_loot import value
-from PokerDice import calc_score, consigliami
 
 from telegram import (
     InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    User
+    InlineKeyboardMarkup
 )
+
+import os
+import utils
+from PokerDice import calc_score, consigliami
+from db_call import DB
 
 COMANDI_PLUS = """
 attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
@@ -24,7 +23,7 @@ class Command():
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
-        self.db=db
+        self.db = db
         # Se ho un messaggio dato da tasto inline
         if update.callback_query:
             command_text = update.callback_query.data
@@ -51,12 +50,12 @@ class Command():
     def execute(self):
         method = self.getattr(self.command[1:], self.unknown_command)
         if (method.__name__.startswith("A")):
-            method=self.db.elegible_admin(method)
+            method = self.db.elegible_admin(method)
         elif (method.__name__.startswith("D") and
                   not utils.is_dev(self.bot.id)):
             pass
         else:
-            method=self.db.elegible_user(method)
+            method = self.db.elegible_user(method)
         method(self.bot, self.update)
 
     def answer(self, text, pretty_json=False, **options):
@@ -73,7 +72,6 @@ class Command():
 
     def command_list(self, admin=False, dev=False):
         """Ritorna la lista dei comandi disponibili"""
-
 
         commands = [command for command in dir(self)
                     if
@@ -148,7 +146,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
     def UhelpLink(self):
         """ - ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
-        #todo: usa messageEntity per una migliore foramttazione
+        # todo: usa messageEntity per una migliore foramttazione
 
         self.answer("https://github.com/odococo/fancazzistibot/blob/master/README.md")
 
@@ -271,12 +269,12 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """test dev"""
         self.answer("ok")
 
-    def Dboss(self):
+    def DpinBoss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
     boss -> 0 (titano) o 1 (phoenix)\n
     giorno -> da 0 a 6 (da lunedì a domenica)\n
     ora -> un'ora qualsiasi"""
-        # fixme: verifica del corretto inserimento dei parametri, cambia nome in DfissaBoss
+        # fixme: verifica del corretto inserimento dei parametri
         chat_id = -1001284891867  # Bot per i Boss
         boss = self.params[0]
         giorno = self.params[1]
@@ -342,7 +340,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
 
+
 def new_command(bot, update):
     command = Command(bot, update, DB())
     command.execute()
-

@@ -16,17 +16,12 @@ bot.
 
 import logging
 import os
-import re
 import sys
 
-import telegram
 from telegram.ext import (
     Updater,
-    MessageHandler,
     RegexHandler,
-    Filters,
-    CallbackQueryHandler,
-    TypeHandler
+    CallbackQueryHandler
 )
 
 from bot_classes import Loot, Boss
@@ -34,7 +29,7 @@ from comandi import new_command
 from db_call import DB
 from utils import (is_numeric)
 
-#==================GLOBAL VARIABLES==========================================
+# ==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -42,9 +37,7 @@ logger = logging.getLogger(__name__)
 PORT = int(os.environ.get('PORT', '5000'))
 
 
-
-
-#==================FUNCTIONS==========================================
+# ==================FUNCTIONS==========================================
 
 def get_token_bot(dev):
     if dev:
@@ -54,6 +47,7 @@ def get_token_bot(dev):
         id = "490902479"
         token = id + ":AAGz3rv4M2U2dYG7WJDbiWZoAFFsUVn_ZIE"
     return token
+
 
 def get_user(user):
     user = {
@@ -65,8 +59,10 @@ def get_user(user):
     }
     return user
 
+
 def get_bot(bot):
     return get_user(bot)
+
 
 # def get_info(bot, update):
 #     user = get_user(update.message.from_user)
@@ -91,27 +87,29 @@ def button(bot, update):
 def alarm(bot, job):
     """Function to send the alarm message"""
     bot.send_message(job.context, text='Beep!')
-    
+
+
 def set(bot, update, args, job_queue, chat_data):
     """Adds a job to the queue"""
     chat_id = update.message.chat_id
-    #print(chat_id)
+    # print(chat_id)
     try:
-      # args[0] should contain the time for the timer in seconds
-      due = int(args[0])
-      if due < 0:
-          update.message.reply_text('Sorry we can not go back to future!')
-          return
+        # args[0] should contain the time for the timer in seconds
+        due = int(args[0])
+        if due < 0:
+            update.message.reply_text('Sorry we can not go back to future!')
+            return
 
-      # Add job to queue
-      job = job_queue.run_once(alarm, due, context=chat_id)
-      chat_data['job'] = job
+        # Add job to queue
+        job = job_queue.run_once(alarm, due, context=chat_id)
+        chat_data['job'] = job
 
-      update.message.reply_text('Timer successfully set!')
+        update.message.reply_text('Timer successfully set!')
 
     except (IndexError, ValueError):
-      update.message.reply_text('Usage: /set <seconds>')
-      
+        update.message.reply_text('Usage: /set <seconds>')
+
+
 def unset(bot, update, chat_data):
     """Removes the job if the user changed their mind"""
 
@@ -125,14 +123,16 @@ def unset(bot, update, chat_data):
 
     update.message.reply_text('Timer successfully unset!')
 
+
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
+
 
 def log_update(bot, update):
     logger.info(update)
 
 
-#==================MAIN==========================================
+# ==================MAIN==========================================
 
 
 def main():
@@ -144,52 +144,45 @@ def main():
     python3 main 2 il bot principale in polling
     python3 main 3 il bot dev in polling
     """
-    #mode=3
+    # mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
-    #add_bot(get_bot(updater.bot))
+    # add_bot(get_bot(updater.bot))
 
-# Get the dispatcher to register handlers
+    # Get the dispatcher to register handlers
     disp = updater.dispatcher
 
     # Handler to get username and other info
-    #disp.add_handler(MessageHandler(Filters.all, get_info), -1)
-    #disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
+    # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
+    # disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
 
 
 
-    db=DB()
+    db = DB()
 
-    #classi per craftlootbot e comandi boss
+    # classi per craftlootbot e comandi boss
     Loot(updater.bot, disp, db)
     Boss(updater.bot, disp, db)
 
-    #handler per richiedere accesso al bot
+    # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))
-
-
-
-
 
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
-
-
-
-
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
-    
+
     # log all errors
     disp.add_error_handler(error)
 
     # Start the Bot
-    if debug: updater.start_polling()
+    if debug:
+        updater.start_polling()
     else:
         updater.start_webhook(listen="0.0.0.0",
-                          port=PORT,
-                          url_path="main")
+                              port=PORT,
+                              url_path="main")
         updater.bot.set_webhook("https://fancazzistibot.herokuapp.com/main")
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,

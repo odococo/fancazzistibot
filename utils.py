@@ -4,13 +4,9 @@
 import ast
 import datetime
 import json
-from functools import wraps
 
 import requests
 from bs4 import BeautifulSoup
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-
-import db_call
 
 COMANDI_BOT_FATHER = """
 win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
@@ -23,8 +19,6 @@ punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco d
 help - mostra questo messaggio di help
 start - avvia il bot
 """
-
-
 
 
 def is_admin(id):
@@ -82,10 +76,6 @@ def get_user(user):
     fields = ["<strong>{}</strong>: <code>{}</code>".format(key, value)
               for key, value in user.items() if key != "date"]
     return "\n".join(fields)
-
-
-
-
 
 
 def get_user_id(update):
