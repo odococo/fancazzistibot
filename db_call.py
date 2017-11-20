@@ -43,6 +43,7 @@ def ban_user(user):
     execute(TABELLE['id_users']['insert']['complete_user'],( user['id'],False,False,False,False,True))
 
 def save_new_user(user):
+    print("Saving new user")
     execute(TABELLE['id_users']['insert']['complete_user'], (user['id'], False, False,True, False, False))
     execute(TABELLE['users']['insert'],(user['id'],user['username'],user['first_name'],user['last_name'],user['language_code']))
 
