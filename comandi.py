@@ -57,7 +57,7 @@ class Command():
             pass
         else:
             method=self.db.elegible_user(method)
-        method(self.bot, self.update) 
+        method(self.bot, self.update)
 
     def answer(self, text, pretty_json=False, **options):
         """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
@@ -110,7 +110,7 @@ In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per 
 e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai 
 finito premi "Fine".\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
-Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato <3"""
+Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️"""
         self.answer(text)
 
     # def Uinline(self):
