@@ -49,7 +49,7 @@ def save_new_user(user):
 
 
 def reset_punteggio():
-    execute("DELETE FROM punteggio")
+    execute(TABELLE['punteggio']['reset'])
 
 
 # aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
@@ -290,6 +290,7 @@ TABELLE = {
         "update": """UPDATE punteggio 
                     SET valutazione = %s ,msg_id =%s, attacchi=%s   
                     WHERE id = %s;""",
+        "reset":"""update punteggio set (msg_id , valutazione, attacchi) = (0 ,0,0)""",
         "delete": """DELETE FROM punteggio
               WHERE id_user = %s"""
     }
