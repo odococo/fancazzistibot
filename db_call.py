@@ -152,6 +152,12 @@ def connect_db():
 def salva_punteggi_in_db(dizionario, is_single):
     """Salva il i punteggi aggiornati, se is_single==True allora dizionario è un semplice dizionario
     altrimenti è una lista di dizionari"""
+    if is_single:
+        execute(TABELLE['punteggio']['update'], (dizionario['valutazione'],dizionario['msg_id'],dizionario['id']))
+    else:
+        for elem in dizionario:
+            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id']))
+
 
 TABELLE = {
     "id_users": {

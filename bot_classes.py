@@ -213,12 +213,27 @@ class Loot:
 
 class Boss:
     def __init__(self, bot, dispatcher):
+        """Questa classe è utilizzate per gestire gli attacchi al boss, i parametri sono:
+        bot : bot dell'updater
+        dispatcher: sempre dell'updater
+        Le variabili di classe:
+        lista_boss : La lista ritornata dalla funzione cerca boss, non vuota solo dopo che un admin ha inoltrato
+                    il messaggio team
+        punteggi: punteggi può variare a seconda dei dati preseti nel db:
+                nel caso in cui nel db ci sia solo un utente con informazioni sia sulla tabella users che punteggi
+                allora questo diventa un dizionario con chiavi [date, first_name, id, msg_id, language_code, username, valutazione, last_name]
+                Se sono presenti piu elementi allora viene ritornata una lista di dizionari come sopra
+        last_update_id: viene salvato nel db per impedire che vengano caricati due volte gli stessi messaggi
+        phoenix: boolean che fa da flag per la scelta del boss
+        single_dict, boolean,serve come falg per sapere se il dizionario del database contiene un solo utente sotto la tabella punteggio
+                
+        """
         self.bot = bot
         self.lista_boss = []
-        self.dict_boss = {}
+        self.punteggi = {}
         self.last_update_id = 0
         self.phoenix = False
-        self.single_dict=True #serve come falg per sapere se il dizionario del database contiene un solo utente sotto la tabella punteggio
+        self.single_dict=True
 
         coversation_boss = ConversationHandler(
             [CommandHandler("attacchiBoss", self.boss_user), RegexHandler("^🏆", self.boss_admin)],
@@ -283,7 +298,7 @@ class Boss:
 
 
         print(boss)
-        self.dict_boss = boss
+        self.punteggi = boss
         self.last_update_id = id
 
         self.lista_boss = self.cerca_boss(update.message.text)
@@ -309,7 +324,7 @@ class Boss:
     def boss_reset_confirm(self, bot, update):
         if "Si" in update.callback_query.data:
             self.lista_boss = []
-            self.dict_boss = {}
+            self.punteggi = {}
             self.last_update_id = 0
             self.phoenix = False
             # todo: invia sul db
@@ -370,34 +385,33 @@ class Boss:
             skipped=[]
             if self.single_dict:#in questo caso ho un dizionario con un solo utente
                 for elem in self.lista_boss:
-                    if elem[0] not in self.dict_boss['username']:
+                    if elem[0] not in self.punteggi['username']:
                         skipped.append(elem[0])
                     elif elem[2] == 0 and self.phoenix:
-                        self.dict_boss['valutazione'] += 2
+                        self.punteggi['valutazione'] += 2
                     elif elem[2] == 0 and not self.phoenix:
-                        self.dict_boss['valutazione'] += 1
-                    self.dict_boss['msg_id']=self.last_update_id
+                        self.punteggi['valutazione'] += 1
+                    self.punteggi['msg_id']=self.last_update_id
 
             else:#altrimenti ho una lista di dizionari
                 found=False
                 for username in self.lista_boss:
-                    for single_dict in self.dict_boss:
-                        if single_dict['username']==username:
-                            found=True
+                    for single_dict in self.punteggi:
+                        if single_dict['username'] == username[0]:
+                            found = True
                             single_dict['msg_id'] = self.last_update_id
                             if self.phoenix:
-                                single_dict['valutazione']+=2
+                                single_dict['valutazione'] += 2
                             else:
-                                single_dict['valutazione']+=1
+                                single_dict['valutazione'] += 1
 
                     if not found:
                         skipped.append(username)
-                    found=False
+                    found = False
 
-            print(self.dict_boss)
 
             if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
-                db_call.salva_punteggi_in_db(self.dict_boss, self.single_dict)
+                db_call.salva_punteggi_in_db(self.punteggi, self.single_dict)
 
             elif len(skipped)>0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
@@ -423,11 +437,12 @@ class Boss:
     def punteggio(self, bot, update):
         """Visualizza la sita di tutti con punteggio annesso"""
 
-        if not len(self.dict_boss.keys()) > 0:
+        if not len(self.punteggi) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
+        #fixme: aggiorna tutto in base al nuovo db
+        sortedD = sorted(self.punteggi.items(), key=operator.itemgetter(1), reverse=True)
 
         to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
         for elem in sortedD:
@@ -459,7 +474,7 @@ class Boss:
         if not len(self.lista_boss) > 0:
             update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
             return ConversationHandler.END
-        if not len(self.dict_boss.keys()) > 0:
+        if not len(self.punteggi) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
@@ -489,7 +504,7 @@ class Boss:
         i = 1
         for elem in non_attaccato:
             to_send += str(i) + ") @" + str(elem[0]) + " : il suo punteggio attuale è <b>" + str(
-                self.dict_boss[elem[0]]) + "</b>"
+                self.punteggi[elem[0]]) + "</b>"
             if elem[1] == 1:
                 to_send += ", può attaccare\n"
             else:
@@ -509,11 +524,11 @@ class Boss:
     def non_attaccanti(self, bot, update):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
-        if not len(self.dict_boss.keys()) > 0:
+        if not len(self.punteggi.keys()) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        sortedD = sorted(self.dict_boss.items(), key=operator.itemgetter(1), reverse=True)
+        sortedD = sorted(self.punteggi.items(), key=operator.itemgetter(1), reverse=True)
 
         to_send = ""
         for elem in sortedD:
