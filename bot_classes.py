@@ -371,6 +371,7 @@ class Boss:
             else:
                 self.phoenix = False
 
+            #fixme: non funziona
             if self.last_update_id == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
                 return 1
@@ -385,9 +386,9 @@ class Boss:
                     if elem[0] not in self.punteggi['username']:
                         skipped.append(elem[0])
                         pass
-                    elif elem[2] == 0 and self.phoenix:
+                    elif isinstance(elem[2], int) and self.phoenix:
                         self.punteggi['valutazione'] += 2
-                    elif elem[2] == 0 and not self.phoenix:
+                    elif isinstance(elem[2], int) and not self.phoenix:
                         self.punteggi['valutazione'] += 1
                     self.punteggi['msg_id']=self.last_update_id
                     self.punteggi['attacchi']+=elem[2]
@@ -402,9 +403,9 @@ class Boss:
                             found = True
                             single_dict['msg_id'] = self.last_update_id
                             single_dict['attacchi'] = username[2]
-                            if self.phoenix:
+                            if self.phoenix and isinstance(username[2], int):
                                 single_dict['valutazione'] += 2
-                            else:
+                            elif not self.phoenix and isinstance(username[2], int):
                                 single_dict['valutazione'] += 1
 
                     if not found:
