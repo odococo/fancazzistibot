@@ -57,7 +57,7 @@ class Command():
             pass
         else:
             method=self.db.elegible_user(method)
-        method(self.bot, self.update)
+        method(self.bot, self.update) 
 
     def answer(self, text, pretty_json=False, **options):
         """Wrapper che consente di inviare risposte testuali che superano il limite di lunghezza"""
