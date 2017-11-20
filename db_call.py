@@ -320,7 +320,7 @@ class DB:
                 return
             else:
                 sig = signature(func)
-                if len(sig)>1:
+                if len(sig.parameters)>1:
                     return func(bot, update, *args, **kwargs)
                 else:
                     return func(*args, **kwargs)
@@ -346,7 +346,7 @@ class DB:
                 return
             elif user["admin"]:
                 sig = signature(func)
-                if len(sig)>1:
+                if len(sig.parameters)>1:
                     return func(bot, update, *args, **kwargs)
                 else:
                     return func(*args, **kwargs)
