@@ -299,7 +299,7 @@ class Boss:
             try:
                 id=boss[0]["msg_id"]
                 self.single_dict=False
-            except IndexError:
+            except KeyError:
                 id=boss["msg_id"]
 
 
