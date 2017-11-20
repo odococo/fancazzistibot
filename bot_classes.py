@@ -15,7 +15,7 @@ class Loot:
     def __init__(self, bot, dispatcher, db):
         self.bot = bot
         self.db=db
-        self.ricerca_decor=db.elegible_user_func(db, self.ricerca)
+        self.ricerca_decor=db.elegible_user_func( self.ricerca)
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
