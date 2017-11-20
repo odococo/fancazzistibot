@@ -141,8 +141,8 @@ TABELLE = {
                     'all': """SELECT * FROM punteggio """,
                     'all_and_users': """SELECT * FROM punteggio NATURAL JOIN users"""
                 },
-                "insert": """INSERT INTO punteggio (id_user, valutazione, msg_id)
-              VALUES (%s, %s, %s)
+                "insert": """INSERT INTO punteggio (id, valutazione, msg_id, attacchi)
+              VALUES (%s, %s, %s, %s)
               ON CONFLICT(id_user) DO UPDATE
               SET valutazione = EXCLUDED.valutazione, msg_id = 0""",
                 "update": """UPDATE punteggio 
@@ -247,9 +247,8 @@ class DB:
         altrimenti è una lista di dizionari"""
         if is_single:
             if not isinstance(dizionario['attacchi'], int): dizionario['attacchi'] = dizionario['attacchi'][1]
-            self.execute(TABELLE['punteggio']['update'],
-                         (dizionario['valutazione'], dizionario['msg_id'], dizionario['attacchi'],
-                          dizionario['id']))
+            self.execute(TABELLE['punteggio']['insert'],
+                         (dizionario['id'], dizionario['valutazione'], dizionario['msg_id'], dizionario['attacchi']))
         else:
             for elem in dizionario:
                 attacchi = 0
@@ -257,8 +256,8 @@ class DB:
                     # print("tuple!")
                     attacchi = int(elem['attacchi'][1])
                     # print(attacchi)
-                self.execute(TABELLE['punteggio']['update'],
-                             (elem['valutazione'], elem['msg_id'], attacchi, elem['id']))
+                self.execute(TABELLE['punteggio']['insert'],
+                             (elem['id'], elem['valutazione'], elem['msg_id'], attacchi))
 
     # esegue una query arbitraria
     @staticmethod
