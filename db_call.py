@@ -8,6 +8,7 @@ import logging
 import json
 import os
 from functools import wraps
+from inspect import signature
 from urllib import parse
 import psycopg2
 import psycopg2.extras
@@ -318,7 +319,12 @@ class DB:
                 update.message.reply_text("Spiacente sei stato bannato dal bot")
                 return
             else:
-                return func(bot, update, *args, **kwargs)
+                sig = signature(func)
+                if len(sig>1):
+                    return func(bot, update, *args, **kwargs)
+                else:
+                    return func(*args, **kwargs)
+
 
         return check_if_user_can_interact
 
@@ -339,7 +345,11 @@ class DB:
                 update.message.reply_text("Spiacente sei stato bannato dal bot")
                 return
             elif user["admin"]:
-                return func(bot, update, *args, **kwargs)
+                sig = signature(func)
+                if len(sig > 1):
+                    return func(bot, update, *args, **kwargs)
+                else:
+                    return func(*args, **kwargs)
             else:
                 update.message.reply_text("Non sei abilitato ad usare questo comando")
                 return
