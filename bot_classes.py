@@ -327,7 +327,7 @@ class Boss:
             self.last_update_id = 0
             self.phoenix = False
             # todo: invia sul db
-            db_call.reset_punteggio()
+            db_call.reset_punteggio() 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text="Punteggi resettati!",
