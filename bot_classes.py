@@ -391,8 +391,10 @@ class Boss:
                         self.punteggi['valutazione'] += 2
                     elif isinstance(elem[2], int) and not self.phoenix:
                         self.punteggi['valutazione'] += 1
+                    elif isinstance(elem[2], tuple):
+                        self.punteggi['attacchi'] += elem[2]
+
                     self.punteggi['msg_id']=self.last_update_id
-                    self.punteggi['attacchi']+=elem[2]
 
 
 
@@ -403,12 +405,12 @@ class Boss:
                         if single_dict['username'] == username[0]:
                             found = True
                             single_dict['msg_id'] = self.last_update_id
-                            single_dict['attacchi'] = username[2]
                             if self.phoenix and isinstance(username[2], int):
                                 single_dict['valutazione'] += 2
                             elif not self.phoenix and isinstance(username[2], int):
                                 single_dict['valutazione'] += 1
-
+                            elif isinstance(username[2], tuple):
+                                single_dict['attacchi'] = username[2][1]
                     if not found:
                         skipped.append(username)
                     found = False
