@@ -245,25 +245,21 @@ class DB:
             return False
         return userA
 
-    def salva_punteggi_in_db(self, dizionario, is_single):
+    def salva_punteggi_in_db(self, dizionario):
         print("DIZIONARIO\n\n")
         print(dizionario)
         print("\n\n")
         """Salva il i punteggi aggiornati, se is_single==True allora dizionario è un semplice dizionario
         altrimenti è una lista di dizionari"""
-        if is_single:
-            if not isinstance(dizionario['attacchi'], int): dizionario['attacchi'] = dizionario['attacchi'][1]
+
+        for elem in dizionario:
+            attacchi = 0
+            if not isinstance(elem['attacchi'], int):
+                # print("tuple!")
+                attacchi = int(elem['attacchi'][1])
+                # print(attacchi)
             self.execute(TABELLE['punteggio']['insert'],
-                         (dizionario['id'], dizionario['valutazione'], dizionario['msg_id'], dizionario['attacchi']))
-        else:
-            for elem in dizionario:
-                attacchi = 0
-                if not isinstance(elem['attacchi'], int):
-                    # print("tuple!")
-                    attacchi = int(elem['attacchi'][1])
-                    # print(attacchi)
-                self.execute(TABELLE['punteggio']['insert'],
-                             (elem['id'], elem['valutazione'], elem['msg_id'], attacchi))
+                         (elem['id'], elem['valutazione'], elem['msg_id'], attacchi))
 
     # esegue una query arbitraria
     @staticmethod

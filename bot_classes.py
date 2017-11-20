@@ -419,7 +419,7 @@ class Boss:
 
             #print(self.punteggi, self.single_dict)
             if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
-                self.db.salva_punteggi_in_db(self.punteggi, self.single_dict)
+                self.db.salva_punteggi_in_db(self.punteggi)
 
             if len(skipped)>0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
