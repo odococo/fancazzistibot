@@ -240,8 +240,8 @@ class Boss:
 
 
         boss_user_decor=db.elegible_user_method(self.boss_user)
-        boss_admin_decor=db.elegible_admin_method(self.boss_admin)
-        reset_boss_ask_decor=db.elegible_admin_method(self.boss_reset_ask)
+        boss_admin_decor=db.elegible_admin_func(self.boss_admin)
+        reset_boss_ask_decor=db.elegible_admin_func(self.boss_reset_ask)
 
         coversation_boss = ConversationHandler(
             [CommandHandler("attacchiBoss", boss_user_decor), RegexHandler("^🏆", boss_admin_decor)],

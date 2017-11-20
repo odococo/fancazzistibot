@@ -349,9 +349,9 @@ class DB:
 
 
 
-    def elegible_admin_method(self, func):
+    def elegible_admin_func(self, func):
         @wraps(func)
-        def check_if_admin(self, bot, update, *args, **kwargs):
+        def check_if_admin(bot, update, *args, **kwargs):
             """Questa funzione ritorna true se l'user puo interagire, altrimenti false
             inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
             user_id = update._effective_user
@@ -365,7 +365,7 @@ class DB:
                 update.message.reply_text("Spiacente sei stato bannato dal bot")
                 return
             elif user["admin"]:
-                return func(self, bot, update, *args, **kwargs)
+                return func(bot, update, *args, **kwargs)
             else:
                 update.message.reply_text("Non sei abilitato ad usare questo comando")
                 return
