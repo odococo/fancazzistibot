@@ -157,7 +157,6 @@ class Loot:
         return ConversationHandler.END
 
     def send_negozi(self, bot, update):
-        to_change=""
         addon=""
 
         if "Si" in update.callback_query.data:
@@ -174,6 +173,7 @@ class Loot:
                 to_change = "Si è verificato un errore, contatta @brandimax"
         else:
             to_change = "Ok"
+
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_change,
