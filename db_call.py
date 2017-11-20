@@ -154,7 +154,8 @@ def salva_punteggi_in_db(dizionario, is_single):
     altrimenti è una lista di dizionari"""
     if is_single:
         if not isinstance(dizionario['attacchi'], int): dizionario['attacchi']=dizionario['attacchi'][1]
-        execute(TABELLE['punteggio']['update'], (dizionario['valutazione'],dizionario['msg_id'],dizionario['id'],dizionario['attacchi']))
+        execute(TABELLE['punteggio']['update'], (dizionario['valutazione'],dizionario['msg_id'],dizionario['attacchi'],
+                                                 dizionario['id']))
     else:
         for elem in dizionario:
             attacchi=0
@@ -162,7 +163,7 @@ def salva_punteggi_in_db(dizionario, is_single):
                 print("tuple!")
                 attacchi= int(elem['attacchi'][1])
             print(attacchi)
-            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id'], attacchi))
+            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], attacchi, elem['id'] ))
 
 
 TABELLE = {
