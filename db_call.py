@@ -253,13 +253,8 @@ class DB:
         altrimenti è una lista di dizionari"""
 
         for elem in dizionario:
-            attacchi = 0
-            if not isinstance(elem['attacchi'], int):
-                # print("tuple!")
-                attacchi = int(elem['attacchi'][1])
-                # print(attacchi)
             self.execute(TABELLE['punteggio']['insert'],
-                         (elem['id'], elem['valutazione'], elem['msg_id'], attacchi))
+                         (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
 
     # esegue una query arbitraria
     @staticmethod
