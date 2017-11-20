@@ -4,7 +4,6 @@
 import random
 import utils, os, re
 
-from db_call import execute, get_user, update_user
 from negozi_loot import value
 from PokerDice import calc_score, consigliami
 
