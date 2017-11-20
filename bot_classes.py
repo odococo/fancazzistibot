@@ -221,7 +221,8 @@ class Boss:
                     il messaggio team
         punteggi: punteggi può variare a seconda dei dati preseti nel db:
                 nel caso in cui nel db ci sia solo un utente con informazioni sia sulla tabella users che punteggi
-                allora questo diventa un dizionario con chiavi [date, first_name, id, msg_id, language_code, username, valutazione, last_name]
+                allora questo diventa un dizionario con chiavi [date, first_name, id, msg_id, language_code, username,
+                 valutazione, last_name, attacchi]
                 Se sono presenti piu elementi allora viene ritornata una lista di dizionari come sopra
         last_update_id: viene salvato nel db per impedire che vengano caricati due volte gli stessi messaggi
         phoenix: boolean che fa da flag per la scelta del boss
@@ -391,7 +392,6 @@ class Boss:
                     elif elem[2] == 0 and not self.phoenix:
                         self.punteggi['valutazione'] += 1
                     self.punteggi['msg_id']=self.last_update_id
-                    self.punteggi['attacchi'] = elem[2]
 
 
 
@@ -403,7 +403,6 @@ class Boss:
                         if single_dict['username'] == username[0]:
                             found = True
                             single_dict['msg_id'] = self.last_update_id
-                            single_dict['attacchi']=username[2]
                             if self.phoenix:
                                 single_dict['valutazione'] += 2
                             else:
@@ -446,7 +445,7 @@ class Boss:
             return ConversationHandler.END
 
         #fixme: aggiorna tutto in base al nuovo db
-        sortedD = sorted([(elem['username'],elem['attacchi']) for elem in self.punteggi], reverse=True)
+        sortedD = sorted([(elem['username'],elem['valutazione']) for elem in self.punteggi], reverse=True)
 
         to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
         for elem in sortedD:
