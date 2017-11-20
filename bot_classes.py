@@ -55,6 +55,7 @@ class Loot:
 
         if update.message.text == "Anulla":
             return self.annulla(bot, update)
+        #fixme: alcune parti non vengono considerate
         elif update.message.text == "Stima":
             if not self.stima_flag:
                 update.message.reply_text(
@@ -503,8 +504,7 @@ class Boss:
 
         i = 1
         for elem in non_attaccato:
-            to_send += str(i) + ") @" + str(elem[0]) + " : il suo punteggio attuale è <b>" + str(
-                self.punteggi[elem[0]]) + "</b>"
+            to_send += str(i) + ") @" + str(elem[0]) 
             if elem[1] == 1:
                 to_send += ", può attaccare\n"
             else:
