@@ -386,8 +386,9 @@ class Boss:
             users_name=[elem["username"] for elem in users]
             users_name_id=[(elem["username"], elem['id']) for elem in users]
 
-            if self.single_dict: self.single_dict=[self.single_dict]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
+            if self.single_dict: self.punteggi=[self.punteggi]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
+            print(self.punteggi)
             for username in self.lista_boss:
                 if username[0] in users_name and\
                         not username[0] in [elem['username'] for elem in self.punteggi]:# se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
