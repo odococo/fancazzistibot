@@ -153,10 +153,12 @@ def salva_punteggi_in_db(dizionario, is_single):
     """Salva il i punteggi aggiornati, se is_single==True allora dizionario è un semplice dizionario
     altrimenti è una lista di dizionari"""
     if is_single:
-        execute(TABELLE['punteggio']['update'], (dizionario['valutazione'],dizionario['msg_id'],dizionario['id']))
+        if dizionario['attacchi']!=0: dizionario['attacchi']=dizionario['attacchi'][1]
+        execute(TABELLE['punteggio']['update'], (dizionario['valutazione'],dizionario['msg_id'],dizionario['id'],dizionario['attacchi']))
     else:
         for elem in dizionario:
-            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id']))
+            if dizionario['attacchi'] != 0: dizionario['attacchi'] = dizionario['attacchi'][1]
+            execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id'],elem['attacchi']))
 
 
 TABELLE = {
@@ -281,7 +283,7 @@ TABELLE = {
               ON CONFLICT(id_user) DO UPDATE
               SET valutazione = EXCLUDED.valutazione, msg_id = 0""",
         "update": """UPDATE punteggio 
-                    SET valutazione = %s ,msg_id =%s   
+                    SET valutazione = %s ,msg_id =%s, attacchi=%s   
                     WHERE id = %s;""",
         "delete": """DELETE FROM punteggio
               WHERE id_user = %s"""

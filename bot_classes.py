@@ -389,7 +389,7 @@ class Boss:
                     elif elem[2] == 0 and not self.phoenix:
                         self.punteggi['valutazione'] += 1
                     self.punteggi['msg_id']=self.last_update_id
-
+                    self.punteggi['attacchi']+=elem[2]
 
 
 
@@ -400,6 +400,7 @@ class Boss:
                         if single_dict['username'] == username[0]:
                             found = True
                             single_dict['msg_id'] = self.last_update_id
+                            single_dict['attacchi'] = username[2]
                             if self.phoenix:
                                 single_dict['valutazione'] += 2
                             else:
@@ -504,7 +505,7 @@ class Boss:
 
         i = 1
         for elem in non_attaccato:
-            to_send += str(i) + ") @" + str(elem[0]) 
+            to_send += str(i) + ") @" + str(elem[0])
             if elem[1] == 1:
                 to_send += ", può attaccare\n"
             else:
