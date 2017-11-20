@@ -78,6 +78,8 @@ class Loot:
                     c = c[0]
                     merged.append((q[0], q[1], c[1], c[2]))
 
+            print(merged, self.quantita, self.costo)
+
             tot = 0
             for elem in merged:
                 if is_numeric(elem[0]):
@@ -116,6 +118,7 @@ class Loot:
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
                 InlineKeyboardButton("No", callback_data="/mostraNegoziNo")
             ]]))
+            print(self.to_send_negozi)
 
             self.costo.clear()
             self.quantita.clear()
@@ -160,14 +163,13 @@ class Loot:
         addon=""
 
         if "Si" in update.callback_query.data:
+            print(self.to_send_negozi)
 
             if len(self.to_send_negozi)>0 and len(self.to_send_negozi)<31:
                 to_change = "".join(self.to_send_negozi)
             elif len(self.to_send_negozi)>0:
                 to_change = "".join(self.to_send_negozi[:29])
                 addon="".join(self.to_send_negozi[29:])
-
-
 
             else:
                 to_change = "Si è verificato un errore, contatta @brandimax"
