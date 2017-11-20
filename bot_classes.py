@@ -290,7 +290,6 @@ class Boss:
             boss={}
             id=0
         else:
-            id=0
             try:
                 id=boss[0]["msg_id"]
                 self.single_dict=False
@@ -298,7 +297,7 @@ class Boss:
                 id=boss["msg_id"]
 
 
-        print(boss)
+        print(boss, id)
         self.punteggi = boss
         self.last_update_id = id
 
@@ -416,7 +415,7 @@ class Boss:
             if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
                 db_call.salva_punteggi_in_db(self.punteggi, self.single_dict)
 
-            elif len(skipped)>0:
+            if len(skipped)>0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
                 for users in skipped:
                     to_send+=users[0]+"\n"
@@ -444,26 +443,28 @@ class Boss:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        #fixme: aggiorna tutto in base al nuovo db
         sortedD = sorted([(elem['username'],elem['valutazione']) for elem in self.punteggi], reverse=True)
+        num = [elem[1] for elem in sortedD]
 
-        to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
+        to_send=""
+
+        if any(elem >3 for elem in num) :to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
         for elem in sortedD:
             if elem[1] > 3: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
-        to_send += "\n❗️❗️<b>Giocatori a rischio espulsione</b>❗️❗️️\n"
+        if 3 in num: to_send += "\n❗️❗️<b>Giocatori a rischio espulsione</b>❗️❗️️\n"
         for elem in sortedD:
             if elem[1] == 3: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
-        to_send += "\n⚠<b>️Non proprio i migliori</b>⚠️\n"
+        if 2 in num: to_send += "\n⚠<b>️Non proprio i migliori</b>⚠️\n"
         for elem in sortedD:
             if elem[1] == 2: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
-        to_send += "\n✅<b>Buono ma non buonissimo</b>✅\n"
+        if 31 in num: to_send += "\n✅<b>Buono ma non buonissimo</b>✅\n"
         for elem in sortedD:
             if elem[1] == 1: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
-        to_send += "\n🎉<b>I nostri best players</b>🎉\n"
+        if 0 in num: to_send += "\n🎉<b>I nostri best players</b>🎉\n"
         for elem in sortedD:
             if elem[1] == 0: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
@@ -529,11 +530,11 @@ class Boss:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        sortedD = sorted([(elem['valutazione'],elem['username'])  for elem in self.punteggi], reverse=True)
+        sortedD = sorted([(elem['attacchi'],elem['username']) for elem in self.punteggi], reverse=True)
 
         to_send = ""
         for elem in sortedD:
-            if (elem[0] > 0): to_send += str(elem[1]) + "\n"
+            if (elem[0] == 0): to_send += str(elem[1]) + "\n"
 
         update.message.reply_text(to_send)
         return 1
