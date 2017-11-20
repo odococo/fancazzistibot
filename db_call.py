@@ -143,7 +143,7 @@ TABELLE = {
                 },
                 "insert": """INSERT INTO punteggio (id, valutazione, msg_id, attacchi)
               VALUES (%s, %s, %s, %s)
-              ON CONFLICT(id_user) DO UPDATE
+              ON CONFLICT(id) DO UPDATE
               SET valutazione = EXCLUDED.valutazione, msg_id = 0""",
                 "update": """UPDATE punteggio 
                     SET valutazione = %s ,msg_id =%s, attacchi=%s   
