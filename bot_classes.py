@@ -384,8 +384,9 @@ class Boss:
             #print(self.lista_boss)
             if self.single_dict:#in questo caso ho un dizionario con un solo utente
                 for elem in self.lista_boss:
+                    print(elem)
                     if elem[0] not in self.punteggi['username']:
-                        skipped.append(elem[0])
+                        skipped.append(elem)
                         pass
                     elif isinstance(elem[2], int) and self.phoenix:
                         self.punteggi['valutazione'] += 2
@@ -415,7 +416,7 @@ class Boss:
                         skipped.append(username)
                     found = False
 
-
+            print(self.punteggi, self.single_dict)
             if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
                 self.db.salva_punteggi_in_db(self.punteggi, self.single_dict)
 
