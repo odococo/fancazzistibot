@@ -32,7 +32,7 @@ from telegram.ext import (
 from bot_classes import Loot, Boss
 from comandi import new_command
 from db_call import DB
-from utils import (is_numeric, grant_deny_access)
+from utils import (is_numeric)
 
 #==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -167,7 +167,7 @@ def main():
     Boss(updater.bot, disp, db)
 
     #handler per richiedere accesso al bot
-    disp.add_handler(CallbackQueryHandler(grant_deny_access, pattern="/consentiAccesso"))
+    disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))
 
 
 
