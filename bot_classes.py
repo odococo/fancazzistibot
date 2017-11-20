@@ -535,7 +535,7 @@ class Boss:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        sortedD = sorted([(elem['attacchi'],elem['username']) for elem in self.punteggi], reverse=True)
+        sortedD = sorted([(elem['attacchi'],elem['username']) for elem in self.punteggi],key=operator.getitem(0), reverse=True)
 
         to_send = ""
         for elem in sortedD:
