@@ -442,7 +442,7 @@ class Boss:
             return ConversationHandler.END
 
         #fixme: aggiorna tutto in base al nuovo db
-        sortedD = sorted(self.punteggi.items(), key=operator.itemgetter(1), reverse=True)
+        sortedD = sorted([(elem['username'],elem['valutazione'])  for elem in self.punteggi], reverse=True)
 
         to_send = "\n⛔️⛔️<b>Giocatori da espellere</b>⛔️⛔️\n"
         for elem in sortedD:
@@ -474,9 +474,7 @@ class Boss:
         if not len(self.lista_boss) > 0:
             update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
             return ConversationHandler.END
-        if not len(self.punteggi) > 0:
-            update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
-            return ConversationHandler.END
+
 
         to_send = "✅ <b>Hanno attaccato</b>:\n"
 
@@ -524,15 +522,15 @@ class Boss:
     def non_attaccanti(self, bot, update):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
-        if not len(self.punteggi.keys()) > 0:
+        if not len(self.punteggi) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
             return ConversationHandler.END
 
-        sortedD = sorted(self.punteggi.items(), key=operator.itemgetter(1), reverse=True)
+        sortedD = sorted([(elem['valutazione'],elem['username'])  for elem in self.punteggi], reverse=True)
 
         to_send = ""
         for elem in sortedD:
-            if (elem[1] > 0): to_send += str(elem[0]) + "\n"
+            if (elem[0] > 0): to_send += str(elem[1]) + "\n"
 
         update.message.reply_text(to_send)
         return 1
