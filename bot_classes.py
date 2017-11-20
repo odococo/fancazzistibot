@@ -391,7 +391,13 @@ class Boss:
 
             print(self.punteggi)
             for username in self.lista_boss:
-                if username[0] in users_name and\
+                if username[0] in users_name and not bool(self.punteggi.pop(0)):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                    self.punteggi.append({'username': username[0],
+                                          'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
+                                          # aggiungo l'id associato
+                                          'valutazione': 0,
+                                          'attacchi': 0})  # aggiungo l'user alla lista
+                elif username[0] in users_name and\
                         not username[0] in [elem['username'] for elem in self.punteggi]:# se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
                     self.punteggi.append({'username':username[0],
                                           'id':[elem[1] for elem in users_name_id if elem[0]==username[0]].pop(0),#aggiungo l'id associato
