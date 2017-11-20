@@ -233,7 +233,7 @@ class Boss:
         self.bot = bot
         self.db=db
         self.lista_boss = []
-        self.punteggi = {}
+        self.punteggi = []
         self.last_update_id = 0
         self.phoenix = False
         self.single_dict=True
@@ -386,15 +386,22 @@ class Boss:
             users_name=[elem["username"] for elem in users]
             users_name_id=[(elem["username"], elem['id']) for elem in users]
 
+
+            for username in self.lista_boss:
+                if username[0] in users_name and\
+                        not username[0] in [elem['username'] for elem in self.punteggi]:# se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
+                    self.punteggi.append({'username':username[0],
+                                          'id':[elem[1] for elem in users_name_id if elem[0]==username[0]].pop(0),#aggiungo l'id associato
+                                         'valutazione': 0,
+                                          'attacchi':0} )#aggiungo l'user alla lista
+
             if self.single_dict: self.single_dict=[self.single_dict]# se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             else:#altrimenti ho una lista di dizionari
                 found=False
+
                 for username in self.lista_boss:
                     for single_dict in self.punteggi:
-                        if username[0] in users_name and not username[0] in single_dict['username']:# se il giocatore non è nella tabella punteggio ma in quella users
-                            single_dict['id']=[elem[1] for elem in users_name_id if elem[0]==username[0]].pop(0)#aggiungo l'id associato
-                            single_dict['username']=username[0]# aggiungo il suo nome, per cui la condizione sotto diventa vera
                         if single_dict['username'] == username[0]:# se è gia presente nel db
                             found = True
                             single_dict['msg_id'] = self.last_update_id
