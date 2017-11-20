@@ -270,7 +270,10 @@ class Boss:
 
         # TODO: prendi dizionario e last_update_id dal database
         # prendi il dizionario, lista  e id
-        self.dict_boss = {}
+        boss=db_call.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        if not boss: boss={}
+        print(boss)
+        self.dict_boss = boss
         self.last_update_id = 0
 
         self.lista_boss = self.cerca_boss(update.message.text)

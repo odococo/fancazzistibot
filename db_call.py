@@ -259,20 +259,21 @@ TABELLE = {
     "punteggio": {
         "create": """CREATE TABLE IF NOT EXISTS punteggio(
               id_user integer REFERENCES id_users ON DELETE CASCADE,
-              valutatione numeric(1) DEFAULT 0,
-              date timestamp DEFAULT CURRENT_TIMESTAMP,
+              valutazione numeric(1) DEFAULT 0,
+              msg_id integer DEFAULT 0,
               PRIMARY KEY(id_user))""",
         "drop": """DROP TABLE IF EXISTS punteggio CASCADE""",
         "select": {
-            'all': """SELECT * FROM punteggio"""
+            'all': """SELECT * FROM punteggio """,
+            'all_and_users':"""SELECT * FROM punteggio NATURAL JOIN users"""
         },
-        "insert": """INSERT INTO punteggio (id_user, valutazione)
-              VALUES (%s, %s)
+        "insert": """INSERT INTO punteggio (id_user, valutazione, msg_id)
+              VALUES (%s, %s, %s)
               ON CONFLICT(id_user) DO UPDATE
-              SET valutazione = EXCLUDED.valutazione, date = CURRENT_TIMESTAMP""",
-        "update": """UPDATE punteggio
-              SET valutazione = %s
-              WHERE id_user = %s""",
+              SET valutazione = EXCLUDED.valutazione, msg_id = 0""",
+        "update": """UPDATE punteggio 
+                    SET valutazione = %s ,msg_id =%s   
+                    WHERE id = %s;""",
         "delete": """DELETE FROM punteggio
               WHERE id_user = %s"""
     }
