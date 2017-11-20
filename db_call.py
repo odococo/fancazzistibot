@@ -158,7 +158,7 @@ def salva_punteggi_in_db(dizionario, is_single):
     else:
         for elem in dizionario:
             attacchi=0
-            if elem['attacchi'] != 0: attacchi= int(elem['attacchi'][1])
+            if not isinstance(elem['attacchi'], int): attacchi= int(elem['attacchi'][1])
             execute(TABELLE['punteggio']['update'], (elem['valutazione'], elem['msg_id'], elem['id'],attacchi))
 
 
