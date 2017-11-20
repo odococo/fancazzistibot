@@ -338,11 +338,8 @@ class Boss:
                 message_id=update.callback_query.message.message_id
             )
 
-
+    @utils.elegible_admin_method
     def boss_reset_ask(self, bot, update):
-        if not is_admin(get_user_id(update)):
-            update.message.reply_text("Non sei abilitato ad usare a questo comando!")
-            return
 
         update.message.reply_text("Sei sicuro di voler resettare i punteggi?\nNon potrai piu recuperarli",
                                   reply_markup=InlineKeyboardMarkup([[
