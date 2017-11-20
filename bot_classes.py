@@ -8,13 +8,14 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
 
 import db_call
 import utils
-from db_call import get_user, get_users
-from utils import is_numeric, is_admin, get_user_id, request_access
+from utils import is_numeric, is_admin, get_user_id
 
 
 class Loot:
-    def __init__(self, bot, dispatcher):
+    def __init__(self, bot, dispatcher, db):
         self.bot = bot
+        self.db=db
+        self.ricerca_decor=db.elegible_user_func(db, self.ricerca)
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
@@ -23,7 +24,7 @@ class Loot:
 
         # adding dispatchers
         coversation = ConversationHandler(
-            [RegexHandler("^Lista oggetti necessari per", self.ricerca)],
+            [RegexHandler("^Lista oggetti necessari per", self.ricerca_decor)],
             states={
                 1: [MessageHandler(Filters.text, self.stima)]
             },
@@ -32,7 +33,6 @@ class Loot:
         dispatcher.add_handler(coversation)
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
-    @utils.elegible_user_method
     def ricerca(self, bot, update):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
 
@@ -213,7 +213,7 @@ class Loot:
 
 
 class Boss:
-    def __init__(self, bot, dispatcher):
+    def __init__(self, bot, dispatcher, db):
         """Questa classe è utilizzate per gestire gli attacchi al boss, i parametri sono:
         bot : bot dell'updater
         dispatcher: sempre dell'updater
@@ -231,6 +231,7 @@ class Boss:
                 
         """
         self.bot = bot
+        self.db=db
         self.lista_boss = []
         self.punteggi = {}
         self.last_update_id = 0
@@ -279,14 +280,13 @@ class Boss:
 
         return res
 
-    @utils.elegible_admin_method
     def boss_admin(self, bot, update):
         """Inoltra il messaggio del boss, solo per admin"""
        # print("Admin boss")
 
 
         # prendi il dizionario, lista  e id
-        boss=db_call.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        boss=self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
         if not boss:
             boss={}
             id=0
@@ -309,11 +309,10 @@ class Boss:
                                   reply_markup=reply_markup)
         return 1
 
-    @utils.elegible_user_method
     def boss_user(self, bot, update):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
 
-        self.punteggi=db_call.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        self.punteggi=self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
 
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)
@@ -327,7 +326,7 @@ class Boss:
             self.last_update_id = 0
             self.phoenix = False
             # todo: invia sul db
-            db_call.reset_punteggio() 
+            self.db.reset_punteggio()
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text="Punteggi resettati!",
@@ -339,7 +338,6 @@ class Boss:
                 message_id=update.callback_query.message.message_id
             )
 
-    @utils.elegible_admin_method
     def boss_reset_ask(self, bot, update):
 
         update.message.reply_text("Sei sicuro di voler resettare i punteggi?\nNon potrai piu recuperarli",
@@ -412,7 +410,7 @@ class Boss:
 
 
             if not len(skipped)==len(self.lista_boss):#se non ho saltato tutti gli username
-                db_call.salva_punteggi_in_db(self.punteggi, self.single_dict)
+                self.db.salva_punteggi_in_db(self.punteggi, self.single_dict)
 
             if len(skipped)>0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
@@ -471,7 +469,6 @@ class Boss:
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1  # 1 è l'id del boss_loop nel conversation handler
 
-    @utils.elegible_admin_method
     def completa(self, bot, update):
         """Visualizza la lista completa ti tutte le info"""
 

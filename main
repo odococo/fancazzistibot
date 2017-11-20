@@ -31,7 +31,7 @@ from telegram.ext import (
 
 from bot_classes import Loot, Boss
 from comandi import new_command
-from db_call import add_user, add_bot, get_users, delete_user
+from db_call import DB
 from utils import (is_numeric, grant_deny_access)
 
 #==================GLOBAL VARIABLES==========================================
@@ -68,18 +68,18 @@ def get_user(user):
 def get_bot(bot):
     return get_user(bot)
 
-def get_info(bot, update):
-    user = get_user(update.message.from_user)
-    bot_id, sep, actual_token = bot.token.partition(':')
-    add_user(user, int(bot_id))
-    if re.search("^[.!/]", update.message.text):
-        pass
-        #non possibile sull'hosting attuale
-        #track_activity.command(bot, update) 
-    elif Filters.all(update.message):
-        pass
-        #non possibile sull'hosting attuale
-        #track_activity.text(bot, update)
+# def get_info(bot, update):
+#     user = get_user(update.message.from_user)
+#     bot_id, sep, actual_token = bot.token.partition(':')
+#     add_user(user, int(bot_id))
+#     if re.search("^[.!/]", update.message.text):
+#         pass
+#         #non possibile sull'hosting attuale
+#         #track_activity.command(bot, update)
+#     elif Filters.all(update.message):
+#         pass
+#         #non possibile sull'hosting attuale
+#         #track_activity.text(bot, update)
 
 def button(bot, update):
     query = update.callback_query
@@ -160,10 +160,11 @@ def main():
 
 
 
+    db=DB()
 
     #classi per craftlootbot e comandi boss
-    Loot(updater.bot, disp)
-    Boss(updater.bot, disp)
+    Loot(updater.bot, disp, db)
+    Boss(updater.bot, disp, db)
 
     #handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(grant_deny_access, pattern="/consentiAccesso"))
