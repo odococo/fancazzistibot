@@ -439,7 +439,7 @@ class Boss:
             # TODO: elif se manda un altro messaggio gestisci
             print(choice)
             update.message.reply_text("Non ho capito, ripeti")
-            return 1
+            return self.fine(bot, update)
 
 
     def punteggio(self, bot, update):
