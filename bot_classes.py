@@ -327,6 +327,7 @@ class Boss:
             self.last_update_id = 0
             self.phoenix = False
             # todo: invia sul db
+            db_call.reset_punteggio()
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text="Punteggi resettati!",
@@ -377,7 +378,7 @@ class Boss:
 
             # aggiunge i membri nel dizionario se non sono gia presenti
             skipped=[]
-            print(self.lista_boss)
+            #print(self.lista_boss)
             if self.single_dict:#in questo caso ho un dizionario con un solo utente
                 for elem in self.lista_boss:
                     if elem[0] not in self.punteggi['username']:
