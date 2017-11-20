@@ -183,6 +183,7 @@ class Loot:
             parse_mode="HTML"
         )
         if addon:
+            bot.sendMessage(update.callback_query.message.chat_id, addon, parse_mode="HTML")
             update.message.reply_text(addon,  parse_mode="HTML")
 
         self.to_send_negozi = []
