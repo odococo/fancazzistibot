@@ -324,7 +324,6 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             text = "Non ci sono utenti nel database"
         self.answer(text)
 
-
     def Aregistra(self):
         """Aggiorna i permessi di un utente"""
         if len(self.params) == 2:

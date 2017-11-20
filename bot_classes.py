@@ -302,7 +302,7 @@ class Boss:
                 id=boss["msg_id"]
 
 
-        print(boss, id)
+        print("\n\n ID = "+str(id)+"\n\n")
         self.punteggi = boss
         self.last_update_id = id
 
@@ -372,6 +372,8 @@ class Boss:
                 self.phoenix = False
 
             #fixme: non funziona
+            print("\n\n update.id = " + str(update.message.message_id)+" last update id = " +str(self.last_update_id)+ "\n\n")
+
             if self.last_update_id == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
                 return 1
