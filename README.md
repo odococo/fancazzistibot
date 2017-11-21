@@ -66,7 +66,7 @@ poter visualizzare "Completa" )
 Inoltre sono presenti i comandi:
 * */reserBoss"*: permette di resettare i punteggi di tutti gli utenti. Una volta resettati i punteggi vanno persi **per sempre**.
 Per questo ti sarà chiesta la conferma 
-* */boss qualeBoss giorno ora*: ti permette di fissare un messaggio per l'attacco dei boss, dove:
+* */pinBoss qualeBoss giorno ora*: ti permette di fissare un messaggio per l'attacco dei boss, dove:
     * *qualeBoss*: 0 -> Titan, 1 -> Phoenix
     * *giorno*: numero compreso tra 0 e 6, (0 -> Lunedi, 1 -> Martedi....6-> Domenica)
     * *ora* : un'ora qualsiasi

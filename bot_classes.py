@@ -19,16 +19,28 @@ class Loot:
         self.costo = []
         self.to_send_negozi = []
 
+        DEBUG=False
+
         # adding dispatchers
-        ricerca_decor = db.elegible_user(self.ricerca)
-        coversation = ConversationHandler(
+        if not DEBUG:
+            ricerca_decor = db.elegible_user(self.ricerca)
+            coversation = ConversationHandler(
             [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
             states={
                 1: [MessageHandler(Filters.text, self.stima)]
             },
             fallbacks=[CommandHandler('Annulla', self.annulla)])
+            dispatcher.add_handler(coversation)
 
-        dispatcher.add_handler(coversation)
+        else:
+            coversation = ConversationHandler(
+            [RegexHandler("^Lista oggetti necessari per", self.ricerca)],
+            states={
+                1: [MessageHandler(Filters.text, self.stima)]
+            },
+            fallbacks=[CommandHandler('Annulla', self.annulla)])
+            dispatcher.add_handler(coversation)
+
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
 
     def ricerca(self, bot, update):
@@ -67,7 +79,7 @@ class Loot:
             elem[0]= quantità oggetto
             elem[1]= nome oggetto
             elem[2]= costo oggetto
-            vifdadelem[3]= numero negozio per oggetto"""
+            elem[3]= numero negozio per oggetto"""
             merged = []
             for q in self.quantita:
                 c = [item for item in self.costo if item[0] == q[1]]
@@ -75,12 +87,14 @@ class Loot:
                     c = c[0]
                     merged.append((q[0], q[1], c[1], c[2]))
 
-            print(merged, self.quantita, self.costo)
+        #    print(merged, self.quantita, self.costo)
 
             tot = 0
+            tempo=0
             for elem in merged:
                 if is_numeric(elem[0]):
                     tot += int(elem[0]) * int(elem[2])
+                    tempo+=10+3*int(elem[0])
 
             tot += int(self.costo_craft)
 
@@ -96,7 +110,7 @@ class Loot:
 
                 update.message.reply_text(to_print)
 
-            m, s = divmod(len(self.costo) * 10, 60)
+            m, s = divmod(tempo, 60)
 
             update.message.reply_text("Comprando gli oggetti dal negozio impiegherai un tempo di circa :\n "
                                       + str(m) + " minuti e " + str(s) + " secondi\n")
@@ -192,11 +206,12 @@ class Loot:
         regex = re.compile(r"> ([0-9]+) su ([0-9]+)")
         to_loop = restante.split("\n")
         to_loop.pop(0)
+        to_loop=list(filter(None, to_loop))
         for line in to_loop:
-            find = re.findall(regex, line)
+            find = re.findall(regex, line)[0]
             try:
                 if find[0] != find[1]:
-                    new_num = int(find[0]) - int(find[1])
+                    new_num = int(find[1]) - int(find[0])
 
                     new_line = line.replace(find[0], str(new_num))
                     new_line = new_line.replace(find[1], str(new_num))
@@ -214,7 +229,7 @@ class Loot:
         if not quantita: quantita = re.findall(r"> ([0-9]+) di ([A-z ]+)",
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
         commands = []
-        self.quantita = [(q[0], q[1].strip()) for q in quantita]
+        self.quantita = [(q[0], q[1].rstrip()) for q in quantita]
         last_ixd = len(lst) - len(lst) % 3
         for i in range(0, (last_ixd) - 2, 3):
             commands.append("/ricerca " + ",".join(lst[i:i + 3]))
