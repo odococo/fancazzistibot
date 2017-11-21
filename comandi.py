@@ -16,7 +16,7 @@ from db_call import DB
 COMANDI_PLUS = """
 attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
 """
- 
+  
 
 class Command():
     def __init__(self, bot, update, db):
