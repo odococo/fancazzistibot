@@ -99,7 +99,7 @@ class Loot:
             tot += int(self.costo_craft)
 
             update.message.reply_text("Secondo le stime di mercato pagherai " +
-                                      "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)")
+                                      "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",reply_markup=ReplyKeyboardRemove())
 
             if (len(self.costo) > 10):
                 self.costo.sort(key=lambda tup: int(tup[1]), reverse=True)
@@ -133,7 +133,6 @@ class Loot:
             self.costo.clear()
             self.quantita.clear()
             self.stima_flag = False
-            update.message.reply_text(reply_markup=ReplyKeyboardRemove())
             return ConversationHandler.END
         else:
             self.stima_parziale(update.message.text.lower())
