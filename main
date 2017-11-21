@@ -163,8 +163,8 @@ def main():
     db = DB()
 
     # classi per craftlootbot e comandi boss
-    Loot(updater.bot, disp, db)
-    Boss(updater.bot, disp, db)
+    Loot(updater, db)
+    Boss(updater, db)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

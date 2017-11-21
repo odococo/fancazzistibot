@@ -10,14 +10,16 @@ from utils import is_numeric
 
 
 class Loot:
-    def __init__(self, bot, dispatcher, db):
-        self.bot = bot
+    def __init__(self, updater, db):
+        self.bot = updater.bot
         self.db = db
         self.costo_craft = 0
         self.stima_flag = False
         self.quantita = []
         self.costo = []
         self.to_send_negozi = []
+
+        dispatcher=updater.dispatcher
 
         DEBUG=False
 
@@ -94,7 +96,7 @@ class Loot:
             for elem in merged:
                 if is_numeric(elem[0]):
                     tot += int(elem[0]) * int(elem[2])
-                    tempo+=10+3*int(elem[0])
+                    tempo+=9+3*int(elem[0])
 
             tot += int(self.costo_craft)
 
@@ -240,7 +242,7 @@ class Loot:
 
 
 class Boss:
-    def __init__(self, bot, dispatcher, db):
+    def __init__(self, updater, db):
         """Questa classe è utilizzate per gestire gli attacchi al boss, i parametri sono:
         bot : bot dell'updater
         dispatcher: sempre dell'updater
@@ -257,13 +259,15 @@ class Boss:
         single_dict, boolean,serve come falg per sapere se il dizionario del database contiene un solo utente sotto la tabella punteggio
                 
         """
-        self.bot = bot
+        self.bot = updater.bot
         self.db = db
         self.lista_boss = []
         self.punteggi = []
         self.last_update_id = 0
         self.phoenix = False
         self.single_dict = True
+
+        dispatcher=updater.dispatcher
 
         boss_user_decor = db.elegible_user(self.boss_user)
         boss_admin_decor = db.elegible_admin(self.boss_admin)
