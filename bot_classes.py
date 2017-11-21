@@ -128,11 +128,12 @@ class Loot:
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
                 InlineKeyboardButton("No", callback_data="/mostraNegoziNo")
             ]]))
-            print(self.to_send_negozi)
+            #print(self.to_send_negozi)
 
             self.costo.clear()
             self.quantita.clear()
             self.stima_flag = False
+            update.message.reply_text(reply_markup=ReplyKeyboardRemove())
             return ConversationHandler.END
         else:
             self.stima_parziale(update.message.text.lower())
