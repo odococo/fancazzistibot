@@ -15,6 +15,10 @@ from db_call import DB
 
 COMANDI_PLUS = """
 attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
+cercaCraft maggioreDi minoreDi - Ti permette di ricercare oggetti da craftare a seconda di vari parametri tra cui:\n
+           Punti Craft : compresi tra maggioreDi e minoreDi\n
+           Rarità: tra cui X, UE, E, L, UR o tutti\n
+           Rinascita: r0, r1, r2
 """
 
 
@@ -334,6 +338,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                 user[permesso] = not user[permesso]
                 self.db.update_user(user)
             text = "Aggiornamento completato!"
+            self.bot.send_message(user['id'],"Sei stato promosso a "+permesso)
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
     utente tramite id o username

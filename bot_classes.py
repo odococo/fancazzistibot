@@ -21,7 +21,7 @@ class Loot:
 
         dispatcher = updater.dispatcher
 
-        DEBUG = False
+        DEBUG = True
 
         # adding dispatchers
         if not DEBUG:
@@ -202,34 +202,41 @@ class Loot:
         self.to_send_negozi = []
 
     def estrai_oggetti(self, msg):
-
+        """Estrae gli ogetti piu quantità dal messaggio /lista dicraftlootbot:
+                msg: messaggio.lower()
+                return string: rappresentante una lista di /ricerca oggetto\n"""
+        # prendo solo gli oggetti necessari
         restante = msg.split("già possiedi")[0].split(":")[1]
         aggiornato = ""
 
-        regex = re.compile(r"> ([0-9]+) su ([0-9]+)")
+        # regex in caso di zaino salvato
+        regex_numeri = re.compile(r"> ([0-9]+) su ([0-9]+)")
+        # regex in caso di zaino non salvato (inizia con 'di')
         to_loop = restante.split("\n")
-        to_loop.pop(0)
-        to_loop = list(filter(None, to_loop))
-        for line in to_loop:
-            find = re.findall(regex, line)[0]
+        to_loop.pop(0)  # il primo elemnto è vuoto
+        to_loop = list(filter(None, to_loop))  # anche gli ultimi 4
+        for line in to_loop:  # capita di possedere 2 su 3 oggetti, per semplicità sostituisco entrambi i numeri con (3-2=1)
+            num = re.findall(regex_numeri, line)  # cerco i sue numeri
             try:
-                if find[0] != find[1]:
-                    new_num = int(find[1]) - int(find[0])
+                num = num[0]  # prendo l'elemento trovato
+                if num[0] != num[1]:  # se i due numeri sono diversi
+                    new_num = int(num[1]) - int(num[0])  # calcolo la differenza
 
-                    new_line = line.replace(find[0], str(new_num))
-                    new_line = new_line.replace(find[1], str(new_num))
-                    aggiornato += new_line + "\n"
+                    new_line = line.replace(num[0], str(new_num))  # rimpiazzo il primo
+                    new_line = new_line.replace(num[1], str(new_num))  # e il secondo
+                    aggiornato += new_line + "\n"  # aggiungo la riga aggiornata
                 else:
                     aggiornato += line + "\n"
 
             except IndexError:
                 aggiornato += line + "\n"
 
-        regex = re.compile(r"di (.*)?\(")
-        regex2 = re.compile(r"su ([0-9]) di (.*)?\(")
-        lst = re.findall(regex, aggiornato)
-        quantita = re.findall(regex2, aggiornato)
-        if not quantita: quantita = re.findall(r"> ([0-9]+) di ([A-z ]+)",
+        regex_comandi = re.compile(r"di (.*)?\(")
+        regex_zaino_completo = re.compile(r"su ([0-9]) di (.*)?\(")
+        regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
+        lst = re.findall(regex_comandi, aggiornato)  # per i comandi
+        quantita = re.findall(regex_zaino_completo, aggiornato)
+        if not quantita: quantita = re.findall(regex_zaino_vuoto,
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
         commands = []
         self.quantita = [(q[0], q[1].rstrip()) for q in quantita]
