@@ -19,28 +19,28 @@ class Loot:
         self.costo = []
         self.to_send_negozi = []
 
-        dispatcher=updater.dispatcher
+        dispatcher = updater.dispatcher
 
-        DEBUG=False
+        DEBUG = False
 
         # adding dispatchers
         if not DEBUG:
             ricerca_decor = db.elegible_user(self.ricerca)
             coversation = ConversationHandler(
-            [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
-            states={
-                1: [MessageHandler(Filters.text, self.stima)]
-            },
-            fallbacks=[CommandHandler('Annulla', self.annulla)])
+                [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
+                states={
+                    1: [MessageHandler(Filters.text, self.stima)]
+                },
+                fallbacks=[CommandHandler('Annulla', self.annulla)])
             dispatcher.add_handler(coversation)
 
         else:
             coversation = ConversationHandler(
-            [RegexHandler("^Lista oggetti necessari per", self.ricerca)],
-            states={
-                1: [MessageHandler(Filters.text, self.stima)]
-            },
-            fallbacks=[CommandHandler('Annulla', self.annulla)])
+                [RegexHandler("^Lista oggetti necessari per", self.ricerca)],
+                states={
+                    1: [MessageHandler(Filters.text, self.stima)]
+                },
+                fallbacks=[CommandHandler('Annulla', self.annulla)])
             dispatcher.add_handler(coversation)
 
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
@@ -89,19 +89,20 @@ class Loot:
                     c = c[0]
                     merged.append((q[0], q[1], c[1], c[2]))
 
-        #    print(merged, self.quantita, self.costo)
+                    #    print(merged, self.quantita, self.costo)
 
             tot = 0
-            tempo=0
+            tempo = 0
             for elem in merged:
                 if is_numeric(elem[0]):
                     tot += int(elem[0]) * int(elem[2])
-                    tempo+=9+3*int(elem[0])
+                    tempo += 9 + 3 * int(elem[0])
 
             tot += int(self.costo_craft)
 
             update.message.reply_text("Secondo le stime di mercato pagherai " +
-                                      "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",reply_markup=ReplyKeyboardRemove())
+                                      "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",
+                                      reply_markup=ReplyKeyboardRemove())
 
             if (len(self.costo) > 10):
                 self.costo.sort(key=lambda tup: int(tup[1]), reverse=True)
@@ -130,7 +131,7 @@ class Loot:
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
                 InlineKeyboardButton("No", callback_data="/mostraNegoziNo")
             ]]))
-            #print(self.to_send_negozi)
+            # print(self.to_send_negozi)
 
             self.costo.clear()
             self.quantita.clear()
@@ -208,7 +209,7 @@ class Loot:
         regex = re.compile(r"> ([0-9]+) su ([0-9]+)")
         to_loop = restante.split("\n")
         to_loop.pop(0)
-        to_loop=list(filter(None, to_loop))
+        to_loop = list(filter(None, to_loop))
         for line in to_loop:
             find = re.findall(regex, line)[0]
             try:
@@ -267,7 +268,7 @@ class Boss:
         self.phoenix = False
         self.single_dict = True
 
-        dispatcher=updater.dispatcher
+        dispatcher = updater.dispatcher
 
         boss_user_decor = db.elegible_user(self.boss_user)
         boss_admin_decor = db.elegible_admin(self.boss_admin)
@@ -571,3 +572,153 @@ class Boss:
 
         update.message.reply_text(to_send)
         return 1
+
+
+class Cerca:
+    def __init__(self, updater, db, oggetti):
+        self.bot = updater.bot
+        self.db = db
+        self.oggetti = oggetti
+        self.craftabili = [elem for elem in oggetti if not elem['craft_pnt'] == 0]
+        self.maggioreDi = -1
+        self.minoreDi = 3000
+        self.rarita = ""
+        self.rinascita = ""
+        self.risultati = []
+
+        dispatcher = updater.dispatcher
+
+        cerca_craft_el=db.elegible_user(self.cerca_craft)
+
+
+        dispatcher.add_handler(CommandHandler("cercaCraft", cerca_craft_el))
+        dispatcher.add_handler(CallbackQueryHandler(self.filtra_rarita, pattern="/rarita"))
+        dispatcher.add_handler(CallbackQueryHandler(self.filtra_rinascita, pattern="/rinascita"))
+        dispatcher.add_handler(CallbackQueryHandler(self.ordina, pattern="/ordina"))
+
+    def cerca_craft(self, bot, update):
+        """"""
+        param = update.message.text.split()[1:]
+        if len(param) == 0 or len(param) > 2:
+            update.message.reply_text("Il comando deve essere usatoin due modi:\n"
+                                      "/cercaCraft maggioreDi minoreDi\n"
+                                      "/cercaCraft maggioreDi\nIn cui maggioreDi e minoreDi sono due numeri rappresentanti"
+                                      "l'intervallo di punti craft in cui vuoi cercare.")
+            return
+        elif len(param) == 1 and is_numeric(param[0]):
+            self.maggioreDi = int(param[0])
+        elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
+            self.maggioreDi = int(param[0])
+            self.minoreDi = int(param[1])
+        else:
+            update.message.reply_text("Non hai inviato dei numeri corretti")
+            return
+
+        if self.maggioreDi > self.minoreDi:
+            update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
+            return
+
+
+
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("X", callback_data="/rarita X"),
+             InlineKeyboardButton("UE", callback_data="/rarita UE"),
+             InlineKeyboardButton("E", callback_data="/rarita E")],
+            [InlineKeyboardButton("L", callback_data="/rarita L"), InlineKeyboardButton("U", callback_data="/rarita U"),
+             InlineKeyboardButton("UR", callback_data="/rarita UR")],
+            [InlineKeyboardButton("Tutti", callback_data="/rarita tutti")]
+        ])
+
+        update.message.reply_text("Secondo quale rarità vuoi filtrare il risultato?", reply_markup=inline)
+
+    def filtra_rarita(self, bot, update):
+        self.rarita = update.callback_query.data.split()[1]
+
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("r0", callback_data="/rinascita 1"),
+             InlineKeyboardButton("r1", callback_data="/rinascita 2"),
+             InlineKeyboardButton("r2", callback_data="/rinascita 3")]
+
+        ])
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text="Perfetto, ora dimmi a quale rinascita sei interessato, ricorda che i risultati mostrati saranno quelli"
+                 " per tutte le rinascite minori uguali a quella che hai selzionato.\nEsempio scegli r2, ti verranno mostrati i "
+                 "risultati per r0, r1 e r2\n",
+            message_id=update.callback_query.message.message_id,
+            reply_markup=inline
+        )
+
+    def filtra_rinascita(self, bot, update):
+        self.rinascita = update.callback_query.data.split()[1]
+
+        # print(self.maggioreDi, self.minoreDi, self.rarita, self.rinascita)
+        if not "tutti" in self.rarita:
+            self.risultati = [elem for elem in self.craftabili if elem['craft_pnt'] > self.maggioreDi and
+                              elem['craft_pnt'] < self.minoreDi and elem['reborn'] <= int(self.rinascita)
+                              and elem['rarity'] == self.rarita]
+        else:
+
+            self.risultati = [elem for elem in self.craftabili if elem['craft_pnt'] > self.maggioreDi and
+                              elem['craft_pnt'] < self.minoreDi and elem['reborn'] <= int(self.rinascita)]
+
+        if len(self.risultati) == 0:
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Non ho trovato risultati per i tuoi criteri di ricerca",
+                message_id=update.callback_query.message.message_id,
+            )
+            return
+
+        to_send = "Ho trovato <b>" + str(
+            len(self.risultati)) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
+                                   "annullare la ricerca"
+
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Punti craft", callback_data="/ordina puntiCraft"),
+             InlineKeyboardButton("Rarità", callback_data="/ordina rarita")],
+            [InlineKeyboardButton("Rinascita", callback_data="/ordina rinascita"),
+             InlineKeyboardButton("Annulla", callback_data="/ordina annulla")]
+
+        ])
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            reply_markup=inline,
+            parse_mode="HTML"
+        )
+
+    def ordina(self, bot, update):
+        param = update.callback_query.data.split()[1]
+        to_send = ""
+        sorted_res = []
+
+        if "annulla" in param:
+            to_send = "Ok annullo"
+
+        elif "puntiCraft" in param:
+            sorted_res = sorted(self.risultati, key=lambda key: key["craft_pnt"])
+        elif "rarita" in param:
+            sorted_res = sorted(self.risultati, key=lambda key: key["rarity"])
+        elif "rinascita" in param:
+            sorted_res = sorted(self.risultati, key=lambda key: key["reborn"])
+
+        message_id = update._effective_chat.id
+
+        if sorted_res:
+            bot.sendMessage(message_id, "Nome   Punti Craft    Rarità     Rinascita\n", parse_mode="HTML")
+
+        for elem in sorted_res:
+            to_send += "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
+                elem["reborn"]) + "\n"
+
+        bot.delete_message(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id
+        )
+
+        while to_send:
+            bot.sendMessage(message_id, to_send[:4096], parse_mode="HTML")
+            to_send = to_send[4096:]

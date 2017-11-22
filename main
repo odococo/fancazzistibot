@@ -24,9 +24,10 @@ from telegram.ext import (
     CallbackQueryHandler
 )
 
-from bot_classes import Loot, Boss
+from bot_classes import Loot, Boss, Cerca
 from comandi import new_command
 from db_call import DB
+from negozi_loot import use_api, ITEMS
 from utils import (is_numeric)
 
 # ==================GLOBAL VARIABLES==========================================
@@ -144,7 +145,7 @@ def main():
     python3 main 2 il bot principale in polling
     python3 main 3 il bot dev in polling
     """
-    #mode=3
+    mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     updater = Updater(get_token_bot(dev))
@@ -161,10 +162,12 @@ def main():
 
 
     db = DB()
+    oggetti=use_api(ITEMS)
 
     # classi per craftlootbot e comandi boss
     Loot(updater, db)
     Boss(updater, db)
+    Cerca(updater, db, oggetti)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))
