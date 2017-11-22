@@ -152,6 +152,8 @@ TABELLE = {
     }
 }
 
+COMANDO_CONNESSIONE_HEROKU_DB="heroku pg:psql"
+
 developer_dicts = {"brandimax": 24978334}  # , "odococo":89675136}
 
 
