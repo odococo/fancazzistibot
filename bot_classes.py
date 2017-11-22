@@ -142,7 +142,7 @@ class Loot:
             return 1
         else:
             to_send="Non ho capito il messaggio... sei sicuro di aver inoltrato quello di @lootplusbot ("\
-                                      "inizia con 'Risultati ricerca di'). Purtroppo ho annullato tutto perche senno poi mi blocco, ma non disperare!\n"\
+                                      "inizia con 'Risultati ricerca di')? Purtroppo ho dovuto annullare tutto altrimenti vado in palla, ma non disperare!\n"\
                                       "Basta che ri-inoltri il messaggio lista di @craftlootbot e poi ri-inoltri tutti i messaggi di @lootplusbot, senza"\
                                       "dover rieffettuare tutte le ricerche nuovamente 👍🏼👍🏼"
             return self.annulla(bot, update, to_send)
@@ -552,11 +552,11 @@ class Boss:
             else:
                 to_send += str(i) + ") "
             to_send += "@" + str(elem[0]) + " : facendo <b>" + '{:,}'.format(int(elem[2][0])).replace(',',
-                                                                                                      '\'') + "</b> danno a <b>" + str(
-                elem[2][1]) + "</b> boss\n"
+                                                                                                      '\'') + "</b> danno con <b>" + str(
+                elem[2][1]) + "</b> attacchi\n"
             i += 1
 
-        to_send += "\n❌ <b>Non hanno attaccato</b>:\n"
+        if non_attaccato:to_send += "\n❌ <b>Non hanno attaccato</b>:\n"
 
         i = 1
         for elem in non_attaccato:
@@ -586,6 +586,8 @@ class Boss:
         for elem in [(elem['attacchi'], elem['username']) for elem in self.punteggi]:
             if (elem[0] == 0): to_send += str(elem[1]) + "\n"
 
+        if not to_send: to_send="Hanno attaccato tutti!@"
+
         update.message.reply_text(to_send)
         return 1
 
@@ -613,10 +615,11 @@ class Cerca:
         dispatcher.add_handler(CallbackQueryHandler(self.ordina, pattern="/ordina"))
 
     def cerca_craft(self, bot, update):
-        """"""
+        """/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato
+        num1>num2 cerca oggetti craft con valore compreso tra num1 e num2."""
         param = update.message.text.split()[1:]
         if len(param) == 0 or len(param) > 2:
-            update.message.reply_text("Il comando deve essere usatoin due modi:\n"
+            update.message.reply_text("Il comando deve essere usato in due modi:\n"
                                       "/cercaCraft maggioreDi minoreDi\n"
                                       "/cercaCraft maggioreDi\nIn cui maggioreDi e minoreDi sono due numeri rappresentanti"
                                       "l'intervallo di punti craft in cui vuoi cercare.")

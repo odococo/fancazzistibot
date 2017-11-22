@@ -14,11 +14,10 @@ from PokerDice import calc_score, consigliami
 from db_call import DB
 
 COMANDI_PLUS = """
-attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
-cercaCraft maggioreDi minoreDi - Ti permette di ricercare oggetti da craftare a seconda di vari parametri tra cui:\n
-           Punti Craft : compresi tra maggioreDi e minoreDi\n
-           Rarità: tra cui X, UE, E, L, UR o tutti\n
-           Rinascita: r0, r1, r2\n
+/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
+/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato 
+        num1>num2 cerca oggetti craft con valore compreso tra num1 e num2.\n
+/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti\n
 """
 
 
