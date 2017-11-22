@@ -50,7 +50,10 @@ class Loot:
 
         text = update.message.text.lower()
         to_send = self.estrai_oggetti(text)
-        self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
+        try:
+            self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
+        except IndexError:
+            self.costo_craft=0
 
         for elem in to_send:
             update.message.reply_text(elem)

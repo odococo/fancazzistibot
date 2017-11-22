@@ -377,9 +377,10 @@ class DB:
             user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \
                   str(bot.username) + "\nConsenti?"
         user = str(user["id"]) + " " + str(user["username"])
-        print(to_send,user)
+       # print(to_send,user)
+        #todo: salva gli id dei messaggi inviati e cancellali nel grant_deny
         for dev in developer_dicts.values():
             bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
                 InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + user)
-            ]]))
+            ]]),one_time_keyboard=True)
