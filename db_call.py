@@ -59,9 +59,6 @@ TABELLE = {
         "create": """CREATE TABLE IF NOT EXISTS users(
               id integer REFERENCES id_users ON DELETE CASCADE,
               username varchar(255),
-              first_name varchar(255),
-              last_name varchar(255),
-              language_code varchar(10),
               date timestamp DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY(id, date))""",
         "drop": """DROP TABLE IF EXISTS users CASCADE""",
@@ -79,10 +76,10 @@ TABELLE = {
                 WHERE id = %s)"""
 
         },
-        "insert": """INSERT INTO users (id, username, first_name, last_name, language_code)
-              VALUES (%s, %s, %s, %s ,%s)""",
+        "insert": """INSERT INTO users (id, username)
+              VALUES (%s, %s)""",
         "update": """UPDATE users
-              SET username = %s, first_name = %s, last_name = %s, language_code = %s
+              SET username = %s,
               WHERE id = %s""",
         "delete": """DELETE FROM users
               WHERE id = %s"""
@@ -188,7 +185,7 @@ class DB:
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, True, False, False))
         self.execute(TABELLE['users']['insert'],
-                     (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
+                     (user['id'], user['username']))
 
     def reset_punteggio(self):
         self.execute(TABELLE['punteggio']['reset'])
@@ -359,8 +356,7 @@ class DB:
         text = update.callback_query.data.split(" ")
         command = text[0]
         user_lst = text[1:]
-        user = {"id": user_lst[0], "username": user_lst[1], "first_name": user_lst[2], "last_name": user_lst[3],
-                "language_code": user_lst[4]}
+        user = {"id": user_lst[0], "username": " ".join(user_lst[1:])}
         if (command.strip("/") == "consentiAccessoSi"):
             # print("Accesso garantito")
             self.save_new_user(user)
@@ -380,9 +376,8 @@ class DB:
                   str(user["first_name"]) + "\nlast_name: " + str(
             user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \
                   str(bot.username) + "\nConsenti?"
-        user = str(user["id"]) + " " + str(user["username"]) + " " + str(user["first_name"]) + " " + str(
-            user["last_name"]) + " " + str(user["language_code"])
-        # print(to_send)
+        user = str(user["id"]) + " " + str(user["username"])
+        print(to_send,user)
         for dev in developer_dicts.values():
             bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
