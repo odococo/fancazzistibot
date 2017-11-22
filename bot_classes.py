@@ -137,9 +137,15 @@ class Loot:
             self.quantita.clear()
             self.stima_flag = False
             return ConversationHandler.END
-        else:
+        elif "Risultati ricerca" in update.message.text:
             self.stima_parziale(update.message.text.lower())
             return 1
+        else:
+            to_send="Non ho capito il messaggio... sei sicuro di aver inoltrato quello di @lootplusbot ("\
+                                      "inizia con 'Risultati ricerca di'). Purtroppo ho annullato tutto perche senno poi mi blocco, ma non disperare!\n"\
+                                      "Basta che ri-inoltri il messaggio lista di @craftlootbot e poi ri-inoltri tutti i messaggi di @lootplusbot, senza"\
+                                      "dover rieffettuare tutte le ricerche nuovamente 👍🏼👍🏼"
+            return self.annulla(bot, update, to_send)
 
     def stima_parziale(self, msg):
         """dato un messaggio in lower inoltrato da lootplusbot rappresentate la risposta la comando ricerca
@@ -161,14 +167,17 @@ class Loot:
 
             self.costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
 
-    def annulla(self, bot, update):
-        """Annulla la stima"""
+    def annulla(self, bot, update, msg=""):
+        """Finisce la conversazione azzerando tutto
+         msg: è il messaggio inviato all'utente
+         return : fine conversazione"""
 
+        if not msg: msg="Ok ho annullato tutto"
         self.stima_flag = False
         self.costo_craft = 0
         self.quantita = []
         self.to_send_negozi = []
-        update.message.reply_text("Ok ho annullato tutto", reply_markup=ReplyKeyboardRemove())
+        update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
 

@@ -18,7 +18,7 @@ attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team
 cercaCraft maggioreDi minoreDi - Ti permette di ricercare oggetti da craftare a seconda di vari parametri tra cui:\n
            Punti Craft : compresi tra maggioreDi e minoreDi\n
            Rarità: tra cui X, UE, E, L, UR o tutti\n
-           Rinascita: r0, r1, r2
+           Rinascita: r0, r1, r2\n
 """
 
 

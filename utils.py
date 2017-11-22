@@ -18,6 +18,9 @@ convert - Converte test/numero da e verso una base arbitraria, si possono fornir
 punteggio - Invia, sotto forma di messaggio, il punteggio relativo all'attacco dei boss per ogni membro
 help - mostra questo messaggio di help
 start - avvia il bot
+cercaCraft - Ti permette di ricercare oggetti da craftare a seconda di varie condizioni\n
+resetBoss - resetta i punteggi del Boss
+
 """
 
 

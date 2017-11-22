@@ -7,6 +7,6 @@ if [ $# -eq 0 ]
     comment=$1
 fi
 
-git add main bot_classes.py db_call.py utils.py comandi.py commitAndPush.sh;
+git add main bot_classes.py db_call.py utils.py comandi.py commitAndPush.sh README.md;
 git commit -m "$comment";
 git push origin master;

@@ -24,7 +24,12 @@ sono i seguenti:
     * *Punteggio*: visualizza il punteggio di tutti i membri del team madre diviso a seconda del valore.
     * *Completa*: comando riservato solo agli admin
     * *Fine*: riporta il bot alle normali funzioni uscendo dalla schermata di visualizzazione
-    
+* */cercaCraft maggioreDi minoreDi* : Questo comande serve per ricercare oggetti a seconda dei punti craft. *Maggiore/MinoreDi*
+devono essere due numeri (**NB** Puoi usare il comando anche senza il parametro *minoreDi*) in cui vuoi che sia compreso il valore
+di punti craft. In seguito ti verrà chiesto se vuoi filtrare anche a seconda della rarità dell'oggetto [X, UE, E, L, U, UR o tutti] e 
+a seconda della rinascita [r0, r1, r2] (**NB** scegliendo una rarità alta ti verranno mostrate anche quelle inferiori, per esempio scegliendo 
+r1 vengono mostrati i risultati per r0 e r1; r2-> r0, r1 e r2).
+
 ## CraftLootBot
 Se Il bot riceve un messaggio inoltrato da @craftlootbot, precisamente un messaggio generato dal comando */lista oggetto* si attevierà
 una sua funzione. Prima di tutto riceverete una serie di messaggi del tipo:
