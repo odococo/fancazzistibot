@@ -17,7 +17,7 @@ COMANDI_PLUS = """
 /attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme
 /cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
 /resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti\n\n
-<b>=============COMANDI DA INOLTRO===============</b>\n\n
+<b>=====COMANDI DA INOLTRO=====</b>\n\n
 """
 
 
@@ -98,7 +98,7 @@ Crediti: @brandimax @Odococo""")
             self.update.message.from_user.id), utils.is_dev(self.bot.id))
         commands = {"/" + command: commands.get(command) for command in commands}
         text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n" \
-               "<b>=============COMANDI SEMPLICI===============</b>\n\n"
+               "<b>=====COMANDI SEMPLICI=====</b>\n\n"
         prov = [key + " " + str(value) for key, value in commands.items()]
         text += "\n".join(prov)
         text += COMANDI_PLUS
