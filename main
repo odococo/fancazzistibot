@@ -166,6 +166,7 @@ def main():
     #manda una notifica a tutti gli utenti
     users=db.get_id_users()
     print(users)
+    if not isinstance(users, list):users=[users]
     for elem in users:
         updater.bot.send_message(elem["id"],"Sono tornato online!")
 
