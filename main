@@ -18,6 +18,7 @@ import logging
 import os
 import sys
 
+from telegram import ReplyKeyboardRemove
 from telegram.ext import (
     Updater,
     RegexHandler,
@@ -177,7 +178,8 @@ def main():
     #print(users)
     if not isinstance(users, list):users=[users]
     for elem in users:
-        if not elem["id"] in bot_ids:  updater.bot.send_message(elem["id"],"Ho subito un aggiornamento, ma adesso sono tornato online!")
+        if not elem["id"] in bot_ids:
+            updater.bot.send_message(elem["id"],"Ho subito un aggiornamento, ma adesso sono tornato online!",reply_markup=ReplyKeyboardRemove())
 
 
     oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame
