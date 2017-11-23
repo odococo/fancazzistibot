@@ -152,6 +152,7 @@ TABELLE = {
 COMANDO_CONNESSIONE_HEROKU_DB="heroku pg:psql"
 
 developer_dicts = {"brandimax": 24978334, "odococo":89675136}
+developer_message=[]
 
 
 class DB:
@@ -362,14 +363,28 @@ class DB:
             # print("Accesso garantito")
             self.save_new_user(user)
             bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
-            for dev in developer_dicts.values():
-                bot.send_message(dev, "L'accesso a user : " + str(user["username"]) + ", è stato garantito")
+
+            for msg in developer_message:
+                bot.edit_message_text(
+                    chat_id=msg.chat_id,
+                    text="L'accesso a user : " + str(user["username"]) + ", è stato garantito",
+                    message_id=msg.message_id,
+                    parse_mode="HTML"
+                )
+
         else:
             # print("Accesso negato")
             bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
             self.ban_user(user)
-            for dev in developer_dicts.values():
-                bot.send_message(dev, "L'accesso a user : " + str(user["username"] + ", è stato negato"))
+            for msg in developer_message:
+                bot.edit_message_text(
+                    chat_id=msg.chat_id,
+                    text= "L'accesso a user : " + str(user["username"]) + ", è stato negato",
+                    message_id=msg.message_id,
+                    parse_mode="HTML"
+                )
+
+        developer_message.clear()
 
     def request_access(self, bot, user):
         """Invia la richiesta di accesso ai comandi agli id presenti in veleloper_dict"""
@@ -381,7 +396,7 @@ class DB:
        # print(to_send,user)
         #todo: salva gli id dei messaggi inviati e cancellali nel grant_deny
         for dev in developer_dicts.values():
-            bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
+            developer_message.append(bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
                 InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + user)
-            ]]),one_time_keyboard=True)
+            ]]),one_time_keyboard=True))
