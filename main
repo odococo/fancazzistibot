@@ -40,14 +40,12 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 # ==================FUNCTIONS==========================================
 
-def get_token_bot(dev):
+def get_bot_id(dev):
     if dev:
         id = "333089594"
-        token = id + ":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
     else:
         id = "490902479"
-        token = id + ":AAGz3rv4M2U2dYG7WJDbiWZoAFFsUVn_ZIE"
-    return token
+    return id
 
 
 def get_user(user):
@@ -145,10 +143,15 @@ def main():
     python3 main 2 il bot principale in polling
     python3 main 3 il bot dev in polling 
     """
+
+    db = DB()#database
+
    # mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
-    updater = Updater(get_token_bot(dev))
+    bot_id=get_bot_id(dev)
+    token=bot_id+db.get_token(bot_id)['token']
+    updater = Updater(token)
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
     # add_bot(get_bot(updater.bot))
 
@@ -161,7 +164,6 @@ def main():
 
 
 
-    db = DB()#database
 
     #manda una notifica a tutti gli utenti
     users=db.get_id_users()

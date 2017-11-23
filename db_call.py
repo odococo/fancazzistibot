@@ -146,6 +146,12 @@ TABELLE = {
         "reset": """update punteggio set (msg_id , valutazione, attacchi) = (0 ,0,0)""",
         "delete": """DELETE FROM punteggio
               WHERE id_user = %s"""
+    },
+    "bot":{
+        "select":{
+            "by_id":"""SELECT * FROM bot WHERE id= %s""",
+            "all":"""SELECT * FROM bot"""
+        }
     }
 }
 
@@ -188,6 +194,9 @@ class DB:
 
         self.execute(TABELLE['users']['insert'],
                      (user['id'], user['username']))
+
+    def get_token(self, bot_id):
+        return self.execute(TABELLE['bot']['select']['by_id'], bot_id)
 
     def reset_punteggio(self):
         self.execute(TABELLE['punteggio']['reset'])
