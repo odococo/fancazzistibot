@@ -417,6 +417,10 @@ class Boss:
 
         user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
+        if self.same_message(boss, user_data['lista_boss'] ):
+            update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
+            return 1
+
         print(user_data['lista_boss'], boss)
 
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
@@ -662,8 +666,25 @@ class Boss:
         update.message.reply_text(to_send)
         return 1
 
-    def same_message(self, db_boss, admin_boss):
-        print("ciao")
+    def same_message(self, boss_db, boss_admin):
+        if isinstance(boss_db, list):
+            for db in boss_db:
+                for admin in boss_admin:
+                    if db['username'] == admin[0]:
+                        if isinstance(admin[2], tuple) and not admin[2][1] == db['attacchi']:
+                            return True
+                        elif admin[2] == 0 and db['attacchi'] == 0:
+                            return True
+
+        else:
+            for admin in boss_admin:
+                if admin[0] == boss_db['username']:
+                    if isinstance(admin[2], tuple) and not admin[2][1] == boss_db['attacchi']:
+                        return True
+                    elif admin[2] == 0 and boss_db['attacchi'] == 0:
+                        return True
+
+        return False
 
 
 class Cerca:
