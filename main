@@ -39,6 +39,7 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 
 # ==================FUNCTIONS==========================================
+bot_ids=[333089594,333089594]
 
 def get_bot_id(dev):
     if dev:
@@ -170,7 +171,7 @@ def main():
     print(users)
     if not isinstance(users, list):users=[users]
     for elem in users:
-        updater.bot.send_message(elem["id"],"Sono tornato online!")
+        if not elem["id"] in bot_ids:  updater.bot.send_message(elem["id"],"Sono tornato online!")
 
 
     oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame
