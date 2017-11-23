@@ -696,7 +696,7 @@ class Cerca:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
                                       "/cercaCraft maggioreDi minoreDi\n"
                                       "/cercaCraft maggioreDi\nIn cui maggioreDi e minoreDi sono due numeri rappresentanti"
-                                      "l'intervallo di punti craft in cui vuoi cercare.")
+                                      " l'intervallo di punti craft in cui vuoi cercare.")
             return
 
 
