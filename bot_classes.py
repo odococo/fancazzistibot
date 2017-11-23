@@ -541,7 +541,7 @@ class Boss:
 
         if not user_data['punteggi']:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
-            return ConversationHandler.END
+            return self.fine()
 
         # sortedD = sorted([(elem['username'], elem['valutazione']) for elem in self.punteggi], reverse=True)
         sortedD = sorted([(elem['username'], elem['valutazione']) for elem in user_data['punteggi']], reverse=True)
@@ -578,7 +578,7 @@ class Boss:
 
         if not len(user_data['lista_boss']) > 0:
             update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
-            return ConversationHandler.END
+            return self.fine()
 
         to_send = "✅ <b>Hanno attaccato</b>:\n"
 
@@ -626,7 +626,7 @@ class Boss:
 
         if not len(user_data['punteggi']) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
-            return ConversationHandler.END
+            return self.fine()
 
         to_send = ""
 
