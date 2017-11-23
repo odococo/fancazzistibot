@@ -97,7 +97,7 @@ Crediti: @brandimax @Odococo""")
         commands = self.command_list(utils.is_admin(
             self.update.message.from_user.id), utils.is_dev(self.bot.id))
         commands = {"/" + command: commands.get(command) for command in commands}
-        text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n"
+        text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n"
         prov = [key + " " + str(value) for key, value in commands.items()]
         text += "\n".join(prov)
         text += COMANDI_PLUS
@@ -106,7 +106,7 @@ Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi i
 Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
 Se, invece non ti interessa avere queste informazioni premi "Annulla".
 In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootbotgame per salvare gli attacchi che ha fatto il team madre al boss!
-Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n
+Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
         self.answer(text)
@@ -217,15 +217,12 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
 
 
-
-
     def Ujson(self):
         """Ottieni il json dell'update"""
         self.answer(str(self.update), pretty_json=True)
 
     def Uconvert(self):
-        """Converte testo/numero da e verso unabase arbitraria.
-    Si possono fornire valori di conversione per personalizzare il risultato"""
+        """Converte testo/numero da e verso unabase arbitraria. Si possono fornire valori di conversione per personalizzare il risultato"""
         convert_params = self.params[0].split("-") if self.params else []
         if len(convert_params) != 3:
             text = "Comando invalido. Sintassi:\n"
