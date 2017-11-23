@@ -14,10 +14,10 @@ from PokerDice import calc_score, consigliami
 from db_call import DB
 
 COMANDI_PLUS = """
-/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
+/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme
 /cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato 
-        num1>num2 cerca oggetti craft con valore compreso tra num1 e num2.\n
-/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti\n
+        num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
+/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti 
 """
 
 
@@ -101,15 +101,12 @@ Crediti: @brandimax @Odococo""")
         prov = [key + " " + str(value) for key, value in commands.items()]
         text += "\n".join(prov)
         text += COMANDI_PLUS
-        text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot:\n
-Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi 
-/ricerca da inoltrare a @lootplusbot. Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare
-premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti 
-e una lista di comandi negozio. Se, invece non ti interessa avere queste informazioni premi "Annulla".\n
-In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per verificare quali membri del team madre hanno attaccato
-e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai 
-finito premi "Fine".\n
-Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!\n
+        text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot:
+Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi /ricerca da inoltrare a @lootplusbot.
+Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
+Se, invece non ti interessa avere queste informazioni premi "Annulla".
+In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per verificare quali membri del team madre hanno attaccato e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai finito premi "Fine".
+Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
         self.answer(text)
 
@@ -147,7 +144,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             reply_markup=reply_markup)
 
     def UhelpLink(self):
-        """ - ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
+        """ Ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
         # todo: usa messageEntity per una migliore foramttazione
 
         self.answer("https://github.com/odococo/fancazzistibot/blob/master/README.md")
@@ -244,7 +241,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         self.answer(text)
 
     def Uwin(self):
-        """Per avere le tue possibilità di vincita nell'ispezione dello gnomo"""
+        """Seguito da cinque numeri separati da spazio, ti da le tue possibilità di vincita nell'ispezione dello gnomo"""
         # print("win")
         # se ci sono troppi o pochi numeri non va bene
         if len(self.params) != 5:
@@ -258,9 +255,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
 
     def Uconsiglia(self):
-        """Per avere una tabella di numeri da cambiare
-    (la prima colonna rappresenta il numeroDaCambiare->NumeroCambiato, la seconda e la terza sono rispettivamente nuova e
-    la vecchia probabilità di vincita, la quarta è il decremento o incremento di probabilità in caso di cambio)"""
+        """Seguito da cinque numeri separati da spazio ,invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
 
         # se ci sono troppi o pochi numeri non va bene
         if len(self.params) != 5:
