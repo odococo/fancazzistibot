@@ -157,24 +157,18 @@ class Loot:
                 if int(elem[0]) > 1:
                     user_data['to_send_negozi'].append("Compra <b>" + elem[1] + "</b> (<b>" + str(
                         elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
-                    # self.to_send_negozi.append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
-                    #     elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
+
                 else:
                     # self.to_send_negozi.append("Compra l'oggetto <b>" + elem[
                     #     1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
-                    user_data['to_send_negozi'].append("Compra l'oggetto <b>" + elem[
+                    user_data['to_send_negozi'].append("Compra <b>" + elem[
                         1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
 
             update.message.reply_text("Vuoi visualizzare i negozi?", reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/mostraNegoziSi"),
                 InlineKeyboardButton("No", callback_data="/mostraNegoziNo")
             ]]))
-            # print(self.to_send_negozi)
 
-            # self.costo.clear()
-            # self.quantita.clear()
-            # self.stima_flag = False
-            #
             user_data['costo'].clear()
             user_data['quantita'].clear()
             user_data['stima_flag'] = False
