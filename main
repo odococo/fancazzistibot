@@ -39,7 +39,7 @@ PORT = int(os.environ.get('PORT', '5000'))
 
 
 # ==================FUNCTIONS==========================================
-bot_ids=[333089594,333089594]
+bot_ids=[333089594,490902479]
 
 def get_bot_id(dev):
     if dev:
