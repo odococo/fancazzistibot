@@ -17,6 +17,7 @@ COMANDI_PLUS = """
 /attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme
 /cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
 /resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti\n\n
+<b>=============COMANDI DA INOLTRO===============</b>\n\n
 """
 
 
@@ -96,7 +97,8 @@ Crediti: @brandimax @Odococo""")
         commands = self.command_list(utils.is_admin(
             self.update.message.from_user.id), utils.is_dev(self.bot.id))
         commands = {"/" + command: commands.get(command) for command in commands}
-        text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n"
+        text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n" \
+               "<b>=============COMANDI SEMPLICI===============</b>\n\n"
         prov = [key + " " + str(value) for key, value in commands.items()]
         text += "\n".join(prov)
         text += COMANDI_PLUS
@@ -107,7 +109,7 @@ Se, invece non ti interessa avere queste informazioni premi "Annulla".
 In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
-        self.answer(text)
+        self.answer(text, parse_mode="HTML")
 
     # def Uinline(self):
     #   """Esempio di comandi inline"""
