@@ -196,7 +196,7 @@ class DB:
                      (user['id'], user['username']))
 
     def get_token(self, bot_id):
-        res=self.execute(TABELLE['bot']['select']['by_id'], bot_id)
+        res=self.execute(TABELLE['bot']['select']['by_id'],( bot_id,))
         print(res)
         return res
 
