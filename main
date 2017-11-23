@@ -171,7 +171,7 @@ def main():
     print(users)
     if not isinstance(users, list):users=[users]
     for elem in users:
-        if not elem["id"] in bot_ids:  updater.bot.send_message(elem["id"],"Sono tornato online!")
+        if not elem["id"] in bot_ids:  updater.bot.send_message(elem["id"],"Ho subito un aggiornamento, ma aesso sono tornato online!")
 
 
     oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame

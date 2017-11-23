@@ -155,7 +155,7 @@ class Loot:
             for elem in merged:
 
                 if int(elem[0]) > 1:
-                    user_data['to_send_negozi'].append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
+                    user_data['to_send_negozi'].append("Compra <b>" + elem[1] + "</b> (<b>" + str(
                         elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
                     # self.to_send_negozi.append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
                     #     elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
