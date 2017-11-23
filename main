@@ -21,15 +21,15 @@ import sys
 from telegram.ext import (
     Updater,
     RegexHandler,
-    CallbackQueryHandler
-)
+    CallbackQueryHandler,
+    MessageHandler, Filters)
 
 from bot_classes import Loot, Boss, Cerca
 from comandi import new_command
 from db_call import DB
 from negozi_loot import use_api, ITEMS
 from utils import (is_numeric)
-
+import random
 # ==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -123,6 +123,12 @@ def unset(bot, update, chat_data):
 
     update.message.reply_text('Timer successfully unset!')
 
+def basta_stikers(bot, update):
+    sender=update.message.from_user
+    to_send=["Ma basta con sti sticker cancerogeni","Ancora?! facciamola finita su","Un altro? regolati perfavore"]
+    if "Vyllain" in sender['username']:
+        update.message.reply_text(random.choice(to_send),reply_to_message_id=update.message.message_id)
+
 
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
@@ -187,6 +193,8 @@ def main():
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
+    disp.add_handler(MessageHandler(Filters.sticker,basta_stikers))
+
 
     # log all errors
     disp.add_error_handler(error)
