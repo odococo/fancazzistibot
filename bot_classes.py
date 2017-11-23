@@ -349,12 +349,13 @@ class Boss:
             states={
                 1: [MessageHandler(Filters.text, self.boss_loop, pass_user_data=True)]
             },
-            fallbacks=[CommandHandler('Fine', self.fine,pass_user_data=True)]
+            fallbacks=[CommandHandler('Fine', self.fine, pass_user_data=True)]
         )
         dispatcher.add_handler(coversation_boss)
 
         dispatcher.add_handler(CommandHandler("resetBoss", reset_boss_ask_decor))
-        dispatcher.add_handler(CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
+        dispatcher.add_handler(
+            CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
 
     def cerca_boss(self, msg):
         """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
@@ -407,16 +408,16 @@ class Boss:
         else:
             try:
                 id = boss[0]["msg_id"]
-                user_data['single_dict']=False
+                user_data['single_dict'] = False
             except KeyError:
                 id = boss["msg_id"]
 
+        user_data['punteggi'] = boss
+        user_data['last_update_id'] = id
 
-        user_data['punteggi'] =boss
-        user_data['last_update_id'] =id
+        user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
-        user_data['lista_boss'] =self.cerca_boss(update.message.text)
-
+        print(user_data['lista_boss'], boss)
 
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
         update.message.reply_text("Di quale boss stiamo parlando?",
@@ -427,7 +428,7 @@ class Boss:
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
 
         self.inizzializza_user_data(user_data)
-        user_data['punteggi']=self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        user_data['punteggi'] = self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
 
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)
@@ -436,10 +437,10 @@ class Boss:
 
     def boss_reset_confirm(self, bot, update, user_data):
         if "Si" in update.callback_query.data:
-            user_data['lista_boss']=[]
-            user_data['punteggi']={}
-            user_data['last_update_id']=0
-            user_data['phoenix']=False
+            user_data['lista_boss'] = []
+            user_data['punteggi'] = {}
+            user_data['last_update_id'] = 0
+            user_data['phoenix'] = False
 
             self.db.reset_punteggio()
             bot.edit_message_text(
@@ -477,7 +478,7 @@ class Boss:
         # se l'admin vuole modificare la lista
         elif choice == "Phoenix" or choice == "Titan":
             if choice == "Phoenix":
-                user_data['phoenix']=True
+                user_data['phoenix'] = True
             else:
                 user_data['phoenix'] = False
 
@@ -495,32 +496,32 @@ class Boss:
             users_name = [elem["username"] for elem in users]
             users_name_id = [(elem["username"], elem['id']) for elem in users]
 
-            if user_data['single_dict']: user_data['punteggi'] = [ user_data['punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
-
-
+            if user_data['single_dict']: user_data['punteggi'] = [user_data[
+                                                                      'punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in user_data['lista_boss']:
                 if username[0] in users_name and not bool(user_data['punteggi'].pop(
                         0)):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
                     user_data['punteggi'].append({'username': username[0],
-                                          'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
-                                          # aggiungo l'id associato
-                                          'valutazione': 0,
-                                          'attacchi': 0})  # aggiungo l'user alla lista
+                                                  'id': [elem[1] for elem in users_name_id if
+                                                         elem[0] == username[0]].pop(0),
+                                                  # aggiungo l'id associato
+                                                  'valutazione': 0,
+                                                  'attacchi': 0})  # aggiungo l'user alla lista
                 elif username[0] in users_name and \
                         not username[0] in [elem['username'] for elem in
                                             user_data[
                                                 'punteggi']]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
                     user_data['punteggi'].append({'username': username[0],
-                                          'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
-                                          # aggiungo l'id associato
-                                          'valutazione': 0,
-                                          'attacchi': 0})  # aggiungo l'user alla lista
+                                                  'id': [elem[1] for elem in users_name_id if
+                                                         elem[0] == username[0]].pop(0),
+                                                  # aggiungo l'id associato
+                                                  'valutazione': 0,
+                                                  'attacchi': 0})  # aggiungo l'user alla lista
 
 
             else:  # altrimenti ho una lista di dizionari
                 found = False
-
 
                 for username in user_data['lista_boss']:
                     for single_dict in user_data['punteggi']:
@@ -529,16 +530,14 @@ class Boss:
                             single_dict['msg_id'] = user_data['last_update_id']
                             if user_data['phoenix'] and isinstance(username[2], int):  # non ha attaccato ed è phoenix
                                 single_dict['valutazione'] += 2
-                            elif not user_data['phoenix'] and isinstance(username[2], int):  # non ha attaccato ed è titan
+                            elif not user_data['phoenix'] and isinstance(username[2],
+                                                                         int):  # non ha attaccato ed è titan
                                 single_dict['valutazione'] += 1
                             elif isinstance(username[2], tuple):  # ha attaccato
                                 single_dict['attacchi'] = username[2][1]
                     if not found:
                         skipped.append(username)
                     found = False
-
-
-
 
             if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
                 self.db.salva_punteggi_in_db(user_data['punteggi'])
@@ -564,8 +563,6 @@ class Boss:
 
     def punteggio(self, bot, update, user_data):
         """Visualizza la sita di tutti con punteggio annesso"""
-
-
 
         if not user_data['punteggi']:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
@@ -610,7 +607,6 @@ class Boss:
 
         to_send = "✅ <b>Hanno attaccato</b>:\n"
 
-
         attaccato = sorted([elem for elem in user_data['lista_boss'] if elem[2] != 0], key=lambda tup: int(tup[2][0]),
                            reverse=True)
         non_attaccato = [elem for elem in user_data['lista_boss'] if elem[2] == 0]
@@ -646,12 +642,11 @@ class Boss:
 
     def fine(self, bot, update, user_data):
         update.message.reply_text("Finito", reply_markup=ReplyKeyboardRemove())
-        user_data['lista_boss']=[]
+        user_data['lista_boss'] = []
         return ConversationHandler.END
 
     def non_attaccanti(self, bot, update, user_data):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
-
 
         if not len(user_data['punteggi']) > 0:
             update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
@@ -666,6 +661,9 @@ class Boss:
 
         update.message.reply_text(to_send)
         return 1
+
+    def same_message(self, db_boss, admin_boss):
+        print("ciao")
 
 
 class Cerca:
@@ -689,7 +687,6 @@ class Cerca:
         dispatcher.add_handler(CallbackQueryHandler(self.filtra_rinascita, pattern="/rinascita", pass_user_data=True))
         dispatcher.add_handler(CallbackQueryHandler(self.ordina, pattern="/ordina", pass_user_data=True))
 
-
     def inizzializza_user_data(self, user_data):
         user_data['maggioreDi'] = -1
         user_data['minoreDi'] = 3000
@@ -702,8 +699,8 @@ class Cerca:
         param = update.message.text.split()[1:]
         self.inizzializza_user_data(user_data)
 
-        magg=0
-        min=0
+        magg = 0
+        min = 0
 
         if len(param) == 0 or len(param) > 2:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
@@ -714,7 +711,7 @@ class Cerca:
 
 
         elif len(param) == 1 and is_numeric(param[0]):
-            user_data['maggioreDi']=int(param[0])
+            user_data['maggioreDi'] = int(param[0])
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
             magg = int(param[0])
             min = int(param[1])
@@ -725,9 +722,8 @@ class Cerca:
         if magg > min:
             update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
             return
-        user_data['maggioreDi']=magg
-        user_data['minoreDi']=min
-
+        user_data['maggioreDi'] = magg
+        user_data['minoreDi'] = min
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("X", callback_data="/rarita X"),
@@ -740,8 +736,7 @@ class Cerca:
 
         update.message.reply_text("Secondo quale rarità vuoi filtrare il risultato?", reply_markup=inline)
 
-
-    def filtra_rarita(self, bot, update,user_data):
+    def filtra_rarita(self, bot, update, user_data):
         user_data['rarita'] = update.callback_query.data.split()[1]
 
         inline = InlineKeyboardMarkup([
@@ -760,20 +755,22 @@ class Cerca:
             reply_markup=inline
         )
 
-    def filtra_rinascita(self, bot, update,user_data):
+    def filtra_rinascita(self, bot, update, user_data):
         rinascita = update.callback_query.data.split()[1]
 
         # print(self.maggioreDi, self.minoreDi, self.rarita, self.rinascita)
         if not "tutti" in user_data['rarita']:
-            user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] > user_data['maggioreDi'] and
-                              elem['craft_pnt'] < user_data['minoreDi'] and elem['reborn'] <= int(rinascita)
-                              and elem['rarity'] == user_data['rarita']]
+            user_data['risultati'] = [elem for elem in self.craftabili if
+                                      elem['craft_pnt'] > user_data['maggioreDi'] and
+                                      elem['craft_pnt'] < user_data['minoreDi'] and elem['reborn'] <= int(rinascita)
+                                      and elem['rarity'] == user_data['rarita']]
         else:
 
-            user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >  user_data['maggioreDi']  and
-                              elem['craft_pnt'] < user_data['minoreDi'] and elem['reborn'] <= int(rinascita)]
+            user_data['risultati'] = [elem for elem in self.craftabili if
+                                      elem['craft_pnt'] > user_data['maggioreDi'] and
+                                      elem['craft_pnt'] < user_data['minoreDi'] and elem['reborn'] <= int(rinascita)]
 
-        if len(user_data['risultati'] ) == 0:
+        if len(user_data['risultati']) == 0:
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text="Non ho trovato risultati per i tuoi criteri di ricerca",
@@ -782,8 +779,8 @@ class Cerca:
             return
 
         to_send = "Ho trovato <b>" + str(
-            len(user_data['risultati'] )) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
-                                   "annullare la ricerca"
+            len(user_data['risultati'])) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
+                                           "annullare la ricerca"
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Punti craft", callback_data="/ordina puntiCraft"),
@@ -800,7 +797,7 @@ class Cerca:
             parse_mode="HTML"
         )
 
-    def ordina(self, bot, update,user_data):
+    def ordina(self, bot, update, user_data):
         param = update.callback_query.data.split()[1]
         to_send = ""
         sorted_res = []
@@ -809,11 +806,11 @@ class Cerca:
             to_send = "Ok annullo"
 
         elif "puntiCraft" in param:
-            sorted_res = sorted(user_data['risultati'] , key=lambda key: key["craft_pnt"])
+            sorted_res = sorted(user_data['risultati'], key=lambda key: key["craft_pnt"])
         elif "rarita" in param:
-            sorted_res = sorted(user_data['risultati'] , key=lambda key: key["rarity"])
+            sorted_res = sorted(user_data['risultati'], key=lambda key: key["rarity"])
         elif "rinascita" in param:
-            sorted_res = sorted(user_data['risultati'] , key=lambda key: key["reborn"])
+            sorted_res = sorted(user_data['risultati'], key=lambda key: key["reborn"])
 
         message_id = update._effective_chat.id
 
