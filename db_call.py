@@ -183,12 +183,12 @@ class DB:
 
     def ban_user(self, user):
         # salvo l'id dell'utente o del bot
-        print("Sto negando l'accesso all'user " + str(user['id']))
+        #print("Sto negando l'accesso all'user " + str(user['id']))
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, False, False, True))
 
     def save_new_user(self, user):
-        print("Saving new user")
+        #print("Saving new user")
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, True, False, False))
 
@@ -197,7 +197,7 @@ class DB:
 
     def get_token(self, bot_id):
         res=self.execute(TABELLE['bot']['select']['by_id'],( bot_id,))
-        print(res)
+        #print(res)
         return res
 
     def reset_punteggio(self):

@@ -101,13 +101,7 @@ class Loot:
             elem[2]= costo oggetto
             elem[3]= numero negozio per oggetto"""
             merged = []
-            # for q in self.quantita:
-            #     c = [item for item in self.costo if item[0] == q[1]]
-            #     if (len(c) > 0):
-            #         c = c[0]
-            #         merged.append((q[0], q[1], c[1], c[2]))
-            #
-            #         #    print(merged, self.quantita, self.costo)
+
 
             for q in user_data['quantita']:
                 c = [item for item in user_data['costo'] if item[0] == q[1]]

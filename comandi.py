@@ -55,7 +55,7 @@ class Command():
         if (method.__name__.startswith("A")):
             method = self.db.elegible_loot_admin(method)
         elif (method.__name__.startswith("D")):
-            method=self.db.elegible_admin(method)
+            method = self.db.elegible_admin(method)
         else:
             method = self.db.elegible_loot_user(method)
         method(self.bot, self.update)
@@ -336,7 +336,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                 user[permesso] = not user[permesso]
                 self.db.update_user(user)
             text = "Aggiornamento completato!"
-            self.bot.send_message(user['id'],"Sei stato promosso a "+permesso)
+            self.bot.send_message(user['id'], "Sei stato promosso a " + permesso)
         else:
             text = """Non hai inserito i parametri correttamente! /registra utente permesso
     utente tramite id o username
