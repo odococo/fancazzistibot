@@ -421,7 +421,7 @@ class Boss:
             update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
             return 1
 
-        print(user_data['lista_boss'], boss)
+        #print(user_data['lista_boss'], boss)
 
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
         update.message.reply_text("Di quale boss stiamo parlando?",
