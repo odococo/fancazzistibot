@@ -212,7 +212,10 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Uinfo(self):
         """Ottieni le informazioni riguardo il tuo account"""
         user = self.update.message.from_user
-        self.answer(str(user), pretty_json=True)
+        to_send=""
+        for key in user.keys():
+            to_send="<b>"+key+"</b> : "+user[key]
+        self.answer(to_send, pretty_json=True, parse_mode="HTML")
 
     def Ujson(self):
         """Ottieni il json dell'update"""

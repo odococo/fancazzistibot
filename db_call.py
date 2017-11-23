@@ -77,7 +77,7 @@ TABELLE = {
 
         },
         "insert": """INSERT INTO users (id, username)
-              VALUES (%s, %s)  ON CONFLICT(id) DO NOTHING""",
+              VALUES (%s, %s)""",
         "update": """UPDATE users
               SET username = %s,
               WHERE id = %s""",
