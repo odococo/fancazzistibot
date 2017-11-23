@@ -147,7 +147,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             "Seleziona il numero di facce:",
             reply_markup=reply_markup)
 
-    def Uhelplink(self):
+    def UhelpLink(self):
         """ - ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
         # todo: usa messageEntity per una migliore foramttazione
 
@@ -208,14 +208,10 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             self.answer("Il comando funziona così:\n"
                         "/dice numero_facce numero_lanci")
 
-    #todo: migiora visualizzazione
     def Uinfo(self):
         """Ottieni le informazioni riguardo il tuo account"""
         user = self.update.message.from_user
-        to_send=""
-        for key in user.keys():
-            to_send="<b>"+key+"</b> : "+user[key]
-        self.answer(to_send, pretty_json=True, parse_mode="HTML")
+        self.answer(str(user), pretty_json=True)
 
     def Ujson(self):
         """Ottieni il json dell'update"""
@@ -276,7 +272,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """test dev"""
         self.answer("ok")
 
-    def Dpinboss(self):
+    def DpinBoss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
     boss -> 0 (titano) o 1 (phoenix)\n
     giorno -> da 0 a 6 (da lunedì a domenica)\n
