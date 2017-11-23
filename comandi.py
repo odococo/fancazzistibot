@@ -15,8 +15,7 @@ from db_call import DB
 
 COMANDI_PLUS = """
 /attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme
-/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita.
- Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
+/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
 /resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti\n\n
 """
 
