@@ -319,8 +319,8 @@ class Loot:
 class Boss:
     def __init__(self, updater, db):
         """Questa classe è utilizzate per gestire gli attacchi al boss, i parametri sono:
-        bot : bot dell'updater
-        dispatcher: sempre dell'updater
+        updater : updater per il bot e il dispatcher
+        db:
         Le variabili di classe:
         lista_boss : La lista ritornata dalla funzione cerca boss, non vuota solo dopo che un admin ha inoltrato
                     il messaggio team

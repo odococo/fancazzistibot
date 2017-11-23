@@ -161,8 +161,15 @@ def main():
 
 
 
-    db = DB()
-    oggetti=use_api(ITEMS)
+    db = DB()#database
+
+    #manda una notifica a tutti gli utenti
+    users=db.get_id_users()
+    for elem in users:
+        updater.bot.send_message(elem["id"],"Sono tornato online!")
+
+
+    oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame
 
     # classi per craftlootbot e comandi boss
     Loot(updater, db)
