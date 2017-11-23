@@ -770,7 +770,7 @@ class Cerca:
 
         to_send = "Ho trovato <b>" + str(
             len(user_data['risultati'])) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
-                                           "annullare la ricerca"
+                                           " annullare la ricerca"
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Punti craft", callback_data="/ordina puntiCraft"),
@@ -805,11 +805,12 @@ class Cerca:
         message_id = update._effective_chat.id
 
         if sorted_res:
-            bot.sendMessage(message_id, "Nome   Punti Craft    Rarità     Rinascita\n", parse_mode="HTML")
+            bot.sendMessage(message_id, "<b>Nome   Punti Craft    Rarità     Rinascita</b>\n", parse_mode="HTML")
 
+        to_send=[]
         for elem in sorted_res:
-            to_send += "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
-                elem["reborn"]) + "\n"
+            to_send.append( "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
+                elem["reborn"]) + "\n")
 
         bot.delete_message(
             chat_id=update.callback_query.message.chat_id,
@@ -817,7 +818,7 @@ class Cerca:
         )
 
         while to_send:
-            bot.sendMessage(message_id, to_send[:4096], parse_mode="HTML")
-            to_send = to_send[4096:]
+            bot.sendMessage(message_id, "".join(to_send[:20]), parse_mode="HTML")
+            to_send = to_send[20:]
 
         self.inizzializza_user_data(user_data)
