@@ -77,19 +77,11 @@ class Loot:
             return self.annulla(bot, update, user_data)
         elif update.message.text == "Stima":
 
-            # if not self.stima_flag:
-            #     update.message.reply_text(
-            #         "Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
-            #     return 1
 
             if not user_data['stima_flag']:
                 update.message.reply_text(
                     "Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
                 return 1
-            #
-            # if len(self.costo) == 0:
-            #     update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
-            #     return self.annulla(bot, update, user_data)
 
             if len(user_data['costo']) == 0:
                 update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
@@ -123,14 +115,6 @@ class Loot:
                                       "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",
                                       reply_markup=ReplyKeyboardRemove())
 
-            # if (len(self.costo) > 10):
-            #     self.costo.sort(key=lambda tup: int(tup[1]), reverse=True)
-            #
-            #     to_print = "I 10 oggetti piu costosi sono:\n"
-            #     for i in range(0, 9):
-            #         to_print += self.costo[i][0] + " : " + self.costo[i][1] + " §\n"
-            #
-            #     update.message.reply_text(to_print)
 
             if (len(user_data['costo']) > 10):
                 user_data['costo'].sort(key=lambda tup: int(tup[1]), reverse=True)
@@ -153,8 +137,7 @@ class Loot:
                         elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
 
                 else:
-                    # self.to_send_negozi.append("Compra l'oggetto <b>" + elem[
-                    #     1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
+
                     user_data['to_send_negozi'].append("Compra <b>" + elem[
                         1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
 
