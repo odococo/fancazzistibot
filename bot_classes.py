@@ -27,33 +27,43 @@ class Loot:
         if not DEBUG:
             ricerca_decor = db.elegible_user(self.ricerca)
             coversation = ConversationHandler(
-                [RegexHandler("^Lista oggetti necessari per", ricerca_decor)],
+                [RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True)],
                 states={
-                    1: [MessageHandler(Filters.text, self.stima)]
+                    1: [MessageHandler(Filters.text, self.stima, pass_user_data=True)]
                 },
-                fallbacks=[CommandHandler('Annulla', self.annulla)])
+                fallbacks=[CommandHandler('Annulla', self.annulla,pass_user_data=True)])
             dispatcher.add_handler(coversation)
 
         else:
             coversation = ConversationHandler(
-                [RegexHandler("^Lista oggetti necessari per", self.ricerca)],
+                [RegexHandler("^Lista oggetti necessari per", self.ricerca,pass_user_data=True)],
                 states={
-                    1: [MessageHandler(Filters.text, self.stima)]
+                    1: [MessageHandler(Filters.text, self.stima,pass_user_data=True)]
                 },
-                fallbacks=[CommandHandler('Annulla', self.annulla)])
+                fallbacks=[CommandHandler('Annulla', self.annulla,pass_user_data=True)])
             dispatcher.add_handler(coversation)
 
-        dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi"))
+        dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi", pass_user_data=True))
 
-    def ricerca(self, bot, update):
+    def ricerca(self, bot, update, user_data):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
 
+        #inizzializza i campi di user data
+        user_data['costo_craft'] = 0
+        user_data['stima_flag'] = False
+        user_data['quantita'] = []
+        user_data['costo'] = []
+        user_data['to_send_negozi'] = []
+
         text = update.message.text.lower()
-        to_send = self.estrai_oggetti(text)
+        to_send = self.estrai_oggetti(text, user_data)
         try:
-            self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
+            # self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
+            user_data['costo_craft']=text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
         except IndexError:
-            self.costo_craft=0
+            # self.costo_craft=0
+            user_data['costo_craft']=0
+
 
         for elem in to_send:
             update.message.reply_text(elem)
@@ -61,24 +71,36 @@ class Loot:
         update.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
                                   "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
                                   reply_markup=reply_markup)
-        self.stima_flag = True
+        # self.stima_flag = True
+        user_data['stima_flag']=True
         return 1
 
-    def stima(self, bot, update):
+    def stima(self, bot, update, user_data):
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
                top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
 
         if update.message.text == "Annulla":
-            return self.annulla(bot, update)
+            return self.annulla(bot, update, user_data)
         elif update.message.text == "Stima":
-            if not self.stima_flag:
+
+            # if not self.stima_flag:
+            #     update.message.reply_text(
+            #         "Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
+            #     return 1
+
+            if not user_data['stima_flag']:
                 update.message.reply_text(
                     "Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
                 return 1
+            #
+            # if len(self.costo) == 0:
+            #     update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
+            #     return self.annulla(bot, update, user_data)
 
-            if len(self.costo) == 0:
+            if len(user_data['costo']) == 0:
                 update.message.reply_text("Non hai inoltrato nessun messaggio da @lootbotplus")
-                return self.annulla(bot, update)
+                return self.annulla(bot, update, user_data)
+
 
             """"merged è una lista di quadruple con i seguenti elementi:
             elem[0]= quantità oggetto
@@ -86,13 +108,19 @@ class Loot:
             elem[2]= costo oggetto
             elem[3]= numero negozio per oggetto"""
             merged = []
-            for q in self.quantita:
-                c = [item for item in self.costo if item[0] == q[1]]
+            # for q in self.quantita:
+            #     c = [item for item in self.costo if item[0] == q[1]]
+            #     if (len(c) > 0):
+            #         c = c[0]
+            #         merged.append((q[0], q[1], c[1], c[2]))
+            #
+            #         #    print(merged, self.quantita, self.costo)
+
+            for q in user_data['quantita']:
+                c = [item for item in user_data['costo'] if item[0] == q[1]]
                 if (len(c) > 0):
                     c = c[0]
                     merged.append((q[0], q[1], c[1], c[2]))
-
-                    #    print(merged, self.quantita, self.costo)
 
             tot = 0
             tempo = 0
@@ -101,18 +129,28 @@ class Loot:
                     tot += int(elem[0]) * int(elem[2])
                     tempo += 9 + 3 * int(elem[0])
 
-            tot += int(self.costo_craft)
+            # tot += int(self.costo_craft)
+            tot += int(user_data['costo_craft'])
 
             update.message.reply_text("Secondo le stime di mercato pagherai " +
                                       "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",
                                       reply_markup=ReplyKeyboardRemove())
 
-            if (len(self.costo) > 10):
-                self.costo.sort(key=lambda tup: int(tup[1]), reverse=True)
+            # if (len(self.costo) > 10):
+            #     self.costo.sort(key=lambda tup: int(tup[1]), reverse=True)
+            #
+            #     to_print = "I 10 oggetti piu costosi sono:\n"
+            #     for i in range(0, 9):
+            #         to_print += self.costo[i][0] + " : " + self.costo[i][1] + " §\n"
+            #
+            #     update.message.reply_text(to_print)
+
+            if (len(user_data['costo']) > 10):
+                user_data['costo'].sort(key=lambda tup: int(tup[1]), reverse=True)
 
                 to_print = "I 10 oggetti piu costosi sono:\n"
                 for i in range(0, 9):
-                    to_print += self.costo[i][0] + " : " + self.costo[i][1] + " §\n"
+                    to_print += user_data['costo'][i][0] + " : " + user_data['costo'][i][1] + " §\n"
 
                 update.message.reply_text(to_print)
 
@@ -124,10 +162,14 @@ class Loot:
             for elem in merged:
 
                 if int(elem[0]) > 1:
-                    self.to_send_negozi.append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
+                    user_data['to_send_negozi'].append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
                         elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
+                    # self.to_send_negozi.append("Compra l'oggetto <b>" + elem[1] + "</b> (<b>" + str(
+                    #     elem[0]) + "</b>) al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
                 else:
-                    self.to_send_negozi.append("Compra l'oggetto <b>" + elem[
+                    # self.to_send_negozi.append("Compra l'oggetto <b>" + elem[
+                    #     1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
+                    user_data['to_send_negozi'].append("Compra l'oggetto <b>" + elem[
                         1] + "</b> al negozio:\n<pre>@lootplusbot " + str(elem[3]) + "</pre>\n")
 
             update.message.reply_text("Vuoi visualizzare i negozi?", reply_markup=InlineKeyboardMarkup([[
@@ -136,21 +178,25 @@ class Loot:
             ]]))
             # print(self.to_send_negozi)
 
-            self.costo.clear()
-            self.quantita.clear()
-            self.stima_flag = False
+            # self.costo.clear()
+            # self.quantita.clear()
+            # self.stima_flag = False
+            #
+            user_data['costo'].clear()
+            user_data['quantita'].clear()
+            user_data['stima_flag'] = False
             return ConversationHandler.END
         elif "Risultati ricerca" in update.message.text:
-            self.stima_parziale(update.message.text.lower())
+            self.stima_parziale(update.message.text.lower(), user_data)
             return 1
         else:
             to_send="Non ho capito il messaggio... sei sicuro di aver inoltrato quello di @lootplusbot ("\
                                       "inizia con 'Risultati ricerca di')? Purtroppo ho dovuto annullare tutto altrimenti vado in palla, ma non disperare!\n"\
                                       "Basta che ri-inoltri il messaggio lista di @craftlootbot e poi ri-inoltri tutti i messaggi di @lootplusbot, senza"\
                                       "dover rieffettuare tutte le ricerche nuovamente 👍🏼👍🏼"
-            return self.annulla(bot, update, to_send)
+            return self.annulla(bot, update,user_data, to_send)
 
-    def stima_parziale(self, msg):
+    def stima_parziale(self, msg, user_data):
         """dato un messaggio in lower inoltrato da lootplusbot rappresentate la risposta la comando ricerca
         salva la lista costo con una tripla di elementi:
         elem[0]: nome oggetto
@@ -168,9 +214,10 @@ class Loot:
             e = re.findall(regex, elem)
             neg = re.findall(regex_negozio, elem)
 
-            self.costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
+          #  self.costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
+            user_data['costo'].append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
 
-    def annulla(self, bot, update, msg=""):
+    def annulla(self, bot, update, user_data, msg=""):
         """Finisce la conversazione azzerando tutto
          msg: è il messaggio inviato all'utente
          return : fine conversazione"""
@@ -180,21 +227,35 @@ class Loot:
         self.costo_craft = 0
         self.quantita = []
         self.to_send_negozi = []
+
+        user_data['stima_flag']=False
+        user_data['costo_craft']=0
+        user_data['quantita']=[]
+
+
         update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
 
-    def send_negozi(self, bot, update):
+    def send_negozi(self, bot, update, user_data):
         addon = ""
 
         if "Si" in update.callback_query.data:
-            print(self.to_send_negozi)
+            #print(self.to_send_negozi)
 
-            if len(self.to_send_negozi) > 0 and len(self.to_send_negozi) < 31:
-                to_change = "".join(self.to_send_negozi)
-            elif len(self.to_send_negozi) > 0:
-                to_change = "".join(self.to_send_negozi[:29])
-                addon = "".join(self.to_send_negozi[29:])
+
+
+            # if len(self.to_send_negozi) > 0 and len(self.to_send_negozi) < 31:
+            #     to_change = "".join(self.to_send_negozi)
+            # elif len(self.to_send_negozi) > 0:
+            #     to_change = "".join(self.to_send_negozi[:29])
+            #     addon = "".join(self.to_send_negozi[29:])
+
+            if len(user_data['to_send_negozi']) > 0 and len(user_data['to_send_negozi']) < 31:
+                to_change = "".join(user_data['to_send_negozi'])
+            elif len(user_data['to_send_negozi']) > 0:
+                to_change = "".join(user_data['to_send_negozi'][:29])
+                addon = "".join(user_data['to_send_negozi'][29:])
 
             else:
                 to_change = "Si è verificato un errore, contatta @brandimax"
@@ -211,9 +272,10 @@ class Loot:
             bot.sendMessage(update.callback_query.message.chat_id, addon, parse_mode="HTML")
             update.message.reply_text(addon, parse_mode="HTML")
 
-        self.to_send_negozi = []
+       # self.to_send_negozi = []
+        user_data['to_send_negozi']=[]
 
-    def estrai_oggetti(self, msg):
+    def estrai_oggetti(self, msg, user_data):
         """Estrae gli ogetti piu quantità dal messaggio /lista dicraftlootbot:
                 msg: messaggio.lower()
                 return string: rappresentante una lista di /ricerca oggetto\n"""
@@ -251,7 +313,8 @@ class Loot:
         if not quantita: quantita = re.findall(regex_zaino_vuoto,
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
         commands = []
-        self.quantita = [(q[0], q[1].rstrip()) for q in quantita]
+        #self.quantita = [(q[0], q[1].rstrip()) for q in quantita]
+        user_data["quantita"]=[(q[0], q[1].rstrip()) for q in quantita]
         last_ixd = len(lst) - len(lst) % 3
         for i in range(0, (last_ixd) - 2, 3):
             commands.append("/ricerca " + ",".join(lst[i:i + 3]))

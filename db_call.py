@@ -77,7 +77,7 @@ TABELLE = {
 
         },
         "insert": """INSERT INTO users (id, username)
-              VALUES (%s, %s)""",
+              VALUES (%s, %s)  ON CONFLICT(id) DO NOTHING""",
         "update": """UPDATE users
               SET username = %s,
               WHERE id = %s""",
@@ -184,6 +184,7 @@ class DB:
         print("Saving new user")
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, True, False, False))
+
         self.execute(TABELLE['users']['insert'],
                      (user['id'], user['username']))
 
