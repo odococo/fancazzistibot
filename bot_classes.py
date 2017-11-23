@@ -791,9 +791,10 @@ class Cerca:
         param = update.callback_query.data.split()[1]
         to_send = ""
         sorted_res = []
+        to_send=[]
 
         if "annulla" in param:
-            to_send = "Ok annullo"
+            to_send.append("Ok annullo")
 
         elif "puntiCraft" in param:
             sorted_res = sorted(user_data['risultati'], key=lambda key: key["craft_pnt"])
@@ -807,7 +808,6 @@ class Cerca:
         if sorted_res:
             bot.sendMessage(message_id, "<b>Nome   Punti Craft    Rarità     Rinascita</b>\n", parse_mode="HTML")
 
-        to_send=[]
         for elem in sorted_res:
             to_send.append( "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
                 elem["reborn"]) + "\n")
