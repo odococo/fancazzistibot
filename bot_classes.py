@@ -818,7 +818,7 @@ class Cerca:
         )
 
         while to_send:
-            bot.sendMessage(message_id, "".join(to_send[:20]), parse_mode="HTML")
-            to_send = to_send[20:]
+            bot.sendMessage(message_id, "".join(to_send[:30]), parse_mode="HTML")
+            to_send = to_send[30:]
 
         self.inizzializza_user_data(user_data)
