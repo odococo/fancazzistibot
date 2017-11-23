@@ -20,7 +20,7 @@ class Loot:
 
         # adding dispatchers
         if not DEBUG:
-            ricerca_decor = db.elegible_user(self.ricerca)
+            ricerca_decor = db.elegible_loot_user(self.ricerca)
             coversation = ConversationHandler(
                 [RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True)],
                 states={
@@ -339,9 +339,9 @@ class Boss:
 
         dispatcher = updater.dispatcher
 
-        boss_user_decor = db.elegible_user(self.boss_user)
-        boss_admin_decor = db.elegible_admin(self.boss_admin)
-        reset_boss_ask_decor = db.elegible_admin(self.boss_reset_ask)
+        boss_user_decor = db.elegible_loot_user(self.boss_user)
+        boss_admin_decor = db.elegible_loot_admin(self.boss_admin)
+        reset_boss_ask_decor = db.elegible_loot_admin(self.boss_reset_ask)
 
         coversation_boss = ConversationHandler(
             [CommandHandler("attacchiboss", boss_user_decor, pass_user_data=True),
@@ -702,7 +702,7 @@ class Cerca:
 
         dispatcher = updater.dispatcher
 
-        cerca_craft_el = db.elegible_user(self.cerca_craft)
+        cerca_craft_el = db.elegible_loot_user(self.cerca_craft)
 
         dispatcher.add_handler(CommandHandler("cercacraft", cerca_craft_el, pass_user_data=True))
         dispatcher.add_handler(CallbackQueryHandler(self.filtra_rarita, pattern="/rarita", pass_user_data=True))

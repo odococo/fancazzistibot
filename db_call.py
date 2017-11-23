@@ -250,6 +250,8 @@ class DB:
             self.execute(TABELLE['punteggio']['insert'],
                          (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
 
+#============================STATIC METHODS===================================
+
     # esegue una query arbitraria
     @staticmethod
     def execute(query, param=None):
@@ -296,7 +298,10 @@ class DB:
 
             # ==============================ACCESS METHODS=======================================================
 
-    def elegible_user(self, func):
+
+#===============================ACCESS TO BOT===========================================
+
+    def elegible_loot_user(self, func):
         """questa funzione ha il compito di verificare se l'id utente è abilitato a chiamare il comando
         il suo utilizzo è il seguente:
         data la funzione command che deve essere wrappata, si può creare una nuova funzione elegible_user(command) """
@@ -342,6 +347,64 @@ class DB:
                 update.message.reply_text("Spiacente sei stato bannato dal bot")
                 return
             elif user["admin"]:
+                sig = signature(func)
+                if len(sig.parameters) > 1:
+                    return func(bot, update, *args, **kwargs)
+                else:
+                    return func(*args, **kwargs)
+            else:
+                update.message.reply_text("Non sei abilitato ad usare questo comando")
+                return
+
+        return check_if_admin
+
+    def elegible_loot_admin(self, func):
+        """stesso compito della funzione elegible_user, solo che verifica anche se l'id è loot_admin"""
+
+        @wraps(func)
+        def check_if_admin(bot, update, *args, **kwargs):
+            """Questa funzione ritorna true se l'user puo interagire, altrimenti false
+            inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+            user_id = update._effective_user
+            # print("cerco user con id " + str(user_id) + ", nel database")
+            user = DB.execute(TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
+            # print("ho trovato : " + str(user))
+            if not user:
+                self.request_access(bot, user_id)
+                return
+            elif user["banned"]:
+                update.message.reply_text("Spiacente sei stato bannato dal bot")
+                return
+            elif user["loot_admin"] or  user["admin"]:
+                sig = signature(func)
+                if len(sig.parameters) > 1:
+                    return func(bot, update, *args, **kwargs)
+                else:
+                    return func(*args, **kwargs)
+            else:
+                update.message.reply_text("Non sei abilitato ad usare questo comando")
+                return
+
+        return check_if_admin
+
+    def elegible_tester(self, func):
+        """stesso compito della funzione elegible_user, solo che verifica anche se l'id è tester"""
+
+        @wraps(func)
+        def check_if_admin(bot, update, *args, **kwargs):
+            """Questa funzione ritorna true se l'user puo interagire, altrimenti false
+            inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+            user_id = update._effective_user
+            # print("cerco user con id " + str(user_id) + ", nel database")
+            user = DB.execute(TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
+            # print("ho trovato : " + str(user))
+            if not user:
+                self.request_access(bot, user_id)
+                return
+            elif user["banned"]:
+                update.message.reply_text("Spiacente sei stato bannato dal bot")
+                return
+            elif user["tester"]:
                 sig = signature(func)
                 if len(sig.parameters) > 1:
                     return func(bot, update, *args, **kwargs)
