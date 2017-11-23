@@ -227,6 +227,9 @@ class DB:
     def get_id_users(self):
         return self.execute(TABELLE['id_users']['select']['all'])
 
+    def get_permission_user(self, user_id):
+        return self.execute(TABELLE["id_users"]['select']['from_id'], (user_id, ))
+
     def update_user(self, user):
         query = TABELLE['id_users']['update']
         return self.execute(query,

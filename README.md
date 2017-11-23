@@ -5,6 +5,8 @@ Prima di poter accedere alle funzionalià di questo bot devrete chiedere l'acces
 I comandi sono molteplici, tra cui:
 * */start*: fa partire il bot 
 * */help* : visualizza la schermata di aiuto per il bot
+* */info* : manda le informazioni relative all'account che ha utilizzato i comandi
+* */permessi*: manda i permessi relativi all'account che ha utilizzato il comando
 * */dice param1 param2*: visualizza il risultato di n lanci (param2) di un dado a n facce (param1)
 * */roll*: stesso prinicpio di dice ma non ha bisogno di parametri
 * */win num1 num2 num3 num4 num5*: ti permette di visualizzare la tua probabilità di vincita nel gioco del poker con dadi, durante l'ispezione dello gnomo

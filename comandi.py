@@ -211,6 +211,15 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """Ottieni le informazioni riguardo il tuo account"""
         user = self.update.message.from_user
         self.answer(str(user), pretty_json=True)
+    def Upermessi(self):
+        """Ottieni info sui permessi relativi al tuo account"""
+        user_id = self.update.message.from_user.id
+        permission=self.db.get_permission_user(user_id)
+        self.answer(str(permission), pretty_json=True)
+
+
+
+
 
     def Ujson(self):
         """Ottieni il json dell'update"""
