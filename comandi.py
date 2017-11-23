@@ -105,7 +105,8 @@ Crediti: @brandimax @Odococo""")
 Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi /ricerca da inoltrare a @lootplusbot.
 Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
 Se, invece non ti interessa avere queste informazioni premi "Annulla".
-In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Per verificare quali membri del team madre hanno attaccato e quali no usa il comando /attacchiBoss, ti verranno presentate delle scelte da fare a seconda di quale informazione vuoi, quando hai finito premi "Fine".
+In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootbotgame per salvare gli attacchi che ha fatto il team madre al boss!
+Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
         self.answer(text)
