@@ -563,7 +563,7 @@ class Boss:
         else:
             # print(choice)
             update.message.reply_text("Non ho capito")
-            return self.fine(bot, update, user_data)
+            return self.fine(bot, update, user_data, msg="Non ho capito, annullo tuttto")
 
     def punteggio(self, bot, update, user_data):
         """Visualizza la sita di tutti con punteggio annesso"""
@@ -644,8 +644,9 @@ class Boss:
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1
 
-    def fine(self, bot, update, user_data):
-        update.message.reply_text("Finito", reply_markup=ReplyKeyboardRemove())
+    def fine(self, bot, update, user_data, msg=""):
+        if not msg: msg="Fine"
+        update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
         user_data['lista_boss'] = []
         return ConversationHandler.END
 
