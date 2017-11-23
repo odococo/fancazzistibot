@@ -142,7 +142,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             "Seleziona il numero di facce:",
             reply_markup=reply_markup)
 
-    def UhelpLink(self):
+    def Uhelplink(self):
         """ Ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
         # todo: usa messageEntity per una migliore foramttazione
 
