@@ -294,8 +294,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
     # admin command ------------------------------------------------------------
     def Autente(self):
-        """Visualizza le informazioni relative a un utente
-    Ricerca tramite username o id"""
+        """Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
         if self.params:
             result = self.db.get_user(self.params[0])
             if result:
