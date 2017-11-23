@@ -540,8 +540,7 @@ class Boss:
         """Visualizza la sita di tutti con punteggio annesso"""
 
         if not user_data['punteggi']:
-            update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
-            return self.fine()
+            return self.fine(bot, update, user_data, "La lista è vuota! Chiedi agli admin di aggiornarla")
 
         # sortedD = sorted([(elem['username'], elem['valutazione']) for elem in self.punteggi], reverse=True)
         sortedD = sorted([(elem['username'], elem['valutazione']) for elem in user_data['punteggi']], reverse=True)
@@ -577,8 +576,7 @@ class Boss:
         """Visualizza la lista completa ti tutte le info"""
 
         if not len(user_data['lista_boss']) > 0:
-            update.message.reply_text("Devi prima inoltrare il messaggio dei boss!")
-            return self.fine()
+            return self.fine(bot, update, user_data, "Devi prima inoltrare il messaggio dei boss!")
 
         to_send = "✅ <b>Hanno attaccato</b>:\n"
 
@@ -625,8 +623,7 @@ class Boss:
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
         if not len(user_data['punteggi']) > 0:
-            update.message.reply_text("La lista è vuota! Chiedi agli admin di aggiornarla")
-            return self.fine()
+            return self.fine(bot, update, user_data, "La lista è vuota! Chiedi agli admin di aggiornarla")
 
         to_send = ""
 
