@@ -344,7 +344,7 @@ class Boss:
         reset_boss_ask_decor = db.elegible_admin(self.boss_reset_ask)
 
         coversation_boss = ConversationHandler(
-            [CommandHandler("attacchiBoss", boss_user_decor, pass_user_data=True),
+            [CommandHandler("attacchiboss", boss_user_decor, pass_user_data=True),
              RegexHandler("^🏆", boss_admin_decor, pass_user_data=True)],
             states={
                 1: [MessageHandler(Filters.text, self.boss_loop, pass_user_data=True)]
@@ -353,7 +353,7 @@ class Boss:
         )
         dispatcher.add_handler(coversation_boss)
 
-        dispatcher.add_handler(CommandHandler("resetBoss", reset_boss_ask_decor))
+        dispatcher.add_handler(CommandHandler("resetboss", reset_boss_ask_decor))
         dispatcher.add_handler(
             CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
 
@@ -704,7 +704,7 @@ class Cerca:
 
         cerca_craft_el = db.elegible_user(self.cerca_craft)
 
-        dispatcher.add_handler(CommandHandler("cercaCraft", cerca_craft_el, pass_user_data=True))
+        dispatcher.add_handler(CommandHandler("cercacraft", cerca_craft_el, pass_user_data=True))
         dispatcher.add_handler(CallbackQueryHandler(self.filtra_rarita, pattern="/rarita", pass_user_data=True))
         dispatcher.add_handler(CallbackQueryHandler(self.filtra_rinascita, pattern="/rinascita", pass_user_data=True))
         dispatcher.add_handler(CallbackQueryHandler(self.ordina, pattern="/ordina", pass_user_data=True))

@@ -80,6 +80,7 @@ Per questo ti sarà chiesta la conferma
 Boss apparte ci sono altri comandi riservati ai soli admin:
 * */utente username* : visualizza le informazioni correlate all'utente
 * */utenti*: visualizza tutti gli utenti che stanno utilizzando il bot
+* */registra utente permesso*: cambia i permessi di un utente (per id o per username) nel valore *permesso* [ tester, admin, loot_admin ,loot_user , banned]
 
 
 ## Crediti

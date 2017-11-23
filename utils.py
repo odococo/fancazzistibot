@@ -9,24 +9,23 @@ import requests
 from bs4 import BeautifulSoup
 
 COMANDI_BOT_FATHER = """
-win - Usa questo comando con 5 numeri separati da spazio per avere le tue possibilità di vincita nell'ispezione dello gnomo
+win - Ti dice la probabilità di vittoria che hai nell'ispezione dello gnomo
 dice - lancia un dado di numeroFacce un quantitativo di volte pari a numeroDadi
 consiglia - Invia una tabella con i numeri da cambiare
 roll - lancia un dado senza specificare nulla
-info - ottini le informazioni riguardanti il tuo account
+info - ottieni le informazioni riguardanti il tuo account
 convert - Converte test o numero verso una base arbitraria, si possono fornire valori di conversione per personalizzare il risultato
-help - mostra questo messaggio di help
+help - mostra il messaggio di help
 start - avvia il bot
-cercaCraft - Ti permette di ricercare oggetti da craftare a seconda di varie condizioni
-resetBoss - resetta i punteggi del Boss
-helpLink - invia link del help completo
-pinBoss - pinna il messaggio di attacco al boss
+resetboss - resetta i punteggi del Boss
+helplink - invia link del help completo
+pinboss - pinna il messaggio di attacco al boss
 utente - visualizza le info di un utente
 utenti - Visualizza gli utenti che utilizzano un determinato bot
 registra - Aggiorna i permessi di un utente
-attacchiBoss - visializza le info sui punteggi del Boss
-resetBoss - resetta i punteggi del Boss
-cercaCraft - ricerca gli oggetti tramite punteggio craft
+attacchiboss - visializza le info sui punteggi del Boss
+resetboss - resetta i punteggi del Boss
+cercacraft - ricerca gli oggetti tramite punteggio craft
 """
 
 
