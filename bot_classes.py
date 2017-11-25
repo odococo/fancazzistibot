@@ -684,8 +684,7 @@ class Cerca:
         param = update.message.text.split()[1:]
         self.inizzializza_user_data(user_data)
 
-        magg = 0
-        min = 0
+
 
         if len(param) == 0 or len(param) > 2:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
@@ -698,11 +697,14 @@ class Cerca:
         elif len(param) == 1 and is_numeric(param[0]):
             user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0])]
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
+            magg=int(param[0])
+            min=int(param[1])
+            print(magg,min)
             if magg > min:
                 update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
                 return
-            user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0]) and
-                                      elem['craft_pnt'] <= int(param[0])]
+            user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= magg and
+                                      elem['craft_pnt'] <= min]
 
         else:
             update.message.reply_text("Non hai inviato dei numeri corretti")
