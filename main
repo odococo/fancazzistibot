@@ -176,7 +176,7 @@ def main():
 
 
     # da usare in caso si voglia aggiornare tutti gli utenti per una qualche modifica
-    aggiornamento="Corretta classe cerca"
+    aggiornamento=""
     if aggiornamento:
         for elem in users:
             if not elem["id"] in bot_ids:

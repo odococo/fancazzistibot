@@ -720,10 +720,11 @@ class Cerca:
             [InlineKeyboardButton("Tutti", callback_data="/rarita tutti")]
         ])
 
-        text = "Ho trovato " + str(num_ris) + " oggetti che rispettano i tuoi parametri\n"
+        text = "Ho trovato <b>" + str(num_ris) + "</b> oggetti che rispettano i tuoi parametri\n"
 
         update.message.reply_text(text +
-                                  "Secondo quale rarità vuoi filtrare?", reply_markup=inline)
+                                  "Secondo quale rarità vuoi filtrare?", reply_markup=inline, parse_mode="HTML"
+                                  )
 
     def filtra_rarita(self, bot, update, user_data):
         user_data['rarita'] = update.callback_query.data.split()[1]
@@ -740,7 +741,7 @@ class Cerca:
              InlineKeyboardButton("r2", callback_data="/rinascita 3")]
 
         ])
-        text = "Ho trovato " + str(num_ris) + " oggetti che rispettano i tuoi parametri\n"
+        text = "Ho trovato <b>" + str(num_ris) + "</b> oggetti che rispettano i tuoi parametri\n"
 
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
@@ -748,7 +749,9 @@ class Cerca:
                         " per tutte le rinascite minori uguali a quella che hai selzionato.\nEsempio scegli r2, ti verranno mostrati i "
                         "risultati per r0, r1 e r2\n",
             message_id=update.callback_query.message.message_id,
-            reply_markup=inline
+            reply_markup=inline,
+            parse_mode="HTML"
+
         )
 
     def no_results(self, bot, update):
