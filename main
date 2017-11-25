@@ -179,7 +179,7 @@ def main():
     if not isinstance(users, list):users=[users]
     for elem in users:
         if not elem["id"] in bot_ids:
-            updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio!",reply_markup=ReplyKeyboardRemove())
+            updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
 
 
     oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame

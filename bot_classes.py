@@ -636,7 +636,6 @@ class Boss:
         return 1
 
     def same_message(self, boss_db, boss_admin):
-        print(boss_db)
         if isinstance(boss_db, list):
             for db in boss_db:
                 for admin in boss_admin:
@@ -645,7 +644,8 @@ class Boss:
                             return True
                         elif admin[2] == 0 and db['attacchi'] == 0:
                             return True
-
+        elif not boss_db:
+            return False
         else:
             for admin in boss_admin:
                 if admin[0] == boss_db['username']:
