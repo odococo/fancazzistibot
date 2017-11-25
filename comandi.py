@@ -307,23 +307,22 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
     def Autenti(self):
         """Visualizza gli utenti che utilizzano un determinato bot"""
-        query = """SELECT utenti.id AS user_id,
-            bot.id AS bot_id
-            FROM bot_users
-            INNER JOIN users AS utenti ON utenti.id = id_user
-            INNER JOIN users AS bot ON bot.id = id_bot
-            GROUP BY utenti.id, bot.id"""
-        users = self.db.execute(query)
+        users = self.db.get_users_and_id()
         if users:
             users = [users] if isinstance(users, dict) else users
             text = "Elenco utenti:\n"
             for user in users:
-                text += "<code>{}</code>: <code>{}</code>\n".format(
-                    user['bot_id'],
-                    user['user_id'])
+                text += "<b>username</b>: <code>"+user['username']+"</code>\n" \
+                         "<b>id</b>: <code>"+str(user['id'])+"</code>\n"\
+                         "<b>admin</b>: <code>"+str(user['admin'])+"</code>\n"\
+                         "<b>tester</b>: <code>"+str(user['tester'])+"</code>\n"\
+                         "<b>loot_user</b>: <code>"+str(user['loot_user'])+"</code>\n"\
+                         "<b>loot_admin</b>: <code>"+str(user['loot_admin'])+"</code>\n"\
+                         "<b>banned</b>: <code>"+str(user['banned'])+"</code>\n"\
+                         "<b>join date</b>: <code>"+str(user['date'])+"</code>\n\n"
         else:
             text = "Non ci sono utenti nel database"
-        self.answer(text)
+        self.answer(text, parse_mode="HTML")
 
     def Aregistra(self):
         """Aggiorna i permessi di un utente"""

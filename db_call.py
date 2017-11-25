@@ -40,8 +40,9 @@ TABELLE = {
               banned boolean DEFAULT true)"""},
         "drop": """DROP TABLE IF EXISTS id_users CASCADE""",
         "select": {
-            'all': """SELECT * FROM id_users""",
-            'from_id': """SELECT * FROM id_users WHERE id = %s"""
+            'all_id': """SELECT * FROM id_users""",
+            'from_id': """SELECT * FROM id_users WHERE id = %s""",
+            'all':"""SELECT * FROM id_users NATURAL JOIN users"""
         },
         "insert": {
             'single_id': """INSERT INTO id_users (id) 
@@ -209,6 +210,9 @@ class DB:
 
     def get_users(self):
         return self.execute(TABELLE['users']['select']['all'])
+
+    def get_users_and_id(self):
+        return self.execute(TABELLE['id_users']['select']['all'])
 
     def delete_user(self, user):
         self.execute(TABELLE['id_users']["delete"], user["id"])
