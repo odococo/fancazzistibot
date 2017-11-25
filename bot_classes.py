@@ -77,7 +77,6 @@ class Loot:
             return self.annulla(bot, update, user_data)
         elif update.message.text == "Stima":
 
-
             if not user_data['stima_flag']:
                 update.message.reply_text(
                     "Per usare questo comando devi aver prima inoltrato la lista di @craftlootbot!")
@@ -93,7 +92,6 @@ class Loot:
             elem[2]= costo oggetto
             elem[3]= numero negozio per oggetto"""
             merged = []
-
 
             for q in user_data['quantita']:
                 c = [item for item in user_data['costo'] if item[0] == q[1]]
@@ -114,7 +112,6 @@ class Loot:
             update.message.reply_text("Secondo le stime di mercato pagherai " +
                                       "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",
                                       reply_markup=ReplyKeyboardRemove())
-
 
             if (len(user_data['costo']) > 10):
                 user_data['costo'].sort(key=lambda tup: int(tup[1]), reverse=True)
@@ -388,11 +385,11 @@ class Boss:
 
         user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
-        if self.same_message(boss, user_data['lista_boss'] ):
+        if self.same_message(boss, user_data['lista_boss']):
             update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
             return 1
 
-        #print(user_data['lista_boss'], boss)
+        # print(user_data['lista_boss'], boss)
 
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
         update.message.reply_text("Di quale boss stiamo parlando?",
@@ -614,7 +611,7 @@ class Boss:
         return 1
 
     def fine(self, bot, update, user_data, msg=""):
-        if not msg: msg="Fine"
+        if not msg: msg = "Fine"
         update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
         user_data['lista_boss'] = []
         return ConversationHandler.END
@@ -679,9 +676,6 @@ class Cerca:
         dispatcher.add_handler(CallbackQueryHandler(self.ordina, pattern="/ordina", pass_user_data=True))
 
     def inizzializza_user_data(self, user_data):
-        user_data['maggioreDi'] = -1
-        user_data['minoreDi'] = 3000
-        user_data['rarita'] = ""
         user_data['risultati'] = []
 
     def cerca_craft(self, bot, update, user_data):
@@ -695,26 +689,27 @@ class Cerca:
 
         if len(param) == 0 or len(param) > 2:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
-                                      "/cercaCraft maggioreDi minoreDi\n"
+                                      "/cercaCcraft maggioreDi minoreDi\n"
                                       "/cercaCraft maggioreDi\nIn cui maggioreDi e minoreDi sono due numeri rappresentanti"
                                       " l'intervallo di punti craft in cui vuoi cercare.")
             return
 
 
         elif len(param) == 1 and is_numeric(param[0]):
-            user_data['maggioreDi'] = int(param[0])
+            user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0])]
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
-            magg = int(param[0])
-            min = int(param[1])
+            if magg > min:
+                update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
+                return
+            user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0]) and
+                                      elem['craft_pnt'] <= int(param[0])]
+
         else:
             update.message.reply_text("Non hai inviato dei numeri corretti")
             return
 
-        if magg > min:
-            update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
-            return
-        user_data['maggioreDi'] = magg
-        user_data['minoreDi'] = min
+        num_ris = len(user_data['risultati'])
+        if num_ris == 0: return self.no_results(bot, update)
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("X", callback_data="/rarita X"),
@@ -725,10 +720,19 @@ class Cerca:
             [InlineKeyboardButton("Tutti", callback_data="/rarita tutti")]
         ])
 
-        update.message.reply_text("Secondo quale rarità vuoi filtrare il risultato?", reply_markup=inline)
+        text = "Ho trovato " + str(num_ris) + " oggetti che rispettano i tuoi parametri\n"
+
+        update.message.reply_text(text +
+                                  "Secondo quale rarità vuoi filtrare?", reply_markup=inline)
 
     def filtra_rarita(self, bot, update, user_data):
         user_data['rarita'] = update.callback_query.data.split()[1]
+        rarita = update.callback_query.data.split()[1]
+        if not "tutti" in rarita:
+            user_data['risultati'] = [elem for elem in user_data['risultati'] if elem['rarity'] == rarita]
+
+        num_ris = len(user_data['risultati'])
+        if num_ris == 0: return self.no_results(bot, update)
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("r0", callback_data="/rinascita 1"),
@@ -736,38 +740,32 @@ class Cerca:
              InlineKeyboardButton("r2", callback_data="/rinascita 3")]
 
         ])
+        text = "Ho trovato " + str(num_ris) + " oggetti che rispettano i tuoi parametri\n"
 
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
-            text="Perfetto, ora dimmi a quale rinascita sei interessato, ricorda che i risultati mostrati saranno quelli"
-                 " per tutte le rinascite minori uguali a quella che hai selzionato.\nEsempio scegli r2, ti verranno mostrati i "
-                 "risultati per r0, r1 e r2\n",
+            text=text + "Perfetto, ora dimmi a quale rinascita sei interessato, ricorda che i risultati mostrati saranno quelli"
+                        " per tutte le rinascite minori uguali a quella che hai selzionato.\nEsempio scegli r2, ti verranno mostrati i "
+                        "risultati per r0, r1 e r2\n",
             message_id=update.callback_query.message.message_id,
             reply_markup=inline
         )
+
+    def no_results(self, bot, update):
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text="Non ho trovato risultati per i tuoi criteri di ricerca",
+            message_id=update.callback_query.message.message_id,
+        )
+        return
 
     def filtra_rinascita(self, bot, update, user_data):
         rinascita = update.callback_query.data.split()[1]
 
         # print(self.maggioreDi, self.minoreDi, self.rarita, self.rinascita)
-        if not "tutti" in user_data['rarita']:
-            user_data['risultati'] = [elem for elem in self.craftabili if
-                                      elem['craft_pnt'] > user_data['maggioreDi'] and
-                                      elem['craft_pnt'] < user_data['minoreDi'] and elem['reborn'] <= int(rinascita)
-                                      and elem['rarity'] == user_data['rarita']]
-        else:
+        user_data['risultati'] = [elem for elem in user_data['risultati'] if elem['reborn'] <= int(rinascita)]
 
-            user_data['risultati'] = [elem for elem in self.craftabili if
-                                      elem['craft_pnt'] > user_data['maggioreDi'] and
-                                      elem['craft_pnt'] < user_data['minoreDi'] and elem['reborn'] <= int(rinascita)]
-
-        if len(user_data['risultati']) == 0:
-            bot.edit_message_text(
-                chat_id=update.callback_query.message.chat_id,
-                text="Non ho trovato risultati per i tuoi criteri di ricerca",
-                message_id=update.callback_query.message.message_id,
-            )
-            return
+        if len(user_data['risultati']) == 0: return self.no_results(bot, update)
 
         to_send = "Ho trovato <b>" + str(
             len(user_data['risultati'])) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
@@ -792,7 +790,7 @@ class Cerca:
         param = update.callback_query.data.split()[1]
         to_send = ""
         sorted_res = []
-        to_send=[]
+        to_send = []
 
         if "annulla" in param:
             to_send.append("Ok annullo")
@@ -810,8 +808,9 @@ class Cerca:
             bot.sendMessage(message_id, "<b>Nome   Punti Craft    Rarità     Rinascita</b>\n", parse_mode="HTML")
 
         for elem in sorted_res:
-            to_send.append( "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
-                elem["reborn"]) + "\n")
+            to_send.append(
+                "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
+                    elem["reborn"]) + "\n")
 
         bot.delete_message(
             chat_id=update.callback_query.message.chat_id,

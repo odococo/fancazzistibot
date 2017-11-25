@@ -126,7 +126,7 @@ def unset(bot, update, chat_data):
 
 def basta_stikers(bot, update):
     sender=update.message.from_user
-    to_send=["Ma basta con sti sticker cancerogeni","Ancora?! facciamola finita su","Un altro? regolati perfavore"]
+    to_send=["Ma basta con sti sticker cancerogeni","Ancora?! facciamola finita su","Un altro? regolati perfavore","Mo ti banno"]
     if "Vyllain" in sender['username']:
         update.message.reply_text(random.choice(to_send),reply_to_message_id=update.message.message_id)
 
@@ -171,12 +171,19 @@ def main():
     # disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
 
 
+    users=db.get_id_users()
+    if not isinstance(users, list):users=[users]
 
+
+    # da usare in caso si voglia aggiornare tutti gli utenti per una qualche modifica
+    aggiornamento="Corretta classe cerca"
+    if aggiornamento:
+        for elem in users:
+            if not elem["id"] in bot_ids:
+                updater.bot.send_message(elem["id"], aggiornamento,
+                                         reply_markup=ReplyKeyboardRemove())
 
     #manda una notifica a tutti gli utenti
-    users=db.get_id_users()
-    #print(users)
-    if not isinstance(users, list):users=[users]
     for elem in users:
         if not elem["id"] in bot_ids:
             updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
