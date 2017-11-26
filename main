@@ -176,7 +176,7 @@ def main():
 
 
     # da usare in caso si voglia aggiornare tutti gli utenti per una qualche modifica
-    aggiornamento=""
+    aggiornamento="Corretto il calcola stima per i materiali"
     if aggiornamento:
         for elem in users:
             if not elem["id"] in bot_ids:
@@ -184,9 +184,10 @@ def main():
                                          reply_markup=ReplyKeyboardRemove())
 
     #manda una notifica a tutti gli utenti
-    for elem in users:
-        if not elem["id"] in bot_ids:
-            updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
+    if not aggiornamento:
+        for elem in users:
+            if not elem["id"] in bot_ids:
+                updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
 
 
     oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame

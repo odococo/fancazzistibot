@@ -16,7 +16,7 @@ class Loot:
 
         dispatcher = updater.dispatcher
 
-        DEBUG = True
+        DEBUG = False
 
         # adding dispatchers
         if not DEBUG:
@@ -266,7 +266,7 @@ class Loot:
                 aggiornato += line + "\n"
 
         regex_comandi = re.compile(r"di (.*)?\(")
-        regex_zaino_completo = re.compile(r"su ([0-9]) di (.*)?\(")
+        regex_zaino_completo = re.compile(r"su ([0-9]+) di (.*)?\(")
         regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
         lst = re.findall(regex_comandi, aggiornato)  # per i comandi
         quantita = re.findall(regex_zaino_completo, aggiornato)
@@ -729,6 +729,7 @@ class Cerca:
                                   )
 
     def filtra_rarita(self, bot, update, user_data):
+        #todo: prova a far scegliere piu rarità
         user_data['rarita'] = update.callback_query.data.split()[1]
         rarita = update.callback_query.data.split()[1]
         if not "tutti" in rarita:
