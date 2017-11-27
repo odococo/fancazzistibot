@@ -627,7 +627,7 @@ class Boss:
         for elem in [(elem['attacchi'], elem['username']) for elem in user_data['punteggi']]:
             if (elem[0] == 0): to_send += str(elem[1]) + "\n"
 
-        if not to_send: to_send = "Hanno attaccato tutti!"
+        if not to_send: to_send = "Hanno attaccato tutti quelli iscritti al bot!"
 
         update.message.reply_text(to_send)
         return 1
