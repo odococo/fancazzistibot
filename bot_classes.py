@@ -658,13 +658,8 @@ class Cerca:
     def __init__(self, updater, db, oggetti):
         self.bot = updater.bot
         self.db = db
-        self.oggetti = oggetti
-        self.craftabili = [elem for elem in oggetti if not elem['craft_pnt'] == 0]
-        self.maggioreDi = -1
-        self.minoreDi = 3000
-        self.rarita = ""
-        self.rinascita = ""
-        self.risultati = []
+        self.craftabili = oggetti
+
 
         dispatcher = updater.dispatcher
 

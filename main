@@ -13,7 +13,7 @@ Basic Echobot example, repeats messages.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
-
+import codecs
 import logging
 import os
 import sys
@@ -175,22 +175,17 @@ def main():
     if not isinstance(users, list):users=[users]
 
 
-    # da usare in caso si voglia aggiornare tutti gli utenti per una qualche modifica
-    aggiornamento="Corretto il calcola stima per i materiali"
-    if aggiornamento:
-        for elem in users:
-            if not elem["id"] in bot_ids:
-                updater.bot.send_message(elem["id"], aggiornamento,
-                                         reply_markup=ReplyKeyboardRemove())
+
 
     #manda una notifica a tutti gli utenti
-    if not aggiornamento:
-        for elem in users:
-            if not elem["id"] in bot_ids:
-                updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
+    for elem in users:
+        if not elem["id"] in bot_ids:
+            updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
 
 
-    oggetti=use_api(ITEMS)#tutti gli oggetti di lootbotgame
+    with codecs.open("craftables_file", encoding='utf-8') as file:
+        rea = file.read()
+        oggetti = eval(rea.replace("null", "None"))
 
     # classi per craftlootbot e comandi boss
     Loot(updater, db)
