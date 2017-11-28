@@ -540,7 +540,9 @@ class Boss:
             return self.fine(bot, update, user_data, "La lista è vuota! Chiedi agli admin di aggiornarla")
 
         # sortedD = sorted([(elem['username'], elem['valutazione']) for elem in self.punteggi], reverse=True)
-        sortedD = sorted([(elem['username'], elem['valutazione']) for elem in user_data['punteggi']], reverse=True)
+        punteggi=user_data['punteggi']
+        if not isinstance(punteggi, list): punteggi=[punteggi]
+        sortedD = sorted([(elem['username'], elem['valutazione']) for elem in punteggi], reverse=True)
 
         num = [elem[1] for elem in sortedD]
 
@@ -619,12 +621,15 @@ class Boss:
     def non_attaccanti(self, bot, update, user_data):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
-        if not len(user_data['punteggi']) > 0:
+        punteggi=user_data['punteggi']
+        if not isinstance(punteggi, list): punteggi=[punteggi]
+
+        if not len(punteggi) > 0:
             return self.fine(bot, update, user_data, "La lista è vuota! Chiedi agli admin di aggiornarla")
 
         to_send = ""
 
-        for elem in [(elem['attacchi'], elem['username']) for elem in user_data['punteggi']]:
+        for elem in [(elem['attacchi'], elem['username']) for elem in punteggi]:
             if (elem[0] == 0): to_send += str(elem[1]) + "\n"
 
         if not to_send: to_send = "Hanno attaccato tutti quelli iscritti al bot!"
