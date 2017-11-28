@@ -633,22 +633,25 @@ class Boss:
         return 1
 
     def same_message(self, boss_db, boss_admin):
-        if isinstance(boss_db, list):
-            for db in boss_db:
-                for admin in boss_admin:
-                    if db['username'] == admin[0]:
-                        if isinstance(admin[2], tuple) and not admin[2][1] == db['attacchi']:
-                            return True
-                        elif admin[2] == 0 and db['attacchi'] == 0:
-                            return True
+        if not isinstance(boss_db, list): boss_db=[boss_db]
         elif not boss_db:
             return False
-        else:
+        users_db= self.db.get_users()
+        users_id=[(elem['username'], elem['id']) for elem in users_db]
+        users_punteggio=[elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in boss_db]]
+        users_db=[elem['username'] for elem in users_db]
+
+        # guarda se ci sono nuovi utenti nel messaggio team che sono anche dentro users
+        for elem in boss_admin:
+            if elem[0] in users_db and not elem[0] in users_punteggio : return False
+
+        
+        for db in boss_db:
             for admin in boss_admin:
-                if admin[0] == boss_db['username']:
-                    if isinstance(admin[2], tuple) and not admin[2][1] == boss_db['attacchi']:
+                if db['username'] == admin[0]:
+                    if isinstance(admin[2], tuple) and not admin[2][1] == db['attacchi']:
                         return True
-                    elif admin[2] == 0 and boss_db['attacchi'] == 0:
+                    elif admin[2] == 0 and db['attacchi'] == 0:
                         return True
 
         return False
