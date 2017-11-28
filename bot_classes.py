@@ -633,23 +633,23 @@ class Boss:
         return 1
 
     def same_message(self, boss_db, boss_admin):
-        if not isinstance(boss_db, list): boss_db=[boss_db]
+        if not isinstance(boss_db, list): boss_db=[boss_db]#rende boss_db una lista
         elif not boss_db:
             return False
         users_db= self.db.get_users()
-        users_id=[(elem['username'], elem['id']) for elem in users_db]
-        users_punteggio=[elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in boss_db]]
-        users_db=[elem['username'] for elem in users_db]
+        users_id=[(elem['username'], elem['id']) for elem in users_db]# contiene la tupla username,id
+        users_punteggio=[elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in boss_db]]# ha solo gli elementi (username,id) che sono prenseti nel db punteggio
+        users_db=[elem['username'] for elem in users_db]# ha gli username presenti nel db users
 
         # guarda se ci sono nuovi utenti nel messaggio team che sono anche dentro users
         for elem in boss_admin:
             if elem[0] in users_db and not elem[0] in users_punteggio : return False
 
-        
+
         for db in boss_db:
             for admin in boss_admin:
-                if db['username'] == admin[0]:
-                    if isinstance(admin[2], tuple) and not admin[2][1] == db['attacchi']:
+                if db['username'] == admin[0]:#per ogni username gia salvato nel db punteggio
+                    if isinstance(admin[2], tuple) and not admin[2][1] == db['attacchi']:#controllo che gli attacchi siano invariati
                         return True
                     elif admin[2] == 0 and db['attacchi'] == 0:
                         return True
