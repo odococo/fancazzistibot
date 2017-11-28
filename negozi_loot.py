@@ -9,6 +9,7 @@ API = "http://fenixweb.net:3300/api/v2/"
 TOKEN = "cMeBZ7H22h8ApDho1722"
 ITEMS = API + TOKEN + "/items"
 SHOP = API + TOKEN + "/shop/"
+RICETTE=API+TOKEN+"/crafts/"
 
 NEGOZI = (
     14501401327,
@@ -35,7 +36,15 @@ OGGETTI_DB = {}
 LAST_UPDATE = None
 
 def use_api(url):
-  return utils.get_content(url, True)['res']
+    try:
+        return utils.get_content(url, True)['res']
+    except KeyError:
+        print ( utils.get_content(url, True))
+        return {}
+
+def get_ricetta(id_oggetto):
+    id_oggetto=str(id_oggetto)
+    return use_api(RICETTE+id_oggetto+"/needed")
 
 def set_items():
     global OGGETTI

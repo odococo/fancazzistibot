@@ -471,8 +471,7 @@ class Boss:
             if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in user_data['lista_boss']:
-                if username[0] in users_name and not bool(user_data['punteggi'].pop(
-                        0)):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                if username[0] in users_name and not bool(user_data['punteggi'][0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
@@ -480,9 +479,7 @@ class Boss:
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
                 elif username[0] in users_name and \
-                        not username[0] in [elem['username'] for elem in
-                                            user_data[
-                                                'punteggi']]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
+                        not username[0] in [elem['username'] for elem in user_data['punteggi']]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
