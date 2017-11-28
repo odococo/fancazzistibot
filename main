@@ -170,17 +170,17 @@ def main():
     # disp.add_handler(MessageHandler(Filters.all, get_info), -1)
     # disp.add_handler(TypeHandler(telegram.Update, log_update), -1)
 
-
-    users=db.get_id_users()
-    if not isinstance(users, list):users=[users]
-
-
-
-
-    #manda una notifica a tutti gli utenti
-    for elem in users:
-        if not elem["id"] in bot_ids:
-            updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
+    #
+    # users=db.get_id_users()
+    # if not isinstance(users, list):users=[users]
+    #
+    #
+    #
+    #
+    # #manda una notifica a tutti gli utenti
+    # for elem in users:
+    #     if not elem["id"] in bot_ids:
+    #         updater.bot.send_message(elem["id"],"Scusa stavo dormendo 😴, ma ora sono sveglio💪🏼💪🏼",reply_markup=ReplyKeyboardRemove())
 
 
     with codecs.open("craftables_file", encoding='utf-8') as file:
