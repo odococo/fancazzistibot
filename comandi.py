@@ -344,6 +344,21 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
 
+    def Dsendtoall(self):
+        """Manda un messaggio a tutti gli utenti"""
+        if len(self.params)==0:
+            self.answer("Devi usare il comando seguito da un messaggio")
+            return
+        users= self.db.get_id_users()
+
+        if not isinstance(users, list): users=list(users)
+
+        msg=" ".join(self.params)
+
+        for user in users:
+            self.bot.send_message(user['id'],msg)
+
+
 
 def new_command(bot, update):
     command = Command(bot, update, DB())
