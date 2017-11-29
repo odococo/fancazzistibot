@@ -301,6 +301,11 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     giorno -> da 0 a 6 (da lunedì a domenica)\n
     ora -> un'ora qualsiasi"""
         # fixme: verifica del corretto inserimento dei parametri
+        if len(self.params)!= 3:
+            self.answer("Non hai inserito i parametri giusti!\n"
+                        "boss -> 0 (titano) o 1 (phoenix)\n"
+                        "giorno -> da 0 a 6 (da lunedì a domenica)\n"
+                        "ora -> un'ora qualsiasi")
         chat_id = -1001284891867  # Bot per i Boss
         boss = self.params[0]
         giorno = self.params[1]
