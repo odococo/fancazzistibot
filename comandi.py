@@ -252,7 +252,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         numeri = [int(param) for param in self.params]
         # calcola il valore della vincita
         win = (1 - calc_score(numeri)) * 100
-        self.answer("Possibilità di vincita : " + "{:.3f}".format(win) + "%")
+        self.answer("Probabilità di vincita : " + "{:.3f}".format(win) + "%")
 
     def Uconsiglia(self):
         """Seguito da cinque numeri separati da spazio ,invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
