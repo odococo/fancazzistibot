@@ -27,6 +27,7 @@ attacchiboss - visializza le info sui punteggi del Boss
 resetboss - resetta i punteggi del Boss
 cercacraft - ricerca gli oggetti tramite punteggio craft
 permessi - stampa i permessi relativi al tuo account
+compra - ti aiuta a decidere quali scrigni comprare
 """
 
 

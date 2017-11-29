@@ -1,6 +1,8 @@
 import re
+from collections import OrderedDict
 
 import emoji
+import math
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
@@ -826,3 +828,123 @@ class Cerca:
             to_send = to_send[30:]
 
         self.inizzializza_user_data(user_data)
+
+
+class Compra:
+
+    def __init__(self, updater, db):
+        self.db=db
+        self.scrigni=OrderedDict([('Legno',600), ('Ferro',1200), ('Prezioso', 2400), ('Diamante',3600), ('Leggendario', 7000), ('Epico',15000)])
+
+        disp=updater.dispatcher
+
+        eleg=self.db.elegible_loot_user(self.sconti)
+
+        disp.add_handler(CommandHandler("compra",eleg,pass_user_data=True))
+
+        conversation=ConversationHandler(
+            [CallbackQueryHandler(self.budget_ask,pattern="/sconti",pass_user_data=True)],
+            states={
+                1: [MessageHandler(Filters.text, self.budget_save, pass_user_data=True)],
+                2: [MessageHandler(Filters.text, self.scrigni_func, pass_user_data=True)]
+
+            },
+            fallbacks=[CommandHandler('Fine', self.inizzializza)]
+        )
+
+        disp.add_handler(conversation)
+
+
+    def inizzializza(self,bot, updates, user_data):
+        user_data['sconto']=0
+        user_data['budget']=0
+        return ConversationHandler.END
+
+
+    def sconti(self, bot, update, user_data):
+
+        self.inizzializza(bot, update, user_data)
+        text="Ci sono sconti all'emporio?"
+
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Nessuno", callback_data="/sconti 0"),
+             InlineKeyboardButton("20 %", callback_data="/sconti 0.2"),
+             InlineKeyboardButton("30 %", callback_data="/sconti 0.3")]
+
+        ])
+
+        update.message.reply_text(text,reply_markup=inline)
+
+    def budget_ask(self, bot, update, user_data):
+        user_data['sconto'] = update.callback_query.data.split()[1]
+
+        text="Qual'è il tuo budget? (inviami un numero)"
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=text,
+            message_id=update.callback_query.message.message_id,
+
+        )
+
+        return 1
+
+    def budget_save(self, bot, update, user_data):
+
+
+        budget=update.message.text.strip()
+        if not is_numeric(budget):
+            update.message.reply_text("Non mi hai inviato un nuemro valido, annullo...")
+            return self.inizzializza(bot, update, user_data)
+        if not user_data ['budget']: user_data['budget'] = int(budget)#salvo soo se è la prima volta che mi trovo qui
+        text="Perfetto, adesso madami una serie di numeri separati da spazio, ad ogni numero corrisponde la relativa percentuale" \
+             " del tuo budget che vuoi spendere sullo scrigno. La posizione dei numeri è associata alla posizione degli scrigni per esempio:\n" \
+             "se mandi '0 0 20 30 25 25' vuol dire:\n" \
+             "0 Lengo, 0 Ferro, 20% Prezioso, 30% Diamante, 25% Leggendario e 25% Epico.\nNota bene la somma dei numeri deve fare 100!"
+        update.message.reply_text(text)
+        return 2
+
+    def scrigni_func(self, bot, update, user_data):
+        param=update.message.text.split(" ")
+
+        if len(param) != 6: #check sul numero dei parametri
+            update.message.reply_text("Non hai inserito il numero per tutti gli scrigni! Ne ho ricevuti "+str(len(param))+"/6")
+            return  self.inizzializza(bot, update,user_data)
+        numbers=[]
+        for num in param:#check sul tipo dei parametri
+            if not is_numeric(num):
+                update.message.reply_text(str(num)+" non è un numero!")
+                return self.inizzializza(bot, update,user_data)
+            else:
+                numbers.append(int(num))
+
+        if sum(numbers)!=100:
+            update.message.reply_text("La somma è errata "+str(sum(numbers))+"/100")
+            return  self.inizzializza(bot, update,user_data)
+
+
+        scontato=OrderedDict()
+        res={}
+        #salvo i valori scontati
+        for elem in self.scrigni.keys():
+            scontato[elem]=self.scrigni[elem]-(self.scrigni[elem]*float(user_data['sconto']))
+            res[elem]=0
+
+        budget=user_data['budget']
+
+        for perc, cost in zip(numbers, scontato.keys()):
+            res[cost]=math.floor(budget*(perc/100)/scontato[cost])
+
+        text=""
+
+        for elem in res.keys():
+
+            if res[elem]:text+="Compra "+str(res[elem])+" di Scrigno "+elem+"\n"
+
+        update.message.reply_text(text)
+        return self.inizzializza(bot, update, user_data)
+
+
+
+
+
