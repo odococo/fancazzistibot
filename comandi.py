@@ -295,7 +295,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             self.bot.pinChatMessage(chat_id, message.message_id, True)
 
     # admin command ------------------------------------------------------------
-    def ApinBoss(self):
+    def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
     boss -> 0 (titano) o 1 (phoenix)\n
     giorno -> da 0 a 6 (da lunedì a domenica)\n
