@@ -4,7 +4,7 @@ if [ $# -eq 0 ]
   then
     comment="bug fixed"
   else
-    comment=$1
+    comment=$#
 fi
 
 git add main bot_classes.py db_call.py utils.py comandi.py commitAndPush.sh README.md;
