@@ -31,6 +31,8 @@ devono essere due numeri (**NB** Puoi usare il comando anche senza il parametro 
 di punti craft. In seguito ti verrà chiesto se vuoi filtrare anche a seconda della rarità dell'oggetto [X, UE, E, L, U, UR o tutti] e 
 a seconda della rinascita [r0, r1, r2] (**NB** scegliendo una rarità alta ti verranno mostrate anche quelle inferiori, per esempio scegliendo 
 r1 vengono mostrati i risultati per r0 e r1; r2-> r0, r1 e r2).
+* */compra*: ti permette di calcolare velocemente quanti scrigni comprare dall'emporio dato un budget per gli acquisti 
+e le percentuali di scrigni da comprare (in ordine : [Legno, Ferro, Prezioso, Diamante, Leggendario, Epico])
 
 ## CraftLootBot
 Se Il bot riceve un messaggio inoltrato da @craftlootbot, precisamente un messaggio generato dal comando */lista oggetto* si attevierà
@@ -83,7 +85,7 @@ Boss apparte ci sono altri comandi riservati ai soli admin:
 * */utente username* : visualizza le informazioni correlate all'utente
 * */utenti*: visualizza tutti gli utenti che stanno utilizzando il bot
 * */registra utente permesso*: cambia i permessi di un utente (per id o per username) nel valore *permesso* [ tester, admin, loot_admin ,loot_user , banned]
-
+* */sendtoall msg* ti permette di inviare un messaggio *msg* a tutti gli utenti nel database
 
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉
