@@ -34,7 +34,8 @@ r1 vengono mostrati i risultati per r0 e r1; r2-> r0, r1 e r2).
 * */compra*: ti permette di calcolare velocemente quanti scrigni comprare dall'emporio dato un budget per gli acquisti 
 e le percentuali di scrigni da comprare (in ordine : [Legno, Ferro, Prezioso, Diamante, Leggendario, Epico])
 * */rarita*: ti mostra la percentuale di oggetti divisi per rarità che ti mancano maggiormente (vedi CraftlootBot, rarità)
-* */resetrarita" : resetta le rarita relative al tuo account, da usare ogni volta che fai acquisti all'emporio
+* */resetrarita* : resetta le rarita relative al tuo account, da usare ogni volta che fai acquisti all'emporio
+* */helpvideo* : per quei comandi difficili da comprendere abbiamo creato dei video tutorial
 ## CraftLootBot
 Se Il bot riceve un messaggio inoltrato da @craftlootbot, precisamente un messaggio generato dal comando */lista oggetto* si attevierà
 una sua funzione. Prima di tutto riceverete una serie di messaggi del tipo:
@@ -90,7 +91,7 @@ Boss apparte ci sono altri comandi riservati ai soli admin:
 * */utente username* : visualizza le informazioni correlate all'utente
 * */utenti*: visualizza tutti gli utenti che stanno utilizzando il bot
 * */registra utente permesso*: cambia i permessi di un utente (per id o per username) nel valore *permesso* [ tester, admin, loot_admin ,loot_user , banned]
-* */sendtoall msg* ti permette di inviare un messaggio *msg* a tutti gli utenti nel database
-
+* */sendtoall msg*: ti permette di inviare un messaggio *msg* a tutti gli utenti nel database
+* */removeuser username* : rimuovi un utente dal bot 
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉

@@ -134,21 +134,18 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     #   self.answer('Please choose:', reply_markup=reply_markup)
 
     def Uhelpvideo(self):
-        """Invia il video tutorial per i comandi di difficile comprensione, attualmente sono disponibili i seguenti video:
-        loot : per imparare come usare l'inoltro di /lista da parte di @craftlootbot, stima e altro"""
-        descrizione=""
+        """Invia il video tutorial per i comandi di difficile comprensione"""
+        descrizione="I video disponibili sono: \n"
         for key in videos.keys():
-            descrizione+=key+" : "+videos[key][0]+"\n"
+            descrizione+="<b>"+key+"</b> : "+videos[key][0]+"\n"
 
-        if len(self.params) != 1:
-            self.answer("Il comando va usato seguito dal titolo del video in questione, attualmente i video disponibili sono: \n"+descrizione)
-            return
-        video=self.params[0].lower()
+        inline=[]
+        for key in videos.keys():
+            inline.append(InlineKeyboardButton(key, callback_data="/helpvideo "+key))
 
-        if video in videos.keys():
-            self.bot.sendVideo(self.update.effective_chat.id, videos[video][1])
-        else:
-            self.answer("Non ho trovato il video che cerchi, quelli attualmente disponibili sono: \n"+descrizione)
+        self.update.message.reply_text(descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
+
+
 
     def Uroll(self):
         """Lancia un dado senza specificare nulla"""

@@ -28,7 +28,7 @@ from telegram.ext import (
     MessageHandler, Filters)
 
 from bot_classes import Loot, Boss, Cerca, Compra
-from comandi import new_command
+from comandi import new_command, videos
 from db_call import DB, developer_dicts
 from negozi_loot import use_api, ITEMS
 from utils import (is_numeric, get_pretty_json)
@@ -188,6 +188,15 @@ def log_update(bot, update):
 def video_reciver(bot, update):
     update.message.reply_text("id video= "+str(update.message.video.file_id))
 
+def send_help_video(bot, update):
+    """Manda il video di help"""
+    video= update.callback_query.data.split()[1]
+    bot.delete_message(
+        chat_id=update.callback_query.message.chat_id,
+        message_id=update.callback_query.message.message_id
+    )
+    bot.sendVideo(update.callback_query.message.chat_id, videos[video])
+
 
 # ==================MAIN==========================================
 
@@ -233,6 +242,7 @@ def main():
     #         updater.bot.send_message(elem["id"],"",reply_markup=ReplyKeyboardRemove())
 
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
+    disp.add_handler(CallbackQueryHandler(send_help_video,pattern="/helpvideo"))
 
 
     with codecs.open("craftables_file", encoding='utf-8') as file:
