@@ -1,5 +1,5 @@
 import re
-from collections import OrderedDict
+from collections import OrderedDict, Counter
 
 import emoji
 import math
@@ -52,8 +52,11 @@ class Loot:
         user_data['costo'] = []
         user_data['to_send_negozi'] = []
 
+        #aggiungo l'user nel db items se non è presente
+        self.db.add_user_to_items(update.message.from_user.id)
+
         text = update.message.text.lower()
-        to_send = self.estrai_oggetti(text, user_data)
+        to_send = self.estrai_oggetti(text, user_data,update.message.from_user.id)
         try:
             # self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
             user_data['costo_craft'] = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
@@ -237,10 +240,18 @@ class Loot:
             # self.to_send_negozi = []
         user_data['to_send_negozi'] = []
 
-    def estrai_oggetti(self, msg, user_data):
+    def salva_rarita_db(self, rarita, user_id):
+        if not rarita:
+            print("Non ho trovato rarità")
+            return
+        rarita = dict(Counter(rarita))
+        self.db.update_items(rarita,user_id)
+
+    def estrai_oggetti(self, msg, user_data, user_id):
         """Estrae gli ogetti piu quantità dal messaggio /lista dicraftlootbot:
                 msg: messaggio.lower()
-                return string: rappresentante una lista di /ricerca oggetto\n"""
+                return string: rappresentante una lista di /ricerca oggetto\n
+            Salva anche le rarità nel db"""
         # prendo solo gli oggetti necessari
         restante = msg.split("già possiedi")[0].split(":")[1]
         aggiornato = ""
@@ -270,7 +281,9 @@ class Loot:
         regex_comandi = re.compile(r"di (.*)?\(")
         regex_zaino_completo = re.compile(r"su ([0-9]+) di (.*)?\(")
         regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
+        regex_rarita=re.compile(r"\(([A-Z]+)\)")
         lst = re.findall(regex_comandi, aggiornato)  # per i comandi
+        self.salva_rarita_db(re.findall(regex_rarita,aggiornato),user_id)
         quantita = re.findall(regex_zaino_completo, aggiornato)
         if not quantita: quantita = re.findall(regex_zaino_vuoto,
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio

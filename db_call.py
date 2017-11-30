@@ -153,6 +153,18 @@ TABELLE = {
             "by_id":"""SELECT * FROM bot WHERE id= %s""",
             "all":"""SELECT * FROM bot"""
         }
+    },
+    "items":{
+        "select":{
+            'select':'SELECT * FROM items',
+            'by_id':'SELECT * FROM items WHERE id = %s'
+        },
+        'insert':{
+            'new_user':"INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0) ON CONFLICT (id) DO NOTHING"
+        },
+        'update':"""UPDATE items
+              SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
+              WHERE id = %s"""
     }
 }
 
@@ -200,6 +212,44 @@ class DB:
         res=self.execute(TABELLE['bot']['select']['by_id'],( bot_id,))
         #print(res)
         return res
+
+    def add_user_to_items(self, id):
+        item_users=self.execute(TABELLE['items']['select']['select'])
+        if not item_users:#se il db è vuoto
+            self.execute(TABELLE['items']['insert']['new_user'], (id,))
+            print("Aggiunto user a items")
+            return
+
+        if not isinstance(item_users, list): item_users=list(item_users)
+
+        for user in item_users:
+            if id == user['id']: return# se lo user è gia presente nel db lascio stare
+
+        #se sono arrivato qua lo user non è nel db e quindi lo aggiungo
+        self.execute(TABELLE['items']['insert']['new_user'], (id,))
+        print("Aggiunto user a items")
+
+    def update_items(self, items_us, id):
+
+        items_db=self.execute(TABELLE['items']['select']['by_id'],(id,))
+
+        for key in items_us.keys():
+            items_db[key.lower()]+=items_us[key]
+
+        print(items_db)
+
+        self.execute(TABELLE['items']['update'],(
+            items_db['c'],
+            items_db['nc'],
+            items_db['r'],
+            items_db['ur'],
+            items_db['l'],
+            items_db['e'],
+            items_db['u'],
+            id
+        ))
+
+
 
     def reset_punteggio(self):
         self.execute(TABELLE['punteggio']['reset'])
