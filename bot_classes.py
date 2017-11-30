@@ -134,7 +134,7 @@ class Loot:
                 for elem in top_ten:
                     to_print+="<b>"+elem[0]+"</b> : "+str(elem[3])+"§ "
                     if int(elem[2])!=1:
-                        to_print+="( quantità = "+str(elem[2])+", totale = "+str(elem[1])+"§ )"
+                        to_print+="( quantità = <b>"+str(elem[2])+"</b>, totale = <b>"+str(elem[1])+"</b>§ )"
                     to_print+="\n"
 
                 update.message.reply_text(to_print, parse_mode="HTML")

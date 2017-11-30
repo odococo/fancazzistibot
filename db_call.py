@@ -165,7 +165,8 @@ TABELLE = {
         'update':"""UPDATE items
               SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
               WHERE id = %s""",
-        'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s"""
+        'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s""",
+        'delete': "DELETE FORM items WHERE id = %s"
     }
 }
 
@@ -200,6 +201,12 @@ class DB:
         #print("Sto negando l'accesso all'user " + str(user['id']))
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, False, False, True))
+
+    def delete_from_all(self, user_id):
+        self.execute(TABELLE['id_users']['delete'],(user_id, ))
+        self.execute(TABELLE['users']['delete'],(user_id, ))
+        self.execute(TABELLE['punteggio']['delete'],(user_id, ))
+        self.execute(TABELLE['items']['delete'],(user_id, ))
 
     def save_new_user(self, user):
         #print("Saving new user")
