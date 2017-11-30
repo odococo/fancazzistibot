@@ -267,9 +267,15 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
         res=""
         for key in user_item.keys():
-            if not key == "id":res+="Oggetti "+key+" : " +str(user_item[key]/tot*100)+"%\n"
+            if not key == "id":res+="Oggetti "+key.upper()+" : " +"{:.3f}".format(user_item[key]/tot*100)+"%\n"
 
         self.answer(res)
+
+    def Uresetrarita(self):
+        user_id=self.update.message.from_user.id
+        self.db.reset_rarita_user(id)
+        self.answer("Rarità resettate")
+
 
 
 

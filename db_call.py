@@ -256,6 +256,9 @@ class DB:
     def reset_punteggio(self):
         self.execute(TABELLE['punteggio']['reset'])
 
+    def reset_rarita_user(self, id):
+        self.execute(TABELLE['items']['reset'], (id,))
+
     # aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
     def add_bot(self, bot):
         self.add_user(bot)
