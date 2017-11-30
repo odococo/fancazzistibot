@@ -272,8 +272,9 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         self.answer(res)
 
     def Uresetrarita(self):
+        """Ti permette di resettare tutte le rarità relative al tuo username, da usare quando hai comprato scrigni all'emporio"""
         user_id=self.update.message.from_user.id
-        self.db.reset_rarita_user(id)
+        self.db.reset_rarita_user(user_id)
         self.answer("Rarità resettate")
 
 

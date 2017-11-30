@@ -33,7 +33,8 @@ a seconda della rinascita [r0, r1, r2] (**NB** scegliendo una rarità alta ti ve
 r1 vengono mostrati i risultati per r0 e r1; r2-> r0, r1 e r2).
 * */compra*: ti permette di calcolare velocemente quanti scrigni comprare dall'emporio dato un budget per gli acquisti 
 e le percentuali di scrigni da comprare (in ordine : [Legno, Ferro, Prezioso, Diamante, Leggendario, Epico])
-
+* */rarita*: ti mostra la percentuale di oggetti divisi per rarità che ti mancano maggiormente (vedi CraftlootBot, rarità)
+* */resetrarita" : resetta le rarita relative al tuo account, da usare ogni volta che fai acquisti all'emporio
 ## CraftLootBot
 Se Il bot riceve un messaggio inoltrato da @craftlootbot, precisamente un messaggio generato dal comando */lista oggetto* si attevierà
 una sua funzione. Prima di tutto riceverete una serie di messaggi del tipo:
@@ -51,6 +52,10 @@ Stima ti permette di ottenere informazioni utili sulla ricerca dei tuoi oggetti:
 * **Tempo stimato**: un'approssimazione di quanto tempo impiegherai a comprare tutti gli oggetti
 * **Comandi per negozio**: anche qui avrai l'opportunità di scegliere se visualizzare tutta le serie di comandi *@lootplusbot numeroNegozio*
 , oppure andare avanti, basta premere "Si" o "No".
+
+##### Rarità
+Ogni volta che inoltri un messaggio da @craftlootbot dato dal comando /lista saranno salvate le rarità che 
+ti mancano. Questo torna utile quando vuoi avere una stima delle quantià di scrigni da comprare.
 
 ## Boss (Admin only)
 Per una maggiore facilità nella gestione degli attacchi al boss del team madre abbiamo implementato i seguenti comandi semplici e di 
