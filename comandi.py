@@ -89,7 +89,7 @@ class Command():
 
     def unknown_command(self):
         print(self.update)
-        if not self.update.effective_chat.description:
+        if "supergroup"not in self.update.message.chat.type :
             self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
 
     # ----------------------------------------------------------------------------------
@@ -293,6 +293,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                 user_item[key] / tot * 100) + "%\n"
 
         if not res: res = "Non sono salvate rarità sul tuo account"
+        else: res+="Ricorda di resettare le rarità quando compri scrigni all'emporio!\n"
 
         self.answer(res)
 
