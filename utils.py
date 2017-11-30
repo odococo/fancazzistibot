@@ -5,6 +5,7 @@ import ast
 import datetime
 import json
 
+import math
 import requests
 from bs4 import BeautifulSoup
 
@@ -44,6 +45,17 @@ def is_admin(id):
              )
     return id in admin
 
+def text_splitter(text, splitter="\n", split_every=10):
+    """Divide un messaggio da mandare in piu parti, ritorna una lista di stringhe"""
+    text = text.split(splitter)
+
+    text = [text[split_every * i:split_every * i + split_every] for i in range(0, math.ceil(len(text) / split_every))]
+
+    res=[]
+    for elem in text:
+        to_append="\n".join(elem)
+        if to_append: res.append(to_append)
+    return res
 
 def is_dev(id):
     """Verifica se l'id del bot è quello del fancazzista supremo"""

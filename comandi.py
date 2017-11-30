@@ -355,12 +355,9 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         else:
             text = "Non ci sono utenti nel database"
 
-        text=text.split("\n")
 
-        text = [text[10 * i:10 * i + 10] for i in range(0, math.ceil(len(text) / 10))]
-
-        for elem in text:
-            self.answer("\n".join(elem), parse_mode="HTML")
+        for elem in utils.text_splitter(text,splitter="\n\n"):
+            self.answer(elem, parse_mode="HTML")
 
 
     def Aregistra(self):
