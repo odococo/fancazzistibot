@@ -118,12 +118,16 @@ class Loot:
                                       "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",
                                       reply_markup=ReplyKeyboardRemove())
 
-            if (len(user_data['costo']) > 10):
-                user_data['costo'].sort(key=lambda tup: int(tup[1]), reverse=True)
+            top_ten=[]
+            for elem in merged:
+                top_ten.append((elem[1],elem[0]*elem[2]))
+            top_ten.sort(key=lambda  tup: tup[1], reverse=True)
+
+            if (len(top_ten) > 10):
 
                 to_print = "I 10 oggetti piu costosi sono:\n"
                 for i in range(0, 9):
-                    to_print += user_data['costo'][i][0] + " : " + user_data['costo'][i][1] + " §\n"
+                    to_print += top_ten[0] + " : " + top_ten[1] + " §\n"
 
                 update.message.reply_text(to_print)
 
