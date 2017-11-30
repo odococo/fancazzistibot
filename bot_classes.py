@@ -119,15 +119,23 @@ class Loot:
                                       reply_markup=ReplyKeyboardRemove())
 
             top_ten=[]
+            """top_ten è una lista con :
+            elem[0]= nome oggetto
+            elem[1]= costo oggetto*quantita
+            elem[2]= quantita
+            elem[3]= costo singolo"""
             for elem in merged:
-                top_ten.append((elem[1],elem[0]*elem[2]))
+                top_ten.append((elem[1],int(elem[0])*int(elem[2]),elem[0], elem[2]))
             top_ten.sort(key=lambda  tup: tup[1], reverse=True)
 
             if (len(top_ten) > 10):
-
+                top_ten = top_ten[:9]
                 to_print = "I 10 oggetti piu costosi sono:\n"
-                for i in range(0, 9):
-                    to_print += top_ten[0] + " : " + top_ten[1] + " §\n"
+                for elem in top_ten:
+                    to_print+="<b>"+elem[0]+"</b> : "+str(elem[3])+"§ "
+                    if elem[2]!=1:
+                        to_print+="( quantità = "+str(elem[2])+", totale = "+str(elem[1])+"§ )"
+                    to_print+="/n"
 
                 update.message.reply_text(to_print)
 
