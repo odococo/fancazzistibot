@@ -45,7 +45,7 @@ def is_admin(id):
              )
     return id in admin
 
-def text_splitter(text, splitter="\n", split_every=10):
+def text_splitter(text, splitter="\n", split_every=5):
     """Divide un messaggio da mandare in piu parti, ritorna una lista di stringhe"""
     text = [elem + splitter for elem in text.split(splitter) if elem]
 
