@@ -135,9 +135,9 @@ class Loot:
                     to_print+="<b>"+elem[0]+"</b> : "+str(elem[3])+"§ "
                     if elem[2]!=1:
                         to_print+="( quantità = "+str(elem[2])+", totale = "+str(elem[1])+"§ )"
-                    to_print+="/n"
+                    to_print+="\n"
 
-                update.message.reply_text(to_print)
+                update.message.reply_text(to_print, parse_mode="HTML")
 
             m, s = divmod(tempo, 60)
 
