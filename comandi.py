@@ -308,6 +308,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                         "boss -> 0 (titano) o 1 (phoenix)\n"
                         "giorno -> da 0 a 6 (da lunedì a domenica)\n"
                         "ora -> un'ora qualsiasi")
+        self.answer(str(self.update))
         chat_id = -1001284891867  # Bot per i Boss
         boss = self.params[0]
         giorno = self.params[1]
@@ -333,7 +334,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             text = "Specifica id o username dell'utente che vuoi cercare"
         self.answer(text)
 
-    def Autenti(self): 
+    def Autenti(self):
         """Visualizza gli utenti che utilizzano un determinato bot"""
         users = self.db.get_users_and_id()
         if users:
