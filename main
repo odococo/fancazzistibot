@@ -18,7 +18,9 @@ import logging
 import os
 import sys
 
+import telegram
 from telegram import ReplyKeyboardRemove
+from telegram.error import Unauthorized
 from telegram.ext import (
     Updater,
     RegexHandler,
@@ -27,7 +29,7 @@ from telegram.ext import (
 
 from bot_classes import Loot, Boss, Cerca, Compra
 from comandi import new_command
-from db_call import DB
+from db_call import DB, developer_dicts
 from negozi_loot import use_api, ITEMS
 from utils import (is_numeric)
 import random
@@ -132,6 +134,41 @@ def basta_stikers(bot, update):
 
 
 def error(bot, update, error):
+    try:
+        raise error
+    except telegram.error.Unauthorized:
+        for val in developer_dicts.values():
+            bot.send_message(val, "Unauthorized Error!")
+            bot.send_message(val, str(update))
+            bot.send_message(val, str(bot))
+
+    except telegram.error.BadRequest:
+        for val in developer_dicts.values():
+            bot.send_message(val, "BadRequest Error!")
+            bot.send_message(val, str(update))
+            bot.send_message(val, str(bot))
+    except telegram.error.TimedOut:
+        for val in developer_dicts.values():
+            bot.send_message(val, "TimedOut Error!")
+            bot.send_message(val, str(update))
+            bot.send_message(val, str(bot))
+            # handle slow connection problems
+    except telegram.error.NetworkError:
+        for val in developer_dicts.values():
+            bot.send_message(val, "NetworkError Error!")
+            bot.send_message(val, str(update))
+            bot.send_message(val, str(bot))
+    except telegram.error.ChatMigrated as e:
+        for val in developer_dicts.values():
+            bot.send_message(val, "NetworkError Error!")
+            bot.send_message(val, e)
+            bot.send_message(val, str(update))
+            bot.send_message(val, str(bot))
+    except telegram.error.TelegramError:
+        for val in developer_dicts.values():
+            bot.send_message(val, "TelegramError Error!")
+            bot.send_message(val, str(update))
+            bot.send_message(val, str(bot))
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 
