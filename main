@@ -139,35 +139,35 @@ def error(bot, update, error):
     except telegram.error.Unauthorized:
         for val in developer_dicts.values():
             bot.send_message(val, "Unauthorized Error!")
-            bot.send_message(val, get_pretty_json(update))
+            bot.send_message(val, get_pretty_json(str(update)))
             bot.send_message(val, str(bot))
 
     except telegram.error.BadRequest:
         for val in developer_dicts.values():
             bot.send_message(val, "BadRequest Error!")
-            bot.send_message(val, get_pretty_json(update))
+            bot.send_message(val, get_pretty_json(str(update)))
             bot.send_message(val, str(bot))
     except telegram.error.TimedOut:
         for val in developer_dicts.values():
             bot.send_message(val, "TimedOut Error!")
-            bot.send_message(val, get_pretty_json(update))
+            bot.send_message(val, get_pretty_json(str(update)))
             bot.send_message(val, str(bot))
             # handle slow connection problems
     except telegram.error.NetworkError:
         for val in developer_dicts.values():
             bot.send_message(val, "NetworkError Error!")
-            bot.send_message(val, get_pretty_json(update))
+            bot.send_message(val, get_pretty_json(str(update)))
             bot.send_message(val, str(bot))
     except telegram.error.ChatMigrated as e:
         for val in developer_dicts.values():
             bot.send_message(val, "NetworkError Error!")
             bot.send_message(val, e)
-            bot.send_message(val, get_pretty_json(update))
+            bot.send_message(val, get_pretty_json(str(update)))
             bot.send_message(val, str(bot))
     except telegram.error.TelegramError:
         for val in developer_dicts.values():
             bot.send_message(val, "TelegramError Error!")
-            bot.send_message(val, get_pretty_json(update))
+            bot.send_message(val, get_pretty_json(str(update)))
             bot.send_message(val, str(bot))
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 

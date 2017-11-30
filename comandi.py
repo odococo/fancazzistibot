@@ -155,7 +155,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Udice(self):
         """Lancia un dado specificando numero di facce e lanci"""
         if (len(self.params) == 2
-            and all(utils.is_numeric(param) for param in self.params)):
+                and all(utils.is_numeric(param) for param in self.params)):
             text = ""
             for counter in range(int(self.params[1])):
                 text += "L'esito n {} è {}\n".format(
@@ -215,10 +215,8 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Upermessi(self):
         """Ottieni info sui permessi relativi al tuo account"""
         user_id = self.update.message.from_user.id
-        permission=self.db.get_permission_user(user_id)
+        permission = self.db.get_permission_user(user_id)
         self.answer(str(permission), pretty_json=True)
-
-
 
     def Ujson(self):
         """Ottieni il json dell'update"""
@@ -257,29 +255,28 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
     def Urarita(self):
         """Quando inoltri un messagio di craftlootbot vengono automaticamente salvate le rarità degli oggetti che non possiedi. Questo comando ti permette di avere (in percentuale) le informazioni su quali rarità hai mancanza nel tuo zaino. Ottimo da utilizzare in con il comando /compra"""
-        user_id=self.update.message.from_user.id
-        user_item=self.db.get_user_items(user_id)
-        tot=0
+        user_id = self.update.message.from_user.id
+        user_item = self.db.get_user_items(user_id)
+        tot = 0
         for key in user_item.keys():
-            if not key=="id":
-                tot+=user_item[key]
+            if not key == "id":
+                tot += user_item[key]
 
-        res=""
+        res = ""
         for key in user_item.keys():
-            if not key == "id" and not user_item[key]==0 : res+="Oggetti <b>"+key.upper()+"</b> : " +"{:.3f}".format(user_item[key]/tot*100)+"%\n"
+            if not key == "id" and not user_item[
+                                           key] == 0: res += "Oggetti <b>" + key.upper() + "</b> : " + "{:.3f}".format(
+                user_item[key] / tot * 100) + "%\n"
 
-        if not res: res="Non sono salvate rarità sul tuo account"
+        if not res: res = "Non sono salvate rarità sul tuo account"
 
         self.answer(res)
 
     def Uresetrarita(self):
         """Ti permette di resettare tutte le rarità relative al tuo username, da usare quando hai comprato scrigni all'emporio"""
-        user_id=self.update.message.from_user.id
+        user_id = self.update.message.from_user.id
         self.db.reset_rarita_user(user_id)
         self.answer("Rarità resettate")
-
-
-
 
     def Uconsiglia(self):
         """Seguito da cinque numeri separati da spazio ,invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
@@ -298,18 +295,13 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             self.bot.sendPhoto(self.update.message.from_user.id, file)
         os.remove(path2img)
 
-    def Dprova(self):
-        """test dev"""
-        self.answer("ok")
-
-
     # admin command ------------------------------------------------------------
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
         boss -> 0 (titano) o 1 (phoenix)
         giorno -> da 0 a 6 (da lunedì a domenica)
         ora -> un'ora qualsiasi"""
-        if len(self.params)!= 3:
+        if len(self.params) != 3:
             self.answer("Non hai inserito i parametri giusti!\n"
                         "boss -> 0 (titano) o 1 (phoenix)\n"
                         "giorno -> da 0 a 6 (da lunedì a domenica)\n"
@@ -346,14 +338,18 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             users = [users] if isinstance(users, dict) else users
             text = "Elenco utenti:\n"
             for user in users:
-                text += "<b>username</b>: <code>"+user['username']+"</code>\n" \
-                         "<b>id</b>: <code>"+str(user['id'])+"</code>\n"\
-                         "<b>admin</b>: <code>"+str(user['admin'])+"</code>\n"\
-                         "<b>tester</b>: <code>"+str(user['tester'])+"</code>\n"\
-                         "<b>loot_user</b>: <code>"+str(user['loot_user'])+"</code>\n"\
-                         "<b>loot_admin</b>: <code>"+str(user['loot_admin'])+"</code>\n"\
-                         "<b>banned</b>: <code>"+str(user['banned'])+"</code>\n"\
-                         "<b>join date</b>: <code>"+str(user['date'])+"</code>\n\n"
+                text += "<b>username</b>: <code>" + user['username'] + "</code>\n" \
+                                                                       "<b>id</b>: <code>" + str(
+                    user['id']) + "</code>\n" \
+                                  "<b>admin</b>: <code>" + str(user['admin']) + "</code>\n" \
+                                                                                "<b>tester</b>: <code>" + str(
+                    user['tester']) + "</code>\n" \
+                                      "<b>loot_user</b>: <code>" + str(user['loot_user']) + "</code>\n" \
+                                                                                            "<b>loot_admin</b>: <code>" + str(
+                    user['loot_admin']) + "</code>\n" \
+                                          "<b>banned</b>: <code>" + str(user['banned']) + "</code>\n" \
+                                                                                          "<b>join date</b>: <code>" + str(
+                    user['date']) + "</code>\n\n"
         else:
             text = "Non ci sono utenti nel database"
         self.answer(text, parse_mode="HTML")
@@ -377,20 +373,37 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     permesso tra questi valori: tester admin loot_admin loot_user banned"""
         self.answer(text)
 
+    def Aremoveuser(self):
+        """Rimuove un user dal bot"""
+        if len(self.params) != 1:
+            self.answer("Devi usare il comando seguito dallo username che vuoi rimuovere dal bot")
+            return
+
+        username=self.params[0]
+        user=self.db.get_user(username)
+        self.db.delete_from_all(user['id'])
+        self.answer("Ho rimosso "+username+" dal bot")
+
+
+    # developer comands ----------------------------------------
+
     def Dsendtoall(self):
         """Manda un messaggio a tutti gli utenti"""
-        if len(self.params)==0:
+        if len(self.params) == 0:
             self.answer("Devi usare il comando seguito da un messaggio")
             return
-        users= self.db.get_id_users()
+        users = self.db.get_id_users()
 
-        if not isinstance(users, list): users=[users]
+        if not isinstance(users, list): users = [users]
 
-        msg=" ".join(self.params)
+        msg = " ".join(self.params)
 
         for user in users:
-            self.bot.send_message(user['id'],msg)
+            self.bot.send_message(user['id'], msg)
 
+    def Dprova(self):
+        """test dev"""
+        self.answer("ok")
 
 
 def new_command(bot, update):
