@@ -143,6 +143,8 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         for key in videos.keys():
             inline.append(InlineKeyboardButton(key, callback_data="/helpvideo "+key))
 
+        print(inline)
+
         #self.update.message.reply_text(descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
         self.bot.send_message(self.update.message.from_user.id,descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
 
