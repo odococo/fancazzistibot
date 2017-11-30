@@ -309,7 +309,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                         "giorno -> da 0 a 6 (da lunedì a domenica)\n"
                         "ora -> un'ora qualsiasi")
         #chat_id = -1001284891867  # Bot per i Boss
-        chat_id=self.update.chat.id
+        chat_id=self.update.effective_chat.id
         boss = self.params[0]
         giorno = self.params[1]
         ore = self.params[2]
