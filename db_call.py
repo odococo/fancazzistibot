@@ -165,7 +165,7 @@ TABELLE = {
         'update':"""UPDATE items
               SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
               WHERE id = %s""",
-        'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e==, u=0 WHERE id =%s"""
+        'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s"""
     }
 }
 
