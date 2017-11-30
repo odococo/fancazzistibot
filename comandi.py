@@ -101,7 +101,7 @@ Crediti: @brandimax @Odococo""")
         text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n" \
                "<b>=====COMANDI SEMPLICI=====</b>\n\n"
         prov = [key + " " + str(value) for key, value in commands.items()]
-        text += "\n".join(prov)
+        text += "\n\n".join(prov)
         text += COMANDI_PLUS
         text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot:
 Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare per ottenere una comoda lista di comandi /ricerca da inoltrare a @lootplusbot.
