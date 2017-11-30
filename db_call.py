@@ -164,7 +164,8 @@ TABELLE = {
         },
         'update':"""UPDATE items
               SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
-              WHERE id = %s"""
+              WHERE id = %s""",
+        'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e==, u=0 WHERE id =%s"""
     }
 }
 
@@ -215,7 +216,7 @@ class DB:
 
     def add_user_to_items(self, id):
         item_users=self.execute(TABELLE['items']['select']['select'])
-        print("item_users",item_users)
+       # print("item_users",item_users)
         if not item_users:#se il db è vuoto
             self.execute(TABELLE['items']['insert']['new_user'], (id,))
             return
@@ -236,7 +237,7 @@ class DB:
         for key in items_us.keys():
             items_db[key.lower()]+=items_us[key]
 
-        print(items_db)
+        #print(items_db)
 
         self.execute(TABELLE['items']['update'],(
             items_db['c'],
@@ -249,7 +250,8 @@ class DB:
             id
         ))
 
-
+    def get_user_items(self, id):
+        return self.execute(TABELLE['items']['select']['by_id'], (id,))
 
     def reset_punteggio(self):
         self.execute(TABELLE['punteggio']['reset'])

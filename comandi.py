@@ -254,6 +254,24 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         win = (1 - calc_score(numeri)) * 100
         self.answer("Probabilità di vincita : " + "{:.3f}".format(win) + "%")
 
+    def Urarita(self):
+        """Quando inoltri un messagio di craftlootbot vengono automaticamente salvate le rarità degli oggetti che non possiedi.
+        Questo comando ti permette di avere (in percentuale) le informazioni su quali rarità hai mancanza nel tuo zaino.
+        Ottimo da utilizzare in con il comando /compra"""
+        user_id=self.update.message.from_user.id
+        user_item=self.db.get_user_items(user_id)
+        tot=0
+        for val in user_item.values():
+            tot+=val
+
+        res=""
+        for key in user_item.keys():
+            res+="Oggetti "+key+" : " +str(user_item[key]/tot*100)+"%\n"
+
+        self.answer(res)
+
+
+
     def Uconsiglia(self):
         """Seguito da cinque numeri separati da spazio ,invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
 
