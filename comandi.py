@@ -267,7 +267,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
         res=""
         for key in user_item.keys():
-            if not key == "id": res+="Oggetti <b>"+key.upper()+"</b> : " +"{:.3f}".format(user_item[key]/tot*100)+"%\n"
+            if not key == "id" and not user_item[key]==0 : res+="Oggetti <b>"+key.upper()+"</b> : " +"{:.3f}".format(user_item[key]/tot*100)+"%\n"
 
         self.answer(res)
 
