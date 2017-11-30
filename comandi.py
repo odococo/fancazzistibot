@@ -356,7 +356,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             text = "Non ci sono utenti nel database"
 
 
-        for elem in utils.text_splitter(text,splitter="\n\n"):
+        for elem in utils.text_splitter(text,splitter="\n\n",split_every=5):
             self.answer(elem, parse_mode="HTML")
 
 

@@ -47,7 +47,7 @@ def is_admin(id):
 
 def text_splitter(text, splitter="\n", split_every=10):
     """Divide un messaggio da mandare in piu parti, ritorna una lista di stringhe"""
-    text = text.split(splitter)
+    text = [elem + splitter for elem in text.split(splitter) if elem]
 
     text = [text[split_every * i:split_every * i + split_every] for i in range(0, math.ceil(len(text) / split_every))]
 
