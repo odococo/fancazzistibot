@@ -185,6 +185,9 @@ def error(bot, update, error):
 def log_update(bot, update):
     logger.info(update)
 
+def video_reciver(bot, update):
+    update.message.reply_text(str(update))
+
 
 # ==================MAIN==========================================
 
@@ -228,6 +231,8 @@ def main():
     # for elem in users:
     #     if not elem["id"] in bot_ids:
     #         updater.bot.send_message(elem["id"],"",reply_markup=ReplyKeyboardRemove())
+
+    disp.add_handler(MessageHandler(Filters.video, video_reciver))
 
 
     with codecs.open("craftables_file", encoding='utf-8') as file:

@@ -333,7 +333,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             text = "Specifica id o username dell'utente che vuoi cercare"
         self.answer(text)
 
-    def Autenti(self):
+    def Autenti(self): 
         """Visualizza gli utenti che utilizzano un determinato bot"""
         users = self.db.get_users_and_id()
         if users:
