@@ -211,6 +211,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """Ottieni le informazioni riguardo il tuo account"""
         user = self.update.message.from_user
         self.answer(str(user), pretty_json=True)
+
     def Upermessi(self):
         """Ottieni info sui permessi relativi al tuo account"""
         user_id = self.update.message.from_user.id
@@ -383,7 +384,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             return
         users= self.db.get_id_users()
 
-        if not isinstance(users, list): users=list(users)
+        if not isinstance(users, list): users=[users]
 
         msg=" ".join(self.params)
 
