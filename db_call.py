@@ -215,6 +215,7 @@ class DB:
 
     def add_user_to_items(self, id):
         item_users=self.execute(TABELLE['items']['select']['select'])
+        print("item_users",item_users)
         if not item_users:#se il db è vuoto
             self.execute(TABELLE['items']['insert']['new_user'], (id,))
             return
