@@ -13,7 +13,7 @@ import utils
 from PokerDice import calc_score, consigliami
 from db_call import DB
 
-COMANDI_PLUS = """
+COMANDI_PLUS = """\n
 /attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
 /cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2\n
 /compra - ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'emporio e il tuo budget\n
