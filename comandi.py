@@ -3,6 +3,7 @@
 
 import random
 
+import math
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
@@ -68,6 +69,7 @@ class Command():
         message_id = None
         if pretty_json:
             text = utils.get_pretty_json(text)
+
         while text:
             message_id = self.update.message.reply_text(text[:4096], **options)
             text = text[4096:]
@@ -352,7 +354,14 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                     user['date']) + "</code>\n\n"
         else:
             text = "Non ci sono utenti nel database"
-        self.answer(text, parse_mode="HTML")
+
+        text=text.split("\n")
+
+        text = [text[10 * i:10 * i + 10] for i in range(0, math.ceil(len(text) / 10))]
+
+        for elem in text:
+            self.answer("\n".join(elem), parse_mode="HTML")
+
 
     def Aregistra(self):
         """Aggiorna i permessi di un utente"""
