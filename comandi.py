@@ -308,8 +308,8 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                         "boss -> 0 (titano) o 1 (phoenix)\n"
                         "giorno -> da 0 a 6 (da lunedì a domenica)\n"
                         "ora -> un'ora qualsiasi")
-        self.answer(str(self.update))
-        chat_id = -1001284891867  # Bot per i Boss
+        #chat_id = -1001284891867  # Bot per i Boss
+        chat_id=self.update.chat.id
         boss = self.params[0]
         giorno = self.params[1]
         ore = self.params[2]
