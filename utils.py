@@ -31,6 +31,7 @@ compra - ti aiuta a decidere quali scrigni comprare
 sendtoall - Invia un messaggio a tutti gli users
 json - invia il json dell'update
 rarita - invia le rarita che piu ti mancano nello zaino
+resetrarita - resetta le rarità salvate sinora
 """
 
 
