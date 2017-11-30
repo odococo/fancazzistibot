@@ -299,33 +299,13 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         """test dev"""
         self.answer("ok")
 
-    def ApinBoss(self):
-        """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
-    boss -> 0 (titano) o 1 (phoenix)\n
-    giorno -> da 0 a 6 (da lunedì a domenica)\n
-    ora -> un'ora qualsiasi"""
-        # fixme: verifica del corretto inserimento dei parametri
-        print(self.update)
-        chat_id = -1001284891867  # Bot per i Boss
-        boss = self.params[0]
-        giorno = self.params[1]
-        ore = self.params[2]
-        nomi_boss = ["il Titano", "Phoenix"]
-        giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
-        from_id = self.update.message.from_user.id
-        if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
-            message = self.bot.send_message(chat_id=chat_id,
-                                            text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
-                                                 giorni[int(giorno) % 7])
-            self.bot.pinChatMessage(chat_id, message.message_id, True)
 
     # admin command ------------------------------------------------------------
     def Apinboss(self):
-        """Fissa un messaggio per l'attacco del boss con i seguenti valori:\n
-    boss -> 0 (titano) o 1 (phoenix)\n
-    giorno -> da 0 a 6 (da lunedì a domenica)\n
-    ora -> un'ora qualsiasi"""
-        # fixme: verifica del corretto inserimento dei parametri
+        """Fissa un messaggio per l'attacco del boss con i seguenti valori:
+        boss -> 0 (titano) o 1 (phoenix)
+        giorno -> da 0 a 6 (da lunedì a domenica)
+        ora -> un'ora qualsiasi"""
         if len(self.params)!= 3:
             self.answer("Non hai inserito i parametri giusti!\n"
                         "boss -> 0 (titano) o 1 (phoenix)\n"
