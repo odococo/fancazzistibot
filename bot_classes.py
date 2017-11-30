@@ -203,15 +203,15 @@ class Loot:
         addon = ""
 
         if "Si" in update.callback_query.data:
-            # print(self.to_send_negozi)
 
-
-
-            # if len(self.to_send_negozi) > 0 and len(self.to_send_negozi) < 31:
-            #     to_change = "".join(self.to_send_negozi)
-            # elif len(self.to_send_negozi) > 0:
-            #     to_change = "".join(self.to_send_negozi[:29])
-            #     addon = "".join(self.to_send_negozi[29:])
+            if not 'to_send_negozi' in user_data.keys():#se la key non è presente nel dizionario c'è qualcosa che non va
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text="Si è verificato un errore, contatta @brandimax e riprova",
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML"
+                )
+                return
 
             if len(user_data['to_send_negozi']) > 0 and len(user_data['to_send_negozi']) < 31:
                 to_change = "".join(user_data['to_send_negozi'])
