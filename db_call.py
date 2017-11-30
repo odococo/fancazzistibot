@@ -146,7 +146,7 @@ TABELLE = {
                     WHERE id = %s;""",
         "reset": """update punteggio set (msg_id , valutazione, attacchi) = (0 ,0,0)""",
         "delete": """DELETE FROM punteggio
-              WHERE id_user = %s"""
+              WHERE id = %s"""
     },
     "bot":{
         "select":{
@@ -166,7 +166,7 @@ TABELLE = {
               SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
               WHERE id = %s""",
         'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s""",
-        'delete': "DELETE FORM items WHERE id = %s"
+        'delete': "DELETE FROM items WHERE id = %s"
     }
 }
 
