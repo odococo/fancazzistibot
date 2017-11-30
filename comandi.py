@@ -88,6 +88,7 @@ class Command():
         return commands
 
     def unknown_command(self):
+        print(self.update)
         if not self.update.effective_chat.description:
             self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
 
