@@ -22,6 +22,8 @@ COMANDI_PLUS = """\n
 <b>=====COMANDI DA INOLTRO=====</b>\n\n
 """
 
+videos={'loot':"BAADBAADGgQAAkLEAAFR6sjD3lVxHJsC"}
+
 
 class Command():
     def __init__(self, bot, update, db):
@@ -129,6 +131,20 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     #       callback_data='3')]]
     #   reply_markup = InlineKeyboardMarkup(keyboard)
     #   self.answer('Please choose:', reply_markup=reply_markup)
+
+    def Uhelpvideo(self):
+        """Invia il video tutorial per i comandi di difficile comprensione, attualmente sono disponibili i seguenti video:
+        loot : per imparare come usare l'inoltro di /lista da parte di @craftlootbot, stima e altro"""
+        if len(self.params) != 1:
+            self.answer("Il comando va usato seguito dal titolo del video in questione, consulta l'help per avere la lista "
+                        "dei video disponibili")
+            return
+        video=self.params[0].lower()
+
+        if video in videos.keys():
+            self.bot.sendVideo(self.update.effective_chat.id, videos[video])
+        else:
+            self.answer("Non ho trovato il video che cerchi, quelli attualmente disponibili sono:  "+", ".join(videos.keys()))
 
     def Uroll(self):
         """Lancia un dado senza specificare nulla"""
@@ -308,7 +324,6 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                         "boss -> 0 (titano) o 1 (phoenix)\n"
                         "giorno -> da 0 a 6 (da lunedì a domenica)\n"
                         "ora -> un'ora qualsiasi")
-        #chat_id = -1001284891867  # Bot per i Boss
         chat_id=self.update.effective_chat.id
         boss = self.params[0]
         giorno = self.params[1]
