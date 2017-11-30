@@ -382,6 +382,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         username=self.params[0]
         user=self.db.get_user(username)
         self.db.delete_from_all(user['id'])
+        self.bot.send_message(user['id'],"Sei stato rimosso dal bot")
         self.answer("Ho rimosso "+username+" dal bot")
 
 
