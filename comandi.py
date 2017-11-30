@@ -261,12 +261,13 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         user_id=self.update.message.from_user.id
         user_item=self.db.get_user_items(user_id)
         tot=0
-        for val in user_item.values():
-            tot+=val
+        for key in user_item.keys():
+            if not key=="id":
+                tot+=user_item[key]
 
         res=""
         for key in user_item.keys():
-            res+="Oggetti "+key+" : " +str(user_item[key]/tot*100)+"%\n"
+            if not key == "id":res+="Oggetti "+key+" : " +str(user_item[key]/tot*100)+"%\n"
 
         self.answer(res)
 
