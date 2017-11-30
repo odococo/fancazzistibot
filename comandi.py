@@ -22,7 +22,8 @@ COMANDI_PLUS = """\n
 <b>=====COMANDI DA INOLTRO=====</b>\n\n
 """
 
-videos={'loot':"BAADBAADGgQAAkLEAAFR6sjD3lVxHJsC"}
+
+videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @craftlootbot","BAADBAADGgQAAkLEAAFR6sjD3lVxHJsC")}
 
 
 class Command():
@@ -135,16 +136,19 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Uhelpvideo(self):
         """Invia il video tutorial per i comandi di difficile comprensione, attualmente sono disponibili i seguenti video:
         loot : per imparare come usare l'inoltro di /lista da parte di @craftlootbot, stima e altro"""
+        descrizione=""
+        for key in videos.keys():
+            descrizione+=key+" : "+videos[key][0]+"\n"
+
         if len(self.params) != 1:
-            self.answer("Il comando va usato seguito dal titolo del video in questione, consulta l'help per avere la lista "
-                        "dei video disponibili")
+            self.answer("Il comando va usato seguito dal titolo del video in questione, attualmente i video disponibili sono: \n"+descrizione)
             return
         video=self.params[0].lower()
 
         if video in videos.keys():
-            self.bot.sendVideo(self.update.effective_chat.id, videos[video])
+            self.bot.sendVideo(self.update.effective_chat.id, videos[video][1])
         else:
-            self.answer("Non ho trovato il video che cerchi, quelli attualmente disponibili sono:  "+", ".join(videos.keys()))
+            self.answer("Non ho trovato il video che cerchi, quelli attualmente disponibili sono: \n"+descrizione)
 
     def Uroll(self):
         """Lancia un dado senza specificare nulla"""

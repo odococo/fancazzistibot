@@ -34,6 +34,7 @@ json - invia il json dell'update
 rarita - invia le rarita che piu ti mancano nello zaino
 resetrarita - resetta le rarità salvate sinora
 removeuser - rimuove un user dal bot
+helpvideo - invia un video tutorial
 """
 
 

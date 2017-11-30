@@ -186,7 +186,7 @@ def log_update(bot, update):
     logger.info(update)
 
 def video_reciver(bot, update):
-    update.message.reply_text(str(update))
+    update.message.reply_text("id video= "+str(update.message.video.file_id))
 
 
 # ==================MAIN==========================================
