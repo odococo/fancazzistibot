@@ -18,7 +18,7 @@ class Loot:
 
         dispatcher = updater.dispatcher
 
-        self.DEBUG = True
+        self.DEBUG = False
 
         # adding dispatchers
         if not self.DEBUG:
