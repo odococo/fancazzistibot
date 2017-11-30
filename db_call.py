@@ -160,7 +160,7 @@ TABELLE = {
             'by_id':'SELECT * FROM items WHERE id = %s'
         },
         'insert':{
-            'new_user':"INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0) ON CONFLICT (id) DO NOTHING"
+            'new_user':"INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0)"
         },
         'update':"""UPDATE items
               SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
