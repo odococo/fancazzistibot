@@ -146,7 +146,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         print(inline)
 
         #self.update.message.reply_text(descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
-        self.bot.send_message(self.update.message.from_user.id,descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
+        self.bot.send_message(self.update.message.from_user.id,descrizione, reply_markup=InlineKeyboardMarkup([inline]), parse_mode="HTML")
 
 
 
