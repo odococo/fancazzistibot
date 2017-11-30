@@ -23,7 +23,7 @@ COMANDI_PLUS = """\n
 """
 
 
-videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @craftlootbot","BAADBAADZgQAAkLEAAFR6V-PeXCIR0gC")}
+videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @craftlootbot","BAADBAADdgQAAkLEAAFRvQtpL8P36MkC")}
 
 
 class Command():
@@ -88,7 +88,8 @@ class Command():
         return commands
 
     def unknown_command(self):
-        self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
+        if not self.update.effective_chat.GROUP:
+            self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
 
     # ----------------------------------------------------------------------------------
 
