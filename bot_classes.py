@@ -18,10 +18,10 @@ class Loot:
 
         dispatcher = updater.dispatcher
 
-        DEBUG = False
+        self.DEBUG = True
 
         # adding dispatchers
-        if not DEBUG:
+        if not self.DEBUG:
             ricerca_decor = db.elegible_loot_user(self.ricerca)
             coversation = ConversationHandler(
                 [RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True)],
@@ -53,7 +53,7 @@ class Loot:
         user_data['to_send_negozi'] = []
 
         #aggiungo l'user nel db items se non è presente
-        self.db.add_user_to_items(update.message.from_user.id)
+        if not self.DEBUG: self.db.add_user_to_items(update.message.from_user.id)
 
         text = update.message.text.lower()
         to_send = self.estrai_oggetti(text, user_data,update.message.from_user.id)
@@ -269,8 +269,8 @@ class Loot:
                 if num[0] != num[1]:  # se i due numeri sono diversi
                     new_num = int(num[1]) - int(num[0])  # calcolo la differenza
 
-                    new_line = line.replace(num[0], str(new_num))  # rimpiazzo il primo
-                    new_line = new_line.replace(num[1], str(new_num))  # e il secondo
+                    new_line = line.replace(num[0], str(new_num),1)  # rimpiazzo il primo
+                    new_line = new_line.replace(num[1], str(new_num),1)  # e il secondo
                     aggiornato += new_line + "\n"  # aggiungo la riga aggiornata
                 else:
                     aggiornato += line + "\n"
@@ -283,7 +283,7 @@ class Loot:
         regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
         regex_rarita=re.compile(r"\(([a-z]+)\)")
         lst = re.findall(regex_comandi, aggiornato)  # per i comandi
-        self.salva_rarita_db(re.findall(regex_rarita,aggiornato),user_id)
+        if not self.DEBUG: self.salva_rarita_db(re.findall(regex_rarita,aggiornato),user_id)
         quantita = re.findall(regex_zaino_completo, aggiornato)
         if not quantita: quantita = re.findall(regex_zaino_vuoto,
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
