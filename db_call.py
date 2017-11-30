@@ -217,17 +217,16 @@ class DB:
         item_users=self.execute(TABELLE['items']['select']['select'])
         if not item_users:#se il db è vuoto
             self.execute(TABELLE['items']['insert']['new_user'], (id,))
-            print("Aggiunto user a items")
             return
 
         if not isinstance(item_users, list): item_users=list(item_users)
+        print(item_users)
 
         for user in item_users:
             if id == user['id']: return# se lo user è gia presente nel db lascio stare
 
         #se sono arrivato qua lo user non è nel db e quindi lo aggiungo
         self.execute(TABELLE['items']['insert']['new_user'], (id,))
-        print("Aggiunto user a items")
 
     def update_items(self, items_us, id):
 
