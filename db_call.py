@@ -220,8 +220,8 @@ class DB:
             self.execute(TABELLE['items']['insert']['new_user'], (id,))
             return
 
-        if not isinstance(item_users, list): item_users=list(item_users)
-        print(item_users)
+        if not isinstance(item_users, list): item_users=[item_users]
+        #print(item_users)
 
         for user in item_users:
             if id == user['id']: return# se lo user è gia presente nel db lascio stare
