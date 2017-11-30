@@ -281,8 +281,7 @@ class Loot:
         regex_comandi = re.compile(r"di (.*)?\(")
         regex_zaino_completo = re.compile(r"su ([0-9]+) di (.*)?\(")
         regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
-        regex_rarita=re.compile(r"\(([A-Z]+)\)")
-        print(aggiornato)
+        regex_rarita=re.compile(r"\(([a-z]+)\)")
         lst = re.findall(regex_comandi, aggiornato)  # per i comandi
         self.salva_rarita_db(re.findall(regex_rarita,aggiornato),user_id)
         quantita = re.findall(regex_zaino_completo, aggiornato)
