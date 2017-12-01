@@ -42,7 +42,7 @@ TABELLE = {
         "select": {
             'all_id': """SELECT * FROM id_users""",
             'from_id': """SELECT * FROM id_users WHERE id = %s""",
-            'all':"""SELECT * FROM id_users NATURAL JOIN users"""
+            'all': """SELECT * FROM id_users NATURAL JOIN users"""
         },
         "insert": {
             'single_id': """INSERT INTO id_users (id) 
@@ -148,32 +148,32 @@ TABELLE = {
         "delete": """DELETE FROM punteggio
               WHERE id = %s"""
     },
-    "bot":{
-        "select":{
-            "by_id":"""SELECT * FROM bot WHERE id= %s""",
-            "all":"""SELECT * FROM bot"""
+    "bot": {
+        "select": {
+            "by_id": """SELECT * FROM bot WHERE id= %s""",
+            "all": """SELECT * FROM bot"""
         }
     },
-    "items":{
-        "select":{
-            'select':'SELECT * FROM items',
-            'by_id':'SELECT * FROM items WHERE id = %s'
+    "items": {
+        "select": {
+            'select': 'SELECT * FROM items',
+            'by_id': 'SELECT * FROM items WHERE id = %s'
         },
-        'insert':{
-            'new_user':"INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0)"
+        'insert': {
+            'new_user': "INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0)"
         },
-        'update':"""UPDATE items
+        'update': """UPDATE items
               SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
               WHERE id = %s""",
-        'reset':"""UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s""",
+        'reset': """UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s""",
         'delete': "DELETE FROM items WHERE id = %s"
     }
 }
 
-COMANDO_CONNESSIONE_HEROKU_DB="heroku pg:psql"
+COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"
 
-developer_dicts = {"brandimax": 24978334, "odococo":89675136}
-developer_message=[]
+developer_dicts = {"brandimax": 24978334, "odococo": 89675136}
+developer_message = []
 
 
 class DB:
@@ -181,104 +181,20 @@ class DB:
 
         self.connect_db()
 
-    # aggiunge un utente al database
-    def add_user(self, user, id_bot=None):
-        # salvo l'id dell'utente o del bot
-        self.execute(TABELLE['id_users']['insert'], (user['id'],))
-        # salvo le altre informazioni relative ad utenti o bot
-        # queste informazioni potrebbero cambiare nel tempo, quindi
-        # prima di tutto selezione le ultime informazioni note dal database
-        # se sono uguali ignoro, altrimenti effettuo un inserimento
-        user_db = self.get_user(user['id'])
-        if self.different_user(user, user_db):
-            self.execute(TABELLE['users']['insert'],
-                         (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
-        if id_bot is not None:
-            self.execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
-
-    def ban_user(self, user):
-        # salvo l'id dell'utente o del bot
-        #print("Sto negando l'accesso all'user " + str(user['id']))
-        self.execute(TABELLE['id_users']['insert']['complete_user'],
-                     (user['id'], False, False, False, False, True))
-
-    def delete_from_all(self, user_id):
-        self.execute(TABELLE['id_users']['delete'],(user_id, ))
-        self.execute(TABELLE['users']['delete'],(user_id, ))
-        self.execute(TABELLE['punteggio']['delete'],(user_id, ))
-        self.execute(TABELLE['items']['delete'],(user_id, ))
-
-    def save_new_user(self, user):
-        #print("Saving new user")
-        self.execute(TABELLE['id_users']['insert']['complete_user'],
-                     (user['id'], False, False, True, False, False))
-
-        self.execute(TABELLE['users']['insert'],
-                     (user['id'], user['username']))
-
-
+    # ============GETTER======================================
     def get_token(self, bot_id):
-        res=self.execute(TABELLE['bot']['select']['by_id'],( bot_id,))
-        #print(res)
+        res = self.execute(TABELLE['bot']['select']['by_id'], (bot_id,))
+        # print(res)
         return res
-
-    def add_user_to_items(self, id):
-        item_users=self.execute(TABELLE['items']['select']['select'])
-       # print("item_users",item_users)
-        if not item_users:#se il db è vuoto
-            self.execute(TABELLE['items']['insert']['new_user'], (id,))
-            return
-
-        if not isinstance(item_users, list): item_users=[item_users]
-        #print(item_users)
-
-        for user in item_users:
-            if id == user['id']: return# se lo user è gia presente nel db lascio stare
-
-        #se sono arrivato qua lo user non è nel db e quindi lo aggiungo
-        self.execute(TABELLE['items']['insert']['new_user'], (id,))
-
-    def update_items(self, items_us, id):
-
-        items_db=self.execute(TABELLE['items']['select']['by_id'],(id,))
-
-        for key in items_us.keys():
-            items_db[key.lower()]+=items_us[key]
-
-        #print(items_db)
-
-        self.execute(TABELLE['items']['update'],(
-            items_db['c'],
-            items_db['nc'],
-            items_db['r'],
-            items_db['ur'],
-            items_db['l'],
-            items_db['e'],
-            items_db['u'],
-            id
-        ))
 
     def get_user_items(self, id):
         return self.execute(TABELLE['items']['select']['by_id'], (id,))
-
-    def reset_punteggio(self):
-        self.execute(TABELLE['punteggio']['reset'])
-
-    def reset_rarita_user(self, id):
-        self.execute(TABELLE['items']['reset'], (id,))
-
-    # aggiunge un bot al database. Il bot ha le medesime caratteristiche di un utente
-    def add_bot(self, bot):
-        self.add_user(bot)
 
     def get_users(self):
         return self.execute(TABELLE['users']['select']['all'])
 
     def get_users_and_id(self):
         return self.execute(TABELLE['id_users']['select']['all'])
-
-    def delete_user(self, user):
-        self.execute(TABELLE['id_users']["delete"], user["id"])
 
     def get_user(self, key_value):
         if utils.is_numeric(key_value):
@@ -295,7 +211,69 @@ class DB:
         return self.execute(TABELLE['id_users']['select']['all'])
 
     def get_permission_user(self, user_id):
-        return self.execute(TABELLE["id_users"]['select']['from_id'], (user_id, ))
+        return self.execute(TABELLE["id_users"]['select']['from_id'], (user_id,))
+
+    def get_punteggi(self):
+        query = TABELLE['punteggio']['select']['all']
+        return self.execute(query)
+
+    # ============ADDER/UPDATER======================================
+    def add_user(self, user, id_bot=None):
+        # salvo l'id dell'utente o del bot
+        self.execute(TABELLE['id_users']['insert'], (user['id'],))
+        # salvo le altre informazioni relative ad utenti o bot
+        # queste informazioni potrebbero cambiare nel tempo, quindi
+        # prima di tutto selezione le ultime informazioni note dal database
+        # se sono uguali ignoro, altrimenti effettuo un inserimento
+        user_db = self.get_user(user['id'])
+        if self.different_user(user, user_db):
+            self.execute(TABELLE['users']['insert'],
+                         (user['id'], user['username'], user['first_name'], user['last_name'], user['language_code']))
+        if id_bot is not None:
+            self.execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
+
+    def add_user_to_items(self, id):
+        item_users = self.execute(TABELLE['items']['select']['select'])
+        # print("item_users",item_users)
+        if not item_users:  # se il db è vuoto
+            self.execute(TABELLE['items']['insert']['new_user'], (id,))
+            return
+
+        if not isinstance(item_users, list): item_users = [item_users]
+        # print(item_users)
+
+        for user in item_users:
+            if id == user['id']: return  # se lo user è gia presente nel db lascio stare
+
+        # se sono arrivato qua lo user non è nel db e quindi lo aggiungo
+        self.execute(TABELLE['items']['insert']['new_user'], (id,))
+
+    def add_bot(self, bot):
+        self.add_user(bot)
+
+    def add_punteggio(self, id, punteggio):
+        query = TABELLE['punteggio']['insert']
+        return self.execute(query, (id, punteggio))
+
+    def update_items(self, items_us, id):
+
+        items_db = self.execute(TABELLE['items']['select']['by_id'], (id,))
+
+        for key in items_us.keys():
+            items_db[key.lower()] += items_us[key]
+
+        # print(items_db)
+
+        self.execute(TABELLE['items']['update'], (
+            items_db['c'],
+            items_db['nc'],
+            items_db['r'],
+            items_db['ur'],
+            items_db['l'],
+            items_db['e'],
+            items_db['u'],
+            id
+        ))
 
     def update_user(self, user):
         query = TABELLE['id_users']['update']
@@ -303,18 +281,45 @@ class DB:
                             (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned'],
                              user['id']))
 
-    # ritorna l'elenco dei punteggi
-    def get_punteggi(self):
-        query = TABELLE['punteggio']['select']['all']
-        return self.execute(query)
+    def add_new_user(self, user):
+        # print("Saving new user")
+        self.execute(TABELLE['id_users']['insert']['complete_user'],
+                     (user['id'], False, False, True, False, False))
 
-    # aggiungi un punteggio
-    def add_punteggio(self, id, punteggio):
-        query = TABELLE['punteggio']['insert']
-        return self.execute(query, (id, punteggio))
+        self.execute(TABELLE['users']['insert'],
+                     (user['id'], user['username']))
 
-    # -------------------------------------------------------------------------------
-    # essendoci anche la data, non posso fare il controllo direttamente da db
+    def update_punteggi(self, dizionario):
+        """Salva il i punteggi aggiornati aggiornandoli in caso gia fossero presenti oppure aggiungendoli altrimenti"""
+
+        for elem in dizionario:
+            self.execute(TABELLE['punteggio']['insert'],
+                         (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
+
+    # ============DELETE/RESET======================================
+
+
+    def ban_user(self, user):
+        # salvo l'id dell'utente o del bot
+        # print("Sto negando l'accesso all'user " + str(user['id']))
+        self.execute(TABELLE['id_users']['insert']['complete_user'],
+                     (user['id'], False, False, False, False, True))
+
+    def delete_from_all(self, user_id):
+        self.execute(TABELLE['id_users']['delete'], (user_id,))
+        self.execute(TABELLE['users']['delete'], (user_id,))
+        self.execute(TABELLE['punteggio']['delete'], (user_id,))
+        self.execute(TABELLE['items']['delete'], (user_id,))
+
+    def reset_punteggio(self):
+        self.execute(TABELLE['punteggio']['reset'])
+
+    def reset_rarita_user(self, id):
+        self.execute(TABELLE['items']['reset'], (id,))
+
+    def delete_user(self, user):
+        self.execute(TABELLE['id_users']["delete"], user["id"])
+
     def different_user(self, userA, userB):
         if (userB and (userA['id'] == userB['id']) and
                 (userA['username'] == userB['username']) and
@@ -324,14 +329,8 @@ class DB:
             return False
         return userA
 
-    def salva_punteggi_in_db(self, dizionario):
-        """Salva il i punteggi aggiornati aggiornandoli in caso gia fossero presenti oppure aggiungendoli altrimenti"""
 
-        for elem in dizionario:
-            self.execute(TABELLE['punteggio']['insert'],
-                         (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
-
-#============================STATIC METHODS===================================
+    # ============================STATIC METHODS===================================
 
     # esegue una query arbitraria
     @staticmethod
@@ -356,7 +355,6 @@ class DB:
                 print("ERRORE {} \n{}\n{}".format(error, query, param))
                 return False
 
-
                 # connessione al db
 
     @staticmethod
@@ -379,8 +377,7 @@ class DB:
 
             # ==============================ACCESS METHODS=======================================================
 
-
-#===============================ACCESS TO BOT===========================================
+    # ===============================ACCESS TO BOT===========================================
 
     def elegible_loot_user(self, func):
         """questa funzione ha il compito di verificare se l'id utente è abilitato a chiamare il comando
@@ -392,9 +389,9 @@ class DB:
             """Questa funzione ritorna true se l'user puo interagire, altrimenti false
             inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
             user_id = update._effective_user
-            #print("cerco user con id " + str(user_id) + ", nel database")
+            # print("cerco user con id " + str(user_id) + ", nel database")
             user = DB.execute(TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
-           # print("ho trovato : " + str(user))
+            # print("ho trovato : " + str(user))
             if not user:
                 self.request_access(bot, user_id)
                 return
@@ -456,7 +453,7 @@ class DB:
             elif user["banned"]:
                 update.message.reply_text("Spiacente sei stato bannato dal bot")
                 return
-            elif user["loot_admin"] or  user["admin"]:
+            elif user["loot_admin"] or user["admin"]:
                 sig = signature(func)
                 if len(sig.parameters) > 1:
                     return func(bot, update, *args, **kwargs)
@@ -505,7 +502,7 @@ class DB:
         user = {"id": user_lst[0], "username": " ".join(user_lst[1:])}
         if (command.strip("/") == "consentiAccessoSi"):
             # print("Accesso garantito")
-            self.save_new_user(user)
+            self.add_new_user(user)
             bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
 
             for msg in developer_message:
@@ -523,7 +520,7 @@ class DB:
             for msg in developer_message:
                 bot.edit_message_text(
                     chat_id=msg.chat_id,
-                    text= "L'accesso a user : " + str(user["username"]) + ", è stato negato",
+                    text="L'accesso a user : " + str(user["username"]) + ", è stato negato",
                     message_id=msg.message_id,
                     parse_mode="HTML"
                 )
@@ -537,10 +534,10 @@ class DB:
             user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \
                   str(bot.username) + "\nConsenti?"
         user = str(user["id"]) + " " + str(user["username"])
-       # print(to_send,user)
-        #todo: salva gli id dei messaggi inviati e cancellali nel grant_deny
+        # print(to_send,user)
+        # todo: salva gli id dei messaggi inviati e cancellali nel grant_deny
         for dev in developer_dicts.values():
             developer_message.append(bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
                 InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + user)
-            ]]),one_time_keyboard=True))
+            ]]), one_time_keyboard=True))

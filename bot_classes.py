@@ -52,11 +52,11 @@ class Loot:
         user_data['costo'] = []
         user_data['to_send_negozi'] = []
 
-        #aggiungo l'user nel db items se non è presente
+        # aggiungo l'user nel db items se non è presente
         if not self.DEBUG: self.db.add_user_to_items(update.message.from_user.id)
 
         text = update.message.text.lower()
-        to_send = self.estrai_oggetti(text, user_data,update.message.from_user.id)
+        to_send = self.estrai_oggetti(text, user_data, update.message.from_user.id)
         try:
             # self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
             user_data['costo_craft'] = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
@@ -118,24 +118,24 @@ class Loot:
                                       "{:,}".format(tot).replace(",", "'") + "§ (costo craft incluso)",
                                       reply_markup=ReplyKeyboardRemove())
 
-            top_ten=[]
+            top_ten = []
             """top_ten è una lista con :
             elem[0]= nome oggetto
             elem[1]= costo oggetto*quantita
             elem[2]= quantita
             elem[3]= costo singolo"""
             for elem in merged:
-                top_ten.append((elem[1],int(elem[0])*int(elem[2]),elem[0], elem[2]))
-            top_ten.sort(key=lambda  tup: tup[1], reverse=True)
+                top_ten.append((elem[1], int(elem[0]) * int(elem[2]), elem[0], elem[2]))
+            top_ten.sort(key=lambda tup: tup[1], reverse=True)
 
             if (len(top_ten) > 10):
                 top_ten = top_ten[:9]
                 to_print = "I 10 oggetti piu costosi sono:\n"
                 for elem in top_ten:
-                    to_print+="<b>"+elem[0]+"</b> : "+str(elem[3])+"§ "
-                    if int(elem[2])!=1:
-                        to_print+="( quantità = <b>"+str(elem[2])+"</b>, totale = <b>"+str(elem[1])+"</b>§ )"
-                    to_print+="\n"
+                    to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
+                    if int(elem[2]) != 1:
+                        to_print += "( quantità = <b>" + str(elem[2]) + "</b>, totale = <b>" + str(elem[1]) + "</b>§ )"
+                    to_print += "\n"
 
                 update.message.reply_text(to_print, parse_mode="HTML")
 
@@ -219,7 +219,7 @@ class Loot:
 
         if "Si" in update.callback_query.data:
 
-            if not 'to_send_negozi' in user_data.keys():#se la key non è presente nel dizionario c'è qualcosa che non va
+            if not 'to_send_negozi' in user_data.keys():  # se la key non è presente nel dizionario c'è qualcosa che non va
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
                     text="Si è verificato un errore, contatta @brandimax e riprova",
@@ -257,7 +257,7 @@ class Loot:
             print("Non ho trovato rarità")
             return
         rarita = dict(Counter(rarita))
-        self.db.update_items(rarita,user_id)
+        self.db.update_items(rarita, user_id)
 
     def estrai_oggetti(self, msg, user_data, user_id):
         """Estrae gli ogetti piu quantità dal messaggio /lista dicraftlootbot:
@@ -281,8 +281,8 @@ class Loot:
                 if num[0] != num[1]:  # se i due numeri sono diversi
                     new_num = int(num[1]) - int(num[0])  # calcolo la differenza
 
-                    new_line = line.replace(num[0], str(new_num),1)  # rimpiazzo il primo
-                    new_line = new_line.replace(num[1], str(new_num),1)  # e il secondo
+                    new_line = line.replace(num[0], str(new_num), 1)  # rimpiazzo il primo
+                    new_line = new_line.replace(num[1], str(new_num), 1)  # e il secondo
                     aggiornato += new_line + "\n"  # aggiungo la riga aggiornata
                 else:
                     aggiornato += line + "\n"
@@ -293,9 +293,9 @@ class Loot:
         regex_comandi = re.compile(r"di (.*)?\(")
         regex_zaino_completo = re.compile(r"su ([0-9]+) di (.*)?\(")
         regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
-        regex_rarita=re.compile(r"\(([a-z]+)\)")
+        regex_rarita = re.compile(r"\(([a-z]+)\)")
         lst = re.findall(regex_comandi, aggiornato)  # per i comandi
-        if not self.DEBUG: self.salva_rarita_db(re.findall(regex_rarita,aggiornato),user_id)
+        if not self.DEBUG: self.salva_rarita_db(re.findall(regex_rarita, aggiornato), user_id)
         quantita = re.findall(regex_zaino_completo, aggiornato)
         if not quantita: quantita = re.findall(regex_zaino_vuoto,
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
@@ -392,7 +392,6 @@ class Boss:
     def boss_admin(self, bot, update, user_data):
         """Inoltra il messaggio del boss, solo per admin"""
         # print("Admin boss")
-
 
         # prendi il dizionario, lista  e id
         self.inizzializza_user_data(user_data)
@@ -495,10 +494,12 @@ class Boss:
             users_name = [elem["username"] for elem in users]
             users_name_id = [(elem["username"], elem['id']) for elem in users]
 
-            if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
+            if user_data['single_dict']: user_data['punteggi'] = [user_data[
+                                                                      'punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in user_data['lista_boss']:
-                if username[0] in users_name and not bool(user_data['punteggi'][0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                if username[0] in users_name and not bool(user_data['punteggi'][
+                                                              0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
@@ -506,7 +507,8 @@ class Boss:
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
                 elif username[0] in users_name and \
-                        not username[0] in [elem['username'] for elem in user_data['punteggi']]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
+                        not username[0] in [elem['username'] for elem in user_data[
+                            'punteggi']]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
@@ -534,7 +536,7 @@ class Boss:
                 found = False
 
             if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
-                self.db.salva_punteggi_in_db(user_data['punteggi'])
+                self.db.update_punteggi(user_data['punteggi'])
 
             if len(skipped) > 0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
@@ -562,8 +564,8 @@ class Boss:
             return self.fine(bot, update, user_data, "La lista è vuota! Chiedi agli admin di aggiornarla")
 
         # sortedD = sorted([(elem['username'], elem['valutazione']) for elem in self.punteggi], reverse=True)
-        punteggi=user_data['punteggi']
-        if not isinstance(punteggi, list): punteggi=[punteggi]
+        punteggi = user_data['punteggi']
+        if not isinstance(punteggi, list): punteggi = [punteggi]
         sortedD = sorted([(elem['username'], elem['valutazione']) for elem in punteggi], reverse=True)
 
         num = [elem[1] for elem in sortedD]
@@ -643,8 +645,8 @@ class Boss:
     def non_attaccanti(self, bot, update, user_data):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
-        punteggi=user_data['punteggi']
-        if not isinstance(punteggi, list): punteggi=[punteggi]
+        punteggi = user_data['punteggi']
+        if not isinstance(punteggi, list): punteggi = [punteggi]
 
         if not len(punteggi) > 0:
             return self.fine(bot, update, user_data, "La lista è vuota! Chiedi agli admin di aggiornarla")
@@ -660,23 +662,25 @@ class Boss:
         return 1
 
     def same_message(self, boss_db, boss_admin):
-        if not isinstance(boss_db, list): boss_db=[boss_db]#rende boss_db una lista
+        if not isinstance(boss_db, list):
+            boss_db = [boss_db]  # rende boss_db una lista
         elif not boss_db:
             return False
-        users_db= self.db.get_users()
-        users_id=[(elem['username'], elem['id']) for elem in users_db]# contiene la tupla username,id
-        users_punteggio=[elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in boss_db]]# ha solo gli elementi (username,id) che sono prenseti nel db punteggio
-        users_db=[elem['username'] for elem in users_db]# ha gli username presenti nel db users
+        users_db = self.db.get_users()
+        users_id = [(elem['username'], elem['id']) for elem in users_db]  # contiene la tupla username,id
+        users_punteggio = [elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in
+                                                                    boss_db]]  # ha solo gli elementi (username,id) che sono prenseti nel db punteggio
+        users_db = [elem['username'] for elem in users_db]  # ha gli username presenti nel db users
 
         # guarda se ci sono nuovi utenti nel messaggio team che sono anche dentro users
         for elem in boss_admin:
-            if elem[0] in users_db and not elem[0] in users_punteggio : return False
-
+            if elem[0] in users_db and not elem[0] in users_punteggio: return False
 
         for db in boss_db:
             for admin in boss_admin:
-                if db['username'] == admin[0]:#per ogni username gia salvato nel db punteggio
-                    if isinstance(admin[2], tuple) and not admin[2][1] == db['attacchi']:#controllo che gli attacchi siano invariati
+                if db['username'] == admin[0]:  # per ogni username gia salvato nel db punteggio
+                    if isinstance(admin[2], tuple) and not admin[2][1] == db[
+                        'attacchi']:  # controllo che gli attacchi siano invariati
                         return True
                     elif admin[2] == 0 and db['attacchi'] == 0:
                         return True
@@ -689,7 +693,6 @@ class Cerca:
         self.bot = updater.bot
         self.db = db
         self.craftabili = oggetti
-
 
         dispatcher = updater.dispatcher
 
@@ -709,8 +712,6 @@ class Cerca:
         param = update.message.text.split()[1:]
         self.inizzializza_user_data(user_data)
 
-
-
         if len(param) == 0 or len(param) > 2:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
                                       "/cercaCcraft maggioreDi minoreDi\n"
@@ -722,9 +723,9 @@ class Cerca:
         elif len(param) == 1 and is_numeric(param[0]):
             user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0])]
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
-            magg=int(param[0])
-            min=int(param[1])
-            print(magg,min)
+            magg = int(param[0])
+            min = int(param[1])
+            print(magg, min)
             if magg > min:
                 update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
                 return
@@ -754,7 +755,7 @@ class Cerca:
                                   )
 
     def filtra_rarita(self, bot, update, user_data):
-        #todo: prova a far scegliere piu rarità
+        # todo: prova a far scegliere piu rarità
         user_data['rarita'] = update.callback_query.data.split()[1]
         rarita = update.callback_query.data.split()[1]
         if not "tutti" in rarita:
@@ -858,17 +859,19 @@ class Cerca:
 class Compra:
 
     def __init__(self, updater, db):
-        self.db=db
-        self.scrigni=OrderedDict([('Legno',600), ('Ferro',1200), ('Prezioso', 2400), ('Diamante',3600), ('Leggendario', 7000), ('Epico',15000)])
+        self.db = db
+        self.scrigni = OrderedDict(
+            [('Legno', 600), ('Ferro', 1200), ('Prezioso', 2400), ('Diamante', 3600), ('Leggendario', 7000),
+             ('Epico', 15000)])
 
-        disp=updater.dispatcher
+        disp = updater.dispatcher
 
-        eleg=self.db.elegible_loot_user(self.sconti)
+        eleg = self.db.elegible_loot_user(self.sconti)
 
-        disp.add_handler(CommandHandler("compra",eleg,pass_user_data=True))
+        disp.add_handler(CommandHandler("compra", eleg, pass_user_data=True))
 
-        conversation=ConversationHandler(
-            [CallbackQueryHandler(self.budget_ask,pattern="/sconti",pass_user_data=True)],
+        conversation = ConversationHandler(
+            [CallbackQueryHandler(self.budget_ask, pattern="/sconti", pass_user_data=True)],
             states={
                 1: [MessageHandler(Filters.text, self.budget_save, pass_user_data=True)],
                 2: [MessageHandler(Filters.text, self.scrigni_func, pass_user_data=True)]
@@ -879,17 +882,15 @@ class Compra:
 
         disp.add_handler(conversation)
 
-
-    def inizzializza(self,bot, updates, user_data):
-        user_data['sconto']=0
-        user_data['budget']=0
+    def inizzializza(self, bot, updates, user_data):
+        user_data['sconto'] = 0
+        user_data['budget'] = 0
         return ConversationHandler.END
-
 
     def sconti(self, bot, update, user_data):
 
         self.inizzializza(bot, update, user_data)
-        text="Ci sono sconti all'emporio?"
+        text = "Ci sono sconti all'emporio?"
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Nessuno", callback_data="/sconti 0"),
@@ -898,12 +899,12 @@ class Compra:
 
         ])
 
-        update.message.reply_text(text,reply_markup=inline)
+        update.message.reply_text(text, reply_markup=inline)
 
     def budget_ask(self, bot, update, user_data):
         user_data['sconto'] = update.callback_query.data.split()[1]
 
-        text="Qual'è il tuo budget? (inviami un numero)"
+        text = "Qual'è il tuo budget? (inviami un numero)"
 
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
@@ -916,60 +917,54 @@ class Compra:
 
     def budget_save(self, bot, update, user_data):
 
-
-        budget=update.message.text.strip()
+        budget = update.message.text.strip()
         if not is_numeric(budget):
             update.message.reply_text("Non mi hai inviato un nuemro valido, annullo...")
             return self.inizzializza(bot, update, user_data)
-        if not user_data ['budget']: user_data['budget'] = int(budget)#salvo soo se è la prima volta che mi trovo qui
-        text="Perfetto, adesso madami una serie di numeri separati da spazio, ad ogni numero corrisponde la relativa percentuale" \
-             " del tuo budget che vuoi spendere sullo scrigno. La posizione dei numeri è associata alla posizione degli scrigni per esempio:\n" \
-             "se mandi '0 0 20 30 25 25' vuol dire:\n" \
-             "0 Lengo, 0 Ferro, 20% Prezioso, 30% Diamante, 25% Leggendario e 25% Epico.\nNota bene la somma dei numeri deve fare 100!"
+        if not user_data['budget']: user_data['budget'] = int(budget)  # salvo soo se è la prima volta che mi trovo qui
+        text = "Perfetto, adesso madami una serie di numeri separati da spazio, ad ogni numero corrisponde la relativa percentuale" \
+               " del tuo budget che vuoi spendere sullo scrigno. La posizione dei numeri è associata alla posizione degli scrigni per esempio:\n" \
+               "se mandi '0 0 20 30 25 25' vuol dire:\n" \
+               "0 Lengo, 0 Ferro, 20% Prezioso, 30% Diamante, 25% Leggendario e 25% Epico.\nNota bene la somma dei numeri deve fare 100!"
         update.message.reply_text(text)
         return 2
 
     def scrigni_func(self, bot, update, user_data):
-        param=update.message.text.split(" ")
+        param = update.message.text.split(" ")
 
-        if len(param) != 6: #check sul numero dei parametri
-            update.message.reply_text("Non hai inserito il numero per tutti gli scrigni! Ne ho ricevuti "+str(len(param))+"/6")
-            return  self.inizzializza(bot, update,user_data)
-        numbers=[]
-        for num in param:#check sul tipo dei parametri
+        if len(param) != 6:  # check sul numero dei parametri
+            update.message.reply_text(
+                "Non hai inserito il numero per tutti gli scrigni! Ne ho ricevuti " + str(len(param)) + "/6")
+            return self.inizzializza(bot, update, user_data)
+        numbers = []
+        for num in param:  # check sul tipo dei parametri
             if not is_numeric(num):
-                update.message.reply_text(str(num)+" non è un numero!")
-                return self.inizzializza(bot, update,user_data)
+                update.message.reply_text(str(num) + " non è un numero!")
+                return self.inizzializza(bot, update, user_data)
             else:
                 numbers.append(int(num))
 
-        if sum(numbers)!=100:
-            update.message.reply_text("La somma è errata "+str(sum(numbers))+"/100")
-            return  self.inizzializza(bot, update,user_data)
+        if sum(numbers) != 100:
+            update.message.reply_text("La somma è errata " + str(sum(numbers)) + "/100")
+            return self.inizzializza(bot, update, user_data)
 
-
-        scontato=OrderedDict()
-        res={}
-        #salvo i valori scontati
+        scontato = OrderedDict()
+        res = {}
+        # salvo i valori scontati
         for elem in self.scrigni.keys():
-            scontato[elem]=self.scrigni[elem]-(self.scrigni[elem]*float(user_data['sconto']))
-            res[elem]=0
+            scontato[elem] = self.scrigni[elem] - (self.scrigni[elem] * float(user_data['sconto']))
+            res[elem] = 0
 
-        budget=user_data['budget']
+        budget = user_data['budget']
 
         for perc, cost in zip(numbers, scontato.keys()):
-            res[cost]=math.floor(budget*(perc/100)/scontato[cost])
+            res[cost] = math.floor(budget * (perc / 100) / scontato[cost])
 
-        text=""
+        text = ""
 
         for elem in res.keys():
 
-            if res[elem]:text+="Compra "+str(res[elem])+" di Scrigno "+elem+"\n"
+            if res[elem]: text += "Compra " + str(res[elem]) + " di Scrigno " + elem + "\n"
 
         update.message.reply_text(text)
         return self.inizzializza(bot, update, user_data)
-
-
-
-
-
