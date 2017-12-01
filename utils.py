@@ -12,7 +12,7 @@ import functools
 import requests
 from bs4 import BeautifulSoup
 
-from db_call import developer_dicts
+developer_dicts = {"brandimax": 24978334, "odococo": 89675136}
 
 COMANDI_BOT_FATHER = """
 win - Ti dice la probabilità di vittoria che hai nell'ispezione dello gnomo
