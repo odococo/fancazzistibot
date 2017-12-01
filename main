@@ -262,7 +262,7 @@ def main():
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
-    disp.add_handler(MessageHandler(Filters.sticker,basta_stikers))
+    #disp.add_handler(MessageHandler(Filters.sticker,basta_stikers))
 
 
     # log all errors
