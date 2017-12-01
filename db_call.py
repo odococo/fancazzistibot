@@ -94,7 +94,8 @@ TABELLE = {
               PRIMARY KEY(id_bot, id_user))""",
         "drop": """DROP TABLE IF EXISTS bot_users CASCADE""",
         "select": {
-            'all': """SELECT * FROM bot_users"""
+            'all': """SELECT * FROM bot_users""",
+            'by_ids': """SELECT * FROM bot_users WHERE id_user=%s and id_bot=%s"""
         },
         "insert": """INSERT INTO bot_users (id_bot, id_user, language)
               VALUES (%s, %s, %s)
@@ -301,6 +302,9 @@ class DB:
             self.execute(TABELLE['punteggio']['insert'],
                          (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
 
+    def add_bot_user(self, effective_user, bot_id):
+        self.execute(TABELLE['bot_users']['insert'],(bot_id, effective_user['id'],effective_user['language_code'],))
+
     # ============DELETE/RESET======================================
     def ban_user(self, user):
         # salvo l'id dell'utente o del bot
@@ -388,14 +392,22 @@ class DB:
         def check_if_user_can_interact(bot, update, *args, **kwargs):
             """Questa funzione ritorna true se l'user puo interagire, altrimenti false
             inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
-            if "private" not in update.message.chat.type: return;
 
             user_id = update._effective_user
             # print("cerco user con id " + str(user_id) + ", nel database")
             user = DB.execute(TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
             # print("ho trovato : " + str(user))
-            if not user:
-                self.request_access(bot, user_id)
+            if not user:#user non prensete nel db id_users
+                if 'private' in update.message.chat.type:# se il messaggio è stato mandato in privata allora devo chiedere l'accesso
+                    self.request_access(bot, user_id)
+                elif 'supergroup' in update.message.chat.type:# altrimenti guardo se è presente nei bot_users
+                    bot_users=DB.execute(TABELLE['bot_users']['select']['by_ids'],(user_id, bot.id))
+                    if not bot_users:#se non è presente glielo dico e lo salvo nel db
+                        update.message.reply_text("E tu chi sei? Non ti ho mai visto da queste parti..."
+                                                  "Perche non mi invii un bel messaggio di start cosi diventiamo amici?",
+                                                  reply_to_message_id=update.message.message_id)
+                        self.add_bot_user(update._effective_user, bot.id)
+
                 return
             elif user["banned"]:
                 update.message.reply_text("Spiacente sei stato bannato dal bot")
@@ -406,6 +418,9 @@ class DB:
                     return func(bot, update, *args, **kwargs)
                 else:
                     return func(*args, **kwargs)
+
+
+
 
         return check_if_user_can_interact
 
