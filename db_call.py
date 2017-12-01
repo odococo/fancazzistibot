@@ -387,6 +387,8 @@ class DB:
         def check_if_user_can_interact(bot, update, *args, **kwargs):
             """Questa funzione ritorna true se l'user puo interagire, altrimenti false
             inoltre in caso di false (user non presente nel db inizia il procedimento di richiesta d'accesso"""
+            if "private" not in update.message.chat.type: return;
+
             user_id = update._effective_user
             # print("cerco user con id " + str(user_id) + ", nel database")
             user = DB.execute(TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))

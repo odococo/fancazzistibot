@@ -89,7 +89,7 @@ class Command():
 
     def unknown_command(self):
         print(self.update)
-        if "supergroup"not in self.update.message.chat.type :
+        if "private" in self.update.message.chat.type :
             self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
 
     # ----------------------------------------------------------------------------------
