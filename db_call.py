@@ -170,10 +170,10 @@ TABELLE = {
     }
 }
 
-COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"
+COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"#comando per connettersi al db
 
 developer_dicts = {"brandimax": 24978334, "odococo": 89675136}
-developer_message = []
+developer_message = []#usata per salvare i messaggi di richiesta accesso
 
 
 class DB:
@@ -297,8 +297,6 @@ class DB:
                          (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
 
     # ============DELETE/RESET======================================
-
-
     def ban_user(self, user):
         # salvo l'id dell'utente o del bot
         # print("Sto negando l'accesso all'user " + str(user['id']))
@@ -329,9 +327,7 @@ class DB:
             return False
         return userA
 
-
     # ============================STATIC METHODS===================================
-
     # esegue una query arbitraria
     @staticmethod
     def execute(query, param=None):
@@ -378,7 +374,6 @@ class DB:
             # ==============================ACCESS METHODS=======================================================
 
     # ===============================ACCESS TO BOT===========================================
-
     def elegible_loot_user(self, func):
         """questa funzione ha il compito di verificare se l'id utente è abilitato a chiamare il comando
         il suo utilizzo è il seguente:
