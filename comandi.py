@@ -27,6 +27,7 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
 
 
 class Command():
+    @utils.catch_exception
     def __init__(self, bot, update, db):
         """Salva bot, update, comando e parametri"""
         self.bot = bot

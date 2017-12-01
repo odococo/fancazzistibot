@@ -46,7 +46,6 @@ class Loot:
     def ricerca(self, bot, update, user_data):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
 
-        print(0/0)
         # inizzializza i campi di user data
         user_data['costo_craft'] = 0
         user_data['stima_flag'] = False
@@ -76,6 +75,7 @@ class Loot:
         user_data['stima_flag'] = True
         return 1
 
+    @catch_exception
     def stima(self, bot, update, user_data):
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
                top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
@@ -176,6 +176,7 @@ class Loot:
                       "dover rieffettuare tutte le ricerche nuovamente 👍🏼👍🏼"
             return self.annulla(bot, update, user_data, to_send)
 
+    @catch_exception
     def stima_parziale(self, msg, user_data):
         """dato un messaggio in lower inoltrato da lootplusbot rappresentate la risposta la comando ricerca
         salva la lista costo con una tripla di elementi:
@@ -197,6 +198,7 @@ class Loot:
             #  self.costo.append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
             user_data['costo'].append((e[0][0], e[0][1].replace(".", "").replace(" ", ""), neg[0]))
 
+    @catch_exception
     def annulla(self, bot, update, user_data, msg=""):
         """Finisce la conversazione azzerando tutto
          msg: è il messaggio inviato all'utente
@@ -216,6 +218,7 @@ class Loot:
 
         return ConversationHandler.END
 
+    @catch_exception
     def send_negozi(self, bot, update, user_data):
         addon = ""
 
@@ -254,6 +257,7 @@ class Loot:
             # self.to_send_negozi = []
         user_data['to_send_negozi'] = []
 
+    @catch_exception
     def salva_rarita_db(self, rarita, user_id):
         if not rarita:
             print("Non ho trovato rarità")
@@ -261,6 +265,7 @@ class Loot:
         rarita = dict(Counter(rarita))
         self.db.update_items(rarita, user_id)
 
+    @catch_exception
     def estrai_oggetti(self, msg, user_data, user_id):
         """Estrae gli ogetti piu quantità dal messaggio /lista dicraftlootbot:
                 msg: messaggio.lower()
@@ -391,6 +396,7 @@ class Boss:
         user_data['phoenix'] = False
         user_data['single_dict'] = True
 
+    @catch_exception
     def boss_admin(self, bot, update, user_data):
         """Inoltra il messaggio del boss, solo per admin"""
         # print("Admin boss")
@@ -424,6 +430,7 @@ class Boss:
                                   reply_markup=reply_markup)
         return 1
 
+    @catch_exception
     def boss_user(self, bot, update, user_data):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
 
@@ -435,6 +442,7 @@ class Boss:
         update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
         return 1
 
+    @catch_exception
     def boss_reset_confirm(self, bot, update, user_data):
         if "Si" in update.callback_query.data:
             user_data['lista_boss'] = []
@@ -454,6 +462,7 @@ class Boss:
                 message_id=update.callback_query.message.message_id
             )
 
+    @catch_exception
     def boss_reset_ask(self, bot, update):
 
         update.message.reply_text("Sei sicuro di voler resettare i punteggi?\nNon potrai piu recuperarli",
@@ -462,6 +471,7 @@ class Boss:
                                       InlineKeyboardButton("No", callback_data="/resetBossNo")
                                   ]]))
 
+    @catch_exception
     def boss_loop(self, bot, update, user_data):
         """Funzione di loop dove ogni methodo , tranne fine, ritorna dopo aver inviato il messaggio"""
 
@@ -559,6 +569,7 @@ class Boss:
             update.message.reply_text("Non ho capito")
             return self.fine(bot, update, user_data, msg="Non ho capito, annullo tuttto")
 
+    @catch_exception
     def punteggio(self, bot, update, user_data):
         """Visualizza la sita di tutti con punteggio annesso"""
 
@@ -597,6 +608,7 @@ class Boss:
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1  # 1 è l'id del boss_loop nel conversation handler
 
+    @catch_exception
     def completa(self, bot, update, user_data):
         """Visualizza la lista completa ti tutte le info"""
 
@@ -638,12 +650,14 @@ class Boss:
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1
 
+    @catch_exception
     def fine(self, bot, update, user_data, msg=""):
         if not msg: msg = "Fine"
         update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
         user_data['lista_boss'] = []
         return ConversationHandler.END
 
+    @catch_exception
     def non_attaccanti(self, bot, update, user_data):
         """Visualizza solo la lista di chi non ha ancora attaccato"""
 
@@ -708,6 +722,7 @@ class Cerca:
     def inizzializza_user_data(self, user_data):
         user_data['risultati'] = []
 
+    @catch_exception
     def cerca_craft(self, bot, update, user_data):
         """/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato
         num1>num2 cerca oggetti craft con valore compreso tra num1 e num2."""
@@ -756,6 +771,7 @@ class Cerca:
                                   "Secondo quale rarità vuoi filtrare?", reply_markup=inline, parse_mode="HTML"
                                   )
 
+    @catch_exception
     def filtra_rarita(self, bot, update, user_data):
         # todo: prova a far scegliere piu rarità
         user_data['rarita'] = update.callback_query.data.split()[1]
@@ -785,6 +801,7 @@ class Cerca:
 
         )
 
+    @catch_exception
     def no_results(self, bot, update):
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
@@ -793,6 +810,7 @@ class Cerca:
         )
         return
 
+    @catch_exception
     def filtra_rinascita(self, bot, update, user_data):
         rinascita = update.callback_query.data.split()[1]
 
@@ -820,6 +838,7 @@ class Cerca:
             parse_mode="HTML"
         )
 
+    @catch_exception
     def ordina(self, bot, update, user_data):
         param = update.callback_query.data.split()[1]
         to_send = ""
@@ -985,6 +1004,7 @@ class EasterEggs:
         disp.add_handler(MessageHandler(Filters.text, self.rip))
 
 
+    @catch_exception
     def rip(self, bot, update):
         if "private" in update.message.chat.type: return
         if "rip" not in update.message.text.lower(): return
