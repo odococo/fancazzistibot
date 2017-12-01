@@ -191,11 +191,11 @@ def video_reciver(bot, update):
 
 def photo_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id image = "+str(update.message.photo))
+        update.message.reply_text("id image = "+str(update))
 
 def sticker_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id stiker = "+str(update.message.sticker))
+        update.message.reply_text("id stiker = "+str(update))
 
 
 def send_help_video(bot, update):
