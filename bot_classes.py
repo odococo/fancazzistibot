@@ -8,7 +8,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 
 import db_call
-from utils import is_numeric
+from utils import is_numeric, catch_exception
 
 
 class Loot:
@@ -42,9 +42,11 @@ class Loot:
 
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi", pass_user_data=True))
 
+    @catch_exception
     def ricerca(self, bot, update, user_data):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
 
+        print(0/0)
         # inizzializza i campi di user data
         user_data['costo_craft'] = 0
         user_data['stima_flag'] = False

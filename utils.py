@@ -3,11 +3,16 @@
 
 import ast
 import datetime
+import inspect
 import json
 
 import math
+
+import functools
 import requests
 from bs4 import BeautifulSoup
+
+from db_call import developer_dicts
 
 COMANDI_BOT_FATHER = """
 win - Ti dice la probabilità di vittoria che hai nell'ispezione dello gnomo
@@ -70,6 +75,19 @@ def is_fanca_admin(id):
              )
 
     return id in admin
+
+def catch_exception(f):
+    @functools.wraps(f)
+    def func(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            print(args, kwargs)
+            print(e)
+            #for value in developer_dicts:
+                #bot.send_message(value, e)
+
+    return func
 
 
 def is_tester(id):
