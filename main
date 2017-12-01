@@ -262,7 +262,7 @@ def main():
         oggetti = eval(rea.replace("null", "None"))
 
     # classi per craftlootbot e comandi boss
-    
+
     Loot(updater, db)
     Boss(updater, db)
     Cerca(updater, db, oggetti)

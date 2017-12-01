@@ -9,6 +9,8 @@ import json
 import math
 
 import functools
+import traceback
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -84,9 +86,10 @@ def catch_exception(f):
         except Exception as e:
             print(args, kwargs)
             print(e)
+            tp=traceback.format_exc()
             for value in developer_dicts.values():
-                args[1].send_message(value, str(e))
-                #args[1].send_message(value, "With update:"+get_pretty_json(str(args[2])))
+                args[1].send_message(value, "EXCEPTION MESSAGE :"+str(e.message)+"\nTRACEBACK : "+tp)
+                #args[1].send_message(value, "With update:\n"+get_pretty_json(str(args[2])))
 
     return func
 
