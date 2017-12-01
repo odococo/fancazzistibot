@@ -982,7 +982,7 @@ class EasterEggs:
 
         disp=updater.dispatcher
 
-        disp.add_handler(MessageHandler(Filters.text, self.rip))
+       # disp.add_handler(MessageHandler(Filters.text, self.rip))
 
 
     def rip(self, bot, update):
