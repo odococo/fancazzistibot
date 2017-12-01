@@ -511,6 +511,7 @@ class DB:
 
         return check_if_admin
 
+    @utils.catch_exception
     def grant_deny_access(self, bot, update):
         """Funziona tramite callback query e serve a garantire l'accesso o meno all'udente id"""
         text = update.callback_query.data.split(" ")
@@ -518,7 +519,15 @@ class DB:
         user_lst = text[1:]
         user = {"id": user_lst[0], "username": " ".join(user_lst[1:])}
         if (command.strip("/") == "consentiAccessoSi"):
-            if DB.execute(TABELLE["id_users"]["select"]["from_id"], (user['id'],)): return
+            if DB.execute(TABELLE["id_users"]["select"]["from_id"], (user['id'],)):
+                for msg in developer_message:
+                    bot.edit_message_text(
+                        chat_id=msg.chat_id,
+                        text="Lo user : " + str(user["username"]) + ", è gia presente nel db",
+                        message_id=msg.message_id,
+                        parse_mode="HTML"
+                    )
+                return
 
             # print("Accesso garantito")
             self.add_new_user(user)
@@ -546,6 +555,7 @@ class DB:
 
         developer_message.clear()
 
+    @utils.catch_exception
     def request_access(self, bot, user):
         """Invia la richiesta di accesso ai comandi agli id presenti in veleloper_dict"""
         to_send = "L'utente :\nid: " + str(user["id"]) + "\nusername: " + str(user["username"]) + "\nfirst_name: " + \
