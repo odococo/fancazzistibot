@@ -343,6 +343,8 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                                             text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
                                                  giorni[int(giorno) % 7])
             self.bot.pinChatMessage(chat_id, message.message_id, True)
+        self.bot.deleteMessage(chat_id=self.update.message.chat.id,
+                          message_id=self.update.message.message_id)
 
     def Autente(self):
         """Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
