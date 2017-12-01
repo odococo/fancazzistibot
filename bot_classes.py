@@ -395,7 +395,7 @@ class Boss:
 
         # prendi il dizionario, lista  e id
         self.inizzializza_user_data(user_data)
-        boss = self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        boss = self.db.get_punteggi_username()
         if not boss:
             boss = {}
             id = 0
@@ -426,7 +426,7 @@ class Boss:
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
 
         self.inizzializza_user_data(user_data)
-        user_data['punteggi'] = self.db.execute(db_call.TABELLE['punteggio']['select']['all_and_users'])
+        user_data['punteggi'] = self.db.get_punteggi_username()
 
         reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                            one_time_keyboard=False)

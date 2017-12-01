@@ -217,6 +217,10 @@ class DB:
         query = TABELLE['punteggio']['select']['all']
         return self.execute(query)
 
+    def get_punteggi_username(self):
+        return self.execute(TABELLE['punteggio']['select']['all_and_users'])
+
+
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
         # salvo l'id dell'utente o del bot
