@@ -160,12 +160,12 @@ TABELLE = {
             'by_id': 'SELECT * FROM items WHERE id = %s'
         },
         'insert': {
-            'new_user': "INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0)"
+            'new_user': "INSERT INTO items VALUES(%s, 0,0,0,0,0,0,0,0)"
         },
         'update': """UPDATE items
-              SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s
+              SET c = %s, nc = %s, r = %s, ur = %s, l = %s, e=%s,  u=%s, ue=%s
               WHERE id = %s""",
-        'reset': """UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0 WHERE id =%s""",
+        'reset': """UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0, ue=0 WHERE id =%s""",
         'delete': "DELETE FROM items WHERE id = %s"
     }
 }
@@ -276,6 +276,7 @@ class DB:
             items_db['l'],
             items_db['e'],
             items_db['u'],
+            items_db['ue'],
             id
         ))
 
