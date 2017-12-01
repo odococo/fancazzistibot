@@ -84,7 +84,7 @@ def catch_exception(f):
         except Exception as e:
             print(args, kwargs)
             print(e)
-            for value in developer_dicts:
+            for value in developer_dicts.values():
                 args[1].send_message(value, str(e))
                 #args[1].send_message(value, "With update:"+get_pretty_json(str(args[2])))
 

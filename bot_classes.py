@@ -982,12 +982,12 @@ class EasterEggs:
 
         disp=updater.dispatcher
 
-       # disp.add_handler(MessageHandler(Filters.text, self.rip))
+        disp.add_handler(MessageHandler(Filters.text, self.rip))
 
 
     def rip(self, bot, update):
         if "private" in update.message.chat.type: return
-        if not "rip" == update.message.text.lower(): return
+        if "rip" not in update.message.text.lower(): return
         if not self.probability(): return
         bot.sendPhoto(update.message.chat.id,self.photos['rip'],reply_to_message_id=update.message.message_id)
 
