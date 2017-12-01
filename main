@@ -27,7 +27,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler, Filters)
 
-from bot_classes import Loot, Boss, Cerca, Compra
+from bot_classes import Loot, Boss, Cerca, Compra, EasterEggs
 from comandi import new_command, videos
 from db_call import DB, developer_dicts
 from negozi_loot import use_api, ITEMS
@@ -186,7 +186,17 @@ def log_update(bot, update):
     logger.info(update)
 
 def video_reciver(bot, update):
-    update.message.reply_text("id video= "+str(update.message.video.file_id))
+    if "private" in update.message.chat.type:
+        update.message.reply_text("id video = "+str(update.message.video.file_id))
+
+def photo_reciver(bot, update):
+    if "private" in update.message.chat.type:
+        update.message.reply_text("id image = "+str(update.message.photo.file_id))
+
+def sticker_reciver(bot, update):
+    if "private" in update.message.chat.type:
+        update.message.reply_text("id image = "+str(update.message.sticker.file_id))
+
 
 def send_help_video(bot, update):
     """Manda il video di help"""
@@ -242,6 +252,8 @@ def main():
     #         updater.bot.send_message(elem["id"],"",reply_markup=ReplyKeyboardRemove())
 
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
+    disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
+    disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video,pattern="/helpvideo"))
 
 
@@ -254,6 +266,7 @@ def main():
     Boss(updater, db)
     Cerca(updater, db, oggetti)
     Compra(updater,db)
+    EasterEggs(updater)
 
 
     # handler per richiedere accesso al bot

@@ -968,3 +968,10 @@ class Compra:
 
         update.message.reply_text(text)
         return self.inizzializza(bot, update, user_data)
+
+
+class EasterEggs:
+
+
+    def __init__(self, updater):
+        self.updater=updater
