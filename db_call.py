@@ -518,6 +518,8 @@ class DB:
         user_lst = text[1:]
         user = {"id": user_lst[0], "username": " ".join(user_lst[1:])}
         if (command.strip("/") == "consentiAccessoSi"):
+            if DB.execute(TABELLE["id_users"]["select"]["from_id"], (user['id'],)): return
+
             # print("Accesso garantito")
             self.add_new_user(user)
             bot.send_message(user["id"], "Ti è stato garantito l'accesso al bot!")
@@ -552,7 +554,6 @@ class DB:
                   str(bot.username) + "\nConsenti?"
         user = str(user["id"]) + " " + str(user["username"])
         # print(to_send,user)
-        # todo: salva gli id dei messaggi inviati e cancellali nel grant_deny
         for dev in developer_dicts.values():
             developer_message.append(bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
