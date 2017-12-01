@@ -987,7 +987,7 @@ class EasterEggs:
 
     def rip(self, bot, update):
         if "private" in update.message.chat.type: return
-        if "rip" == update.message.text.lower(): return
+        if not "rip" == update.message.text.lower(): return
         if not self.probability(): return
         bot.sendPhoto(update.message.chat.id,self.photos['rip'],reply_to_message_id=update.message.message_id)
 
