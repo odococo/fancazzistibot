@@ -88,7 +88,7 @@ def catch_exception(f):
             print(e)
             tp=traceback.format_exc()
             for value in developer_dicts.values():
-                args[1].send_message(value, "EXCEPTION MESSAGE :"+str(e.message)+"\nTRACEBACK : "+tp)
+                args[1].send_message(value, "EXCEPTION MESSAGE :"+str(e)+"\nTRACEBACK : "+tp)
                 #args[1].send_message(value, "With update:\n"+get_pretty_json(str(args[2])))
 
     return func
