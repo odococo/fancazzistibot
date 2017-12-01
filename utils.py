@@ -78,7 +78,11 @@ def is_fanca_admin(id):
 
     return id in admin
 
+#decoratore per inviare eccezioni direttamente ai developres
+
 def catch_exception(f):
+    """Invia le eccezzioni direttamente ai developers, il suo utilizzo è  @catch_exception posto sopra un metodo di una classe
+    che ha i primi due parametri bot e update"""
     @functools.wraps(f)
     def func(*args, **kwargs):
         try:
@@ -88,8 +92,8 @@ def catch_exception(f):
             print(e)
             tp=traceback.format_exc()
             for value in developer_dicts.values():
-                args[1].send_message(value, "EXCEPTION MESSAGE :"+str(e)+"\nTRACEBACK : "+tp)
-                #args[1].send_message(value, "With update:\n"+get_pretty_json(str(args[2])))
+                args[1].send_message(value, "TRACEBACK : "+tp)
+                args[1].send_message(value, "With update:\n"+get_pretty_json(str(args[2])))
 
     return func
 
