@@ -23,7 +23,8 @@ COMANDI_PLUS = """\n
 """
 
 
-videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @craftlootbot","BAADBAADdgQAAkLEAAFRvQtpL8P36MkC")}
+videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @craftlootbot","BAADBAADdgQAAkLEAAFRvQtpL8P36MkC"),
+        'rarita':("Tutorial su come utilizzare i comandi /compra e /rarita","BAADBAADygIAAtD9GVEWYOqYqzCxvAI")}
 
 
 class Command():
