@@ -562,7 +562,10 @@ class DB:
                   str(user["first_name"]) + "\nlast_name: " + str(
             user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \
                   str(bot.username) + "\nConsenti?"
+        bot.send_message(user['id'], "La richiesta di accesso al bot è stata inoltrata, aspetta la risposta")
+
         user = str(user["id"]) + " " + str(user["username"])
+
         # print(to_send,user)
         for dev in developer_dicts.values():
             developer_message.append(bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
