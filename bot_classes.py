@@ -915,6 +915,7 @@ class Compra:
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Nessuno", callback_data="/sconti 0"),
+             InlineKeyboardButton("10 %", callback_data="/sconti 0.1"),
              InlineKeyboardButton("20 %", callback_data="/sconti 0.2"),
              InlineKeyboardButton("30 %", callback_data="/sconti 0.3")]
 
