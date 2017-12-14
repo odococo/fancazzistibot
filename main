@@ -25,7 +25,7 @@ from telegram.ext import (
     Updater,
     RegexHandler,
     CallbackQueryHandler,
-    MessageHandler, Filters)
+    MessageHandler, Filters, CommandHandler)
 
 from bot_classes import Loot, Boss, Cerca, Compra, EasterEggs
 from comandi import new_command, videos
@@ -197,9 +197,6 @@ def sticker_reciver(bot, update):
     if "private" in update.message.chat.type:
         update.message.reply_text("id stiker = "+str(update))
 
-def file_reciver(bot, update):
-    if "private" in update.message.chat.type:
-        update.message.reply_text("id file = "+str(update))
 
 
 def send_help_video(bot, update):
@@ -210,6 +207,10 @@ def send_help_video(bot, update):
         message_id=update.callback_query.message.message_id
     )
     bot.sendVideo(update.callback_query.message.chat_id, videos[video][1])
+
+
+def send_talenti(bot, update):
+    bot.sendDocument(update.message.chat_id,"BQADBAADzwMAAl9bYVOvyYj5p6SWIQI")
 
 
 # ==================MAIN==========================================
@@ -257,8 +258,8 @@ def main():
 
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
-    disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
-    disp.add_handler(MessageHandler(Filters.document, sticker_reciver))
+    disp.add_handler(MessageHandler(Filters.sticker & Filters.document , sticker_reciver))
+    disp.add_handler(CommandHandler("talenti", send_talenti))
     disp.add_handler(CallbackQueryHandler(send_help_video,pattern="/helpvideo"))
 
 
