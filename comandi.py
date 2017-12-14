@@ -118,6 +118,7 @@ Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine
 Se, invece non ti interessa avere queste informazioni premi "Annulla".
 In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n\n
 <b>=====FINE=====</b>\n\n
+Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
         self.answer(text, parse_mode="HTML")
