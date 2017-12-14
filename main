@@ -228,7 +228,7 @@ def main():
     debug = mode // 2 == 1
     bot_id=get_bot_id(dev)
     token=str(bot_id)+db.get_token(bot_id)['token']
-    updater = Updater(token)
+    #updater = Updater(token)
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
     # add_bot(get_bot(updater.bot))
 
