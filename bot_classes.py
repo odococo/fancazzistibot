@@ -23,23 +23,19 @@ class Loot:
         # adding dispatchers
         if not self.DEBUG:
             ricerca_decor = db.elegible_loot_user(self.ricerca)
-            coversation = ConversationHandler(
-                [RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True)],
-                states={
-                    1: [MessageHandler(Filters.text, self.stima, pass_user_data=True)]
-                },
-                fallbacks=[CommandHandler('Annulla', self.annulla, pass_user_data=True)])
-            dispatcher.add_handler(coversation)
+            stima_decor = db.elegible_loot_user(self.stima)
+            dispatcher.add_handler(RegexHandler("^Lista oggetti necessari per", self.ricerca, pass_user_data=True))
+            dispatcher.add_handler(MessageHandler(Filters.text, self.stima, pass_user_data=True))
+
+            dispatcher.add_handler(ricerca_decor)
+            dispatcher.add_handler(stima_decor)
 
         else:
-            coversation = ConversationHandler(
-                [RegexHandler("^Lista oggetti necessari per", self.ricerca, pass_user_data=True)],
-                states={
-                    1: [MessageHandler(Filters.text, self.stima, pass_user_data=True)]
-                },
-                fallbacks=[CommandHandler('Annulla', self.annulla, pass_user_data=True)])
-            dispatcher.add_handler(coversation)
 
+            dispatcher.add_handler(RegexHandler("^Lista oggetti necessari per", self.ricerca, pass_user_data=True))
+            dispatcher.add_handler(MessageHandler(Filters.text, self.stima, pass_user_data=True))
+
+        dispatcher.add_handler(CallbackQueryHandler(self.decision, pattern="/loot", pass_user_data=True))
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi", pass_user_data=True))
 
     @catch_exception
@@ -52,12 +48,13 @@ class Loot:
         user_data['quantita'] = []
         user_data['costo'] = []
         user_data['to_send_negozi'] = []
+        user_data['to_send'] = []
 
         # aggiungo l'user nel db items se non è presente
         if not self.DEBUG: self.db.add_user_to_items(update.message.from_user.id)
 
         text = update.message.text.lower()
-        to_send = self.estrai_oggetti(text, user_data, update.message.from_user.id)
+        user_data['to_send'] = self.estrai_oggetti(text, user_data, update.message.from_user.id)
         try:
             # self.costo_craft = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
             user_data['costo_craft'] = text.split("per eseguire i craft spenderai: ")[1].split("§")[0].replace("'", "")
@@ -65,15 +62,41 @@ class Loot:
             # self.costo_craft=0
             user_data['costo_craft'] = 0
 
-        for elem in to_send:
-            update.message.reply_text(elem)
-        reply_markup = ReplyKeyboardMarkup([["Annulla", "Stima"]], one_time_keyboard=True)
-        update.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
-                                  "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
-                                  reply_markup=reply_markup)
-        # self.stima_flag = True
-        user_data['stima_flag'] = True
-        return 1
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Negozi", callback_data="/loot negozi")],
+             [InlineKeyboardButton("Ricerca", callback_data="/loot ricerca")]
+        ])
+        update.message.reply_text("Puoi scegliere se visualizzare i comandi ricerca oppure ottenere una stringa negozi",reply_markup=inline)
+
+
+    @catch_exception
+    def decision(self, bot, update, user_data):
+        param = update.callback_query.data.split()[1]
+
+
+        bot.delete_message(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id
+        )
+        if "ricerca" in param:
+
+            for elem in user_data['to_send']:
+                bot.sendMessage(update.callback_query.message.chat.id,elem)
+
+            reply_markup = ReplyKeyboardMarkup([["Annulla", "Stima"]], one_time_keyboard=True)
+            update.callback_query.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
+                                      "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
+                                      reply_markup=reply_markup)
+            # self.stima_flag = True
+            user_data['stima_flag'] = True
+            return
+        elif "negozi" in param:
+            to_send="/negozi "
+            for elem in user_data['quantita']:
+                to_send+=elem[1]+"::"+elem[0]+","
+
+            to_send=to_send.rstrip(",")
+            bot.sendMessage(update.callback_query.message.chat.id, to_send)
 
     @catch_exception
     def stima(self, bot, update, user_data):
