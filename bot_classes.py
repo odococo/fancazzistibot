@@ -102,6 +102,8 @@ class Loot:
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
                top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
 
+        if not user_data['stima_flag']: return
+
         if update.message.text == "Annulla":
             return self.annulla(bot, update, user_data)
         elif update.message.text == "Stima":
