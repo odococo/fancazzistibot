@@ -223,7 +223,7 @@ def main():
 
     db = DB()#database
 
-    mode=3
+    # mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     bot_id=get_bot_id(dev)
