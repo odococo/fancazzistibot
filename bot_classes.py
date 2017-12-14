@@ -25,7 +25,7 @@ class Loot:
             ricerca_decor = db.elegible_loot_user(self.ricerca)
             stima_decor = db.elegible_loot_user(self.stima)
             dispatcher.add_handler(RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True))
-            #dispatcher.add_handler(MessageHandler(Filters.text, stima_decor, pass_user_data=True))
+            dispatcher.add_handler(MessageHandler(Filters.text, stima_decor, pass_user_data=True))
 
 
 
@@ -84,7 +84,7 @@ class Loot:
 
             reply_markup = ReplyKeyboardMarkup([["Annulla", "Stima"]], one_time_keyboard=True)
             update.callback_query.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
-                                      "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti annulla.",
+                                      "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti Annulla.",
                                       reply_markup=reply_markup)
             # self.stima_flag = True
             user_data['stima_flag'] = True
@@ -97,7 +97,6 @@ class Loot:
             to_send=to_send.rstrip(",")
             bot.sendMessage(update.callback_query.message.chat.id, to_send)
 
-    @catch_exception
     def stima(self, bot, update, user_data):
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
                top 10 di quelli piu costosi e una stima del tempo che impiegherai a comprarli tutti."""
