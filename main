@@ -197,6 +197,10 @@ def sticker_reciver(bot, update):
     if "private" in update.message.chat.type:
         update.message.reply_text("id stiker = "+str(update))
 
+def file_reciver(bot, update):
+    if "private" in update.message.chat.type:
+        update.message.reply_text("id file = "+str(update))
+
 
 def send_help_video(bot, update):
     """Manda il video di help"""
@@ -254,6 +258,7 @@ def main():
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
     disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
+    disp.add_handler(MessageHandler(Filters.document, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video,pattern="/helpvideo"))
 
 
