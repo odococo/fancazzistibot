@@ -208,11 +208,6 @@ def send_help_video(bot, update):
     )
     bot.sendVideo(update.callback_query.message.chat_id, videos[video][1])
 
-
-def send_talenti(bot, update):
-    bot.sendDocument(update.message.chat_id,"BQADBAADzwMAAl9bYVOvyYj5p6SWIQI")
-
-
 # ==================MAIN==========================================
 
 
@@ -259,7 +254,6 @@ def main():
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
     disp.add_handler(MessageHandler(Filters.sticker and Filters.document , sticker_reciver))
-    disp.add_handler(CommandHandler("talenti", send_talenti))
     disp.add_handler(CallbackQueryHandler(send_help_video,pattern="/helpvideo"))
 
 

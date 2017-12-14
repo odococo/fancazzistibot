@@ -152,7 +152,9 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         #self.update.message.reply_text(descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
         self.bot.send_message(self.update.message.from_user.id,descrizione, reply_markup=InlineKeyboardMarkup([inline]), parse_mode="HTML")
 
-
+    def Utalenti(self):
+        """Manda un pdf con tutta la lista degli oggetti necessari per ogni talento"""
+        self.bot.sendDocument(self.update.message.chat_id, "BQADBAADGAMAAgs3mVFa4igIcxDUAwI")
 
     def Uroll(self):
         """Lancia un dado senza specificare nulla"""
