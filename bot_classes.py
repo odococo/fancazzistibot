@@ -25,7 +25,7 @@ class Loot:
             ricerca_decor = db.elegible_loot_user(self.ricerca)
             stima_decor = db.elegible_loot_user(self.stima)
             dispatcher.add_handler(RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True))
-            dispatcher.add_handler(MessageHandler(Filters.text, stima_decor, pass_user_data=True))
+            #dispatcher.add_handler(MessageHandler(Filters.text, stima_decor, pass_user_data=True))
 
 
 
