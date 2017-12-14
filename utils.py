@@ -42,6 +42,7 @@ rarita - invia le rarita che piu ti mancano nello zaino
 resetrarita - resetta le rarità salvate sinora
 removeuser - rimuove un user dal bot
 helpvideo - invia un video tutorial
+talenti - invia un pdf dei talenti
 """
 
 
