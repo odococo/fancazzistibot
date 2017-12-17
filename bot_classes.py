@@ -9,7 +9,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 from utils import is_numeric, catch_exception
 
-DEBUG = True
+DEBUG = False
 
 
 class Loot:
