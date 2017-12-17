@@ -352,7 +352,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
     def Uartefatti(self):
         """Invia la lista di artefatti"""
-        msg="""[Forwarded from Osho]
+        msg="""
 FIAMMEGGIANTE
 Per ottenere questo artefatto devi raggiungere 85 punti dungeon e possedere 5.000.000§, questi ultimi ti verranno sottratti per completare il rituale.
 
