@@ -4,6 +4,8 @@
 import random
 
 import math
+from datetime import datetime, timedelta
+
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
@@ -328,6 +330,24 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         with open(path2img, "rb") as file:
             self.bot.sendPhoto(self.update.message.from_user.id, file)
         os.remove(path2img)
+
+    def Ucheoresonotra(self):
+        """Calcola l'ora che sarà tra un tot di ore\nUso: /cheoresonotra hh:mm\nEsempio: /cheoresonotra 7:45 """
+        if len(self.params)!= 1:
+            self.update.message.reply_text("Non hai inserito il numero corretto di parametri!\nUso: /cheoresonotra hh:mm"
+                                           "\nEsempio: /cheoresonotra 7:45")
+            return
+
+        try:
+            ore=int(self.params.split(":")[0])
+            minuti=int(self.params.split(":")[1])
+        except ValueError:
+            self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /cheoresonotra hh:mm"
+                                           "\nEsempio: /cheoresonotra 7:45")
+            return
+
+        future_hour = datetime.now() + timedelta(hours=ore, minutes=minuti)
+        self.update.message.reply_text("Tra "+str(ore)+" ore e "+str(minuti)+" minuti, saranno le "+str(future_hour))
 
     # admin command ------------------------------------------------------------
     def Apinboss(self):
