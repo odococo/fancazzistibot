@@ -44,6 +44,7 @@ removeuser - rimuove un user dal bot
 helpvideo - invia un video tutorial
 talenti - invia un pdf dei talenti
 cheoresonotra - ti dice che ore saranno tra un tot di tempo
+artefatti - invia la lista di artefatti
 """
 
 
