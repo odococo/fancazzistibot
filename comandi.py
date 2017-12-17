@@ -339,8 +339,8 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             return
 
         try:
-            ore=int(self.params.split(":")[0])
-            minuti=int(self.params.split(":")[1])
+            ore=int(self.params[0].split(":")[0])
+            minuti=int(self.params[0].split(":")[1])
         except ValueError:
             self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /cheoresonotra hh:mm"
                                            "\nEsempio: /cheoresonotra 7:45")
