@@ -348,7 +348,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
 
         future_hour = datetime.now() + timedelta(hours=ore, minutes=minuti)
         self.update.message.reply_text("Tra "+str(ore)+" ore e "+str(minuti)+" minuti, saranno le "+
-                                       str(str(future_hour.time()).split(".")[0])+" del "+str(future_hour.date()))
+                                       str(str(future_hour.time()).split(".")[0])+" del "+str(future_hour.date().strftime('%Y-%m-%d')))
 
     # admin command ------------------------------------------------------------
     def Apinboss(self):
