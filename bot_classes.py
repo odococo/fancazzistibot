@@ -1,14 +1,15 @@
+import math
+import random
 import re
 from collections import OrderedDict, Counter
-import random
+
 import emoji
-import math
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
-
-import db_call
 from utils import is_numeric, catch_exception
+
+DEBUG = True
 
 
 class Loot:
@@ -18,23 +19,29 @@ class Loot:
 
         dispatcher = updater.dispatcher
 
-        self.DEBUG = False
-
+        converstaion = 0
         # adding dispatchers
-        if not self.DEBUG:
+        if not DEBUG:
             ricerca_decor = db.elegible_loot_user(self.ricerca)
             stima_decor = db.elegible_loot_user(self.stima)
             dispatcher.add_handler(RegexHandler("^Lista oggetti necessari per", ricerca_decor, pass_user_data=True))
-            dispatcher.add_handler(MessageHandler(Filters.text, stima_decor, pass_user_data=True))
+            converstion = ConversationHandler(
+                [CallbackQueryHandler(self.decision, pattern="/loot", pass_user_data=True)],
+                states={
+                    1: [MessageHandler(Filters.text, stima_decor, pass_user_data=True)],
 
-
-
+                }, fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)])
         else:
 
             dispatcher.add_handler(RegexHandler("^Lista oggetti necessari per", self.ricerca, pass_user_data=True))
-            dispatcher.add_handler(MessageHandler(Filters.text, self.stima, pass_user_data=True))
+            converstion = ConversationHandler(
+                [CallbackQueryHandler(self.decision, pattern="/loot", pass_user_data=True)],
+                states={
+                    1: [MessageHandler(Filters.text, self.stima, pass_user_data=True)],
 
-        dispatcher.add_handler(CallbackQueryHandler(self.decision, pattern="/loot", pass_user_data=True))
+                }, fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)])
+
+        dispatcher.add_handler(converstion)
         dispatcher.add_handler(CallbackQueryHandler(self.send_negozi, pattern="^/mostraNegozi", pass_user_data=True))
 
     @catch_exception
@@ -50,7 +57,7 @@ class Loot:
         user_data['to_send'] = []
 
         # aggiungo l'user nel db items se non è presente
-        if not self.DEBUG: self.db.add_user_to_items(update.message.from_user.id)
+        if not DEBUG: self.db.add_user_to_items(update.message.from_user.id)
 
         text = update.message.text.lower()
         user_data['to_send'] = self.estrai_oggetti(text, user_data, update.message.from_user.id)
@@ -63,15 +70,14 @@ class Loot:
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Negozi", callback_data="/loot negozi")],
-             [InlineKeyboardButton("Ricerca", callback_data="/loot ricerca")]
+            [InlineKeyboardButton("Ricerca", callback_data="/loot ricerca")]
         ])
-        update.message.reply_text("Puoi scegliere se visualizzare i comandi ricerca oppure ottenere una stringa negozi",reply_markup=inline)
-
+        update.message.reply_text("Puoi scegliere se visualizzare i comandi ricerca oppure ottenere una stringa negozi",
+                                  reply_markup=inline)
 
     @catch_exception
     def decision(self, bot, update, user_data):
         param = update.callback_query.data.split()[1]
-
 
         bot.delete_message(
             chat_id=update.callback_query.message.chat_id,
@@ -80,22 +86,24 @@ class Loot:
         if "ricerca" in param:
 
             for elem in user_data['to_send']:
-                bot.sendMessage(update.callback_query.message.chat.id,elem)
+                bot.sendMessage(update.callback_query.message.chat.id, elem)
 
             reply_markup = ReplyKeyboardMarkup([["Annulla", "Stima"]], one_time_keyboard=True)
-            update.callback_query.message.reply_text("Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
-                                      "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti Annulla.",
-                                      reply_markup=reply_markup)
+            update.callback_query.message.reply_text(
+                "Adesso puoi inoltrarmi tutti i risultati di ricerca di @lootplusbot per "
+                "avere il totale dei soldi da spendere. Quando hai finito premi Stima, altrimenti Annulla.",
+                reply_markup=reply_markup)
             # self.stima_flag = True
             user_data['stima_flag'] = True
-            return
+            return 1
         elif "negozi" in param:
-            to_send="/negozi "
+            to_send = "/negozi "
             for elem in user_data['quantita']:
-                to_send+=elem[1]+"::"+elem[0]+","
+                to_send += elem[1] + "::" + elem[0] + ","
 
-            to_send=to_send.rstrip(",")
+            to_send = to_send.rstrip(",")
             bot.sendMessage(update.callback_query.message.chat.id, to_send)
+            return ConversationHandler.END
 
     def stima(self, bot, update, user_data):
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
@@ -325,7 +333,7 @@ class Loot:
         regex_zaino_vuoto = re.compile(r"> ([0-9]+) di ([A-z ]+)")
         regex_rarita = re.compile(r"\(([a-z]+)\)")
         lst = re.findall(regex_comandi, aggiornato)  # per i comandi
-        if not self.DEBUG: self.salva_rarita_db(re.findall(regex_rarita, aggiornato), user_id)
+        if not DEBUG: self.salva_rarita_db(re.findall(regex_rarita, aggiornato), user_id)
         quantita = re.findall(regex_zaino_completo, aggiornato)
         if not quantita: quantita = re.findall(regex_zaino_vuoto,
                                                aggiornato)  # se cerchi con lo zaino vuoto cambia il messaggio
@@ -910,9 +918,12 @@ class Compra:
 
         disp = updater.dispatcher
 
-        eleg = self.db.elegible_loot_user(self.sconti)
+        if not DEBUG:
+            eleg = self.db.elegible_loot_user(self.sconti)
+            disp.add_handler(CommandHandler("compra", eleg, pass_user_data=True))
 
-        disp.add_handler(CommandHandler("compra", eleg, pass_user_data=True))
+        else:
+            disp.add_handler(CommandHandler("compra", self.sconti, pass_user_data=True))
 
         conversation = ConversationHandler(
             [CallbackQueryHandler(self.budget_ask, pattern="/sconti", pass_user_data=True)],
@@ -970,7 +981,7 @@ class Compra:
         text = "Perfetto, adesso madami una serie di numeri separati da spazio, ad ogni numero corrisponde la relativa percentuale" \
                " del tuo budget che vuoi spendere sullo scrigno. La posizione dei numeri è associata alla posizione degli scrigni per esempio:\n" \
                "se mandi '0 0 20 30 25 25' vuol dire:\n" \
-               "0 Lengo, 0 Ferro, 20% Prezioso, 30% Diamante, 25% Leggendario e 25% Epico.\nNota bene la somma dei numeri deve fare 100!"
+               "0 Lengo [C], 0 Ferro [NC], 20% Prezioso [R], 30% Diamante [UR], 25% Leggendario [L] e 25% Epico [E].\nNota bene la somma dei numeri deve fare 100!"
         update.message.reply_text(text)
         return 2
 
@@ -1009,32 +1020,32 @@ class Compra:
 
         for elem in res.keys():
 
-            if res[elem]: text += "Compra " + str(res[elem]) + " di Scrigno " + elem + "\n"
+            if res[elem]: text += "Compra <b>" + str(res[elem]) + "</b> di Scrigno " + elem + "\n"
 
-        update.message.reply_text(text)
+        if not text: text="Si è verificato un errore...contatta @brandimax"
+
+        update.message.reply_text(text, parse_mode="HTML")
         return self.inizzializza(bot, update, user_data)
 
 
 class EasterEggs:
 
-
     def __init__(self, updater):
-        self.updater=updater
-        self.photos={'rip':"AgADBAAD8KsxG0LECFEjH-KrMEdbaS2KIBoABLOSJLrQ2GR6oV0AAgI"}
-        self.prob=0.1
+        self.updater = updater
+        self.photos = {'rip': "AgADBAAD8KsxG0LECFEjH-KrMEdbaS2KIBoABLOSJLrQ2GR6oV0AAgI"}
+        self.prob = 0.1
 
-        disp=updater.dispatcher
+        disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(Filters.text, self.rip))
-
 
     @catch_exception
     def rip(self, bot, update):
         if "private" in update.message.chat.type: return
         if "rip" != update.message.text.lower(): return
         if not self.probability(): return
-        bot.sendPhoto(update.message.chat.id,self.photos['rip'],reply_to_message_id=update.message.message_id)
+        bot.sendPhoto(update.message.chat.id, self.photos['rip'], reply_to_message_id=update.message.message_id)
 
     def probability(self):
-        num=random.uniform(0, 1)
-        return num<self.prob
+        num = random.uniform(0, 1)
+        return num < self.prob
