@@ -519,6 +519,12 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     def Dciaosoho(self):
         self.bot.send_message(241317532,"ciao osho")
 
+    def Dciao(self):
+        """Invia ciao ad un id"""
+        if len(self.params)!= 1:
+            self.update.message.reply_text("Non hai inserito l'id")
+        self.bot.send_message(self.params[0],"ciao bello")
+
 
 
 def new_command(bot, update):
