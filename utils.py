@@ -47,6 +47,7 @@ cheoresonotra - ti dice che ore saranno tra un tot di tempo
 artefatti - invia la lista di artefatti
 svegliamadre - manda un messaggio ai membri del team madre
 deletefromall - rimuove un user dal bot
+sveglia - invia un messaggio a uno o piu username per spronarli ad attaccare il boss
 """
 
 

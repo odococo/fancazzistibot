@@ -334,7 +334,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
     def Ucheoresonotra(self):
         """Calcola l'ora che sarà tra un tot di ore\nUso: /cheoresonotra hh:mm\nEsempio: /cheoresonotra 7:45 """
         if len(self.params)!= 1:
-            self.update.message.reply_text("Non hai inserito il numero corretto di parametri!\nUso: /cheoresonotra hh:mm"
+            self.answer("Non hai inserito il numero corretto di parametri!\nUso: /cheoresonotra hh:mm"
                                            "\nEsempio: /cheoresonotra 7:45")
             return
 
@@ -347,7 +347,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
             return
 
         future_hour = datetime.now() + timedelta(hours=ore, minutes=minuti)
-        self.update.message.reply_text("Tra "+str(ore)+" ore e "+str(minuti)+" minuti, saranno le "+
+        self.answer("Tra "+str(ore)+" ore e "+str(minuti)+" minuti, saranno le "+
                                        str(str(future_hour.time()).split(".")[0])+" del "+str(future_hour.date().strftime('%d-%m-%Y')))
 
     def Uartefatti(self):
@@ -374,7 +374,7 @@ Per ottenere questo artefatto devi:
 > Aver partecipato e aiutato a vincere 5 imprese globali
 
 L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe essere aggiornato lievemente"""
-        self.update.message.reply_text(msg)
+        self.answer(msg)
 
 
     # admin command ------------------------------------------------------------
@@ -504,27 +504,38 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     def Ddeletefromall(self):
         """Rimuove un o piu users (separati da spazio) dal bot completamente"""
         if len(self.params)<1:
-            self.update.message.reply_text("Il comando deve essere seguito da uno o piu username separati da spazio")
+            self.answer("Il comando deve essere seguito da uno o piu username separati da spazio")
         for elem in self.params:
             user=self.db.get_user(elem)
             print(user)
             try:
                 self.db.delete_from_all(user['id'])
                 self.bot.send_message(user['id'], "Sei stao rimosso dal bot")
-                self.update.message.reply_text(str(elem)+" è stato rimosso dal bot!")
+                self.answer(str(elem)+" è stato rimosso dal bot!")
 
             except (KeyError, TypeError):
-                self.update.message.reply_text("Non ho trovato "+str(elem)+" tra gli users del bot")
+                self.answer("Non ho trovato "+str(elem)+" tra gli users del bot")
 
     def Dciaosoho(self):
         self.bot.send_message(241317532,"ciao osho")
 
-    def Dciao(self):
-        """Invia ciao ad un id"""
-        if len(self.params)!= 1:
-            self.update.message.reply_text("Non hai inserito l'id")
-        self.bot.send_message(self.params[0],"ciao bello")
+    def Asveglia(self):
+        """Invia un messaggio a uno o piu username per spronarli ad attaccare il boss"""
+        if len(self.params)< 1:
+            self.answer("Non hai inserito nessun username")
+            return
 
+        to_send=["Attacca il boss dannazzione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
+
+        for elem in self.params:
+            user = self.db.get_user(elem)
+            print(user)
+            try:
+                self.bot.send_message(user['id'], random.choice(to_send))
+
+            except (KeyError, TypeError):
+                self.answer("Non ho trovato " + str(elem) + " tra gli users del bot")
+        self.answer("Messaggio inviato")
 
 
 def new_command(bot, update):
