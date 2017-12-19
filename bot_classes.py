@@ -250,7 +250,7 @@ class Loot:
         try :
             update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
         except KeyError:
-            update.callback_query.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+            bot.sendMessage(update.callback_query.message.chat.id, msg, reply_markup=ReplyKeyboardRemove())
         finally:
             return ConversationHandler.END
 
