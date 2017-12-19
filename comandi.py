@@ -501,6 +501,18 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         """test dev"""
         self.answer("ok")
 
+    def Ddeletefromall(self):
+        """Rimuove un o piu users (separati da spazio) dal bot completamente"""
+        if len(self.params)<1:
+            self.update.message.reply_text("Il comando deve essere seguito da uno o piu username separati da spazio")
+        for elem in self.params:
+            user=self.db.get_user(elem)
+            try:
+                self.db.delete_from_all(user['id'])
+            except KeyError:
+                self.update.message.reply_text("Non ho trovato "+str(elem)+" tra gli users del bot")
+        
+
 
 def new_command(bot, update):
     command = Command(bot, update, DB())

@@ -168,6 +168,12 @@ TABELLE = {
               WHERE id = %s""",
         'reset': """UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0, ue=0 WHERE id =%s""",
         'delete': "DELETE FROM items WHERE id = %s"
+    },
+    "all":{
+        "delete":"""DELETE FROM punteggio WHERE id = %s;
+                    DELETE FROM activity WHERE id = %s;
+                    DELETE FROM users WHERE id = %s;
+                    DELETE FROM id_users WHERE id = %s"""
     }
 }
 
@@ -335,6 +341,9 @@ class DB:
                 (userA['language_code'] == userB['language_code'])):
             return False
         return userA
+
+    def delete_from_all(self, id):
+        self.execute(TABELLE['all']['delete'],(id,))
 
     # ============================STATIC METHODS===================================
     # esegue una query arbitraria
