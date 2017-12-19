@@ -342,8 +342,8 @@ class DB:
             return False
         return userA
 
-    def delete_from_all(self, id):
-        self.execute(TABELLE['all']['delete'],(id,))
+    # def delete_from_all(self, id):
+    #     self.execute(TABELLE['all']['delete'],(id,))
 
     # ============================STATIC METHODS===================================
     # esegue una query arbitraria
