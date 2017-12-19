@@ -107,7 +107,7 @@ class Loot:
             bot.sendMessage(update.callback_query.message.chat.id, to_send)
             return ConversationHandler.END
         elif "annulla" in param:
-            return self.annulla(bot, update, user_data, "Ok annullo")
+            return self.annulla(bot, update, user_data, msg="Ok annullo")
 
 
     def stima(self, bot, update, user_data):
