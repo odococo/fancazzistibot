@@ -46,6 +46,7 @@ talenti - invia un pdf dei talenti
 cheoresonotra - ti dice che ore saranno tra un tot di tempo
 artefatti - invia la lista di artefatti
 svegliamadre - manda un messaggio ai membri del team madre
+deletefromall - rimuove un user dal bot
 """
 
 

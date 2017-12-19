@@ -507,6 +507,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
             self.update.message.reply_text("Il comando deve essere seguito da uno o piu username separati da spazio")
         for elem in self.params:
             user=self.db.get_user(elem)
+            print(user)
             try:
                 self.db.delete_from_all(user['id'])
                 self.bot.send_message(user['id'], "Sei stao rimosso dal bot")
