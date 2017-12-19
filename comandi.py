@@ -541,7 +541,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         users=self.db.get_users()
 
         for  user in users:
-            self.answer("Mando messaggio a "+user['id'])
+            self.answer("Mando messaggio a "+str(user['id']))
             self.bot.send_message(user['id'],"Messaggio di prova, se lo ricevi vuol dire che non mi hai bloccato!\nBravo/a")
 
 
