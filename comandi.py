@@ -516,6 +516,9 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
             except (KeyError, TypeError):
                 self.update.message.reply_text("Non ho trovato "+str(elem)+" tra gli users del bot")
 
+    def Dciaosoho(self):
+        self.bot.send_message(241317532,"ciao osho")
+
 
 
 def new_command(bot, update):
