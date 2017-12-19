@@ -376,7 +376,15 @@ Per ottenere questo artefatto devi:
 L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe essere aggiornato lievemente"""
         self.update.message.reply_text(msg)
 
+
     # admin command ------------------------------------------------------------
+
+    def Asvegliamadre(self):
+        """Manda un messaggio ai membri del Team madre"""
+        users=self.db.get_punteggi()
+        for user in users:
+            self.bot.send_message(user['id']," ".join(self.params))
+
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
         boss -> 0 (titano) o 1 (phoenix)
