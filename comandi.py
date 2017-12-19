@@ -480,6 +480,23 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.bot.send_message(user['id'],"Sei stato rimosso dal bot")
         self.answer("Ho rimosso "+username+" dal bot")
 
+    def Asveglia(self):
+        """Invia un messaggio a uno o piu username per spronarli ad attaccare il boss"""
+        if len(self.params)< 1:
+            self.answer("Non hai inserito nessun username")
+            return
+
+        to_send=["Attacca il boss dannazzione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
+
+        for elem in self.params:
+            user = self.db.get_user(elem)
+            print(user)
+            try:
+                self.bot.send_message(user['id'], random.choice(to_send))
+
+            except (KeyError, TypeError):
+                self.answer("Non ho trovato " + str(elem) + " tra gli users del bot")
+        self.answer("Messaggio inviato")
 
     # developer comands ----------------------------------------
 
@@ -519,23 +536,15 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     def Dciaosoho(self):
         self.bot.send_message(241317532,"ciao osho")
 
-    def Asveglia(self):
-        """Invia un messaggio a uno o piu username per spronarli ad attaccare il boss"""
-        if len(self.params)< 1:
-            self.answer("Non hai inserito nessun username")
-            return
+    def Dchiblocca(self):
 
-        to_send=["Attacca il boss dannazzione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
+        users=self.db.get_users()
 
-        for elem in self.params:
-            user = self.db.get_user(elem)
-            print(user)
-            try:
-                self.bot.send_message(user['id'], random.choice(to_send))
+        for  user in users:
+            self.answer("Mando messaggio a "+user['id'])
+            self.bot.send_message(user['id'],"Messaggio di prova, se lo ricevi vuol dire che non mi hai bloccato!\nBravo/a")
 
-            except (KeyError, TypeError):
-                self.answer("Non ho trovato " + str(elem) + " tra gli users del bot")
-        self.answer("Messaggio inviato")
+
 
 
 def new_command(bot, update):
