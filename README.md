@@ -36,6 +36,11 @@ e le percentuali di scrigni da comprare (in ordine : [Legno, Ferro, Prezioso, Di
 * */rarita*: ti mostra la percentuale di oggetti divisi per rarità che ti mancano maggiormente (vedi CraftlootBot, rarità)
 * */resetrarita* : resetta le rarita relative al tuo account, da usare ogni volta che fai acquisti all'emporio
 * */helpvideo* : per quei comandi difficili da comprendere abbiamo creato dei video tutorial
+* */artefatti* - invia la lista di artefatti
+* */cheoresonotra hh:mm* - ti dice che ore saranno tra hh:mm (dove h sono le ore e m i minuti), un esempio sarebbe /cheoresonotra 7:45
+* */talenti* - invia un pdf con tutti i necessari (compreso il costo totale) per i talenti
+
+
 ## CraftLootBot
 Se Il bot riceve un messaggio inoltrato da @craftlootbot, precisamente un messaggio generato dal comando */lista oggetto* si attevierà
 una sua funzione. Prima di tutto riceverete una serie di messaggi del tipo:
@@ -93,5 +98,6 @@ Boss apparte ci sono altri comandi riservati ai soli admin:
 * */registra utente permesso*: cambia i permessi di un utente (per id o per username) nel valore *permesso* [ tester, admin, loot_admin ,loot_user , banned]
 * */sendtoall msg*: ti permette di inviare un messaggio *msg* a tutti gli utenti nel database
 * */removeuser username* : rimuovi un utente dal bot 
+* */svegliamadre msg*: manda un messaggio a tutti i membri del team madre (quelli che sono registrati con i comadni boss)
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉

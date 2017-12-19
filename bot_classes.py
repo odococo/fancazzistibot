@@ -241,10 +241,7 @@ class Loot:
          return : fine conversazione"""
 
         if not msg: msg = "Ok ho annullato tutto"
-        self.stima_flag = False
-        self.costo_craft = 0
-        self.quantita = []
-        self.to_send_negozi = []
+
 
         user_data['stima_flag'] = False
         user_data['costo_craft'] = 0
@@ -254,8 +251,8 @@ class Loot:
             update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
         except KeyError:
             update.callback_query.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
-
-        return ConversationHandler.END
+        finally:
+            return ConversationHandler.END
 
     @catch_exception
     def send_negozi(self, bot, update, user_data):
