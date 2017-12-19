@@ -456,7 +456,7 @@ class Boss:
 
         # print(user_data['lista_boss'], boss)
 
-        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"]], one_time_keyboard=True)
+        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan","Annulla"]], one_time_keyboard=True)
         update.message.reply_text("Di quale boss stiamo parlando?",
                                   reply_markup=reply_markup)
         return 1
@@ -594,6 +594,8 @@ class Boss:
                                       reply_markup=reply_markup)
 
             return 1
+
+        elif choice =="Annulla": return self.fine(bot, update, user_data, "Ok")
 
         else:
             # print(choice)
@@ -1049,3 +1051,18 @@ class EasterEggs:
     def probability(self):
         num = random.uniform(0, 1)
         return num < self.prob
+
+
+class Constes:
+
+    def __init__(self, updater):
+        self.updater = updater
+        self.contest_flag=False
+        self.contest_creator=False
+
+
+        disp = updater.dispatcher
+
+
+
+
