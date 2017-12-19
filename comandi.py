@@ -380,7 +380,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     # admin command ------------------------------------------------------------
 
     def Asvegliamadre(self):
-        """Manda un messaggio ai membri del Team madre"""
+        """Manda un messaggio ai membri del Team madre (quelli dentro la lista punteggio)"""
         users=self.db.get_punteggi()
         for user in users:
             self.bot.send_message(user['id']," ".join(self.params))

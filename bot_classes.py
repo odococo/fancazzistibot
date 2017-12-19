@@ -70,7 +70,9 @@ class Loot:
 
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Negozi", callback_data="/loot negozi")],
-            [InlineKeyboardButton("Ricerca", callback_data="/loot ricerca")]
+            [InlineKeyboardButton("Ricerca", callback_data="/loot ricerca")],
+            [InlineKeyboardButton("Annulla", callback_data="/loot annulla")]
+
         ])
         update.message.reply_text("Puoi scegliere se visualizzare i comandi ricerca oppure ottenere una stringa negozi",
                                   reply_markup=inline)
@@ -104,6 +106,9 @@ class Loot:
             to_send = to_send.rstrip(",")
             bot.sendMessage(update.callback_query.message.chat.id, to_send)
             return ConversationHandler.END
+        elif "annulla" in param:
+            return self.annulla(bot, update, user_data, "Ok annullo")
+
 
     def stima(self, bot, update, user_data):
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
@@ -245,7 +250,10 @@ class Loot:
         user_data['costo_craft'] = 0
         user_data['quantita'] = []
 
-        update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+        try :
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+        except KeyError:
+            update.callback_query.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
 
         return ConversationHandler.END
 
