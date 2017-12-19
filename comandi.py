@@ -509,9 +509,12 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
             user=self.db.get_user(elem)
             try:
                 self.db.delete_from_all(user['id'])
+                self.bot.send_message(user['id'], "Sei stao rimosso dal bot")
+                self.update.message.reply_text(str(elem)+" è stato rimosso dal bot!")
+
             except KeyError:
                 self.update.message.reply_text("Non ho trovato "+str(elem)+" tra gli users del bot")
-        
+
 
 
 def new_command(bot, update):
