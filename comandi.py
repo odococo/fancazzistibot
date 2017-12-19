@@ -513,7 +513,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
                 self.bot.send_message(user['id'], "Sei stao rimosso dal bot")
                 self.update.message.reply_text(str(elem)+" è stato rimosso dal bot!")
 
-            except KeyError or TypeError:
+            except (KeyError, TypeError):
                 self.update.message.reply_text("Non ho trovato "+str(elem)+" tra gli users del bot")
 
 
