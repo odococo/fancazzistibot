@@ -1144,7 +1144,7 @@ class Top:
         if not isinstance(top_ps, list): top_ps = [top_ps]
 
         # sorting
-        sorted_top = sorted(top_ps, key=lambda k: k[sort_key])
+        sorted_top = sorted(top_ps, key=lambda k: k[sort_key], reverse=True)
         to_send=""
         idx=1
         for pl in sorted_top:

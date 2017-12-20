@@ -20,7 +20,8 @@ COMANDI_PLUS = """\n
 /attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
 /cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2\n
 /compra - ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'emporio e il tuo budget\n
-/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti\n\n
+/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti
+/top - ti permette di visualizzare la classifica dei top player in base a [pc totali, pc settimanali, edosoldi, abilità, rango)\n\n
 <b>=====COMANDI DA INOLTRO=====</b>\n\n
 """
 
@@ -123,6 +124,8 @@ Ti sarà inviata una comoda lista di comandi /ricerca da inoltrare a @lootplusbo
 Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
 Se, invece non ti interessa avere queste informazioni premi "Annulla".
 In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n\n
+<b>Top</b>
+Inviando il messaggio "Giocatore" che ottieni in @lootgamebot aggiornerai il database e potrai visualizzare la tuo posizione in classifica! (leggi il comando /top per ulteriori informazioni)
 <b>=====FINE=====</b>\n\n
 Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!

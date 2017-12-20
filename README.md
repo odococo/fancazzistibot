@@ -36,10 +36,10 @@ e le percentuali di scrigni da comprare (in ordine : [Legno, Ferro, Prezioso, Di
 * */rarita*: ti mostra la percentuale di oggetti divisi per rarità che ti mancano maggiormente (vedi CraftlootBot, rarità)
 * */resetrarita* : resetta le rarita relative al tuo account, da usare ogni volta che fai acquisti all'emporio
 * */helpvideo* : per quei comandi difficili da comprendere abbiamo creato dei video tutorial
-* */artefatti* - invia la lista di artefatti
-* */cheoresonotra hh:mm* - ti dice che ore saranno tra hh:mm (dove h sono le ore e m i minuti), un esempio sarebbe /cheoresonotra 7:45
-* */talenti* - invia un pdf con tutti i necessari (compreso il costo totale) per i talenti
-
+* */artefatti* : invia la lista di artefatti
+* */cheoresonotra hh:mm* : ti dice che ore saranno tra hh:mm (dove h sono le ore e m i minuti), un esempio sarebbe /cheoresonotra 7:45
+* */talenti* : invia un pdf con tutti i necessari (compreso il costo totale) per i talenti
+* */top* : mostra la classifica dei migliori gioatori in base a vari parametri (pc totali, pc settimanali, edosoldi, abilità, rango)
 
 ## CraftLootBot
 Se Il bot riceve un messaggio inoltrato da @craftlootbot, precisamente un messaggio generato dal comando */lista oggetto* si attevierà
@@ -62,6 +62,10 @@ Stima ti permette di ottenere informazioni utili sulla ricerca dei tuoi oggetti:
 ##### Rarità
 Ogni volta che inoltri un messaggio da @craftlootbot dato dal comando /lista saranno salvate le rarità che 
 ti mancano. Questo torna utile quando vuoi avere una stima delle quantià di scrigni da comprare.
+
+## Top
+Inoltrando al bot il messaggio "Giocatore" che ottieni da @lootbotplus, verrà aggiornata la lista dei top player e potrai visualizzare il tuo 
+posto
 
 ## Boss (Admin only)
 Per una maggiore facilità nella gestione degli attacchi al boss del team madre abbiamo implementato i seguenti comandi semplici e di 
