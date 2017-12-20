@@ -103,9 +103,13 @@ Boss apparte ci sono altri comandi riservati ai soli admin:
 * */sendtoall msg*: ti permette di inviare un messaggio *msg* a tutti gli utenti nel database
 * */removeuser username* : rimuovi un utente dal bot 
 * */svegliamadre msg*: manda un messaggio a tutti i membri del team madre (quelli che sono registrati con i comadni boss)
+
+## Comandi Developer
+* */sendtoall msg* : manda un messaggio a tutti quelli presenti nel database
+* */deletefromall username* : cancella un utente da tutti i database del bot
+* */chiblocca* : l'esecuzione termina quando un utente ha bloccato il bot, e stampa l'id dell'utente
+
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉
 
 ## TODO
-* usa getChat per verificare se un user ha bloccato il bot
-* Calcola il punteggio delle pietra da inoltro zaino

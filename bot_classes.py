@@ -1,3 +1,4 @@
+import inspect
 import math
 import random
 import re
@@ -9,6 +10,7 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
+from comandi import Command
 from utils import is_numeric, catch_exception
 
 DEBUG = False
@@ -1089,8 +1091,8 @@ class Top:
             disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
             disp.add_handler(CommandHandler("top", self.top_command))
         else:
-            add_player_decor=self.db.elegible_loot_user(self.add_player)
-            top_command_decor=self.db.elegible_loot_user(self.top_command)
+            add_player_decor = self.db.elegible_loot_user(self.add_player)
+            top_command_decor = self.db.elegible_loot_user(self.top_command)
             disp.add_handler(RegexHandler("^Giocatore 👤", add_player_decor))
             disp.add_handler(CommandHandler("top", top_command_decor))
 
@@ -1137,15 +1139,15 @@ class Top:
         top_ps = self.db.get_all_top()
         sort_key = update.callback_query.data.split()[1]
 
-        if sort_key=="esci":
+        if sort_key == "esci":
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
             )
             return
 
-        prov_dict={
-            "pc_tot":"📦Punti Craft Totali📦",
+        prov_dict = {
+            "pc_tot": "📦Punti Craft Totali📦",
             "pc_set": "📁Punti Craft Settimanali📁",
             "money": "💰EdoSoldi💰",
             "ability": "🎗Abilità🎗",
@@ -1157,11 +1159,11 @@ class Top:
 
         # sorting
         sorted_top = sorted(top_ps, key=lambda k: k[sort_key], reverse=True)
-        to_send="Classifica per <b>"+prov_dict[sort_key]+"</b>\n"
-        idx=1
+        to_send = "Classifica per <b>" + prov_dict[sort_key] + "</b>\n"
+        idx = 1
         for pl in sorted_top:
-            to_send+=self.pretty_user(pl,idx, sort_key)
-            idx+=1
+            to_send += self.pretty_user(pl, idx, sort_key)
+            idx += 1
 
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
@@ -1186,10 +1188,13 @@ class Top:
 
         future_hour = user['agg'] + timedelta(hours=1)
 
-        res += "<b>" + user['username'] + "</b> con <b>" + "{:,}".format(user[sort_key]).replace(",",".") + "</b> (<i>" + \
-               str(future_hour.time()).split(".")[0]+" del "+str(future_hour.date().strftime('%d-%m-%Y')) + "</i>)\n"
+        res += "<b>" + user['username'] + "</b> con <b>" + "{:,}".format(user[sort_key]).replace(",",
+                                                                                                 ".") + "</b> (<i>" + \
+               str(future_hour.time()).split(".")[0] + " del " + str(
+            future_hour.date().strftime('%d-%m-%Y')) + "</i>)\n"
 
         return res
+
 
 class PietreDrago:
 
@@ -1201,60 +1206,169 @@ class PietreDrago:
 
         disp.add_handler(RegexHandler("^.* possiedi \(D\):", self.calc_val))
 
-
     def calc_val(self, bot, update):
 
-        msg=update.message.text
+        msg = update.message.text
 
-        regex_legno=re.compile(r"Pietra Anima di Legno \(([0-9]+)")
-        regex_ferro=re.compile(r"Pietra Anima di Ferro \(([0-9]+)")
-        regex_preziosa=re.compile(r"Pietra Anima Preziosa \(([0-9]+)")
-        regex_diamante=re.compile(r"Pietra Cuore di Diamante \(([0-9]+)")
-        regex_leggendario=re.compile(r"Pietra Cuore Leggendario \(([0-9]+)")
-        regex_epico=re.compile(r"Pietra Spirito Epico \(([0-9]+)")
+        regex_legno = re.compile(r"Pietra Anima di Legno \(([0-9]+)")
+        regex_ferro = re.compile(r"Pietra Anima di Ferro \(([0-9]+)")
+        regex_preziosa = re.compile(r"Pietra Anima Preziosa \(([0-9]+)")
+        regex_diamante = re.compile(r"Pietra Cuore di Diamante \(([0-9]+)")
+        regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+)")
+        regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+)")
 
-        legno=re.findall(regex_legno,msg)
-        ferro=re.findall(regex_ferro,msg)
-        preziosa=re.findall(regex_preziosa,msg)
-        diamante=re.findall(regex_diamante,msg)
-        leggendario=re.findall(regex_leggendario,msg)
-        epico=re.findall(regex_epico,msg)
+        legno = re.findall(regex_legno, msg)
+        ferro = re.findall(regex_ferro, msg)
+        preziosa = re.findall(regex_preziosa, msg)
+        diamante = re.findall(regex_diamante, msg)
+        leggendario = re.findall(regex_leggendario, msg)
+        epico = re.findall(regex_epico, msg)
 
-        if len(legno)>0: legno=int(legno[0])
-        else: legno=0
+        if len(legno) > 0:
+            legno = int(legno[0])
+        else:
+            legno = 0
 
-        if len(ferro)>0: ferro=int(ferro[0])*2
-        else: ferro=0
+        if len(ferro) > 0:
+            ferro = int(ferro[0]) * 2
+        else:
+            ferro = 0
 
-        if len(preziosa)>0: preziosa=int(preziosa[0])*3
-        else: preziosa=0
+        if len(preziosa) > 0:
+            preziosa = int(preziosa[0]) * 3
+        else:
+            preziosa = 0
 
-        if len(diamante)>0: diamante=int(diamante[0])*4
-        else: diamante=0
+        if len(diamante) > 0:
+            diamante = int(diamante[0]) * 4
+        else:
+            diamante = 0
 
-        if len(leggendario)>0: leggendario=int(leggendario[0])*5
-        else: leggendario=0
+        if len(leggendario) > 0:
+            leggendario = int(leggendario[0]) * 5
+        else:
+            leggendario = 0
 
-        if len(epico)>0: epico=int(epico[0])*6
-        else: epico=0
+        if len(epico) > 0:
+            epico = int(epico[0]) * 6
+        else:
+            epico = 0
 
-        tot=legno+ferro+preziosa+diamante+leggendario+epico
+        tot = legno + ferro + preziosa + diamante + leggendario + epico
 
-        to_send="Valore delle Pietre 🐲:\n"
-        if legno: to_send+="Pietra Anima di Legno 🌴 : <b>"+str(legno)+"</b>\n"
-        if ferro: to_send+="Pietra Anima di Ferro ⚙️ : <b>"+str(ferro)+"</b>\n"
-        if preziosa: to_send+="Pietra Anima Preziosa ✨ : <b>"+str(preziosa)+"</b>\n"
-        if diamante: to_send+="Pietra Cuore di Diamante 💎 : <b>"+str(diamante)+"</b>\n"
-        if leggendario: to_send+="Pietra Cuore Leggendario 💥 : <b>"+str(leggendario)+"</b>\n"
-        if epico: to_send+="Pietra Spirito Epico 🌪 : <b>"+str(epico)+"</b>\n"
-        to_send+="Totale : <b>"+str(tot)+"</b>\n"
-        lv=tot/70
-        if lv<1: to_send+="Puoi arrivare al <b>"+"{0:.2f}".format(lv*100)+"%</b> di un livello"
-        elif lv<2:  to_send+="Puoi far salire il drago di <b>"+str(math.floor(lv))+"</b> livello e <b>"+"{0:.2f}".format(lv%1*100)+"%</b>"
-        else:  to_send+="Puoi far salire il drago di <b>"+str(math.floor(lv))+"</b> livelli e <b>"+"{0:.2f}".format(lv%1*100)+"%</b>"
+        to_send = "Valore delle Pietre 🐲:\n"
+        if legno: to_send += "Pietra Anima di Legno 🌴 : <b>" + str(legno) + "</b>\n"
+        if ferro: to_send += "Pietra Anima di Ferro ⚙️ : <b>" + str(ferro) + "</b>\n"
+        if preziosa: to_send += "Pietra Anima Preziosa ✨ : <b>" + str(preziosa) + "</b>\n"
+        if diamante: to_send += "Pietra Cuore di Diamante 💎 : <b>" + str(diamante) + "</b>\n"
+        if leggendario: to_send += "Pietra Cuore Leggendario 💥 : <b>" + str(leggendario) + "</b>\n"
+        if epico: to_send += "Pietra Spirito Epico 🌪 : <b>" + str(epico) + "</b>\n"
+        to_send += "Totale : <b>" + str(tot) + "</b>\n"
+        lv = tot / 70
+        if lv < 1:
+            to_send += "Puoi arrivare al <b>" + "{0:.2f}".format(lv * 100) + "%</b> di un livello"
+        elif lv < 2:
+            to_send += "Puoi far salire il drago di <b>" + str(
+                math.floor(lv)) + "</b> livello e <b>" + "{0:.2f}".format(lv % 1 * 100) + "%</b>"
+        else:
+            to_send += "Puoi far salire il drago di <b>" + str(
+                math.floor(lv)) + "</b> livelli e <b>" + "{0:.2f}".format(lv % 1 * 100) + "%</b>"
 
-        update.message.reply_text(to_send,parse_mode="HTML")
+        update.message.reply_text(to_send, parse_mode="HTML")
 
 
+class Help():
+
+    def __init__(self, updater):
+        self.updater = updater
+
+        disp = updater.dispatcher
+        # todo: add permission decor
+
+        disp.add_handler(CommandHandler("help", None))
+
+    def get_commands_help(self):
+        funcs = inspect.getmembers(Command, predicate=inspect.isfunction)
+        admin = []
+        user = []
+        developer = []
+
+        for elem in funcs:
+            if elem[0][0] == "A":
+                admin.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
+            elif elem[0][0] == "U":
+                user.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
+
+            elif elem[0][0] == "D":
+                developer.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
+
+        return user, admin, developer
+
+    def get_other_commands(self):
+        return """\n
+/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme
+/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
+/compra - ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'emporio e il tuo budget
+/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti
+/top - ti permette di visualizzare la classifica dei top player in base a [pc totali, pc settimanali, edosoldi, abilità, rango)
+"""
+
+    def forward_commands(self):
+        return """
+<b>=====COMANDI DA INOLTRO=====</b>\n\n
+I comandi da inoltro sono molteplici, verranno suddivisi in base al tipo di messaggio inoltrato.
+
+<b>----Loot----</b>
+Questo comando viene attivato quando inoltri il messaggio <b>/lista oggetto</b> da @craftlootbot.
+Una volta inoltrato ti sarà chiesta quale informazione vuoi visualizzare tra le seguenti:
+<b>Negozi</b>
+Ti permette di ottenere una comoda stringa di negozi degli oggetti mancanti da poter inoltrare a @lootbotplus
+<b>Ricerca</b>
+Questo comando prevede piu passi:
+\t1) Una volta premuto il bottone ti saranno inviati dei messaggi "/ricerca oggetto1, oggetto2, oggetto3" per ogni oggetto che ti manca
+\t2) Inoltra questi messaggi a @lootplusbot
+\t3) Ri-inoltra i messaggi li @lootplusbot (quelli con i prezzi e i negozi) a @fancabot
+\t4) Clicca stima per ottenere il costo tolate (comprendente acquisto degli oggetti e craft stesso), il tempo stimato per comprare gli oggetti, la top 10 degli oggetti piu costosi (solo se sono presenti 10 elementi o più)
+\t5) Ti verrà chiesto se vuoi visualizzare i negozi, clicca <i>"Si"</i> per ottenere una lista di comandi <pre>@lootplusbot codiceNegozio</pre>, altrimenti <i>"No"</i> per annullare
 
 
+<b>----Boss----</b>
+Comando solo per <b>ADMIN</b>, per l'opzione user visualizzare il help del comando /attacchiboss
+Questo comando viene attivato quando inoltri il messaggio <b>Team</b> di @lootgamebot
+Potrete scegliere tra tre opzioni:
+\t1)<i>Titan : +1 punto per chi non ha attaccato
+\t2)<i>Phoenix</i> : +2 punti per chi non ha attaccato
+\t3)<i>Annulla</i> : se vi siete sbagliati
+Scelto il tipo di boss verranno salvati i punti dei membri non attaccanti, ovviamente chi ha piu punti si trova in pericolo di kick dal team
+<b>NB</b>: Se qualcuno dei membri NON ha inviato il comando /start al bot non saranno salvati i punti del suddetto, ma verrai notificato.
+Successivamente potrete scegliere 4 opzioni:
+\t1)<i>Completa</i> : Visualizza gli utenti divisi in due categorie, attaccanti (con danno, punteggio e attacchi), non attaccanti (con punteggio e occupazione corrente (cava, missione))
+\t2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
+\t3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
+\t4)<i>Annulla</i> : Per completare la fase di visualizzazione
+
+
+<b>----Top----</b>
+Questo comando viene attivato inoltrando il messaggio <b>Giocatore</b> da @lootgamebot
+Inviando il messaggio ggiornerai il database e potrai visualizzare la tuo posizione in classifica con gli altri membri.
+La classifica mostra la data di aggiornamento e i punti realtivi a:
+\t1)Punti craft totali
+\t2)Punti craft settimanali
+\t3)Edosoldi
+\t4)Abilità
+\t5)Rango 
+
+<b>----Pietre del Drago----</b>
+Questo comando viene attivato inoltrando il messagio <b>/zaino D</b> da @lootplusbot
+Otterrai il valore (in exp drago) di tutte le pietre del drago che sono presenti nel tuo zaino nei seguenti formati:
+\t1)Punti individuali per ogni pietra
+\t2)Punti totali
+\t3)Avanzamento in termini di livello del drago se decidi di nutrirlo con tutte le pietre
+"""
+
+    def get_credits(self):
+        return """<b>=====CREDITI=====</b>\n\n
+Crediti: @brandimax e @Odococo e un ringraziamento speciale a @DiabolicamenteMe per avermi aiutato ❤️.
+Se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
+Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
+"""

@@ -547,9 +547,11 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
                 self.answer("Non ho trovato "+str(elem)+" tra gli users del bot")
 
     def Dciaosoho(self):
+        """Manda ciao ad osho"""
         self.bot.send_message(241317532,"ciao osho")
 
     def Dchiblocca(self):
+        """Permette di ottenere l'id di chi ha bloccato il bot"""
 
         @utils.catch_exception
         def inner(bot, update):
