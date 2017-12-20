@@ -270,7 +270,7 @@ def main():
     Compra(updater,db)
     #EasterEggs(updater)
     Top(updater,db)
-    PietreDrago(updater)
+    PietreDrago(updater,db)
     Help(updater,db)
 
 
