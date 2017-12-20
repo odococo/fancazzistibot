@@ -1076,7 +1076,7 @@ class Top:
 
         disp = updater.dispatcher
         #todo: add permission decor
-        disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
+        disp.add_handler(RegexHandler("^Giocatore", self.add_player))
         disp.add_handler(CommandHandler("top",self.get_player))
 
 
