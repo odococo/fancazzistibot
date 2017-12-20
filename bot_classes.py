@@ -1248,6 +1248,11 @@ class PietreDrago:
         if leggendario: to_send+="Pietra Cuore Leggendario : <b>"+str(leggendario)+"</b>\n"
         if epico: to_send+="Pietra Spirito Epico : <b>"+str(epico)+"</b>\n"
         to_send+="Totale : <b>"+str(tot)+"</b>"
+        lv=math.floor(tot/70)
+        if lv==0: to_send+="Puoi arrivare al "+"{0:.2f}".format(70/tot*100)+"% di un livello"
+        elif lv!=1:  to_send+="Puoi far salire il drago di "+str(math.floor(tot/70))+" livelli"
+        else:  to_send+="Puoi far salire il drago di  "+str(math.floor(tot/70))+" livello"
+
 
         update.message.reply_text(to_send,parse_mode="HTML")
 
