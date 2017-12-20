@@ -72,16 +72,27 @@ def text_splitter_lines(text, splitter="\n", split_every=5):
         if to_append: res.append(to_append)
     return res
 def text_splitter_bytes(text,splitter="\n", split_every=4096):
-    """Divide un messaggio da mandare in piu parti, ritorna una lista di stringhe"""
+    """Divide un messaggio da mandare in piu parti
+    @:param text: messaggio da dividere
+    @:type: str
+    @:param splitter: lo splitter secondo cui dividere il messggio (default \n)
+    @:type: str
+    @:param split_every: bytes secondo cui splittare il text (default 4096)
+    @:type: int"""
+    #divide il testo
     text = [elem+splitter for elem in text.split(splitter) if elem]
 
     res=[]
     to_append=""
     for elem in text:
+        #se la lunghezza del testo in bytes del to_append + elem supera il parametrp
         if len((to_append+elem).encode('utf-8'))>=split_every:
+            #appendi e resetta to_append
             res.append(to_append)
             to_append=""
+        # altrimenti aggiungi elem
         to_append+=elem
+    #se la lunghezza del text è inferiore a split_every appendi al res
     if not res: res.append(to_append)
     return res
 

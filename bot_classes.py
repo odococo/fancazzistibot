@@ -402,8 +402,12 @@ class Boss:
         lista[0]: nome \n
         lista[1]: Missione/cava + tempo se in missione o cava, 1 altrimenti\n
         lista[2]: 0 se non c'è stato attacco al boss, tupla altrimenti: tupla[0] danno, tupla[1] numero di boss"""
+
+        #prendi il messaggio
         prova = msg.split("Attività membri:\n")[1]
+        #trasforma le omoji in testo
         prova = emoji.demojize(prova)
+        #compila i pattern
         name_reg1 = re.compile(r"([0-z_]+) :")
         name_reg2 = re.compile(r"^([0-z_]+) .*")
         obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
@@ -411,6 +415,7 @@ class Boss:
 
         res = []
 
+        #cerca tutto con i vari regex
         for elem in prova.split("\n\n"):
             try:
                 name = re.findall(name_reg1, elem)[0]
@@ -436,33 +441,39 @@ class Boss:
 
     @catch_exception
     def boss_admin(self, bot, update, user_data):
-        """Inoltra il messaggio del boss, solo per admin"""
-        # print("Admin boss")
+        """Inoltra il messaggio del boss, solo per admin
+        @:return: ritorna lo state del prossimo handler"""
 
         # prendi il dizionario, lista  e id
         self.inizzializza_user_data(user_data)
+        #prendi i dati dal databse
         boss = self.db.get_punteggi_username()
+        #se è vuoto inizzializza
         if not boss:
             boss = {}
             id = 0
         else:
+            #differenza tra dizionario e lista
             try:
                 id = boss[0]["msg_id"]
                 user_data['single_dict'] = False
             except KeyError:
                 id = boss["msg_id"]
 
+        #salva i dati
         user_data['punteggi'] = boss
         user_data['last_update_id'] = id
 
         user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
+        #se il messaggio presenta le stesse info avverti l'user
         if self.same_message(boss, user_data['lista_boss']):
             update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
             return 1
 
         # print(user_data['lista_boss'], boss)
 
+        #genera e invia risposta
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan", "Annulla"]], one_time_keyboard=True)
         update.message.reply_text("Di quale boss stiamo parlando?",
                                   reply_markup=reply_markup)
@@ -470,8 +481,11 @@ class Boss:
 
     @catch_exception
     def boss_user(self, bot, update, user_data):
-        """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche"""
+        """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche
+                @:return: ritorna lo state del prossimo handler"""
 
+
+        #prendi le info dal db
         self.inizzializza_user_data(user_data)
         user_data['punteggi'] = self.db.get_punteggi_username()
 
@@ -482,6 +496,7 @@ class Boss:
 
     @catch_exception
     def boss_reset_confirm(self, bot, update, user_data):
+        """Conferma l'operazione di reset dei punteggi"""
         if "Si" in update.callback_query.data:
             user_data['lista_boss'] = []
             user_data['punteggi'] = {}
@@ -502,6 +517,7 @@ class Boss:
 
     @catch_exception
     def boss_reset_ask(self, bot, update):
+        """Chiede la conferma per il reset dei punteggi"""
 
         update.message.reply_text("Sei sicuro di voler resettare i punteggi?\nNon potrai piu recuperarli",
                                   reply_markup=InlineKeyboardMarkup([[
@@ -765,11 +781,13 @@ class Cerca:
 
     @catch_exception
     def cerca_craft(self, bot, update, user_data):
-        """/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato
-        num1>num2 cerca oggetti craft con valore compreso tra num1 e num2."""
+        """Cerca oggetti nell'intervallo craft specificato dall'utente"""
+
+        #prendi l'intervallo
         param = update.message.text.split()[1:]
         self.inizzializza_user_data(user_data)
 
+        #controlla che ci siano 1 o due parametri
         if len(param) == 0 or len(param) > 2:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
                                       "/cercaCcraft maggioreDi minoreDi\n"
@@ -777,7 +795,7 @@ class Cerca:
                                       " l'intervallo di punti craft in cui vuoi cercare.")
             return
 
-
+        #controlla che siano numerici
         elif len(param) == 1 and is_numeric(param[0]):
             user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0])]
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
@@ -794,9 +812,11 @@ class Cerca:
             update.message.reply_text("Non hai inviato dei numeri corretti")
             return
 
+        #cerca quanti oggetti sono stati trovati
         num_ris = len(user_data['risultati'])
         if num_ris == 0: return self.no_results(bot, update)
 
+        #inline per la selezione della rarità
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("X", callback_data="/rarita X"),
              InlineKeyboardButton("UE", callback_data="/rarita UE"),
@@ -805,7 +825,7 @@ class Cerca:
              InlineKeyboardButton("UR", callback_data="/rarita UR")],
             [InlineKeyboardButton("Tutti", callback_data="/rarita tutti")]
         ])
-
+        #generazione e invio del messaggio
         text = "Ho trovato <b>" + str(num_ris) + "</b> oggetti che rispettano i tuoi parametri\n"
 
         update.message.reply_text(text +
@@ -814,15 +834,20 @@ class Cerca:
 
     @catch_exception
     def filtra_rarita(self, bot, update, user_data):
+        """Filtra i risultati trovati precedentemente a seconda della rarità"""
         # todo: prova a far scegliere piu rarità
-        user_data['rarita'] = update.callback_query.data.split()[1]
+        #prendi la rarità scelte dall'utente
+        #user_data['rarita'] = update.callback_query.data.split()[1]
         rarita = update.callback_query.data.split()[1]
+        #filtra se non sono state scelte tutte
         if not "tutti" in rarita:
             user_data['risultati'] = [elem for elem in user_data['risultati'] if elem['rarity'] == rarita]
 
+        #conta i risultati
         num_ris = len(user_data['risultati'])
         if num_ris == 0: return self.no_results(bot, update)
 
+        #genera e invia risposta
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("r0", callback_data="/rinascita 1"),
              InlineKeyboardButton("r1", callback_data="/rinascita 2"),
@@ -844,6 +869,7 @@ class Cerca:
 
     @catch_exception
     def no_results(self, bot, update):
+        """Funzione da chiamare in caso non ci siano risultati della ricerca"""
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text="Non ho trovato risultati per i tuoi criteri di ricerca",
@@ -853,13 +879,18 @@ class Cerca:
 
     @catch_exception
     def filtra_rinascita(self, bot, update, user_data):
+        """Filtra i risualti ottenuti precedentemente in base alla rinascita"""
+        #prendi i parametri scelti dall'utente
         rinascita = update.callback_query.data.split()[1]
 
         # print(self.maggioreDi, self.minoreDi, self.rarita, self.rinascita)
+        #filtra
         user_data['risultati'] = [elem for elem in user_data['risultati'] if elem['reborn'] <= int(rinascita)]
 
+        #stessa storia
         if len(user_data['risultati']) == 0: return self.no_results(bot, update)
 
+        #genera e invia risposta
         to_send = "Ho trovato <b>" + str(
             len(user_data['risultati'])) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
                                            " annullare la ricerca"
@@ -881,6 +912,7 @@ class Cerca:
 
     @catch_exception
     def ordina(self, bot, update, user_data):
+        """Ordina i risultati trovati in base alla scelta dell'utente"""
         param = update.callback_query.data.split()[1]
         to_send = ""
         sorted_res = []
@@ -889,6 +921,7 @@ class Cerca:
         if "annulla" in param:
             to_send.append("Ok annullo")
 
+        #ordina lista in base a parametro
         elif "puntiCraft" in param:
             sorted_res = sorted(user_data['risultati'], key=lambda key: key["craft_pnt"])
         elif "rarita" in param:
@@ -896,25 +929,31 @@ class Cerca:
         elif "rinascita" in param:
             sorted_res = sorted(user_data['risultati'], key=lambda key: key["reborn"])
 
+        #prendi l'id del messaggio
         message_id = update._effective_chat.id
 
+        #inizzializza titolo
         if sorted_res:
             bot.sendMessage(message_id, "<b>Nome   Punti Craft    Rarità     Rinascita</b>\n", parse_mode="HTML")
 
+        #aggiungi elemeenti
         for elem in sorted_res:
             to_send.append(
                 "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
                     elem["reborn"]) + "\n")
 
+        #elimina messaggio di scelta
         bot.delete_message(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id
         )
 
+        #manda i messaggi ogni 30 elementi
         while to_send:
             bot.sendMessage(message_id, "".join(to_send[:30]), parse_mode="HTML")
             to_send = to_send[30:]
 
+        #azzera lo user_data
         self.inizzializza_user_data(user_data)
 
 
@@ -924,7 +963,7 @@ class Compra:
         self.db = db
         self.scrigni = OrderedDict(
             [('Legno', 600), ('Ferro', 1200), ('Prezioso', 2400), ('Diamante', 3600), ('Leggendario', 7000),
-             ('Epico', 15000)])
+             ('Epico', 15000)]) #dizionario ordinato per mantenere la relazione quantità-tipo scrigno
 
         disp = updater.dispatcher
 
@@ -935,6 +974,7 @@ class Compra:
         else:
             disp.add_handler(CommandHandler("compra", self.sconti, pass_user_data=True))
 
+        #crea conversazione
         conversation = ConversationHandler(
             [CallbackQueryHandler(self.budget_ask, pattern="/sconti", pass_user_data=True)],
             states={
@@ -948,11 +988,16 @@ class Compra:
         disp.add_handler(conversation)
 
     def inizzializza(self, bot, updates, user_data):
+        """Inizzializza user data
+        @:param user_data: dizionario dei dati utente
+        @:type: dict
+        @:return: ritorna la fine della conversazione"""
         user_data['sconto'] = 0
         user_data['budget'] = 0
         return ConversationHandler.END
 
     def sconti(self, bot, update, user_data):
+        """Chiedi allo user se sono presenti sconti all'emporio"""
 
         self.inizzializza(bot, update, user_data)
         text = "Ci sono sconti all'emporio?"
@@ -968,6 +1013,8 @@ class Compra:
         update.message.reply_text(text, reply_markup=inline)
 
     def budget_ask(self, bot, update, user_data):
+        """Salva sconti e chiedi il budget
+        @:return: ritorna lo state del prossimo handler (guarda ConversationHandler)"""
         user_data['sconto'] = update.callback_query.data.split()[1]
 
         text = "Qual'è il tuo budget? (inviami un numero)"
@@ -982,6 +1029,9 @@ class Compra:
         return 1
 
     def budget_save(self, bot, update, user_data):
+        """Salva budget e chiedi quantita di scrigni
+        @:return: ritorna lo state del prossimo handler (guarda ConversationHandler)"""
+
 
         budget = update.message.text.strip()
         if not is_numeric(budget):
@@ -996,8 +1046,9 @@ class Compra:
         return 2
 
     def scrigni_func(self, bot, update, user_data):
+        """Salva gli scrigni e calcola la quantità da comprare """
         param = update.message.text.split(" ")
-
+        #check se l'user ha impostato correttamente gli scrigni
         if len(param) != 6:  # check sul numero dei parametri
             update.message.reply_text(
                 "Non hai inserito il numero per tutti gli scrigni! Ne ho ricevuti " + str(len(param)) + "/6")
@@ -1014,6 +1065,7 @@ class Compra:
             update.message.reply_text("La somma è errata " + str(sum(numbers)) + "/100")
             return self.inizzializza(bot, update, user_data)
 
+        #usa dizionario ordinato per non perdere la relazione quantita scrignio-tipo
         scontato = OrderedDict()
         res = {}
         # salvo i valori scontati
@@ -1027,7 +1079,7 @@ class Compra:
             res[cost] = math.floor(budget * (perc / 100) / scontato[cost])
 
         text = ""
-
+        #genera il messaggio da inviare e invia
         for elem in res.keys():
 
             if res[elem]: text += "Compra <b>" + str(res[elem]) + "</b> di Scrigno " + elem + "\n"
@@ -1035,6 +1087,7 @@ class Compra:
         if not text: text = "Si è verificato un errore...contatta @brandimax"
 
         update.message.reply_text(text, parse_mode="HTML")
+        #rinizzializza lo user_data
         return self.inizzializza(bot, update, user_data)
 
 
@@ -1060,7 +1113,7 @@ class EasterEggs:
         num = random.uniform(0, 1)
         return num < self.prob
 
-
+#todo
 class Constes:
 
     def __init__(self, updater):
@@ -1084,7 +1137,7 @@ class Top:
             [InlineKeyboardButton("Rango", callback_data="/top rango"),
              InlineKeyboardButton("Esci", callback_data="/top esci")]
 
-        ])
+        ])#inline per il messaggio
 
         disp = updater.dispatcher
         if DEBUG:
@@ -1099,6 +1152,7 @@ class Top:
         disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top"))
 
     def add_player(self, bot, update):
+        """Aggiunge user nel db e visualizza top player"""
 
         # getting demojized message
         msg = update.message.text
@@ -1134,11 +1188,12 @@ class Top:
         update.message.reply_text(to_send, reply_markup=self.inline)
 
     def get_top(self, bot, update):
-
+        """Visualizza informazioni per il top player"""
         # getting list of players and sort_key
         top_ps = self.db.get_all_top()
         sort_key = update.callback_query.data.split()[1]
 
+        # se l'user vuole uscire elimina il messaggio di scelta
         if sort_key == "esci":
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
@@ -1146,6 +1201,7 @@ class Top:
             )
             return
 
+        #sono sfaticato
         prov_dict = {
             "pc_tot": "📦Punti Craft Totali📦",
             "pc_set": "📁Punti Craft Settimanali📁",
@@ -1165,6 +1221,7 @@ class Top:
             to_send += self.pretty_user(pl, idx, sort_key)
             idx += 1
 
+        #modifica messaggio
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
@@ -1175,6 +1232,15 @@ class Top:
         )
 
     def pretty_user(self, user, idx, sort_key):
+        """Formatta messaggio di user da inviare
+        @:param user: dizionario dello user
+        @:type: dict
+        @:param idx: indice per la classifica
+        @:type: int
+        @:param sort_key: chiave secondo cui avviene il sort
+        @:type: str
+        @:return res: stringa dello user formattata
+        """
         res = ""
 
         if idx == 1:
@@ -1186,8 +1252,10 @@ class Top:
         else:
             res += str(idx) + ") "
 
+        #heroku manda l'ora corrente indietro di uno, aggiungi un ora
         future_hour = user['agg'] + timedelta(hours=1)
 
+        #crea messaggio formattato
         res += "<b>" + user['username'] + "</b> con <b>" + "{:,}".format(user[sort_key]).replace(",",
                                                                                                  ".") + "</b> (<i>" + \
                str(future_hour.time()).split(".")[0] + " del " + str(
@@ -1214,7 +1282,7 @@ class PietreDrago:
     def calc_val(self, bot, update):
 
         msg = update.message.text
-
+        #compila il pattern
         regex_legno = re.compile(r"Pietra Anima di Legno \(([0-9]+)")
         regex_ferro = re.compile(r"Pietra Anima di Ferro \(([0-9]+)")
         regex_preziosa = re.compile(r"Pietra Anima Preziosa \(([0-9]+)")
@@ -1222,6 +1290,7 @@ class PietreDrago:
         regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+)")
         regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+)")
 
+        #cerca dentro il messaggio
         legno = re.findall(regex_legno, msg)
         ferro = re.findall(regex_ferro, msg)
         preziosa = re.findall(regex_preziosa, msg)
@@ -1229,6 +1298,7 @@ class PietreDrago:
         leggendario = re.findall(regex_leggendario, msg)
         epico = re.findall(regex_epico, msg)
 
+        #se è presente casta a int e moltiplica, altrimenti setta a zero
         if len(legno) > 0:
             legno = int(legno[0])
         else:
@@ -1259,8 +1329,10 @@ class PietreDrago:
         else:
             epico = 0
 
+        #calcola il totale
         tot = legno + ferro + preziosa + diamante + leggendario + epico
 
+        #setta il messaggio da inviare
         to_send = "Valore delle Pietre 🐲:\n"
         if legno: to_send += "Pietra Anima di Legno 🌴 : <b>" + str(legno) + "</b>\n"
         if ferro: to_send += "Pietra Anima di Ferro ⚙️ : <b>" + str(ferro) + "</b>\n"
@@ -1308,11 +1380,14 @@ class Help:
         disp.add_handler(CallbackQueryHandler(self.help_decision, pattern="/help"))
 
     def get_commands_help(self):
+        """Prende le funzioni e relative doc dei metodi di Command
+        @:return user, admin, developer: liste contenenti nome funzioni e doc"""
         funcs = inspect.getmembers(Command, predicate=inspect.isfunction)
         admin = []
         user = []
         developer = []
 
+        #appende in tutte le liste nomeFunzione - doc
         for elem in funcs:
             if elem[0][0] == "A":
                 admin.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
@@ -1322,6 +1397,7 @@ class Help:
             elif elem[0][0] == "D":
                 developer.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
 
+        #appende i comandi non prenseti in Command
         admin.append("/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
                      "i punteggi non sono piu recuperabili")
 
@@ -1404,12 +1480,15 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
     #todo: create multiple page help
     def help_decision(self, bot, update):
+        """Visulauzza i vari help a seconda della scelta dell'user"""
+        #prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
         user,admin,developer=self.get_commands_help()
 
         to_send=""
         if param=="esci":
+            #elimina messaggio di scelta
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
@@ -1417,37 +1496,46 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             bot.sendMessage(update.callback_query.message.chat.id, "Spero di esserti stato utile!")
             return
         elif param=="admin":
+
             to_send+="<b>=====COMANDI ADMIN=====</b>\n\n"
+            #scrive tutti i comandi
             for elem in admin:
                 to_send+=elem+"\n\n"
-
+            #dividi il messaggio a seconda della lunghezza in bytes
             to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            #se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 to_send = to_send[0]
+            #altrimenti usa il primo elemento
             else: to_send=to_send[0]
 
 
         elif param=="user":
             to_send+="<b>=====COMANDI USER=====</b>\n\n"
 
-            for elem in user:
+            for elem in admin:
                 to_send+=elem+"\n\n"
+            #dividi il messaggio a seconda della lunghezza in bytes
             to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            #se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 to_send = to_send[0]
+            #altrimenti usa il primo elemento
             else: to_send=to_send[0]
 
 
         elif param == "developer":
             to_send+="<b>=====COMANDI DEVELOPER=====</b>\n\n"
 
-            for elem in developer:
-                to_send += elem + "\n\n"
-            to_send = text_splitter_bytes(to_send, splitter="\n\n")
+            for elem in admin:
+                to_send+=elem+"\n\n"
+            #dividi il messaggio a seconda della lunghezza in bytes
+            to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            #se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 to_send = to_send[0]
-            else:
-                to_send = to_send[0]
+            #altrimenti usa il primo elemento
+            else: to_send=to_send[0]
 
         elif param == "inoltro":
             to_send+=self.get_forward_commands()
@@ -1455,6 +1543,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         elif param=="crediti":
             to_send+=self.get_credits()
 
+        #modifica il messaggio con il to_send
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
