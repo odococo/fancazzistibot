@@ -177,7 +177,7 @@ TABELLE = {
     },
     "top":{
         "insert":"""INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id ) VALUES 
-        (%s,%s,%s,%s,%s,%s) ON CONFLICT(id) DO UPDATE SET id = EXCLUDED.id ;""",
+        (%s,%s,%s,%s,%s,%s) ON CONFLICT(id) DO UPDATE;""",
         "select":{
             "all":"SELECT * FROM top NATURAL JOIN users;"
         }
