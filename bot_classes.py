@@ -1108,8 +1108,8 @@ class Top:
             inline = InlineKeyboardMarkup([
                 [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
                  InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
-                [InlineKeyboardButton("EdoSoldi", callback_data="/top ricerca"),
-                 InlineKeyboardButton("Abilità", callback_data="/top edosoldi")],
+                [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
+                 InlineKeyboardButton("Abilità", callback_data="/top ability")],
                 [InlineKeyboardButton("Rango", callback_data="/top rango"),
                  InlineKeyboardButton("Annulla", callback_data="/top annulla")]
 
@@ -1128,8 +1128,8 @@ class Top:
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
              InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
-            [InlineKeyboardButton("EdoSoldi", callback_data="/top ricerca"),
-             InlineKeyboardButton("Abilità", callback_data="/top edosoldi")],
+            [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
+             InlineKeyboardButton("Abilità", callback_data="/top ability")],
             [InlineKeyboardButton("Rango", callback_data="/top rango"),
              InlineKeyboardButton("Annulla", callback_data="/top annulla")]
 
