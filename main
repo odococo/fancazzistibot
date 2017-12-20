@@ -145,6 +145,7 @@ def error(bot, update, error):
             bot.send_message(val, str(bot))
 
     except telegram.error.BadRequest:
+        if "Message is not modified" in str(error): return
         for val in developer_dicts.values():
             bot.send_message(val, "BadRequest Error!")
             bot.send_message(val, str(error))
