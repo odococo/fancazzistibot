@@ -1133,7 +1133,12 @@ class Top:
     def get_top(self, bot,update):
         top_ps=self.db.get_all_top()
         sort_key = update.callback_query.data.split()[1]
-
-        print(top_ps, sort_key)
+        bot.delete_message(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id
+        )
+        
+        print(top_ps)
+        print(sort_key)
 
 
