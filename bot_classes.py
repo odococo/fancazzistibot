@@ -1078,6 +1078,7 @@ class Top:
         #todo: add permission decor
         disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
         disp.add_handler(CommandHandler("top",self.top_command))
+        disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top"))
 
 
     def add_player(self, bot,update):
@@ -1139,3 +1140,4 @@ class Top:
 
     def get_top(self, bot,update):
         top_ps=self.db.get_all_top()
+        param = update.callback_query.data.split()[1]
