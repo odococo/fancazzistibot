@@ -1092,11 +1092,11 @@ class Top:
         abilita_regex = re.compile(r"Abilità: ([0-9]+)")
         rango_regex = re.compile(r"Rango: [A-z ]+ \(([0-9]+)")
 
-        pc_tot=re.findall(pc_regex,msg)[0][0]
-        pc_set=re.findall(pc_regex,msg)[0][1]
-        money=re.findall(money_regex,msg)[0]
-        ability=re.findall(abilita_regex,msg)[0]
-        rango=re.findall(rango_regex,msg)[0]
+        pc_tot=re.findall(pc_regex,msg)[0][0].replace(".","")
+        pc_set=re.findall(pc_regex,msg)[0][1].replace(".","")
+        money=re.findall(money_regex,msg)[0].replace(".","")
+        ability=re.findall(abilita_regex,msg)[0].replace(".","")
+        rango=re.findall(rango_regex,msg)[0].replace(".","")
 
         self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
 
