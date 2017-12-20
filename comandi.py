@@ -516,7 +516,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
 
     def Dprova(self):
         """test dev"""
-        self.answer("ok")
+        self.answer(self.bot.getChat())
 
     def Ddeletefromall(self):
         """Rimuove un o piu users (separati da spazio) dal bot completamente"""
@@ -543,7 +543,6 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         for  user in users:
             self.answer("Mando messaggio a "+str(user['id']))
             self.bot.send_message(user['id'],"Messaggio di prova, se lo ricevi vuol dire che non mi hai bloccato!\nBravo/a")
-
 
 
 
