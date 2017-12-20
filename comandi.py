@@ -346,7 +346,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
                                            "\nEsempio: /cheoresonotra 7:45")
             return
 
-        future_hour = datetime.now() + timedelta(hours=ore, minutes=minuti)
+        future_hour = datetime.now() + timedelta(hours=ore+1, minutes=minuti)
         self.answer("Tra "+str(ore)+" ore e "+str(minuti)+" minuti, saranno le "+
                                        str(str(future_hour.time()).split(".")[0])+" del "+str(future_hour.date().strftime('%d-%m-%Y')))
 
