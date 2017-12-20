@@ -1068,6 +1068,39 @@ class Constes:
 
         disp = updater.dispatcher
 
+class Top:
+
+    def __init__(self, updater, db):
+        self.updater = updater
+        self.db=db
+
+        disp = updater.dispatcher
+        #todo: add permission decor
+        disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
+
+
+    def add_player(self, bot,update):
+
+        #getting demojized message
+        msg=update.message.text
+        msg=emoji.demojize(msg)
+
+        #compaling regex
+        pc_regex = re.compile(r":package: ([0-9.]+) \(([0-9.]+)")
+        money_regex = re.compile(r":money_bag: ([0-9.]+)")
+        abilita_regex = re.compile(r"Abilità: ([0-9]+)")
+        rango_regex = re.compile(r"Rango: [A-z ]+ \(([0-9]+)")
+
+        pc_tot=re.findall(pc_regex,msg)[0][0]
+        pc_set=re.findall(pc_regex,msg)[0][1]
+        money=re.findall(money_regex,msg)[0]
+        ability=re.findall(abilita_regex,msg)[0]
+        rango=re.findall(rango_regex,msg)[0]
+
+        self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
+
+        update.message.reply_text("Sei stato aggiunto correttamente, utilizza il comando /top per vedere la classifica")
+
 
 
 

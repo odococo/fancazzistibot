@@ -174,6 +174,13 @@ TABELLE = {
                     DELETE FROM activity WHERE id = %s;
                     DELETE FROM users WHERE id = %s;
                     DELETE FROM id_users WHERE id = %s"""
+    },
+    "top":{
+        "insert":"""INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id ) VALUES 
+        (%s,%s,%s,%s,%s,%s) ON CONFLICT(id) DO UPDATE SET id = EXCLUDED.id ;""",
+        "select":{
+            "all":"SELECT * FROM top;"
+        }
     }
 }
 
@@ -226,6 +233,9 @@ class DB:
 
     def get_punteggi_username(self):
         return self.execute(TABELLE['punteggio']['select']['all_and_users'])
+
+    def get_all_top(self):
+        return self.execute(TABELLE['top']['select']['all'])
 
 
     # ============ADDER/UPDATER======================================
@@ -310,6 +320,9 @@ class DB:
 
     def add_bot_user(self, effective_user, bot_id):
         self.execute(TABELLE['bot_users']['insert'],(bot_id, effective_user['id'],effective_user['language_code'],))
+
+    def add_update_top_user(self, pc_tot , pc_set,  money,  ability,  rango,  id):
+        self.execute(TABELLE['top']['insert'],(pc_tot , pc_set,  money,  ability,  rango,  id,))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):

@@ -101,3 +101,8 @@ Boss apparte ci sono altri comandi riservati ai soli admin:
 * */svegliamadre msg*: manda un messaggio a tutti i membri del team madre (quelli che sono registrati con i comadni boss)
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉
+
+## TODO
+* usa getChat per verificare se un user ha bloccato il bot
+* Calcola il punteggio delle pietra da inoltro zaino
+* Aggiungi classifica
