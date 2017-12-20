@@ -1073,6 +1073,15 @@ class Top:
     def __init__(self, updater, db):
         self.updater = updater
         self.db=db
+        self.inline=InlineKeyboardMarkup([
+                [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
+                 InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
+                [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
+                 InlineKeyboardButton("Abilità", callback_data="/top ability")],
+                [InlineKeyboardButton("Rango", callback_data="/top rango"),
+                 InlineKeyboardButton("Annulla", callback_data="/top annulla")]
+
+            ])
 
         disp = updater.dispatcher
         #todo: add permission decor
@@ -1103,19 +1112,10 @@ class Top:
         #updating to db
         err=self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
         to_send=""
-        if err:
+        if not err:
 
-            inline = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
-                 InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
-                [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
-                 InlineKeyboardButton("Abilità", callback_data="/top ability")],
-                [InlineKeyboardButton("Rango", callback_data="/top rango"),
-                 InlineKeyboardButton("Annulla", callback_data="/top annulla")]
-
-            ])
             to_send="In base a cosa desideri visualizzare la classifica?"
-            update.message.reply_text(to_send,reply_markup=inline)
+            update.message.reply_text(to_send,reply_markup=self.inline)
         else:
             to_send="Si è verificato un errore, contatta @brandimax e inoltragli il messaggio che hai inviato"
             update.message.reply_text(to_send)
@@ -1125,17 +1125,9 @@ class Top:
 
 
     def top_command(self, bot, update):
-        inline = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
-             InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
-            [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
-             InlineKeyboardButton("Abilità", callback_data="/top ability")],
-            [InlineKeyboardButton("Rango", callback_data="/top rango"),
-             InlineKeyboardButton("Annulla", callback_data="/top annulla")]
 
-        ])
         to_send = "In base a cosa desideri visualizzare la classifica?"
-        update.message.reply_text(to_send, reply_markup=inline)
+        update.message.reply_text(to_send, reply_markup=self.inline)
 
 
     def get_top(self, bot,update):
