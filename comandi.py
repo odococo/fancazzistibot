@@ -103,7 +103,7 @@ class Command():
     # ----------------------------------------------------------------------------------
 
     def Ustart(self):
-        """ Inizzializza il bot con la schermata di help"""
+        """- Inizzializza il bot con la schermata di help"""
         self.answer("""Benvenuto al Fancabot. Ha diverse funzionalità! Scoprile con /help!\n
     
 Crediti: @brandimax @Odococo""")
@@ -157,7 +157,7 @@ Crediti: @brandimax @Odococo""")
     #   self.answer('Please choose:', reply_markup=reply_markup)
 
     def Uhelpvideo(self):
-        """Invia il video tutorial per i comandi di difficile comprensione"""
+        """- Invia il video tutorial per i comandi di difficile comprensione"""
         descrizione="I video disponibili sono: \n"
         for key in videos.keys():
             descrizione+="<b>"+key+"</b> : "+videos[key][0]+"\n"
@@ -172,11 +172,11 @@ Crediti: @brandimax @Odococo""")
         self.bot.send_message(self.update.message.from_user.id,descrizione, reply_markup=InlineKeyboardMarkup([inline]), parse_mode="HTML")
 
     def Utalenti(self):
-        """Manda un pdf con tutta la lista degli oggetti necessari per ogni talento"""
+        """- Manda un pdf con tutta la lista degli oggetti necessari per ogni talento"""
         self.bot.sendDocument(self.update.message.chat_id, "BQADBAADGAMAAgs3mVFa4igIcxDUAwI")
 
     def Uroll(self):
-        """Lancia un dado senza specificare nulla"""
+        """- Lancia un dado senza specificare nulla"""
         keyboard = [
             [InlineKeyboardButton("4", callback_data="/dice 4"),
              InlineKeyboardButton("6", callback_data="/dice 6"),
@@ -194,13 +194,13 @@ Crediti: @brandimax @Odococo""")
             reply_markup=reply_markup)
 
     def Uhelplink(self):
-        """ Ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
+        """- Ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
         # todo: usa messageEntity per una migliore foramttazione
 
         self.answer("https://github.com/odococo/fancazzistibot/blob/master/README.md")
 
     def Udice(self):
-        """Lancia un dado specificando numero di facce e lanci"""
+        """numFacce numLanci - Lancia un dado specificando numero di facce e lanci"""
         if (len(self.params) == 2
                 and all(utils.is_numeric(param) for param in self.params)):
             text = ""
@@ -255,22 +255,22 @@ Crediti: @brandimax @Odococo""")
                         "/dice numero_facce numero_lanci")
 
     def Uinfo(self):
-        """Ottieni le informazioni riguardo il tuo account"""
+        """- Ottieni le informazioni riguardo il tuo account"""
         user = self.update.message.from_user
         self.answer(str(user), pretty_json=True)
 
     def Upermessi(self):
-        """Ottieni info sui permessi relativi al tuo account"""
+        """- Ottieni info sui permessi relativi al tuo account"""
         user_id = self.update.message.from_user.id
         permission = self.db.get_permission_user(user_id)
         self.answer(str(permission), pretty_json=True)
 
     def Ujson(self):
-        """Ottieni il json dell'update"""
+        """- Ottieni il json dell'update"""
         self.answer(str(self.update), pretty_json=True)
 
     def Uconvert(self):
-        """Converte testo/numero da e verso unabase arbitraria. Si possono fornire valori di conversione per personalizzare il risultato"""
+        """base_originale-base_destinazione-valori_di_conversione testo/numero- Converte testo/numero da e verso unabase arbitraria. Si possono fornire valori di conversione per personalizzare il risultato"""
         convert_params = self.params[0].split("-") if self.params else []
         if len(convert_params) != 3:
             text = "Comando invalido. Sintassi:\n"
@@ -287,7 +287,7 @@ Crediti: @brandimax @Odococo""")
         self.answer(text)
 
     def Uwin(self):
-        """Seguito da cinque numeri separati da spazio, ti da le tue possibilità di vincita nell'ispezione dello gnomo"""
+        """num1 num2 num3 num4 num5 - Seguito da cinque numeri separati da spazio, ti da le tue possibilità di vincita nell'ispezione dello gnomo"""
         # print("win")
         # se ci sono troppi o pochi numeri non va bene
         if len(self.params) != 5:
@@ -301,7 +301,7 @@ Crediti: @brandimax @Odococo""")
         self.answer("Probabilità di vincita : " + "{:.3f}".format(win) + "%")
 
     def Urarita(self):
-        """Quando inoltri un messagio di craftlootbot vengono automaticamente salvate le rarità degli oggetti che non possiedi. Questo comando ti permette di avere (in percentuale) le informazioni su quali rarità hai mancanza nel tuo zaino. Ottimo da utilizzare in con il comando /compra"""
+        """- Quando inoltri un messagio di craftlootbot vengono automaticamente salvate le rarità degli oggetti che non possiedi. Questo comando ti permette di avere (in percentuale) le informazioni su quali rarità hai mancanza nel tuo zaino. Ottimo da utilizzare in con il comando /compra"""
         user_id = self.update.message.from_user.id
         user_item = self.db.get_user_items(user_id)
         tot = 0
@@ -321,13 +321,13 @@ Crediti: @brandimax @Odococo""")
         self.answer(res)
 
     def Uresetrarita(self):
-        """Ti permette di resettare tutte le rarità relative al tuo username, da usare quando hai comprato scrigni all'emporio"""
+        """- Ti permette di resettare tutte le rarità relative al tuo username, da usare quando hai comprato scrigni all'emporio"""
         user_id = self.update.message.from_user.id
         self.db.reset_rarita_user(user_id)
         self.answer("Rarità resettate")
 
     def Uconsiglia(self):
-        """Seguito da cinque numeri separati da spazio ,invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
+        """num1 num2 num3 num4 num5 - Invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
 
         # se ci sono troppi o pochi numeri non va bene
         if len(self.params) != 5:
@@ -344,7 +344,7 @@ Crediti: @brandimax @Odococo""")
         os.remove(path2img)
 
     def Ucheoresonotra(self):
-        """Calcola l'ora che sarà tra un tot di ore\nEsempio: <pre>/cheoresonotra 7:45</pre> """
+        """hh:mm - Calcola l'ora che sarà tra un tot di ore\nEsempio: <pre>/cheoresonotra 7:45</pre> """
         if len(self.params)!= 1:
             self.answer("Non hai inserito il numero corretto di parametri!\nUso: /cheoresonotra hh:mm"
                                            "\nEsempio: /cheoresonotra 7:45")
@@ -363,7 +363,7 @@ Crediti: @brandimax @Odococo""")
                                        str(str(future_hour.time()).split(".")[0])+" del "+str(future_hour.date().strftime('%d-%m-%Y')))
 
     def Uartefatti(self):
-        """Invia la lista di artefatti"""
+        """- Invia la lista di artefatti"""
         msg="""
 FIAMMEGGIANTE
 Per ottenere questo artefatto devi raggiungere 85 punti dungeon e possedere 5.000.000§, questi ultimi ti verranno sottratti per completare il rituale.
@@ -392,7 +392,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     # admin command ------------------------------------------------------------
 
     def Asvegliamadre(self):
-        """Manda un messaggio ai membri del Team madre (quelli dentro la lista punteggio)"""
+        """msg- Manda un messaggio ai membri del Team madre (quelli dentro la lista punteggio)"""
         if len(self.params)==0:
             self.answer("Devi inviare un messaggio insieme al comando")
             return
@@ -426,7 +426,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
                           message_id=self.update.message.message_id)
 
     def Autente(self):
-        """Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
+        """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
         if self.params:
             result = self.db.get_user(self.params[0])
             if result:
@@ -438,7 +438,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.answer(text)
 
     def Autenti(self):
-        """Visualizza gli utenti che utilizzano un determinato bot"""
+        """- Visualizza gli utenti che utilizzano un determinato bot"""
         users = self.db.get_users_and_id()
         if users:
             users = [users] if isinstance(users, dict) else users
@@ -465,7 +465,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
 
 
     def Aregistra(self):
-        """Aggiorna i permessi di un utente"""
+        """username - Aggiorna i permessi di un utente"""
         if len(self.params) == 2:
             key = self.params[0]
             permesso = self.params[1]
@@ -484,7 +484,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.answer(text)
 
     def Aremoveuser(self):
-        """Rimuove un user dal bot"""
+        """username - Rimuove un user dal bot"""
         if len(self.params) != 1:
             self.answer("Devi usare il comando seguito dallo username che vuoi rimuovere dal bot")
             return
@@ -496,7 +496,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.answer("Ho rimosso "+username+" dal bot")
 
     def Asveglia(self):
-        """Invia un messaggio a uno o piu username per spronarli ad attaccare il boss"""
+        """username1 username2 ... - Invia un messaggio a uno o piu username per spronarli ad attaccare il boss"""
         if len(self.params)< 1:
             self.answer("Non hai inserito nessun username")
             return
@@ -516,7 +516,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     # developer comands ----------------------------------------
 
     def Dsendtoall(self):
-        """Manda un messaggio a tutti gli utenti"""
+        """msg - Manda un messaggio a tutti gli utenti"""
         if len(self.params) == 0:
             self.answer("Devi usare il comando seguito da un messaggio")
             return
@@ -535,7 +535,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.answer(str(self.bot.sendChatAction(self.params[0], "typing")), pretty_json=True)
 
     def Ddeletefromall(self):
-        """Rimuove un o piu users (separati da spazio) dal bot completamente"""
+        """username - Rimuove un o piu users (separati da spazio) dal bot completamente"""
         if len(self.params)<1:
             self.answer("Il comando deve essere seguito da uno o piu username separati da spazio")
         for elem in self.params:
@@ -550,11 +550,11 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
                 self.answer("Non ho trovato "+str(elem)+" tra gli users del bot")
 
     def Dciaosoho(self):
-        """Manda ciao ad osho"""
+        """- Manda ciao ad osho"""
         self.bot.send_message(241317532,"ciao osho")
 
     def Dchiblocca(self):
-        """Permette di ottenere l'id di chi ha bloccato il bot"""
+        """- Permette di ottenere l'id di chi ha bloccato il bot"""
 
         @utils.catch_exception
         def inner(bot, update):

@@ -1390,12 +1390,12 @@ class Help:
         #appende in tutte le liste nomeFunzione - doc
         for elem in funcs:
             if elem[0][0] == "A":
-                admin.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
+                admin.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
             elif elem[0][0] == "U":
-                user.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
+                user.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
 
             elif elem[0][0] == "D":
-                developer.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
+                developer.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
 
         #appende i comandi non prenseti in Command
         admin.append("/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
@@ -1474,8 +1474,10 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 """
 
     def help_init(self, bot, update):
-        to_send="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\nSeleziona una" \
-                " categoria di comandi per imapararne l'utilizzo"
+        to_send="""Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
+        Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
+        nome_comando parametri - spiegazione
+        Quindi ricorda di aggiungere i parametri giusti!"""
         update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
     #todo: create multiple page help
