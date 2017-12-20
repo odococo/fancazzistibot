@@ -1086,8 +1086,15 @@ class Top:
 
         disp = updater.dispatcher
         # todo: add permission decor
-        disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
-        disp.add_handler(CommandHandler("top", self.top_command))
+        if DEBUG:
+            disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
+            disp.add_handler(CommandHandler("top", self.top_command))
+        else:
+            add_player_decor=self.db.elegible_loot_user(self.add_player)
+            top_command_decor=self.db.elegible_loot_user(self.top_command)
+            disp.add_handler(RegexHandler("^Giocatore 👤", add_player_decor))
+            disp.add_handler(CommandHandler("top", top_command_decor))
+
         disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top"))
 
     def add_player(self, bot, update):
@@ -1184,3 +1191,14 @@ class Top:
                str(future_hour.time()).split(".")[0]+" del "+str(future_hour.date().strftime('%d-%m-%Y')) + "</i>)\n"
 
         return res
+
+class Zaino:
+
+    def __init__(self, updater, db):
+        self.updater = updater
+        self.db = db
+
+        disp = updater.dispatcher
+
+
+
