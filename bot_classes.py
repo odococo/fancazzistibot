@@ -1085,7 +1085,6 @@ class Top:
         ])
 
         disp = updater.dispatcher
-        # todo: add permission decor
         if DEBUG:
             disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
             disp.add_handler(CommandHandler("top", self.top_command))
@@ -1192,13 +1191,66 @@ class Top:
 
         return res
 
-class Zaino:
+class PietreDrago:
 
-    def __init__(self, updater, db):
+    def __init__(self, updater):
         self.updater = updater
-        self.db = db
 
         disp = updater.dispatcher
+        # todo: add permission decor
+
+        disp.add_handler(RegexHandler("^.* possiedi \(D\):", self.calc_val))
+
+
+    def calc_val(self, bot, update):
+
+        msg=update.message.text
+
+        regex_legno=re.compile(r"Pietra Anima di Legno \(([0-9]+)")
+        regex_ferro=re.compile(r"Pietra Anima di Ferro \(([0-9]+)")
+        regex_preziosa=re.compile(r"Pietra Anima Preziosa \(([0-9]+)")
+        regex_diamante=re.compile(r"Pietra Cuore di Diamante \(([0-9]+)")
+        regex_leggendario=re.compile(r"Pietra Cuore Leggendario \(([0-9]+)")
+        regex_epico=re.compile(r"Pietra Spirito Epico \(([0-9]+)")
+
+        legno=re.findall(regex_legno,msg)
+        ferro=re.findall(regex_ferro,msg)
+        preziosa=re.findall(regex_preziosa,msg)
+        diamante=re.findall(regex_diamante,msg)
+        leggendario=re.findall(regex_leggendario,msg)
+        epico=re.findall(regex_epico,msg)
+
+        if len(legno)>0: legno=legno[0]
+        else: legno=0
+
+        if len(ferro)>0: ferro=ferro[0]
+        else: ferro=0
+
+        if len(preziosa)>0: preziosa=preziosa[0]
+        else: preziosa=0
+
+        if len(diamante)>0: diamante=diamante[0]
+        else: diamante=0
+
+        if len(leggendario)>0: leggendario=leggendario[0]
+        else: leggendario=0
+
+        if len(epico)>0: epico=epico[0]
+        else: epico=0
+
+        tot=legno+ferro*2+preziosa*3+diamante*4+leggendario*5+epico*6
+
+        to_send="Valore delle Pietre:\n"
+        if legno: to_send+="Pietra Anima di Legno : <b>"+str(legno)+"</b>\n"
+        if ferro: to_send+="Pietra Anima di Ferro : <b>"+str(ferro)+"</b>\n"
+        if preziosa: to_send+="Pietra Anima Preziosa : <b>"+str(preziosa)+"</b>\n"
+        if diamante: to_send+="Pietra Cuore di Diamante : <b>"+str(diamante)+"</b>\n"
+        if leggendario: to_send+="Pietra Cuore Leggendario : <b>"+str(leggendario)+"</b>\n"
+        if epico: to_send+="Pietra Spirito Epico : <b>"+str(epico)+"</b>\n"
+        to_send+="Totale : <b>"+str(tot)+"</b>"
+
+        update.message.reply_text(to_send,parse_mode="HTML")
+
 
 
 

@@ -27,7 +27,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler, Filters, CommandHandler)
 
-from bot_classes import Loot, Boss, Cerca, Compra, EasterEggs, Top
+from bot_classes import Loot, Boss, Cerca, Compra, EasterEggs, Top, PietreDrago
 from comandi import new_command, videos
 from db_call import DB, developer_dicts
 from negozi_loot import use_api, ITEMS
@@ -270,6 +270,7 @@ def main():
     Compra(updater,db)
     #EasterEggs(updater)
     Top(updater,db)
+    PietreDrago(updater)
 
 
     # handler per richiedere accesso al bot
