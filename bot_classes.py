@@ -1348,7 +1348,7 @@ Questo comando prevede piu passi:
 Comando solo per <b>ADMIN</b>, per l'opzione user visualizzare il help del comando /attacchiboss
 Questo comando viene attivato quando inoltri il messaggio <b>Team</b> di @lootgamebot
 Potrete scegliere tra tre opzioni:
-\t1)<i>Titan : +1 punto per chi non ha attaccato
+\t1)<i>Titan</i> : +1 punto per chi non ha attaccato
 \t2)<i>Phoenix</i> : +2 punti per chi non ha attaccato
 \t3)<i>Annulla</i> : se vi siete sbagliati
 Scelto il tipo di boss verranno salvati i punti dei membri non attaccanti, ovviamente chi ha piu punti si trova in pericolo di kick dal team
@@ -1405,6 +1405,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             bot.sendMessage(update.callback_query.message.chat.id, "Spero di esserti stato utile!")
             return
         elif param=="admin":
+            to_send+="<b>=====COMANDI ADMIN=====</b>\n\n"
             for elem in admin:
                 to_send+=elem+"\n"
 
