@@ -1419,9 +1419,9 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         elif param=="admin":
             to_send+="<b>=====COMANDI ADMIN=====</b>\n\n"
             for elem in admin:
-                to_send+=elem+"\n"
+                to_send+=elem+"\n\n"
 
-            to_send=text_splitter_bytes(to_send, splitter="\n")
+            to_send=text_splitter_bytes(to_send, splitter="\n\n")
             if len(to_send) > 1:
                 to_send = to_send[0]
             else: to_send=to_send[0]
@@ -1442,8 +1442,8 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             to_send+="<b>=====COMANDI DEVELOPER=====</b>\n\n"
 
             for elem in developer:
-                to_send += elem + "\n"
-            to_send = text_splitter_bytes(to_send, splitter="\n")
+                to_send += elem + "\n\n"
+            to_send = text_splitter_bytes(to_send, splitter="\n\n")
             if len(to_send) > 1:
                 to_send = to_send[0]
             else:
