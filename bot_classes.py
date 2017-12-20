@@ -2,6 +2,7 @@ import math
 import random
 import re
 from collections import OrderedDict, Counter
+from datetime import timedelta
 
 import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
@@ -1172,6 +1173,6 @@ class Top:
             res += str(idx) + ") "
 
         res += "<b>" + user['username'] + "</b> con <b>" + str(user[sort_key]) + "</b> (<i>" + str(
-            user['agg']) + "</i>)\n"
+            user['agg']+ timedelta(hours=1)) + "</i>)\n"
 
         return res
