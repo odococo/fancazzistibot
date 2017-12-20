@@ -1137,7 +1137,7 @@ class Top:
                 message_id=update.callback_query.message.message_id,
                 reply_markup=ReplyKeyboardRemove()
             )
-            return 
+            return
 
 
         # casting top to list if is dict
@@ -1170,7 +1170,7 @@ class Top:
         elif idx == 3:
             res += "🥉 "
         else:
-            idx += str(idx) + ") "
+            res += str(idx) + ") "
 
         res += "<b>" + user['username'] + "</b> con <b>" + str(user[sort_key]) + "</b> (<i>" + str(
             user['agg']) + "</i>)\n"
