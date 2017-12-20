@@ -1102,6 +1102,13 @@ class Top:
         #updating to db
         err=self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
         if err:
+
+            inline = InlineKeyboardMarkup([
+                [InlineKeyboardButton("Negozi", callback_data="/loot negozi")],
+                [InlineKeyboardButton("Ricerca", callback_data="/loot ricerca")],
+                [InlineKeyboardButton("Annulla", callback_data="/loot annulla")]
+
+            ])
             update.message.reply_text("Sei stato aggiunto correttamente, utilizza il comando /top per vedere la classifica")
         else:
             update.message.reply_text("Si è verificato un errore, contatta @brandimax e inoltragli il messaggio che hai inviato")
