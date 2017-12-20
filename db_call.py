@@ -176,9 +176,9 @@ TABELLE = {
                     DELETE FROM id_users WHERE id = %s"""
     },
     "top":{
-        "insert":"""INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id ) VALUES 
-        (%s,%s,%s,%s,%s,%s) ON CONFLICT(id) DO UPDATE SET 
-        top.pc_tot=pc_tot, top.pc_set=pc_set, top.money=money, top.ability=ability, top.rango=rango""",
+        "insert":"""INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id, agg ) VALUES 
+        (%s,%s,%s,%s,%s,%s, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET 
+        top.pc_tot=pc_tot, top.pc_set=pc_set, top.money=money, top.ability=ability, top.rango=rango, top.agg=CURRENT_TIMESTAMP""",
         "select":{
             "all":"SELECT * FROM top NATURAL JOIN users;"
         }

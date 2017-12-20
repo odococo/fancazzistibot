@@ -1077,7 +1077,7 @@ class Top:
         disp = updater.dispatcher
         #todo: add permission decor
         disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
-        disp.add_handler(CommandHandler("top",self.get_player))
+        disp.add_handler(CommandHandler("top",self.top_command))
 
 
     def add_player(self, bot,update):
@@ -1113,7 +1113,7 @@ class Top:
                  InlineKeyboardButton("Annulla", callback_data="/top annulla")]
 
             ])
-            to_send="cosa "
+            to_send="In base a cosa desideri visualizzare la classifica?"
             update.message.reply_text(to_send,reply_markup=inline)
         else:
             to_send="Si è verificato un errore, contatta @brandimax e inoltragli il messaggio che hai inviato"
@@ -1123,6 +1123,19 @@ class Top:
 
 
 
-    def get_player(self, bot, update):
-        players=self.db.get_all_top()
-        print(players)
+    def top_command(self, bot, update):
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
+             InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
+            [InlineKeyboardButton("EdoSoldi", callback_data="/top ricerca"),
+             InlineKeyboardButton("Abilità", callback_data="/top edosoldi")],
+            [InlineKeyboardButton("Rango", callback_data="/top rango"),
+             InlineKeyboardButton("Annulla", callback_data="/top annulla")]
+
+        ])
+        to_send = "In base a cosa desideri visualizzare la classifica?"
+        update.message.reply_text(to_send, reply_markup=inline)
+
+
+    def get_top(self, bot,update):
+        top_ps=self.db.get_all_top()
