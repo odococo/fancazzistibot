@@ -393,6 +393,9 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
 
     def Asvegliamadre(self):
         """Manda un messaggio ai membri del Team madre (quelli dentro la lista punteggio)"""
+        if len(self.params)==0:
+            self.answer("Devi inviare un messaggio insieme al comando")
+            return
         users=self.db.get_punteggi()
         for user in users:
             self.bot.send_message(user['id']," ".join(self.params))
