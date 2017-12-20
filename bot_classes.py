@@ -1104,3 +1104,6 @@ class Top:
 
 
 
+    def get_player(self, bot, update):
+        players=self.db.get_all_top()
+        print(players)
