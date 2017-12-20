@@ -1076,7 +1076,7 @@ class Top:
 
         disp = updater.dispatcher
         #todo: add permission decor
-        disp.add_handler(RegexHandler("^Giocatore", self.add_player))
+        disp.add_handler(RegexHandler("*Giocatore*", self.add_player))
         disp.add_handler(CommandHandler("top",self.get_player))
 
 
@@ -1092,12 +1092,14 @@ class Top:
         abilita_regex = re.compile(r"Abilità: ([0-9]+)")
         rango_regex = re.compile(r"Rango: [A-z ]+ \(([0-9]+)")
 
+        #getting values
         pc_tot=re.findall(pc_regex,msg)[0][0].replace(".","")
         pc_set=re.findall(pc_regex,msg)[0][1].replace(".","")
         money=re.findall(money_regex,msg)[0].replace(".","")
         ability=re.findall(abilita_regex,msg)[0].replace(".","")
         rango=re.findall(rango_regex,msg)[0].replace(".","")
 
+        #updating to db
         self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
 
         update.message.reply_text("Sei stato aggiunto correttamente, utilizza il comando /top per vedere la classifica")
