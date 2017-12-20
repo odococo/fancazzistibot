@@ -1223,22 +1223,22 @@ class PietreDrago:
         if len(legno)>0: legno=int(legno[0])
         else: legno=0
 
-        if len(ferro)>0: ferro=int(ferro[0])
+        if len(ferro)>0: ferro=int(ferro[0])*2
         else: ferro=0
 
-        if len(preziosa)>0: preziosa=int(preziosa[0])
+        if len(preziosa)>0: preziosa=int(preziosa[0])*3
         else: preziosa=0
 
-        if len(diamante)>0: diamante=int(diamante[0])
+        if len(diamante)>0: diamante=int(diamante[0])*4
         else: diamante=0
 
-        if len(leggendario)>0: leggendario=int(leggendario[0])
+        if len(leggendario)>0: leggendario=int(leggendario[0])*5
         else: leggendario=0
 
-        if len(epico)>0: epico=int(epico[0])
+        if len(epico)>0: epico=int(epico[0])*6
         else: epico=0
 
-        tot=legno+ferro*2+preziosa*3+diamante*4+leggendario*5+epico*6
+        tot=legno+ferro+preziosa+diamante+leggendario+epico
 
         to_send="Valore delle Pietre:\n"
         if legno: to_send+="Pietra Anima di Legno : <b>"+str(legno)+"</b>\n"
