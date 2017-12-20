@@ -126,6 +126,8 @@ Se, invece non ti interessa avere queste informazioni premi "Annulla".
 In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\n\n
 <b>Top</b>
 Inviando il messaggio "Giocatore" che ottieni in @lootgamebot aggiornerai il database e potrai visualizzare la tuo posizione in classifica! (leggi il comando /top per ulteriori informazioni)
+<b>Pietre del Drago</b>
+Inoltrando il messagio "/zaino D" da @lootplusbot, otterrai il valore di tutte le pietre del drago che sono presenti nel tuo zaino
 <b>=====FINE=====</b>\n\n
 Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
 Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!

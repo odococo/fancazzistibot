@@ -1220,22 +1220,22 @@ class PietreDrago:
         leggendario=re.findall(regex_leggendario,msg)
         epico=re.findall(regex_epico,msg)
 
-        if len(legno)>0: legno=legno[0]
+        if len(legno)>0: legno=int(legno[0])
         else: legno=0
 
-        if len(ferro)>0: ferro=ferro[0]
+        if len(ferro)>0: ferro=int(ferro[0])
         else: ferro=0
 
-        if len(preziosa)>0: preziosa=preziosa[0]
+        if len(preziosa)>0: preziosa=int(preziosa[0])
         else: preziosa=0
 
-        if len(diamante)>0: diamante=diamante[0]
+        if len(diamante)>0: diamante=int(diamante[0])
         else: diamante=0
 
-        if len(leggendario)>0: leggendario=leggendario[0]
+        if len(leggendario)>0: leggendario=int(leggendario[0])
         else: leggendario=0
 
-        if len(epico)>0: epico=epico[0]
+        if len(epico)>0: epico=int(epico[0])
         else: epico=0
 
         tot=legno+ferro*2+preziosa*3+diamante*4+leggendario*5+epico*6
