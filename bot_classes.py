@@ -1141,3 +1141,9 @@ class Top:
     def get_top(self, bot,update):
         top_ps=self.db.get_all_top()
         param = update.callback_query.data.split()[1]
+
+        print(top_ps)
+
+        sort_key=""
+
+        if "pc_tot" in param : sort_key="pc_tot"

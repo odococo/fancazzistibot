@@ -177,8 +177,9 @@ TABELLE = {
     },
     "top":{
         "insert":"""INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id, agg ) VALUES 
-        (%s,%s,%s,%s,%s,%s, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SELECT ( top.pc_tot , top.pc_set,  top.money,  top.ability,  top.rango,  top.id, top.agg ) FROM top 
-        top.pc_tot=pc_tot, top.pc_set=pc_set, top.money=money, top.ability=ability, top.rango=rango, top.agg=CURRENT_TIMESTAMP""",
+                    (%s,%s,%s,%s,%s,%s, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SELECT ( top.pc_tot , top.pc_set,
+                      top.money,  top.ability,  top.rango,  top.id, top.agg ) FROM top SET top.pc_tot=pc_tot, 
+                      top.pc_set=pc_set, top.money=money, top.ability=ability, top.rango=rango, top.agg=CURRENT_TIMESTAMP""",
         "select":{
             "all":"SELECT * FROM top NATURAL JOIN users;"
         }
