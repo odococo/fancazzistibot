@@ -525,7 +525,8 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
 
     def Dprova(self):
         """test dev"""
-        self.answer(str(self.bot.sendChatAction(89675136, "typing")), pretty_json=True)
+
+        self.answer(str(self.bot.sendChatAction(self.params[0], "typing")), pretty_json=True)
 
     def Ddeletefromall(self):
         """Rimuove un o piu users (separati da spazio) dal bot completamente"""
