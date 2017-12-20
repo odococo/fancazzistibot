@@ -103,7 +103,7 @@ class Command():
     # ----------------------------------------------------------------------------------
 
     def Ustart(self):
-        """ - Inizzializza il bot con la schermata di help"""
+        """ Inizzializza il bot con la schermata di help"""
         self.answer("""Benvenuto al Fancabot. Ha diverse funzionalità! Scoprile con /help!\n
     
 Crediti: @brandimax @Odococo""")
@@ -344,7 +344,7 @@ Crediti: @brandimax @Odococo""")
         os.remove(path2img)
 
     def Ucheoresonotra(self):
-        """Calcola l'ora che sarà tra un tot di ore\nUso: /cheoresonotra hh:mm\nEsempio: <pre>/cheoresonotra 7:45</pre> """
+        """Calcola l'ora che sarà tra un tot di ore\nEsempio: <pre>/cheoresonotra 7:45</pre> """
         if len(self.params)!= 1:
             self.answer("Non hai inserito il numero corretto di parametri!\nUso: /cheoresonotra hh:mm"
                                            "\nEsempio: /cheoresonotra 7:45")

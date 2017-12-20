@@ -1312,16 +1312,16 @@ class Help:
             elif elem[0][0] == "D":
                 developer.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
 
-            admin.append("/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
-                         "i punteggi non sono piu recuperabili")
+        admin.append("/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
+                     "i punteggi non sono piu recuperabili")
 
-            user.append("/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team")
-            user.append("/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e "
-                        "rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2 ")
-            user.append("/compra - Ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'"
-                        "emporio e il tuo budget")
-            user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
-                        "settimanali, edosoldi, abilità, rango)")
+        user.append("/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team")
+        user.append("/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e "
+                    "rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2 ")
+        user.append("/compra - Ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'"
+                    "emporio e il tuo budget")
+        user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
+                    "settimanali, edosoldi, abilità, rango]")
 
         return user, admin, developer
 
@@ -1392,6 +1392,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
                 " categoria di comandi per imapararne l'utilizzo"
         update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
+    #todo: create multiple page help
     def help_decision(self, bot, update):
         param = update.callback_query.data.split()[1]
 
@@ -1409,20 +1410,32 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             to_send+="<b>=====COMANDI ADMIN=====</b>\n\n"
             for elem in admin:
                 to_send+=elem+"\n"
-            to_send=text_splitter_bytes(to_send)
-            if len(to_send)>1:
-                to_send=to_send[0]
 
-        elif param=="user":
-            for elem in user:
-                to_send+=elem+"\n"
+            to_send=text_splitter_bytes(to_send, splitter="\n")
             if len(to_send) > 1:
                 to_send = to_send[0]
+            else: to_send=to_send[0]
+
+
+        elif param=="user":
+            to_send+="<b>=====COMANDI USER=====</b>\n\n"
+
+            for elem in user:
+                to_send+=elem+"\n\n"
+            to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            if len(to_send) > 1:
+                to_send = to_send[0]
+            else: to_send=to_send[0]
 
 
         elif param == "developer":
             for elem in developer:
                 to_send += elem + "\n"
+            to_send = text_splitter_bytes(to_send, splitter="\n")
+            if len(to_send) > 1:
+                to_send = to_send[0]
+            else:
+                to_send = to_send[0]
 
         elif param == "inoltro":
             to_send+=self.get_forward_commands()

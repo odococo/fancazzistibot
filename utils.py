@@ -82,6 +82,7 @@ def text_splitter_bytes(text,splitter="\n", split_every=4096):
             res.append(to_append)
             to_append=""
         to_append+=elem
+    if not res: res.append(to_append)
     return res
 
 def is_dev(id):
