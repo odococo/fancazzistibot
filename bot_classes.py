@@ -1080,7 +1080,7 @@ class Top:
             [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
              InlineKeyboardButton("Abilità", callback_data="/top ability")],
             [InlineKeyboardButton("Rango", callback_data="/top rango"),
-             InlineKeyboardButton("Annulla", callback_data="/top annulla")]
+             InlineKeyboardButton("Esci", callback_data="/top esci")]
 
         ])
 
@@ -1131,12 +1131,11 @@ class Top:
         top_ps = self.db.get_all_top()
         sort_key = update.callback_query.data.split()[1]
 
-        if sort_key=="annulla":
+        if sort_key=="esci":
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
             )
-            bot.sendMessage(update.callback_query.message.chat.id, "Annullo")
             return
 
 
