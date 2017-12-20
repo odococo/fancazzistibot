@@ -337,7 +337,7 @@ Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per
         os.remove(path2img)
 
     def Ucheoresonotra(self):
-        """Calcola l'ora che sarà tra un tot di ore\nUso: /cheoresonotra hh:mm\nEsempio: /cheoresonotra 7:45 """
+        """Calcola l'ora che sarà tra un tot di ore\nUso: /cheoresonotra hh:mm\nEsempio: <pre>/cheoresonotra 7:45</pre> """
         if len(self.params)!= 1:
             self.answer("Non hai inserito il numero corretto di parametri!\nUso: /cheoresonotra hh:mm"
                                            "\nEsempio: /cheoresonotra 7:45")
