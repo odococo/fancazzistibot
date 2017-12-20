@@ -101,7 +101,7 @@ class Loot:
             user_data['stima_flag'] = True
             return 1
         elif "negozi" in param:
-            to_send = "/negozi "
+            to_send = "/negozio "
             for elem in user_data['quantita']:
                 to_send += elem[1] + "::" + elem[0] + ","
 
