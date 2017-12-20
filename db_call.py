@@ -200,20 +200,36 @@ class DB:
 
     # ============GETTER======================================
     def get_token(self, bot_id):
+        """Prende tutti i bot nella tabella bot
+        @:param bot_id
+        @:type: int
+         @:return: dizionario del bot """
         res = self.execute(TABELLE['bot']['select']['by_id'], (bot_id,))
         # print(res)
         return res
 
     def get_user_items(self, id):
+        """Prende tutti gli user in items
+        @:param id: id dello user
+        @:type: int
+         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['items']['select']['by_id'], (id,))
 
     def get_users(self):
+        """Prende tutti gli user in users
+         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['users']['select']['all'])
 
     def get_users_and_id(self):
+        """Prende tutti gli user in id_users
+         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['id_users']['select']['all'])
 
     def get_user(self, key_value):
+        """Prende l'user dalla tabella users
+        @:param key_value: valore secondo cui si cerca l'utente (id o username)
+        @:type: int o str
+         @:return:  dizionario dell'utente """
         if utils.is_numeric(key_value):
             key_value = int(key_value)
             query = TABELLE['users']['select']['from_id']
@@ -225,24 +241,41 @@ class DB:
         return user
 
     def get_id_users(self):
+        """Prende tutti gli user in id_users
+         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['id_users']['select']['all'])
 
     def get_permission_user(self, user_id):
+        """Prende i permessi dello user specificato
+        @:param user_id: id dello user di cui vuoi sapere le info
+        @:type: dict
+         @:return: dizionario dello user specificato """
         return self.execute(TABELLE["id_users"]['select']['from_id'], (user_id,))
 
     def get_punteggi(self):
+        """Prende tutti gli user in punteggi tranne lo username
+         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         query = TABELLE['punteggio']['select']['all']
         return self.execute(query)
 
     def get_punteggi_username(self):
+        """Prende tutti gli user in punteggi insieme allo username
+         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['punteggio']['select']['all_and_users'])
 
     def get_all_top(self):
+        """Prende tutti gli user in top
+        @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['top']['select']['all'])
 
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
+        """Aggiunge uno user alle tabelle id_users e bot_users
+        @:param user: dizionario dello user, necessita delle chiavi id, language_code
+        @:type: dict
+        @:param id_bot: id del bot a cui aggiungere lo user
+        @:type: int"""
         # salvo l'id dell'utente o del bot
         self.execute(TABELLE['id_users']['insert'], (user['id'],))
         # salvo le altre informazioni relative ad utenti o bot
