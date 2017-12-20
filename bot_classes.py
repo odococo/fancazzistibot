@@ -11,7 +11,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 
 from comandi import Command
-from utils import is_numeric, catch_exception
+from utils import is_numeric, catch_exception, text_splitter_bytes
 
 DEBUG = False
 
@@ -1281,7 +1281,7 @@ class Help:
 
     def __init__(self, updater):
         self.updater = updater
-        self.inline= InlineKeyboardMarkup([
+        self.inline_cat= InlineKeyboardMarkup([
             [InlineKeyboardButton("Admin", callback_data="/help admin"),
              InlineKeyboardButton("User", callback_data="/help user"),
              InlineKeyboardButton("Developer", callback_data="/help developer")],
@@ -1290,6 +1290,7 @@ class Help:
              InlineKeyboardButton("Esci", callback_data="/help esci")]
 
         ])
+
         disp = updater.dispatcher
         # todo: add permission decor
 
@@ -1327,7 +1328,7 @@ class Help:
 
     def get_forward_commands(self):
         return """
-<b>=====COMANDI DA INOLTRO=====</b>\n\n
+<b>=====COMANDI DA INOLTRO=====</b>\n
 I comandi da inoltro sono molteplici, verranno suddivisi in base al tipo di messaggio inoltrato.
 
 <b>----Loot----</b>
@@ -1337,50 +1338,50 @@ Una volta inoltrato ti sarà chiesta quale informazione vuoi visualizzare tra le
 Ti permette di ottenere una comoda stringa di negozi degli oggetti mancanti da poter inoltrare a @lootbotplus
 <b>Ricerca</b>
 Questo comando prevede piu passi:
-\t1) Una volta premuto il bottone ti saranno inviati dei messaggi "/ricerca oggetto1, oggetto2, oggetto3" per ogni oggetto che ti manca
-\t2) Inoltra questi messaggi a @lootplusbot
-\t3) Ri-inoltra i messaggi li @lootplusbot (quelli con i prezzi e i negozi) a @fancabot
-\t4) Clicca stima per ottenere il costo tolate (comprendente acquisto degli oggetti e craft stesso), il tempo stimato per comprare gli oggetti, la top 10 degli oggetti piu costosi (solo se sono presenti 10 elementi o più)
-\t5) Ti verrà chiesto se vuoi visualizzare i negozi, clicca <i>"Si"</i> per ottenere una lista di comandi <pre>@lootplusbot codiceNegozio</pre>, altrimenti <i>"No"</i> per annullare
+1) Una volta premuto il bottone ti saranno inviati dei messaggi "/ricerca oggetto1, oggetto2, oggetto3" per ogni oggetto che ti manca
+2) Inoltra questi messaggi a @lootplusbot
+3) Ri-inoltra i messaggi li @lootplusbot (quelli con i prezzi e i negozi) a @fancabot
+4) Clicca stima per ottenere il costo tolate (comprendente acquisto degli oggetti e craft stesso), il tempo stimato per comprare gli oggetti, la top 10 degli oggetti piu costosi (solo se sono presenti 10 elementi o più)
+5) Ti verrà chiesto se vuoi visualizzare i negozi, clicca <i>"Si"</i> per ottenere una lista di comandi <pre>@lootplusbot codiceNegozio</pre>, altrimenti <i>"No"</i> per annullare
 
 
 <b>----Boss----</b>
 Comando solo per <b>ADMIN</b>, per l'opzione user visualizzare il help del comando /attacchiboss
 Questo comando viene attivato quando inoltri il messaggio <b>Team</b> di @lootgamebot
 Potrete scegliere tra tre opzioni:
-\t1)<i>Titan</i> : +1 punto per chi non ha attaccato
-\t2)<i>Phoenix</i> : +2 punti per chi non ha attaccato
-\t3)<i>Annulla</i> : se vi siete sbagliati
+1)<i>Titan</i> : +1 punto per chi non ha attaccato
+2)<i>Phoenix</i> : +2 punti per chi non ha attaccato
+3)<i>Annulla</i> : se vi siete sbagliati
 Scelto il tipo di boss verranno salvati i punti dei membri non attaccanti, ovviamente chi ha piu punti si trova in pericolo di kick dal team
 <b>NB</b>: Se qualcuno dei membri NON ha inviato il comando /start al bot non saranno salvati i punti del suddetto, ma verrai notificato.
 Successivamente potrete scegliere 4 opzioni:
-\t1)<i>Completa</i> : Visualizza gli utenti divisi in due categorie, attaccanti (con danno, punteggio e attacchi), non attaccanti (con punteggio e occupazione corrente (cava, missione))
-\t2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
-\t3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
-\t4)<i>Annulla</i> : Per completare la fase di visualizzazione
+1)<i>Completa</i> : Visualizza gli utenti divisi in due categorie, attaccanti (con danno, punteggio e attacchi), non attaccanti (con punteggio e occupazione corrente (cava, missione))
+2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
+3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
+4)<i>Annulla</i> : Per completare la fase di visualizzazione
 Per resettare i punteggi usa /resetboss, però fai attenzione poichè l'operazione non è reversibile
 
 <b>----Top----</b>
 Questo comando viene attivato inoltrando il messaggio <b>Giocatore</b> da @lootgamebot
 Inviando il messaggio ggiornerai il database e potrai visualizzare la tuo posizione in classifica con gli altri membri.
 La classifica mostra la data di aggiornamento e i punti realtivi a:
-\t1)Punti craft totali
-\t2)Punti craft settimanali
-\t3)Edosoldi
-\t4)Abilità
-\t5)Rango 
+1)Punti craft totali
+2)Punti craft settimanali
+3)Edosoldi
+4)Abilità
+5)Rango 
 La visualizzazione è anche disponibile tramite il comando /top, senza aggiornamento dei valori
 
 <b>----Pietre del Drago----</b>
 Questo comando viene attivato inoltrando il messagio <b>/zaino D</b> da @lootplusbot
 Otterrai il valore (in exp drago) di tutte le pietre del drago che sono presenti nel tuo zaino nei seguenti formati:
-\t1)Punti individuali per ogni pietra
-\t2)Punti totali
-\t3)Avanzamento in termini di livello del drago se decidi di nutrirlo con tutte le pietre
+1)Punti individuali per ogni pietra
+2)Punti totali
+3)Avanzamento in termini di livello del drago se decidi di nutrirlo con tutte le pietre
 """
 
     def get_credits(self):
-        return """<b>=====CREDITI=====</b>\n\n
+        return """<b>=====CREDITI=====</b>\n
 Crediti: @brandimax e @Odococo e un ringraziamento speciale a @DiabolicamenteMe per avermi aiutato ❤️.
 Se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
@@ -1389,7 +1390,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
     def help_init(self, bot, update):
         to_send="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\nSeleziona una" \
                 " categoria di comandi per imapararne l'utilizzo"
-        update.message.reply_text(to_send, reply_markup=self.inline)
+        update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
     def help_decision(self, bot, update):
         param = update.callback_query.data.split()[1]
@@ -1408,10 +1409,16 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             to_send+="<b>=====COMANDI ADMIN=====</b>\n\n"
             for elem in admin:
                 to_send+=elem+"\n"
+            to_send=text_splitter_bytes(to_send)
+            if len(to_send)>1:
+                to_send=to_send[0]
 
         elif param=="user":
             for elem in user:
                 to_send+=elem+"\n"
+            if len(to_send) > 1:
+                to_send = to_send[0]
+
 
         elif param == "developer":
             for elem in developer:
@@ -1427,7 +1434,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
             message_id=update.callback_query.message.message_id,
-            reply_markup=self.inline,
+            reply_markup=self.inline_cat,
             parse_mode="HTML"
 
         )

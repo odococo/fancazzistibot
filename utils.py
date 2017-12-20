@@ -60,7 +60,7 @@ def is_admin(id):
              )
     return id in admin
 
-def text_splitter(text, splitter="\n", split_every=5):
+def text_splitter_lines(text, splitter="\n", split_every=5):
     """Divide un messaggio da mandare in piu parti, ritorna una lista di stringhe"""
     text = [elem + splitter for elem in text.split(splitter) if elem]
 
@@ -70,6 +70,18 @@ def text_splitter(text, splitter="\n", split_every=5):
     for elem in text:
         to_append="\n".join(elem)
         if to_append: res.append(to_append)
+    return res
+def text_splitter_bytes(text,splitter="\n", split_every=4096):
+    """Divide un messaggio da mandare in piu parti, ritorna una lista di stringhe"""
+    text = [elem+splitter for elem in text.split(splitter) if elem]
+
+    res=[]
+    to_append=""
+    for elem in text:
+        if len((to_append+elem).encode('utf-8'))>=split_every:
+            res.append(to_append)
+            to_append=""
+        to_append+=elem
     return res
 
 def is_dev(id):

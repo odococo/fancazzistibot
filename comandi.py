@@ -457,7 +457,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
             text = "Non ci sono utenti nel database"
 
 
-        for elem in utils.text_splitter(text,splitter="\n\n"):
+        for elem in utils.text_splitter_lines(text, splitter="\n\n"):
             self.answer(elem, parse_mode="HTML")
 
 
