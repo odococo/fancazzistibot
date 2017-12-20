@@ -267,7 +267,7 @@ def main():
     Boss(updater, db)
     Cerca(updater, db, oggetti)
     Compra(updater,db)
-    EasterEggs(updater)
+    #EasterEggs(updater)
     Top(updater,db)
 
 
