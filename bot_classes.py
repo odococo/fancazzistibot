@@ -1240,13 +1240,13 @@ class PietreDrago:
 
         tot=legno+ferro+preziosa+diamante+leggendario+epico
 
-        to_send="Valore delle Pietre:\n"
-        if legno: to_send+="Pietra Anima di Legno : <b>"+str(legno)+"</b>\n"
-        if ferro: to_send+="Pietra Anima di Ferro : <b>"+str(ferro)+"</b>\n"
-        if preziosa: to_send+="Pietra Anima Preziosa : <b>"+str(preziosa)+"</b>\n"
-        if diamante: to_send+="Pietra Cuore di Diamante : <b>"+str(diamante)+"</b>\n"
-        if leggendario: to_send+="Pietra Cuore Leggendario : <b>"+str(leggendario)+"</b>\n"
-        if epico: to_send+="Pietra Spirito Epico : <b>"+str(epico)+"</b>\n"
+        to_send="Valore delle Pietre 🐲:\n"
+        if legno: to_send+="Pietra Anima di Legno 🌴 : <b>"+str(legno)+"</b>\n"
+        if ferro: to_send+="Pietra Anima di Ferro ⚙️ : <b>"+str(ferro)+"</b>\n"
+        if preziosa: to_send+="Pietra Anima Preziosa ✨ : <b>"+str(preziosa)+"</b>\n"
+        if diamante: to_send+="Pietra Cuore di Diamante 💎 : <b>"+str(diamante)+"</b>\n"
+        if leggendario: to_send+="Pietra Cuore Leggendario 💥 : <b>"+str(leggendario)+"</b>\n"
+        if epico: to_send+="Pietra Spirito Epico 🌪 : <b>"+str(epico)+"</b>\n"
         to_send+="Totale : <b>"+str(tot)+"</b>\n"
         lv=tot/70
         if lv<1: to_send+="Puoi arrivare al <b>"+"{0:.2f}".format(lv*100)+"%</b> di un livello"
