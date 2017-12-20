@@ -550,16 +550,16 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.bot.send_message(241317532,"ciao osho")
 
     def Dchiblocca(self):
-        
+
         @utils.catch_exception
-        def inner():
+        def inner(bot, update):
             users=self.db.get_users()
 
             for  user in users:
-                print("Mando messaggio a "+str(user['id']))
+                self.answer("Mando messaggio a "+str(user['id']))
                 self.bot.sendChatAction(user['id'],"typing")
 
-        inner()
+        inner(self.bot, self.update)
 
 
 
