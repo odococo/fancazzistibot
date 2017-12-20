@@ -1203,7 +1203,6 @@ class PietreDrago:
         self.db=db
 
         disp = updater.dispatcher
-        # todo: add permission decor
 
         if DEBUG:
             disp.add_handler(RegexHandler("^.* possiedi \(D\):", self.calc_val))
@@ -1299,7 +1298,6 @@ class Help:
         ])
 
         disp = updater.dispatcher
-        # todo: add permission decor
         if DEBUG:
             disp.add_handler(CommandHandler("help", self.help_init))
         if not DEBUG:
@@ -1441,6 +1439,8 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
 
         elif param == "developer":
+            to_send+="<b>=====COMANDI DEVELOPER=====</b>\n\n"
+
             for elem in developer:
                 to_send += elem + "\n"
             to_send = text_splitter_bytes(to_send, splitter="\n")
