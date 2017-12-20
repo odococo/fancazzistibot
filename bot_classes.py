@@ -1174,7 +1174,7 @@ class Top:
 
         future_hour = user['agg'] + timedelta(hours=1)
 
-        res += "<b>" + user['username'] + "</b> con <b>" + "{:.}".format(user[sort_key]) + "</b> (<i>" + \
+        res += "<b>" + user['username'] + "</b> con <b>" + "{:.}".format(int(user[sort_key])) + "</b> (<i>" + \
                str(future_hour.time()).split(".")[0]+" del "+str(future_hour.date().strftime('%d-%m-%Y')) + "</i>)\n"
 
         return res
