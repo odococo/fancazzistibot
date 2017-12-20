@@ -1249,8 +1249,9 @@ class PietreDrago:
         if epico: to_send+="Pietra Spirito Epico : <b>"+str(epico)+"</b>\n"
         to_send+="Totale : <b>"+str(tot)+"</b>\n"
         lv=tot/70
-        if lv<1: to_send+="Puoi arrivare al "+"{0:.2f}".format(lv*100)+"% di un livello"
-        else:  to_send+="Puoi far salire il drago di  "+str(lv)+" livello e ""{0:.2f}".format(lv%1*100)
+        if lv<1: to_send+="Puoi arrivare al <b>"+"{0:.2f}".format(lv*100)+"%</b> di un livello"
+        elif lv<2:  to_send+="Puoi far salire il drago di <b>"+str(math.floor(lv))+"</b> livello e <b>"+"{0:.2f}".format(lv%1*100)+"%</b>"
+        else:  to_send+="Puoi far salire il drago di <b>"+str(math.floor(lv))+"</b> livelli e <b>"+"{0:.2f}".format(lv%1*100)+"%</b>"
 
         update.message.reply_text(to_send,parse_mode="HTML")
 
