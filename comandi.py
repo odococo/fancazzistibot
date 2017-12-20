@@ -30,6 +30,9 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
         'rarita':("Tutorial su come utilizzare i comandi /compra e /rarita","BAADBAADygIAAtD9GVEWYOqYqzCxvAI")}
 
 
+
+
+
 class Command():
     @utils.catch_exception
     def __init__(self, bot, update, db):
@@ -547,12 +550,16 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
         self.bot.send_message(241317532,"ciao osho")
 
     def Dchiblocca(self):
+        
+        @utils.catch_exception
+        def inner():
+            users=self.db.get_users()
 
-        users=self.db.get_users()
+            for  user in users:
+                print("Mando messaggio a "+str(user['id']))
+                self.bot.sendChatAction(user['id'],"typing")
 
-        for  user in users:
-            print("Mando messaggio a "+str(user['id']))
-            self.bot.sendChatAction(user['id'],"typing")
+        inner()
 
 
 
