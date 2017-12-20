@@ -109,4 +109,3 @@ Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! ðŸ
 ## TODO
 * usa getChat per verificare se un user ha bloccato il bot
 * Calcola il punteggio delle pietra da inoltro zaino
-* Aggiungi classifica

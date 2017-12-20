@@ -1138,13 +1138,20 @@ class Top:
             )
             return
 
+        prov_dict={
+            "pc_tot":"📦Punti Craft Totali📦",
+            "pc_set": "📁Punti Craft Settimanali📁",
+            "money": "💰EdoSoldi💰",
+            "ability": "🎗Abilità🎗",
+            "rango": "🛡Rango🛡"
+        }
 
         # casting top to list if is dict
         if not isinstance(top_ps, list): top_ps = [top_ps]
 
         # sorting
         sorted_top = sorted(top_ps, key=lambda k: k[sort_key], reverse=True)
-        to_send=""
+        to_send="Classifica per <b>"+prov_dict[sort_key]+"</b>\n"
         idx=1
         for pl in sorted_top:
             to_send+=self.pretty_user(pl,idx, sort_key)
