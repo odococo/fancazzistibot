@@ -271,7 +271,7 @@ def main():
     #EasterEggs(updater)
     Top(updater,db)
     PietreDrago(updater)
-    Help(updater)
+    Help(updater,db)
 
 
     # handler per richiedere accesso al bot

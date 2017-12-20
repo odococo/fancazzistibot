@@ -1198,13 +1198,19 @@ class Top:
 
 class PietreDrago:
 
-    def __init__(self, updater):
+    def __init__(self, updater, db):
         self.updater = updater
+        self.db=db
 
         disp = updater.dispatcher
         # todo: add permission decor
 
-        disp.add_handler(RegexHandler("^.* possiedi \(D\):", self.calc_val))
+        if DEBUG:
+            disp.add_handler(RegexHandler("^.* possiedi \(D\):", self.calc_val))
+        else:
+            calc_val_el=self.db.elegible_loot_user(self.calc_val)
+            disp.add_handler(RegexHandler("^.* possiedi \(D\):", calc_val_el))
+
 
     def calc_val(self, bot, update):
 
@@ -1279,8 +1285,9 @@ class PietreDrago:
 
 class Help:
 
-    def __init__(self, updater):
+    def __init__(self, updater, db):
         self.updater = updater
+        self.db=db
         self.inline_cat= InlineKeyboardMarkup([
             [InlineKeyboardButton("Admin", callback_data="/help admin"),
              InlineKeyboardButton("User", callback_data="/help user"),
@@ -1293,8 +1300,13 @@ class Help:
 
         disp = updater.dispatcher
         # todo: add permission decor
+        if DEBUG:
+            disp.add_handler(CommandHandler("help", self.help_init))
+        if not DEBUG:
+            help_init_elegible=self.db.elegible_loot_user(self.help_init)
+            disp.add_handler(CommandHandler("help", help_init_elegible))
 
-        disp.add_handler(CommandHandler("help", self.help_init))
+
         disp.add_handler(CallbackQueryHandler(self.help_decision, pattern="/help"))
 
     def get_commands_help(self):
