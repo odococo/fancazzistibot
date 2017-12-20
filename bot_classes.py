@@ -1131,12 +1131,11 @@ class Top:
         sort_key = update.callback_query.data.split()[1]
 
         if sort_key=="annulla":
-            bot.edit_message_text(
+            bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
-                text="Annullo",
-                message_id=update.callback_query.message.message_id,
-                reply_markup=ReplyKeyboardRemove()
+                message_id=update.callback_query.message.message_id
             )
+            bot.sendMessage(update.callback_query.message.chat.id, "Annullo")
             return
 
 
@@ -1146,7 +1145,7 @@ class Top:
         # sorting
         sorted_top = sorted(top_ps, key=lambda k: k[sort_key])
         to_send=""
-        idx=0
+        idx=1
         for pl in sorted_top:
             to_send+=self.pretty_user(pl,idx, sort_key)
             idx+=1
