@@ -193,6 +193,7 @@ developer_message = []#usata per salvare i messaggi di richiesta accesso
 
 
 class DB:
+    """Classe per gestire l'interfacciamento con il database"""
     def __init__(self):
 
         self.connect_db()
@@ -256,6 +257,9 @@ class DB:
             self.execute(TABELLE['bot_users']['insert'], (id_bot, user['id'], user['language_code']))
 
     def add_user_to_items(self, id):
+        """Aggiunge un user alla tabella items
+        @:param id: id dell'user
+        @:type: int"""
         item_users = self.execute(TABELLE['items']['select']['select'])
         # print("item_users",item_users)
         if not item_users:  # se il db è vuoto
@@ -272,13 +276,24 @@ class DB:
         self.execute(TABELLE['items']['insert']['new_user'], (id,))
 
     def add_bot(self, bot):
+        """Non so che faccia"""
         self.add_user(bot)
 
     def add_punteggio(self, id, punteggio):
+        """Aggiunge uno user nella tabella punteggio con relativo id
+        @:param id: id dell'user
+        @:type: int
+        @:param punteggio: punteggio relativo all'user
+        @:type: int"""
         query = TABELLE['punteggio']['insert']
         return self.execute(query, (id, punteggio))
 
     def update_items(self, items_us, id):
+        """Aggiorna gli item realtivi ad un user
+        @:param items_us: necessita delle chiavi c, nc, r, ur, l, e, u, ue
+        @:type: dict
+        @:param id: user id
+        @:type: int"""
 
         items_db = self.execute(TABELLE['items']['select']['by_id'], (id,))
 
@@ -300,12 +315,17 @@ class DB:
         ))
 
     def update_user(self, user):
+        """Aggiorna uno user nella tabella id_users
+        @:param user: dizionario, necessita delle chiavi:
+        admin, teste, loot_user, loot_admin, banned, id"""
         query = TABELLE['id_users']['update']
         return self.execute(query,
                             (user['admin'], user['tester'], user['loot_user'], user['loot_admin'], user['banned'],
                              user['id']))
 
     def add_new_user(self, user):
+        """Aggiunge un nuovo utente alle tabelle id_user e users
+        @:param user: dizionario, necessita delle chiavi id, username"""
         # print("Saving new user")
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, True, False, False))
@@ -314,41 +334,77 @@ class DB:
                      (user['id'], user['username']))
 
     def update_punteggi(self, dizionario):
-        """Salva il i punteggi aggiornati aggiornandoli in caso gia fossero presenti oppure aggiungendoli altrimenti"""
+        """Salva il i punteggi aggiornati aggiornandoli in caso gia fossero presenti oppure aggiungendoli altrimenti
+        @:param dizionario: lista di dict, necessita delle chiavi id, valutazione, msg_id, attacchi
+        @:type: list of dict"""
 
         for elem in dizionario:
             self.execute(TABELLE['punteggio']['insert'],
                          (elem['id'], elem['valutazione'], elem['msg_id'], elem['attacchi']))
 
     def add_bot_user(self, effective_user, bot_id):
+        """Aggiunge uno user in bot_users
+        @:param effective_user: utente, necessita delle chiavi id, language_code
+        @:type: dict"""
         self.execute(TABELLE['bot_users']['insert'],(bot_id, effective_user['id'],effective_user['language_code'],))
 
     def add_update_top_user(self, pc_tot , pc_set,  money,  ability,  rango,  id):
+        """Aggiunge un user alla tabella top, se gia esiste lo aggiorna
+        @:param pc_tot: punti craft totali
+        @:type: int
+        @:param pc_set: punti craft settimanali
+        @:type: int
+        @:param money: edosoldi
+        @:type: int
+        @:param ability: abilità
+        @:type: int
+        @:param rango: rango
+        @:type: int
+        @:param id: id dell'user
+        @:type: int
+        """
         self.execute(TABELLE['top']['insert'],(pc_tot , pc_set,  money,  ability,  rango,  id,))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):
+        """Banna un user dal bot
+        @:param user: dizionario dell'user, necessita l'id"""
         # salvo l'id dell'utente o del bot
         # print("Sto negando l'accesso all'user " + str(user['id']))
         self.execute(TABELLE['id_users']['insert']['complete_user'],
                      (user['id'], False, False, False, False, True))
 
     def delete_from_all(self, user_id):
+        """Elimina un utente dalle tabelle id_users, users, punteggio, items
+        @:param user_id: id dell'utente"""
         self.execute(TABELLE['id_users']['delete'], (user_id,))
         self.execute(TABELLE['users']['delete'], (user_id,))
         self.execute(TABELLE['punteggio']['delete'], (user_id,))
         self.execute(TABELLE['items']['delete'], (user_id,))
 
     def reset_punteggio(self):
+        """Resetta tutti i punteggi nella tabella punteggio"""
         self.execute(TABELLE['punteggio']['reset'])
 
     def reset_rarita_user(self, id):
+        """Resetta le rarità relativa ad un utente
+        @:param id: id dell'utente
+        @:type: int"""
         self.execute(TABELLE['items']['reset'], (id,))
 
     def delete_user(self, user):
+        """Elimina un user dalla tabella id_users
+        @:param user: dizionario rappresentate l'utente, necessita della key id
+        @:type: dict"""
         self.execute(TABELLE['id_users']["delete"], user["id"])
 
     def different_user(self, userA, userB):
+        """Verifica che due user siano diveri
+        @:param userA: primo user
+        @:type: dict
+        @:param userB: secondo user
+        @:type: dict
+        """
         if (userB and (userA['id'] == userB['id']) and
                 (userA['username'] == userB['username']) and
                 (userA['first_name'] == userB['first_name']) and
@@ -359,6 +415,7 @@ class DB:
 
     # def delete_from_all(self, id):
     #     self.execute(TABELLE['all']['delete'],(id,))
+
 
     # ============================STATIC METHODS===================================
     # esegue una query arbitraria
@@ -541,8 +598,10 @@ class DB:
         text = update.callback_query.data.split(" ")
         command = text[0]
         user_lst = text[1:]
+        #costruisce il dizionario dal messaggio
         user = {"id": user_lst[0], "username": " ".join(user_lst[1:])}
-        if (command.strip("/") == "consentiAccessoSi"):
+        if (command.strip("/") == "consentiAccessoSi"):   #se viene garantito l'accesso salva l'user nel db e notifa user e developer
+
             if DB.execute(TABELLE["id_users"]["select"]["from_id"], (user['id'],)):
                 for msg in developer_message:
                     bot.edit_message_text(
@@ -565,7 +624,7 @@ class DB:
                     parse_mode="HTML"
                 )
 
-        else:
+        else:#altrimenti aggiungi l'user alla lista bannati e notifica i developers
             # print("Accesso negato")
             bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
             self.ban_user(user)
@@ -581,17 +640,19 @@ class DB:
 
     @utils.catch_exception
     def request_access(self, bot, user):
-        """Invia la richiesta di accesso ai comandi agli id presenti in veleloper_dict"""
+        """Invia la richiesta di accesso ai comandi agli id presenti in deleloper_dict"""
         to_send = "L'utente :\nid: " + str(user["id"]) + "\nusername: " + str(user["username"]) + "\nfirst_name: " + \
                   str(user["first_name"]) + "\nlast_name: " + str(
             user["last_name"]) + "\n" + "\nHa richiesto l'accesso a " + \
                   str(bot.username) + "\nConsenti?"
         bot.send_message(user['id'], "La richiesta di accesso al bot è stata inoltrata, aspetta la risposta")
 
+        #costruisce il messaggio da inivare dal dizionario
         user = str(user["id"]) + " " + str(user["username"])
 
         # print(to_send,user)
         for dev in developer_dicts.values():
+            #manditiene in memoria i messaggi inviati per evitare doppie risposte
             developer_message.append(bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
                 InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + user)
