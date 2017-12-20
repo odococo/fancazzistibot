@@ -7,6 +7,7 @@ import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
+
 from utils import is_numeric, catch_exception
 
 DEBUG = False
@@ -108,7 +109,6 @@ class Loot:
             return ConversationHandler.END
         elif "annulla" in param:
             return self.annulla(bot, update, user_data, msg="Ok annullo")
-
 
     def stima(self, bot, update, user_data):
         """ Inoltra tutte i messaggi /ricerca di @lootbotplus e digita /stima. Così otterrai il costo totale degli oggetti, la
@@ -242,12 +242,11 @@ class Loot:
 
         if not msg: msg = "Ok ho annullato tutto"
 
-
         user_data['stima_flag'] = False
         user_data['costo_craft'] = 0
         user_data['quantita'] = []
 
-        try :
+        try:
             update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
         except KeyError:
             bot.sendMessage(update.callback_query.message.chat.id, msg, reply_markup=ReplyKeyboardRemove())
@@ -461,7 +460,7 @@ class Boss:
 
         # print(user_data['lista_boss'], boss)
 
-        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan","Annulla"]], one_time_keyboard=True)
+        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan", "Annulla"]], one_time_keyboard=True)
         update.message.reply_text("Di quale boss stiamo parlando?",
                                   reply_markup=reply_markup)
         return 1
@@ -600,7 +599,8 @@ class Boss:
 
             return 1
 
-        elif choice =="Annulla": return self.fine(bot, update, user_data, "Ok")
+        elif choice == "Annulla":
+            return self.fine(bot, update, user_data, "Ok")
 
         else:
             # print(choice)
@@ -1029,7 +1029,7 @@ class Compra:
 
             if res[elem]: text += "Compra <b>" + str(res[elem]) + "</b> di Scrigno " + elem + "\n"
 
-        if not text: text="Si è verificato un errore...contatta @brandimax"
+        if not text: text = "Si è verificato un errore...contatta @brandimax"
 
         update.message.reply_text(text, parse_mode="HTML")
         return self.inizzializza(bot, update, user_data)
@@ -1062,83 +1062,117 @@ class Constes:
 
     def __init__(self, updater):
         self.updater = updater
-        self.contest_flag=False
-        self.contest_creator=False
-
+        self.contest_flag = False
+        self.contest_creator = False
 
         disp = updater.dispatcher
+
 
 class Top:
 
     def __init__(self, updater, db):
         self.updater = updater
-        self.db=db
-        self.inline=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
-                 InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
-                [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
-                 InlineKeyboardButton("Abilità", callback_data="/top ability")],
-                [InlineKeyboardButton("Rango", callback_data="/top rango"),
-                 InlineKeyboardButton("Annulla", callback_data="/top annulla")]
+        self.db = db
+        self.inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Craft Totali", callback_data="/top pc_tot"),
+             InlineKeyboardButton("Craft Settimanali", callback_data="/top pc_set")],
+            [InlineKeyboardButton("EdoSoldi", callback_data="/top money"),
+             InlineKeyboardButton("Abilità", callback_data="/top ability")],
+            [InlineKeyboardButton("Rango", callback_data="/top rango"),
+             InlineKeyboardButton("Annulla", callback_data="/top annulla")]
 
-            ])
+        ])
 
         disp = updater.dispatcher
-        #todo: add permission decor
+        # todo: add permission decor
         disp.add_handler(RegexHandler("^Giocatore 👤", self.add_player))
-        disp.add_handler(CommandHandler("top",self.top_command))
+        disp.add_handler(CommandHandler("top", self.top_command))
         disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top"))
 
+    def add_player(self, bot, update):
 
-    def add_player(self, bot,update):
+        # getting demojized message
+        msg = update.message.text
+        msg = emoji.demojize(msg)
 
-        #getting demojized message
-        msg=update.message.text
-        msg=emoji.demojize(msg)
-
-        #compaling regex
+        # compaling regex
         pc_regex = re.compile(r":package: ([0-9.]+) \(([0-9.]+)")
         money_regex = re.compile(r":money_bag: ([0-9.]+)")
         abilita_regex = re.compile(r"Abilità: ([0-9]+)")
         rango_regex = re.compile(r"Rango: [A-z ]+ \(([0-9]+)")
 
-        #getting values
-        pc_tot=re.findall(pc_regex,msg)[0][0].replace(".","")
-        pc_set=re.findall(pc_regex,msg)[0][1].replace(".","")
-        money=re.findall(money_regex,msg)[0].replace(".","")
-        ability=re.findall(abilita_regex,msg)[0].replace(".","")
-        rango=re.findall(rango_regex,msg)[0].replace(".","")
+        # getting values
+        pc_tot = re.findall(pc_regex, msg)[0][0].replace(".", "")
+        pc_set = re.findall(pc_regex, msg)[0][1].replace(".", "")
+        money = re.findall(money_regex, msg)[0].replace(".", "")
+        ability = re.findall(abilita_regex, msg)[0].replace(".", "")
+        rango = re.findall(rango_regex, msg)[0].replace(".", "")
 
-        #updating to db
-        err=self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
-        to_send=""
+        # updating to db
+        err = self.db.add_update_top_user(pc_tot, pc_set, money, ability, rango, update.message.from_user.id)
+        to_send = ""
         if not err:
 
-            to_send="In base a cosa desideri visualizzare la classifica?"
-            update.message.reply_text(to_send,reply_markup=self.inline)
+            to_send = "In base a cosa desideri visualizzare la classifica?"
+            update.message.reply_text(to_send, reply_markup=self.inline)
         else:
-            to_send="Si è verificato un errore, contatta @brandimax e inoltragli il messaggio che hai inviato"
+            to_send = "Si è verificato un errore, contatta @brandimax e inoltragli il messaggio che hai inviato"
             update.message.reply_text(to_send)
-
-
-
-
 
     def top_command(self, bot, update):
 
         to_send = "In base a cosa desideri visualizzare la classifica?"
         update.message.reply_text(to_send, reply_markup=self.inline)
 
+    def get_top(self, bot, update):
 
-    def get_top(self, bot,update):
-        top_ps=self.db.get_all_top()
+        # getting list of players and sort_key
+        top_ps = self.db.get_all_top()
         sort_key = update.callback_query.data.split()[1]
-        bot.delete_message(
+
+        if sort_key=="annulla":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Annullo",
+                message_id=update.callback_query.message.message_id,
+                reply_markup=ReplyKeyboardRemove()
+            )
+            return 
+
+
+        # casting top to list if is dict
+        if not isinstance(top_ps, list): top_ps = [top_ps]
+
+        # sorting
+        sorted_top = sorted(top_ps, key=lambda k: k[sort_key])
+        to_send=""
+        idx=0
+        for pl in sorted_top:
+            to_send+=self.pretty_user(pl,idx, sort_key)
+            idx+=1
+
+        bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
-            message_id=update.callback_query.message.message_id
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            reply_markup=self.inline,
+            parse_mode="HTML"
+
         )
-        
-        print(top_ps)
-        print(sort_key)
 
+    def pretty_user(self, user, idx, sort_key):
+        res = ""
 
+        if idx == 1:
+            res += "🥇 "
+        elif idx == 2:
+            res += "🥈 "
+        elif idx == 3:
+            res += "🥉 "
+        else:
+            idx += str(idx) + ") "
+
+        res += "<b>" + user['username'] + "</b> con <b>" + str(user[sort_key]) + "</b> (<i>" + str(
+            user['agg']) + "</i>)\n"
+
+        return res
