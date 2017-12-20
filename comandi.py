@@ -107,39 +107,39 @@ class Command():
         self.answer("""Benvenuto al Fancabot. Ha diverse funzionalità! Scoprile con /help!\n
     
 Crediti: @brandimax @Odococo""")
-
-    def Uhelp(self):
-        """Visualizza l'elenco dei comandi con relativa descrizione"""
-        commands = self.command_list(utils.is_admin(
-            self.update.message.from_user.id), utils.is_dev(self.bot.id))
-        commands = {"/" + command: commands.get(command) for command in commands}
-        text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n" \
-               "<b>=====COMANDI SEMPLICI=====</b>\n\n"
-        prov = [key + " " + str(value) for key, value in commands.items()]
-        text += "\n\n".join(prov)
-        text += COMANDI_PLUS
-        text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot.
-Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare, ti sarà chiesta quale informazione vuoi visualizzare:
-<b>Negozi</b>
-Ti permette di ottenere una comoda lista di negozi degli oggetti mancanti da poter inoltrare a @lootbotplus
-<b>Ricerca</b>
-Ti sarà inviata una comoda lista di comandi /ricerca da inoltrare a @lootplusbot.
-Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
-Se, invece non ti interessa avere queste informazioni premi "Annulla".
-
-<b>Boss</b>
-In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\
-
-<b>Top</b>
-Inviando il messaggio "Giocatore" che ottieni in @lootgamebot aggiornerai il database e potrai visualizzare la tuo posizione in classifica! (leggi il comando /top per ulteriori informazioni)
-
-<b>Pietre del Drago</b>
-Inoltrando il messagio "/zaino D" da @lootplusbot, otterrai il valore di tutte le pietre del drago che sono presenti nel tuo zaino
-\n\n<b>=====FINE=====</b>\n\n
-Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
-Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
-Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
-        self.answer(text, parse_mode="HTML")
+#
+#     def Uhelp(self):
+#         """Visualizza l'elenco dei comandi con relativa descrizione"""
+#         commands = self.command_list(utils.is_admin(
+#             self.update.message.from_user.id), utils.is_dev(self.bot.id))
+#         commands = {"/" + command: commands.get(command) for command in commands}
+#         text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n" \
+#                "<b>=====COMANDI SEMPLICI=====</b>\n\n"
+#         prov = [key + " " + str(value) for key, value in commands.items()]
+#         text += "\n\n".join(prov)
+#         text += COMANDI_PLUS
+#         text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot.
+# Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare, ti sarà chiesta quale informazione vuoi visualizzare:
+# <b>Negozi</b>
+# Ti permette di ottenere una comoda lista di negozi degli oggetti mancanti da poter inoltrare a @lootbotplus
+# <b>Ricerca</b>
+# Ti sarà inviata una comoda lista di comandi /ricerca da inoltrare a @lootplusbot.
+# Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
+# Se, invece non ti interessa avere queste informazioni premi "Annulla".
+#
+# <b>Boss</b>
+# In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\
+#
+# <b>Top</b>
+# Inviando il messaggio "Giocatore" che ottieni in @lootgamebot aggiornerai il database e potrai visualizzare la tuo posizione in classifica! (leggi il comando /top per ulteriori informazioni)
+#
+# <b>Pietre del Drago</b>
+# Inoltrando il messagio "/zaino D" da @lootplusbot, otterrai il valore di tutte le pietre del drago che sono presenti nel tuo zaino
+# \n\n<b>=====FINE=====</b>\n\n
+# Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
+# Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
+# Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
+#         self.answer(text, parse_mode="HTML")
 
     # def Uinline(self):
     #   """Esempio di comandi inline"""

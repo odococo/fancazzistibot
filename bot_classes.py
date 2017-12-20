@@ -1277,15 +1277,24 @@ class PietreDrago:
         update.message.reply_text(to_send, parse_mode="HTML")
 
 
-class Help():
+class Help:
 
     def __init__(self, updater):
         self.updater = updater
+        self.inline= InlineKeyboardMarkup([
+            [InlineKeyboardButton("Admin", callback_data="/help admin"),
+             InlineKeyboardButton("User", callback_data="/help user"),
+             InlineKeyboardButton("Developer", callback_data="/help developer")],
+            [InlineKeyboardButton("Inoltro", callback_data="/help inoltro"),
+             InlineKeyboardButton("Crediti", callback_data="/help crediti"),
+             InlineKeyboardButton("Esci", callback_data="/help esci")]
 
+        ])
         disp = updater.dispatcher
         # todo: add permission decor
 
-        disp.add_handler(CommandHandler("help", None))
+        disp.add_handler(CommandHandler("help", self.help_init))
+        disp.add_handler(CallbackQueryHandler(self.help_decision, pattern="/help"))
 
     def get_commands_help(self):
         funcs = inspect.getmembers(Command, predicate=inspect.isfunction)
@@ -1302,18 +1311,21 @@ class Help():
             elif elem[0][0] == "D":
                 developer.append("/"+elem[0][1:] + " - " + elem[1].__doc__ + "\n")
 
+            admin.append("/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
+                         "i punteggi non sono piu recuperabili")
+
+            user.append("/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team")
+            user.append("/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e "
+                        "rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2 ")
+            user.append("/compra - Ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'"
+                        "emporio e il tuo budget")
+            user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
+                        "settimanali, edosoldi, abilità, rango)")
+
         return user, admin, developer
 
-    def get_other_commands(self):
-        return """\n
-/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme
-/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e rinascita. Dato num1>num2 cerca oggetti craft con valore compreso tra num1 e num2
-/compra - ti permette di calcolare facilmente quanti scrigni comprare in base a sconti dell'emporio e il tuo budget
-/resetBoss - resetta i punteggi associati agli attacchi al Boss di tutti
-/top - ti permette di visualizzare la classifica dei top player in base a [pc totali, pc settimanali, edosoldi, abilità, rango)
-"""
 
-    def forward_commands(self):
+    def get_forward_commands(self):
         return """
 <b>=====COMANDI DA INOLTRO=====</b>\n\n
 I comandi da inoltro sono molteplici, verranno suddivisi in base al tipo di messaggio inoltrato.
@@ -1346,7 +1358,7 @@ Successivamente potrete scegliere 4 opzioni:
 \t2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
 \t3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
 \t4)<i>Annulla</i> : Per completare la fase di visualizzazione
-
+Per resettare i punteggi usa /resetboss, però fai attenzione poichè l'operazione non è reversibile
 
 <b>----Top----</b>
 Questo comando viene attivato inoltrando il messaggio <b>Giocatore</b> da @lootgamebot
@@ -1357,6 +1369,7 @@ La classifica mostra la data di aggiornamento e i punti realtivi a:
 \t3)Edosoldi
 \t4)Abilità
 \t5)Rango 
+La visualizzazione è anche disponibile tramite il comando /top, senza aggiornamento dei valori
 
 <b>----Pietre del Drago----</b>
 Questo comando viene attivato inoltrando il messagio <b>/zaino D</b> da @lootplusbot
@@ -1372,3 +1385,49 @@ Crediti: @brandimax e @Odococo e un ringraziamento speciale a @DiabolicamenteMe 
 Se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
 Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
 """
+
+    def help_init(self, bot, update):
+        to_send="Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\nSeleziona una" \
+                " categoria di comandi per imapararne l'utilizzo"
+        update.message.reply_text(to_send, reply_markup=self.inline)
+
+    def help_decision(self, bot, update):
+        param = update.callback_query.data.split()[1]
+
+        user,admin,developer=self.get_commands_help()
+
+        to_send=""
+        if param=="esci":
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
+            bot.sendMessage(update.callback_query.message.chat.id, "Spero di esserti stato utile!")
+            return
+        elif param=="admin":
+            for elem in admin:
+                to_send+=elem+"\n"
+
+        elif param=="user":
+            for elem in user:
+                to_send+=elem+"\n"
+
+        elif param == "developer":
+            for elem in developer:
+                to_send += elem + "\n"
+
+        elif param == "inoltro":
+            to_send+=self.get_forward_commands()
+
+        elif param=="crediti":
+            to_send+=self.get_credits()
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            reply_markup=self.inline,
+            parse_mode="HTML"
+
+        )
+
