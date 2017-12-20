@@ -1100,8 +1100,8 @@ class Top:
         rango=re.findall(rango_regex,msg)[0].replace(".","")
 
         #updating to db
-        self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
-
+        prov=self.db.add_update_top_user( pc_tot , pc_set,  money,  ability,  rango,  update.message.from_user.id)
+        print(str(prov))
         update.message.reply_text("Sei stato aggiunto correttamente, utilizza il comando /top per vedere la classifica")
 
 
