@@ -490,7 +490,7 @@ Detto questo in bocca al lupo"""
         message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
                                              str(str(future_hour.time()).split(".")[0]) + " del "+
-                                             str(future_hour.date().strftime('%d-%m-%Y')+"\nTimer settato!"))
+                                             str(future_hour.date().strftime('%d-%m-%Y')))
         self.bot.pinChatMessage(chat_id, message.message_id, True)
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
                                message_id=self.update.message.message_id)
@@ -701,6 +701,7 @@ class Timer(Thread):
         if not self.date_time:
             self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
             return
+        self.bot.sendMessage(self.to_send_id, "Timer avviato!")
 
         remaning_time= self.date_time - datetime.now()+
         wait_time=600
