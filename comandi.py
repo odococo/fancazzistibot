@@ -705,6 +705,7 @@ class Timer(Thread):
 
         remaning_time= self.date_time - datetime.now()
         wait_time=600
+        print(divmod(remaning_time.total_seconds(), 60)[0])
         if divmod(remaning_time.total_seconds(), 60)[0]<600:
             wait_time=divmod(remaning_time.total_seconds(), 60)[0]
 
