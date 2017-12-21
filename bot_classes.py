@@ -492,8 +492,7 @@ class Boss:
 
         #genera e invia risposta
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"],["Sveglia", "Annulla"],["Visualizza"]], one_time_keyboard=True)
-        update.message.reply_text("Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio"
-                                  " a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
+        update.message.reply_text("Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
                                   reply_markup=reply_markup)
         return 1
 
@@ -791,10 +790,11 @@ class Boss:
         """Controlla che le info inviate siano uguali a quelle nel db"""
         if not boss_db:
             return False
+
         if not isinstance(boss_db, list):
             boss_db = [boss_db]  # rende boss_db una lista
 
-        print(boss_db)
+        #print(boss_db)
         users_db = self.db.get_users()
         if not users_db: return False
         users_id = [(elem['username'], elem['id']) for elem in users_db]  # contiene la tupla username,id
