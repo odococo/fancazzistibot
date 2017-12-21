@@ -702,8 +702,13 @@ class Timer(Thread):
             self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
             return
 
+        remaning_time= self.date_time - datetime.now()+
+        wait_time=600
+        if divmod(remaning_time.total_seconds(), 60)[0]<600:
+            wait_time=divmod(remaning_time.total_seconds(), 60)[0]
+
         #aspetta 10 minuti finche non viene stoppato
-        while not self.stopped.wait(600):
+        while not self.stopped.wait(wait_time):
             #se il tempo è terminato esci dal ciclo
             if datetime.now()==self.date_time: break
         self.bot.sendMessage(self.to_send_id,"Il timer è scaduto")
