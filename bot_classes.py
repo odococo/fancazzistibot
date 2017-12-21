@@ -791,13 +791,12 @@ class Boss:
         """Controlla che le info inviate siano uguali a quelle nel db"""
         if not isinstance(boss_db, list):
             boss_db = [boss_db]  # rende boss_db una lista
-        elif not boss_db:
+        elif len(boss_db)==0:
             return False
         users_db = self.db.get_users()
         if not users_db: return False
         users_id = [(elem['username'], elem['id']) for elem in users_db]  # contiene la tupla username,id
-        users_punteggio = [elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in
-                                                                    boss_db]]  # ha solo gli elementi (username,id) che sono prenseti nel db punteggio
+        users_punteggio = [elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in boss_db]]  # ha solo gli elementi (username,id) che sono prenseti nel db punteggio
         users_db = [elem['username'] for elem in users_db]  # ha gli username presenti nel db users
 
         # guarda se ci sono nuovi utenti nel messaggio team che sono anche dentro users
