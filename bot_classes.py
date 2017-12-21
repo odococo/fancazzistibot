@@ -576,7 +576,6 @@ class Boss:
             users = self.db.get_users()
             users_name = [elem["username"] for elem in users]
             users_name_id = [(elem["username"], elem['id']) for elem in users]
-            print("1")
 
 
             if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
@@ -598,24 +597,38 @@ class Boss:
                                                   # aggiungo l'id associato
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
-            print("2")
+            print("1")
 
             print(user_data)
             found = False
 
             for username in user_data['lista_boss']:
+
+                print("1")
                 for single_dict in user_data['punteggi']:
+
+                    print("1")
                     if single_dict['username'] == username[0]:  # se è gia presente nel db
                         found = True
+
+                        print("1")
                         single_dict['msg_id'] = user_data['last_update_id']
+
+                        print("1")
                         if user_data['phoenix'] and isinstance(username[2], int):  # non ha attaccato ed è phoenix
                             single_dict['valutazione'] += 2
-                        elif not user_data['phoenix'] and isinstance(username[2],
-                                                                     int):  # non ha attaccato ed è titan
+
+                            print("1")
+                        elif not user_data['phoenix'] and isinstance(username[2], int):  # non ha attaccato ed è titan
+
+                            print("1")
                             single_dict['valutazione'] += 1
                         elif isinstance(username[2], tuple):  # ha attaccato
+
+                            print("1")
                             single_dict['attacchi'] = username[2][1]
                 if not found:
+                    print("1")
                     skipped.append(username)
                 found = False
             print("3")
