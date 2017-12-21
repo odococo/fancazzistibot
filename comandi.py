@@ -59,6 +59,7 @@ class Command():
         #event to stop
         self.timer=timer
         self.stop_timer=timer.get_stop_event()
+        self.timer.set_bot_update(bot, update)
 
         # print(self.command, self.params)
 
