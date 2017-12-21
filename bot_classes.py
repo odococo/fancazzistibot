@@ -564,7 +564,6 @@ class Boss:
                 user_data['phoenix'] = False
 
             # todo: trova un'equivalente di id che non cambia ongi volta che rinvii lo stesso messaggio
-            print("1")
 
             if user_data['last_update_id'] == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
@@ -577,11 +576,10 @@ class Boss:
             users = self.db.get_users()
             users_name = [elem["username"] for elem in users]
             users_name_id = [(elem["username"], elem['id']) for elem in users]
-            print("2")
+            print("1")
 
 
-            if user_data['single_dict']: user_data['punteggi'] = [user_data[
-                                                                      'punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
+            if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in user_data['lista_boss']:
                 if username[0] in users_name and not bool(user_data['punteggi'][0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
@@ -600,6 +598,7 @@ class Boss:
                                                   # aggiungo l'id associato
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
+            print("2")
 
            # print(user_data)
             found = False
@@ -619,11 +618,12 @@ class Boss:
                 if not found:
                     skipped.append(username)
                 found = False
+            print("3")
 
             if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
                 self.db.update_punteggi(user_data['punteggi'])
 
-            print("3")
+            print("4")
 
 
             #notifica gli users che il punteggio è stato aggiornato
