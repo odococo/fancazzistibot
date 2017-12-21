@@ -652,7 +652,7 @@ class Boss:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
                 for users in skipped:
                     to_send += "@" + users[0] + "\n"
-                to_send += "Chiedigli di inviare /start a @" + bot.username
+                to_send += "Chiedigli di inviare /start a @" + bot.username+" , in privato"
                 update.message.reply_text(to_send)
 
 
