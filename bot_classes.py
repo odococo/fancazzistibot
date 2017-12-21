@@ -601,13 +601,14 @@ class Boss:
 
             print(user_data)
             found = False
+            #rimuovi dizionari vuoti
+            user_data['punteggi']=filter(None, user_data['punteggi'])
 
             for username in user_data['lista_boss']:
 
                 print("1")
                 for single_dict in user_data['punteggi']:
-                    if not single_dict: continue
-
+                
                     print("1")
                     if single_dict['username'] == username[0]:  # se è gia presente nel db
                         found = True
