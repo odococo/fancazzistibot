@@ -504,7 +504,7 @@ Detto questo in bocca al lupo"""
         self.timer.start()
 
     def Astoptimer(self):
-        if not self.timer.is_alive():
+        if not self.timer.stopped:
             self.answer("Il timer non è attivo")
             return
         self.stop_timer.set()
@@ -705,6 +705,8 @@ class Timer(Thread):
         self.bot.sendMessage(self.to_send_id, "Timer avviato!")
 
         remaning_time= self.date_time - datetime.now()
+        self.bot.sendMessage(self.to_send_id, "Il timer scadrà tra "+str(remaning_time))
+
         wait_time=600
         print(divmod(remaning_time.total_seconds(), 60)[0])
         if divmod(remaning_time.total_seconds(), 60)[0]<600:
