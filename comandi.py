@@ -704,10 +704,11 @@ class Timer(Thread):
             self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
             return
 
-
+        #prendi la differenza tra quanto c'è da aspettare e ora
         d,h,m=self.dates_diff(self, self.date_time)
         self.bot.sendMessage(self.to_send_id, "Timer avviato! scadrà tra "+str(h)+" ore")
 
+        #se i minuti da aspettare sono meno di 10 usa quelli come wait time
         wait_time=600
         if m<600:
             wait_time=m
@@ -718,8 +719,11 @@ class Timer(Thread):
             if datetime.now()==self.date_time: break
         self.bot.sendMessage(self.to_send_id,"Il timer è scaduto")
 
-    def dates_diff(self, date1):
-        diff = date1- datetime.now()
+    def dates_diff(self, date_time):
+        """Get the difference between a datetime and now
+        @:param date_time: the date time
+        @:type: datetime"""
+        diff = date_time- datetime.now()
         days = diff.days
         days_to_hours = days * 24
         diff_btw_two_times = (diff.seconds) / 3600
