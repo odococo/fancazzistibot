@@ -478,7 +478,8 @@ class Boss:
 
         #genera e invia risposta
         reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"],["Sveglia", "Annulla"]], one_time_keyboard=True)
-        update.message.reply_text("Scegli un boss oppure clicca sveglia per mandare un messaggio a chi non ha attaccato, oppure annulla.",
+        update.message.reply_text("Scegli un boss per salvare il punteggio oppure clicca sveglia per mandare un messaggio"
+                                  " a chi non ha attaccato, oppure annulla.",
                                   reply_markup=reply_markup)
         return 1
 
