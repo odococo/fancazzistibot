@@ -256,7 +256,7 @@ Crediti: @brandimax @Odococo""")
 
     def Uinfo(self):
         """- Ottieni le informazioni riguardo il tuo account"""
-        user = self.update.message.from_user
+        user = self.db.get_user(self.update.message.from_user.id)
         self.answer(str(user), pretty_json=True)
 
     def Upermessi(self):
@@ -410,12 +410,8 @@ Detto questo in bocca al lupo"""
 
         res=self.db.update_username(new_username,user_id)
         print(res)
-        if not res:
-            self.answer("Si è verificato un errore")
 
-        else:
-
-            self.answer("Complimenti! il tuo nuovo nome è "+new_username)
+        self.answer("Complimenti! il tuo nuovo nome è "+new_username)
 
 
     # admin command ------------------------------------------------------------
