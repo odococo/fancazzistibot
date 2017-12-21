@@ -507,7 +507,7 @@ Detto questo in bocca al lupo"""
             self.answer("Il timer non è attivo")
             return
         self.stop_timer.set()
-        self.answer("Il timer è stato fermato")
+        self.answer("Il timer è stato fermato a "+self.timer.get_remning_time_str()+" ore dalla fine")
 
     def Autente(self):
         """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
@@ -669,12 +669,15 @@ class Timer(Thread):
     def set_hour(self, date_time):
         self.date_time=date_time
 
-    def get_remning_time(self):
+    def get_remning_time_str(self):
         if not self.date_time:
             self.update.message.reply_text("Non c'è nessun timer impostato")
             return
         remaning_time=self.date_time - datetime.now()
-        self.update.message.reply_text("Mancano "+str(str(remaning_time.time()).split(".")[0]))
+        return str(str(remaning_time.time()).split(".")[0])
+
+    def get_remaning_time(self):
+        self.update.message.reply_text("Mancano "+self.get_remning_time_str())
 
     def run(self):
         if not self.date_time:
