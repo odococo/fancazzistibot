@@ -476,7 +476,7 @@ Detto questo in bocca al lupo"""
         boss = self.params[0]
         giorno = self.params[1]
         try:
-            if giorno:
+            if not giorno:
                 ore = int(self.params[2].split(":")[0])+24
             else:
                 ore=int(self.params[2].split(":")[0])
@@ -671,6 +671,7 @@ class Timer(Thread):
         self.to_send_id=None
 
     def set_bot_update(self, bot, update):
+        """Setter per bot e update"""
         self.bot = bot
         self.update = update
         self.to_send_id = update.effective_chat.id
@@ -683,15 +684,19 @@ class Timer(Thread):
         self.date_time=date_time
 
     def get_stop_event(self):
-        return self.stopped
+        """Ritorna lo stato del thread"""
+        return self.stopped and self.is_alive()
 
     def get_remning_time_str(self, string=True):
         """Ritorna la stringa con il tempo rimanente
-        #:return: str"""
+        @:param string: boolena per ritornare in stringa o datetime
+        @:type: bool
+        #:return: str or datetime"""
         if not self.date_time:
             self.update.message.reply_text("Non c'è nessun timer impostato")
             return
         remaning_time=self.date_time - datetime.now()
+
         if string: return str(str(remaning_time.time()).split(".")[0])
         else: return remaning_time.time()
 
