@@ -477,7 +477,7 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
 
 
     def Aregistra(self):
-        """username - Aggiorna i permessi di un utente"""
+        """username permesso - Aggiorna i permessi di un utente tra [tester, admin ,loot_admin ,loot_user, banned]"""
         if len(self.params) == 2:
             key = self.params[0]
             permesso = self.params[1]
