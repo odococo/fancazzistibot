@@ -391,13 +391,13 @@ L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe esse
     def Uregoleboss(self):
         """- invia le regole riguardanti i punteggi del boss"""
         regole="""Mese nuovo regole nuove
-        Da oggi i punteggi associati al vostro username saranno crucuali nella vostra vita del team!
-        I punteggi vengono aggiornati ogni volta che si attacca Titan o Phoenix, se avete iemnticato di attaccarlo entro lo scadere del tempo vi verra aggiunto +1 o +2 rispettivamente.
-        Il valore a cui dovrete tutti puntare è zero ovviamente.
-        Dal tre in su si è a forte rischio kick dal madre.
-        Per poter visualizzare il vostro punteggio basta usare il comando /attacchiboss
-        Lo dico tanto per essere chiaro, l'aggiornamento del punteggio avviene in modo automatico, quidni non ci posso fare nulla per cambiarlo
-        Detto questo in bocca al lupo"""
+Da oggi i punteggi associati al vostro username saranno crucuali nella vostra vita del team!
+I punteggi vengono aggiornati ogni volta che si attacca Titan o Phoenix, se avete diemnticato di attaccarlo entro lo scadere del tempo vi verra aggiunto +1 o +2 rispettivamente.
+Il valore a cui dovrete tutti puntare è zero ovviamente.
+Dal tre in su si è a forte rischio kick dal madre.
+Per poter visualizzare il vostro punteggio basta usare il comando /attacchiboss
+Lo dico tanto per essere chiaro, l'aggiornamento del punteggio avviene in modo automatico, quidni non ci posso fare nulla per cambiarlo
+Detto questo in bocca al lupo"""
         self.answer(regole)
 
 
