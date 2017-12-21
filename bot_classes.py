@@ -602,7 +602,7 @@ class Boss:
             #print(user_data)
             found = False
             #rimuovi dizionari vuoti
-            user_data['punteggi']=filter(None, user_data['punteggi'])
+            user_data['punteggi']=list(filter(None, user_data['punteggi']))
             print(user_data)
 
             #per ogni elemento nel messaggio inviato
@@ -634,7 +634,7 @@ class Boss:
                     skipped.append(username)
                 found = False
 
-                
+
             # se non ho saltato tutti gli username
             if not len(skipped) == len(user_data['lista_boss']):
                 print("all skipped")
