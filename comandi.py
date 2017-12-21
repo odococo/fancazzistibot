@@ -36,7 +36,7 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
 
 class Command():
     @utils.catch_exception
-    def __init__(self, bot, update, db):
+    def __init__(self, bot, update, db, timer):
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
@@ -57,8 +57,8 @@ class Command():
         self.params = [param.strip() for param in command_text[1:]]
         #timer variables
         #event to stop
-        self.stop_timer= Event()
-        self.timer=Timer(self.stop_timer, bot, update)
+        self.timer=timer
+        self.stop_timer=timer.get_stop_event()
 
         # print(self.command, self.params)
 
@@ -653,23 +653,39 @@ Detto questo in bocca al lupo"""
 
 
 def new_command(bot, update):
-    command = Command(bot, update, DB())
+    stop_timer = Event()
+    timer=Timer(stop_timer)
+    command = Command(bot, update, DB(), timer)
     command.execute()
 
 #timer class
 class Timer(Thread):
-    def __init__(self, event, bot, update):
+    def __init__(self, event):
         Thread.__init__(self)
         self.stopped = event
-        self.bot=bot
-        self.update=update
+        self.bot=None
+        self.update=None
         self.date_time=None
-        self.to_send_id=update.effective_chat.id
+        self.to_send_id=None
+
+    def set_bot_update(self, bot, update):
+        self.bot = bot
+        self.update = update
+        self.to_send_id = update.effective_chat.id
 
     def set_hour(self, date_time):
+        """Setta l'ora in cui far partire il timer
+         #:param date_time: ora e data della fine del timer
+         #:type: datetime"""
+
         self.date_time=date_time
 
+    def get_stop_event(self):
+        return self.stopped
+
     def get_remning_time_str(self):
+        """Ritorna la stringa con il tempo rimanente
+        #:return: str"""
         if not self.date_time:
             self.update.message.reply_text("Non c'è nessun timer impostato")
             return
@@ -677,13 +693,14 @@ class Timer(Thread):
         return str(str(remaning_time.time()).split(".")[0])
 
     def get_remaning_time(self):
+        """Notifica l'utente del tempo rimanente"""
         self.update.message.reply_text("Mancano "+self.get_remning_time_str())
 
     def run(self):
+        """Runna il timer"""
         if not self.date_time:
             self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
             return
-
 
         #aspetta 10 minuti finche non viene stoppato
         while not self.stopped.wait(600):
