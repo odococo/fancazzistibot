@@ -400,6 +400,18 @@ Lo dico tanto per essere chiaro, l'aggiornamento del punteggio avviene in modo a
 Detto questo in bocca al lupo"""
         self.answer(regole)
 
+    def Umigra(self):
+        """nuovoUsername - Cambia il tuo username dentro al bot"""
+        if len(self.params)!=1:
+            self.answer("Devi inserire un nome che sarà il tuo nuovo username associato al bot")
+            return
+        user_id=self.update.message.from_user.id
+        new_username=self.params[0]
+
+        self.db.update_username(new_username,user_id)
+
+        self.answer("Complimenti! il tuo nuovo nome è "+new_username)
+
 
     # admin command ------------------------------------------------------------
 

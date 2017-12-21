@@ -398,6 +398,14 @@ class DB:
         """
         self.execute(TABELLE['top']['insert'],(pc_tot , pc_set,  money,  ability,  rango,  id,))
 
+    def update_username(self, new_username, id):
+        """Cambia lo username nel tabella users
+        @:param new_username: nuovo username
+        @:type: str
+        @:param id: id dello user che vuole cambiare il nome
+        @:type: int"""
+        self.execute(TABELLE['users']['update'],(new_username, id, ))
+
     # ============DELETE/RESET======================================
     def ban_user(self, user):
         """Banna un user dal bot
