@@ -430,30 +430,65 @@ Detto questo in bocca al lupo"""
         for user in users:
             self.bot.send_message(user['id']," ".join(self.params))
 
+    # def Apinboss(self):
+    #     """Fissa un messaggio per l'attacco del boss con i seguenti valori:
+    #     boss -> 0 (titano) o 1 (phoenix)
+    #     giorno -> da 0 a 6 (da lunedì a domenica)
+    #     ora -> un'ora qualsiasi"""
+    #     if len(self.params) != 3:
+    #         self.answer("Non hai inserito i parametri giusti!\n"
+    #                     "boss -> 0 (titano) o 1 (phoenix)\n"
+    #                     "giorno -> da 0 a 6 (da lunedì a domenica)\n"
+    #                     "ora -> un'ora qualsiasi")
+    #     chat_id=self.update.effective_chat.id
+    #     boss = self.params[0]
+    #     giorno = self.params[1]
+    #     ore = self.params[2]
+    #     nomi_boss = ["il Titano", "Phoenix"]
+    #     giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+    #     from_id = self.update.message.from_user.id
+    #     if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
+    #         message = self.bot.send_message(chat_id=chat_id,
+    #                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
+    #                                              giorni[int(giorno) % 7])
+    #         self.bot.pinChatMessage(chat_id, message.message_id, True)
+    #     self.bot.deleteMessage(chat_id=self.update.message.chat.id,
+    #                       message_id=self.update.message.message_id)
+
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
-        boss -> 0 (titano) o 1 (phoenix)
-        giorno -> da 0 a 6 (da lunedì a domenica)
-        ora -> un'ora qualsiasi"""
+               boss -> 0 (titano) o 1 (phoenix)
+               giorno -> 0 (oggi) 1 (domani)
+               ora -> un'ora qualsiasi nel formato hh:mm"""
         if len(self.params) != 3:
             self.answer("Non hai inserito i parametri giusti!\n"
                         "boss -> 0 (titano) o 1 (phoenix)\n"
-                        "giorno -> da 0 a 6 (da lunedì a domenica)\n"
-                        "ora -> un'ora qualsiasi")
-        chat_id=self.update.effective_chat.id
+                        "giorno -> 0 (oggi) 1 (domani)\n"
+                        "ora -> un'ora qualsiasi nel formato hh:mm")
+        chat_id = self.update.effective_chat.id
         boss = self.params[0]
         giorno = self.params[1]
-        ore = self.params[2]
+        try:
+            if giorno:
+                ore = int(self.params[2].split(":")[0])+24
+            else:
+                ore=int(self.params[2].split(":")[0])
+            minuti = int(self.params[2].split(":")[1])
+        except ValueError:
+            self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /pinboss boss giorno hh:mm"
+                                           "\nEsempio: /pinboss 0 1 7:45")
+            return
+
         nomi_boss = ["il Titano", "Phoenix"]
-        giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
-        from_id = self.update.message.from_user.id
-        if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
-            message = self.bot.send_message(chat_id=chat_id,
-                                            text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
-                                                 giorni[int(giorno) % 7])
-            self.bot.pinChatMessage(chat_id, message.message_id, True)
+        ore=1+int()
+        future_hour = datetime.now() + timedelta(hours=ore+1, minutes=minuti)
+        message = self.bot.send_message(chat_id=chat_id,
+                                        text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
+                                             str(str(future_hour.time()).split(".")[0]) + " del "+
+                                             str(future_hour.date().strftime('%d-%m-%Y')))
+        self.bot.pinChatMessage(chat_id, message.message_id, True)
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
-                          message_id=self.update.message.message_id)
+                               message_id=self.update.message.message_id)
 
     def Autente(self):
         """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
