@@ -712,7 +712,11 @@ class Timer(Thread):
 
         #prendi la differenza tra quanto c'è da aspettare e ora
         d,h,m=self.dates_diff(self.date_time)
-        self.bot.sendMessage(self.to_send_id, "Timer avviato! scadrà tra "+str(h)+" ore")
+        if h<0:
+            to_send="scadrà tra "+str(m)+" minuti"
+        else:
+            to_send="scadrà tra "+str(h)+" ore"
+        self.bot.sendMessage(self.to_send_id, "Timer avviato!"+to_send)
 
         #se i minuti da aspettare sono meno di 10 usa quelli come wait time
         wait_time=600
