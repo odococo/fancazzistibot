@@ -13,7 +13,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
 from comandi import Command
 from utils import is_numeric, catch_exception, text_splitter_bytes
 
-DEBUG = False
+DEBUG = True
 
 
 class Loot:
@@ -380,23 +380,38 @@ class Boss:
         self.attacca_boss_frasi=["Attacca il boss dannazzione!",
         "Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle","Attacca il boss ORA"]
 
+
         dispatcher = updater.dispatcher
 
-        boss_user_decor = db.elegible_loot_user(self.boss_user)
-        boss_admin_decor = db.elegible_loot_admin(self.boss_admin)
-        reset_boss_ask_decor = db.elegible_loot_admin(self.boss_reset_ask)
+        if not DEBUG:
+            boss_user_decor = db.elegible_loot_user(self.boss_user)
+            boss_admin_decor = db.elegible_loot_admin(self.boss_admin)
+            reset_boss_ask_decor = db.elegible_loot_admin(self.boss_reset_ask)
 
-        coversation_boss = ConversationHandler(
-            [CommandHandler("attacchiboss", boss_user_decor, pass_user_data=True),
-             RegexHandler("^🏆", boss_admin_decor, pass_user_data=True)],
-            states={
-                1: [MessageHandler(Filters.text, self.boss_loop, pass_user_data=True)]
-            },
-            fallbacks=[CommandHandler('Fine', self.fine, pass_user_data=True)]
-        )
-        dispatcher.add_handler(coversation_boss)
+            coversation_boss = ConversationHandler(
+                [CommandHandler("attacchiboss", boss_user_decor, pass_user_data=True),
+                 RegexHandler("^🏆", boss_admin_decor, pass_user_data=True)],
+                states={
+                    1: [MessageHandler(Filters.text, self.boss_loop, pass_user_data=True)]
+                },
+                fallbacks=[CommandHandler('Fine', self.fine, pass_user_data=True)]
+            )
+            dispatcher.add_handler(coversation_boss)
 
-        dispatcher.add_handler(CommandHandler("resetboss", reset_boss_ask_decor))
+            dispatcher.add_handler(CommandHandler("resetboss", reset_boss_ask_decor))
+        else:
+            coversation_boss = ConversationHandler(
+                [CommandHandler("attacchiboss", self.boss_user, pass_user_data=True),
+                 RegexHandler("^🏆", self.boss_admin, pass_user_data=True)],
+                states={
+                    1: [MessageHandler(Filters.text, self.boss_loop, pass_user_data=True)]
+                },
+                fallbacks=[CommandHandler('Fine', self.fine, pass_user_data=True)]
+            )
+            dispatcher.add_handler(coversation_boss)
+
+            dispatcher.add_handler(CommandHandler("resetboss", self.boss_reset_ask))
+
         dispatcher.add_handler( CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
 
     def cerca_boss(self, msg):
@@ -726,7 +741,7 @@ class Boss:
                 to_send += "🥉" + str(i) + ") "
             else:
                 to_send += str(i) + ") "
-            to_send += "@" + str(elem[0]) + " : facendo <b>" + '{:,}'.format(int(elem[2][0])).replace(',',
+            to_send += str(elem[0]) + " : facendo <b>" + '{:,}'.format(int(elem[2][0])).replace(',',
                                                                                                       '\'') + "</b> danno con <b>" + str(
                 elem[2][1]) + "</b> attacchi\n"
             i += 1
