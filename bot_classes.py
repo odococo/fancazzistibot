@@ -577,68 +577,66 @@ class Boss:
             users_name = [elem["username"] for elem in users]
             users_name_id = [(elem["username"], elem['id']) for elem in users]
 
+            # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
+            if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]
 
-            if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in user_data['lista_boss']:
-                if username[0] in users_name and not bool(user_data['punteggi'][0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                if username[0] in users_name and not bool(user_data['punteggi'][0]):
+                    user_data['punteggi'].append({'username': username[0],
+                                                  # aggiungo l'id associato
+                                                  'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
+                                                  'valutazione': 0,
+                                                  'attacchi': 0})  # aggiungo l'user alla lista
+
+                # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
+                elif username[0] in users_name and not username[0] in [elem['username'] for elem in user_data[ 'punteggi']]:
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
                                                   # aggiungo l'id associato
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
-                elif username[0] in users_name and \
-                        not username[0] in [elem['username'] for elem in user_data[
-                            'punteggi']]:  # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
-                    user_data['punteggi'].append({'username': username[0],
-                                                  'id': [elem[1] for elem in users_name_id if
-                                                         elem[0] == username[0]].pop(0),
-                                                  # aggiungo l'id associato
-                                                  'valutazione': 0,
-                                                  'attacchi': 0})  # aggiungo l'user alla lista
-            print("1")
 
             print(user_data)
             found = False
             #rimuovi dizionari vuoti
             user_data['punteggi']=filter(None, user_data['punteggi'])
+            #print(user_data)
 
+            #per ogni elemento nel messaggio inviato
             for username in user_data['lista_boss']:
 
-                print("1")
+                #per ogni username in punteggi
                 for single_dict in user_data['punteggi']:
-                
-                    print("1")
-                    if single_dict['username'] == username[0]:  # se è gia presente nel db
+
+                    # se è gia presente nel db
+                    if single_dict['username'] == username[0]:
                         found = True
 
-                        print("1")
                         single_dict['msg_id'] = user_data['last_update_id']
 
-                        print("1")
-                        if user_data['phoenix'] and isinstance(username[2], int):  # non ha attaccato ed è phoenix
+                        # non ha attaccato ed è phoenix
+                        if user_data['phoenix'] and isinstance(username[2], int):
                             single_dict['valutazione'] += 2
 
-                            print("1")
-                        elif not user_data['phoenix'] and isinstance(username[2], int):  # non ha attaccato ed è titan
-
-                            print("1")
+                        # non ha attaccato ed è titan
+                        elif not user_data['phoenix'] and isinstance(username[2], int):
                             single_dict['valutazione'] += 1
-                        elif isinstance(username[2], tuple):  # ha attaccato
 
-                            print("1")
+                        elif isinstance(username[2], tuple):  # ha attaccato
+                            #aggiungo gli attacchi
                             single_dict['attacchi'] = username[2][1]
+
+
                 if not found:
-                    print("1")
                     skipped.append(username)
                 found = False
-            print("3")
 
             if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
                 self.db.update_punteggi(user_data['punteggi'])
 
-            print("4")
 
 
             #notifica gli users che il punteggio è stato aggiornato
