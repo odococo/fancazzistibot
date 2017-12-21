@@ -257,8 +257,9 @@ Crediti: @brandimax @Odococo""")
     def Uinfo(self):
         #todo: prendi nome dal db e formatta per bene
         """- Ottieni le informazioni riguardo il tuo account"""
-        user = self.update.message.from_user
-        self.answer(str(user), pretty_json=True)
+        user = self.db.get_user(self.update.message.from_user.id)
+        to_send=utils.get_user(user)
+        self.answer(to_send)
 
     def Upermessi(self):
         """- Ottieni info sui permessi relativi al tuo account"""
