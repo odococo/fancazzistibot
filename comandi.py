@@ -255,6 +255,7 @@ Crediti: @brandimax @Odococo""")
                         "/dice numero_facce numero_lanci")
 
     def Uinfo(self):
+        #todo: prendi nome dal db e formatta per bene
         """- Ottieni le informazioni riguardo il tuo account"""
         user = self.update.message.from_user
         self.answer(str(user), pretty_json=True)
@@ -405,6 +406,9 @@ Detto questo in bocca al lupo"""
         if len(self.params)!=1:
             self.answer("Devi inserire un nome che sarà il tuo nuovo username associato al bot")
             return
+        elif "@" in self.params[0]:
+            self.answer("Non mettere la chiocciola")
+            return 
         user_id=self.update.message.from_user.id
         new_username=self.params[0]
 
