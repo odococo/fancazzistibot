@@ -477,9 +477,9 @@ class Boss:
         # print(user_data['lista_boss'], boss)
 
         #genera e invia risposta
-        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"],["Sveglia", "Annulla"]], one_time_keyboard=True)
-        update.message.reply_text("Scegli un boss per salvare il punteggio oppure clicca sveglia per mandare un messaggio"
-                                  " a chi non ha attaccato, oppure annulla.",
+        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"],["Sveglia", "Annulla"],["Visualizza"]], one_time_keyboard=True)
+        update.message.reply_text("Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio"
+                                  " a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
                                   reply_markup=reply_markup)
         return 1
 
@@ -628,16 +628,17 @@ class Boss:
             #prendo gli users in punteggi e nel messaggio
             punteggi_users=self.db.get_punteggi_username()
             attacchi_users= user_data['lista_boss']
-            print(punteggi_users)
-            print(attacchi_users)
+
 
             #prendo solo gli username di chi non ha attaccato
             attacchi_users=[elem[0] for elem in attacchi_users if elem[2]==0]
             #faccio lo stesso con i punteggi
             punteggi_users=[elem for elem in punteggi_users if elem['username'] in attacchi_users]
 
-            print(punteggi_users)
-            print(attacchi_users)
+            if not punteggi_users:
+                update.message.reply_text("Tutti gli users presenti nel bot hanno attaccato il boss")
+                return self.fine(bot, update, user_data)
+
 
             #mando il messaggio a tutti i non attaccanti e creo la risposta
             to_send="Ho mandato un messaggio ai seguenti users:\n"
@@ -647,9 +648,11 @@ class Boss:
 
             update.message.reply_text(to_send)
 
-            return self.fine(bot, update, user_data)
-
-
+        elif choice=="Visualizza":
+            reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+                                               one_time_keyboard=False)
+            update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
+            return 1
 
 
         else:
