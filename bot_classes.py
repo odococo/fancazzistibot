@@ -622,10 +622,10 @@ class Boss:
                 self.db.update_punteggi(user_data['punteggi'])
 
             #notifica gli users che il punteggio è stato aggiornato
-            for elem in user_data['punteggi']:
-                bot.sendMessage(elem['id'],"Le valutazioni sono state aggiornate!\n"
-                                           "Sei arrivato al punteggio <b>"+str(elem['valutazione'])+"</b>\n"
-                                            "Per consultare le regole usa il comando /regoleboss")
+            # for elem in user_data['punteggi']:
+            #     bot.sendMessage(elem['id'],"Le valutazioni sono state aggiornate!\n"
+            #                                "Sei arrivato al punteggio <b>"+str(elem['valutazione'])+"</b>\n"
+            #                                 "Per consultare le regole usa il comando /regoleboss")
 
             if len(skipped) > 0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
