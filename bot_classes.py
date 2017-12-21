@@ -606,6 +606,7 @@ class Boss:
 
                 print("1")
                 for single_dict in user_data['punteggi']:
+                    if not single_dict: continue
 
                     print("1")
                     if single_dict['username'] == username[0]:  # se è gia presente nel db
