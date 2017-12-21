@@ -732,7 +732,7 @@ class Timer(Thread):
         """Get the difference between a datetime and now
         @:param date_time: the date time
         @:type: datetime"""
-        diff = date_time- datetime.now()
+        diff = datetime.now() -date_time
         days = diff.days
         days_to_hours = days * 24
         diff_btw_two_times = (diff.seconds) / 3600
