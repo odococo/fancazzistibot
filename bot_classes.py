@@ -599,11 +599,11 @@ class Boss:
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
 
-            print(user_data)
+            #print(user_data)
             found = False
             #rimuovi dizionari vuoti
             user_data['punteggi']=filter(None, user_data['punteggi'])
-            #print(user_data)
+            print(user_data)
 
             #per ogni elemento nel messaggio inviato
             for username in user_data['lista_boss']:
@@ -634,7 +634,10 @@ class Boss:
                     skipped.append(username)
                 found = False
 
-            if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
+                
+            # se non ho saltato tutti gli username
+            if not len(skipped) == len(user_data['lista_boss']):
+                print("all skipped")
                 self.db.update_punteggi(user_data['punteggi'])
 
 
@@ -652,13 +655,11 @@ class Boss:
                 to_send += "Chiedigli di inviare /start a @" + bot.username
                 update.message.reply_text(to_send)
 
-            print("4")
 
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)
             update.message.reply_text("Dati salvati!\nAdesso fammi sapere in che formato vuoi ricevere le info",
                                       reply_markup=reply_markup)
-            print("5")
 
             return 1
 
