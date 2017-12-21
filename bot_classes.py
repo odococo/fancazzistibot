@@ -1469,7 +1469,8 @@ Successivamente potrete scegliere 4 opzioni:
 1)<i>Completa</i> : Visualizza gli utenti divisi in due categorie, attaccanti (con danno, punteggio e attacchi), non attaccanti (con punteggio e occupazione corrente (cava, missione))
 2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
 3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
-4)<i>Annulla</i> : Per completare la fase di visualizzazione
+4)<i>Sveglia</i> : Manda un messaggio per incoraggare chi non ha attaccato a farlo
+5)<i>Annulla</i> : Per completare la fase di visualizzazione
 Per resettare i punteggi usa /resetboss, però fai attenzione poichè l'operazione non è reversibile
 
 <b>----Top----</b>
