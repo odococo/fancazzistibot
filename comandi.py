@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import random
+import time
 
 import math
 from datetime import datetime, timedelta
@@ -58,7 +59,6 @@ class Command():
         #timer variables
         #event to stop
         self.timer=timer
-        self.stop_timer=timer.get_stop_event()
         self.timer.set_bot_update(bot, update)
 
         # print(self.command, self.params)
@@ -508,7 +508,6 @@ Detto questo in bocca al lupo"""
         if not self.timer.stopped:
             self.answer("Il timer non è attivo")
             return
-        self.stop_timer.set()
         self.answer("Il timer è stato fermato a "+self.timer.get_remning_time_str()+" ore dalla fine")
 
     def Autente(self):
@@ -655,16 +654,15 @@ Detto questo in bocca al lupo"""
 
 
 def new_command(bot, update):
-    stop_timer = Event()
-    timer=Timer(stop_timer)
+    timer=Timer()
     command = Command(bot, update, DB(), timer)
     command.execute()
 
 #timer class
 class Timer(Thread):
-    def __init__(self, event):
+    def __init__(self):
         Thread.__init__(self)
-        self.stopped = event
+        self.stop=False
         self.bot=None
         self.update=None
         self.date_time=None
@@ -683,9 +681,12 @@ class Timer(Thread):
 
         self.date_time=date_time
 
+    def stop_timer(self):
+        self.stop=True
+
     def get_stop_event(self):
         """Ritorna lo stato del thread"""
-        return self.stopped and self.is_alive()
+        return self.stop and self.is_alive()
 
     def get_remning_time_str(self, string=True):
         """Ritorna la stringa con il tempo rimanente
@@ -710,12 +711,14 @@ class Timer(Thread):
             self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
             return
 
+        self.stop=False
+
         #prendi la differenza tra quanto c'è da aspettare e ora
         d,h,m=self.dates_diff(self.date_time)
         if h<0:
-            to_send="scadrà tra "+str(m)+" minuti"
+            to_send="scadrà tra "+str(int(m))+" minuti"
         else:
-            to_send="scadrà tra "+str(h)+" ore"
+            to_send="scadrà tra "+str(int(h))+" ore"
         self.bot.sendMessage(self.to_send_id, "Timer avviato!"+to_send)
 
         #se i minuti da aspettare sono meno di 10 usa quelli come wait time
@@ -723,16 +726,18 @@ class Timer(Thread):
         if m<600: wait_time=m
 
         #aspetta 10 minuti finche non viene stoppato
-        while not self.stopped.wait(wait_time):
+        while not self.stop:
             #se il tempo è terminato esci dal ciclo
             if datetime.now()==self.date_time: break
+            time.sleep(5)
+
         self.bot.sendMessage(self.to_send_id,"Il timer è scaduto")
 
     def dates_diff(self, date_time):
         """Get the difference between a datetime and now
         @:param date_time: the date time
         @:type: datetime"""
-        diff = datetime.now() -date_time
+        diff = datetime.now() - date_time
         days = diff.days
         days_to_hours = days * 24
         diff_btw_two_times = (diff.seconds) / 3600
