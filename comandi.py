@@ -408,8 +408,8 @@ Detto questo in bocca al lupo"""
         user_id=self.update.message.from_user.id
         new_username=self.params[0]
 
-        self.db.update_username(new_username,user_id)
-
+        res=self.db.update_username(new_username,user_id)
+        print(res)
         self.answer("Complimenti! il tuo nuovo nome è "+new_username)
 
 
