@@ -79,9 +79,7 @@ TABELLE = {
         },
         "insert": """INSERT INTO users (id, username)
               VALUES (%s, %s)""",
-        "update": """UPDATE users
-              SET username = %s,
-              WHERE id = %s""",
+        "update": """UPDATE users SET username = %s  WHERE id = %s""",
         "delete": """DELETE FROM users
               WHERE id = %s"""
     },

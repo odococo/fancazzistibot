@@ -410,7 +410,12 @@ Detto questo in bocca al lupo"""
 
         res=self.db.update_username(new_username,user_id)
         print(res)
-        self.answer("Complimenti! il tuo nuovo nome è "+new_username)
+        if not res:
+            self.answer("Si è verificato un errore")
+
+        else:
+
+            self.answer("Complimenti! il tuo nuovo nome è "+new_username)
 
 
     # admin command ------------------------------------------------------------
