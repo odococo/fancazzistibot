@@ -685,14 +685,15 @@ class Timer(Thread):
     def get_stop_event(self):
         return self.stopped
 
-    def get_remning_time_str(self):
+    def get_remning_time_str(self, string=True):
         """Ritorna la stringa con il tempo rimanente
         #:return: str"""
         if not self.date_time:
             self.update.message.reply_text("Non c'è nessun timer impostato")
             return
         remaning_time=self.date_time - datetime.now()
-        return str(str(remaning_time.time()).split(".")[0])
+        if string: return str(str(remaning_time.time()).split(".")[0])
+        else: return remaning_time.time()
 
     def get_remaning_time(self):
         """Notifica l'utente del tempo rimanente"""
@@ -705,13 +706,12 @@ class Timer(Thread):
             return
 
         #prendi la differenza tra quanto c'è da aspettare e ora
-        d,h,m=self.dates_diff(self, self.date_time)
+        d,h,m=self.dates_diff(self.date_time)
         self.bot.sendMessage(self.to_send_id, "Timer avviato! scadrà tra "+str(h)+" ore")
 
         #se i minuti da aspettare sono meno di 10 usa quelli come wait time
         wait_time=600
-        if m<600:
-            wait_time=m
+        if m<600: wait_time=m
 
         #aspetta 10 minuti finche non viene stoppato
         while not self.stopped.wait(wait_time):
