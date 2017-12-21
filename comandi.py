@@ -490,7 +490,7 @@ Detto questo in bocca al lupo"""
         message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
                                              str(str(future_hour.time()).split(".")[0]) + " del "+
-                                             str(future_hour.date().strftime('%d-%m-%Y')))
+                                             str(future_hour.date().strftime('%d-%m-%Y')+"\nTimer settato!"))
         self.bot.pinChatMessage(chat_id, message.message_id, True)
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
                                message_id=self.update.message.message_id)
@@ -502,6 +502,12 @@ Detto questo in bocca al lupo"""
         self.timer.set_hour(timer_hour)
         self.timer.start()
 
+    def Astoptimer(self):
+        if not self.timer.is_alive():
+            self.answer("Il timer non è attivo")
+            return
+        self.stop_timer.set()
+        self.answer("Il timer è stato fermato")
 
     def Autente(self):
         """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
@@ -662,6 +668,13 @@ class Timer(Thread):
 
     def set_hour(self, date_time):
         self.date_time=date_time
+
+    def get_remning_time(self):
+        if not self.date_time:
+            self.update.message.reply_text("Non c'è nessun timer impostato")
+            return
+        remaning_time=self.date_time - datetime.now()
+        self.update.message.reply_text("Mancano "+str(str(remaning_time.time()).split(".")[0]))
 
     def run(self):
         if not self.date_time:
