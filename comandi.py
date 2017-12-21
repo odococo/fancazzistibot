@@ -256,7 +256,7 @@ Crediti: @brandimax @Odococo""")
 
     def Uinfo(self):
         """- Ottieni le informazioni riguardo il tuo account"""
-        user = self.db.get_user(self.update.message.from_user.id)
+        user = self.update.message.from_user
         self.answer(str(user), pretty_json=True)
 
     def Upermessi(self):
