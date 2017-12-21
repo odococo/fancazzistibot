@@ -793,6 +793,7 @@ class Boss:
             boss_db = [boss_db]  # rende boss_db una lista
         elif len(boss_db)==0:
             return False
+        print(boss_db)
         users_db = self.db.get_users()
         if not users_db: return False
         users_id = [(elem['username'], elem['id']) for elem in users_db]  # contiene la tupla username,id
