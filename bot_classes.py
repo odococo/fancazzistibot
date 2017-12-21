@@ -789,10 +789,11 @@ class Boss:
 
     def same_message(self, boss_db, boss_admin):
         """Controlla che le info inviate siano uguali a quelle nel db"""
+        if not boss_db:
+            return False
         if not isinstance(boss_db, list):
             boss_db = [boss_db]  # rende boss_db una lista
-        elif len(boss_db)==0:
-            return False
+
         print(boss_db)
         users_db = self.db.get_users()
         if not users_db: return False
