@@ -1514,37 +1514,37 @@ Questo comando prevede piu passi:
 Comando solo per <b>ADMIN</b>, per l'opzione user visualizzare il help del comando /attacchiboss
 Questo comando viene attivato quando inoltri il messaggio <b>Team</b> di @lootgamebot
 Potrete scegliere tra tre opzioni:
-1)<i>Titan</i> : +1 punto per chi non ha attaccato
-2)<i>Phoenix</i> : +2 punti per chi non ha attaccato
-3)<i>Annulla</i> : se vi siete sbagliati
+1) <i>Titan</i> : +1 punto per chi non ha attaccato
+2) <i>Phoenix</i> : +2 punti per chi non ha attaccato
+3) <i>Annulla</i> : se vi siete sbagliati
 Scelto il tipo di boss verranno salvati i punti dei membri non attaccanti, ovviamente chi ha piu punti si trova in pericolo di kick dal team
 <b>NB</b>: Se qualcuno dei membri NON ha inviato il comando /start al bot non saranno salvati i punti del suddetto, ma verrai notificato.
 Successivamente potrete scegliere 4 opzioni:
-1)<i>Completa</i> : Visualizza gli utenti divisi in due categorie, attaccanti (con danno, punteggio e attacchi), non attaccanti (con punteggio e occupazione corrente (cava, missione))
-2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
-3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
-4)<i>Sveglia</i> : Manda un messaggio per incoraggare chi non ha attaccato a farlo
-5)<i>Visualizza</i> : Permentte di vedere le informazioni senza salvare il punteggio
-6)<i>Annulla</i> : Per completare la fase di visualizzazione
+1) <i>Completa</i> : Visualizza gli utenti divisi in due categorie, attaccanti (con danno, punteggio e attacchi), non attaccanti (con punteggio e occupazione corrente (cava, missione))
+2) <i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
+3) <i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
+4) <i>Sveglia</i> : Manda un messaggio per incoraggare chi non ha attaccato a farlo
+5) <i>Visualizza</i> : Permentte di vedere le informazioni senza salvare il punteggio
+6) <i>Annulla</i> : Per completare la fase di visualizzazione
 Per resettare i punteggi usa /resetboss, però fai attenzione poichè l'operazione non è reversibile
 
 <b>----Top----</b>
 Questo comando viene attivato inoltrando il messaggio <b>Giocatore</b> da @lootgamebot
 Inviando il messaggio ggiornerai il database e potrai visualizzare la tuo posizione in classifica con gli altri membri.
 La classifica mostra la data di aggiornamento e i punti realtivi a:
-1)Punti craft totali
-2)Punti craft settimanali
-3)Edosoldi
-4)Abilità
-5)Rango 
+1) Punti craft totali
+2) Punti craft settimanali
+3) Edosoldi
+4) Abilità
+5) Rango 
 La visualizzazione è anche disponibile tramite il comando /top, senza aggiornamento dei valori
 
 <b>----Pietre del Drago----</b>
 Questo comando viene attivato inoltrando il messagio <b>/zaino D</b> da @lootplusbot
 Otterrai il valore (in exp drago) di tutte le pietre del drago che sono presenti nel tuo zaino nei seguenti formati:
-1)Punti individuali per ogni pietra
-2)Punti totali
-3)Avanzamento in termini di livello del drago se decidi di nutrirlo con tutte le pietre
+1) Punti individuali per ogni pietra
+2) Punti totali
+3) Avanzamento in termini di livello del drago se decidi di nutrirlo con tutte le pietre
 """
 
     def get_credits(self):
