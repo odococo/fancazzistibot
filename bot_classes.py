@@ -1596,7 +1596,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         elif param=="user":
             to_send+="<b>=====COMANDI USER=====</b>\n\n"
 
-            for elem in admin:
+            for elem in user:
                 to_send+=elem+"\n\n"
             #dividi il messaggio a seconda della lunghezza in bytes
             to_send=text_splitter_bytes(to_send, splitter="\n\n")
@@ -1610,7 +1610,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         elif param == "developer":
             to_send+="<b>=====COMANDI DEVELOPER=====</b>\n\n"
 
-            for elem in admin:
+            for elem in developer:
                 to_send+=elem+"\n\n"
             #dividi il messaggio a seconda della lunghezza in bytes
             to_send=text_splitter_bytes(to_send, splitter="\n\n")
