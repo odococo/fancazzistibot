@@ -500,6 +500,7 @@ Detto questo in bocca al lupo"""
         timer_hour=future_hour-timedelta(hours=1,minutes=2)
 
         #inizzializza e runna il thread
+        print(timer_hour)
         self.timer.set_hour(timer_hour)
         self.timer.start()
 
@@ -702,10 +703,9 @@ class Timer(Thread):
         if not self.date_time:
             self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
             return
-        self.bot.sendMessage(self.to_send_id, "Timer avviato!")
 
         remaning_time= self.date_time - datetime.now()
-        self.bot.sendMessage(self.to_send_id, "Il timer scadrà tra "+str(remaning_time))
+        self.bot.sendMessage(self.to_send_id, "Timer avviato! scadrà tra "+str(remaning_time))
 
         wait_time=600
         print(divmod(remaning_time.total_seconds(), 60)[0])
