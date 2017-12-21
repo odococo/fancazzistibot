@@ -735,7 +735,7 @@ class Boss:
 
         if 0 in num: to_send += "\n🎉<b>I nostri best players</b>🎉\n"
         for elem in sortedD:
-            if elem[1] == 0: to_send += "@" + str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
+            if elem[1] == 0: to_send += str(elem[0]) + " : <b>" + str(elem[1]) + "</b>\n"
 
         update.message.reply_text(to_send, parse_mode="HTML")
         return 1  # 1 è l'id del boss_loop nel conversation handler
