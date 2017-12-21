@@ -298,7 +298,7 @@ class Loot:
     @catch_exception
     def salva_rarita_db(self, rarita, user_id):
         if not rarita:
-            print("Non ho trovato rarità")
+           # print("Non ho trovato rarità")
             return
         rarita = dict(Counter(rarita))
         self.db.update_items(rarita, user_id)
@@ -600,7 +600,7 @@ class Boss:
                                                   'attacchi': 0})  # aggiungo l'user alla lista
             print("2")
 
-           # print(user_data)
+            print(user_data)
             found = False
 
             for username in user_data['lista_boss']:
@@ -866,7 +866,7 @@ class Cerca:
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
             magg = int(param[0])
             min = int(param[1])
-            print(magg, min)
+            #print(magg, min)
             if magg > min:
                 update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
                 return
