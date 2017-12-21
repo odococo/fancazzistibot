@@ -628,11 +628,16 @@ class Boss:
             #prendo gli users in punteggi e nel messaggio
             punteggi_users=self.db.get_punteggi_username()
             attacchi_users= user_data['lista_boss']
+            print(punteggi_users)
+            print(attacchi_users)
 
             #prendo solo gli username di chi non ha attaccato
             attacchi_users=[elem[0] for elem in attacchi_users if elem[2]==0]
             #faccio lo stesso con i punteggi
             punteggi_users=[elem for elem in punteggi_users if elem['username'] in attacchi_users]
+
+            print(punteggi_users)
+            print(attacchi_users)
 
             #mando il messaggio a tutti i non attaccanti e creo la risposta
             to_send="Ho mandato un messaggio ai seguenti users:\n"
