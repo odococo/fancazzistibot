@@ -564,6 +564,7 @@ class Boss:
                 user_data['phoenix'] = False
 
             # todo: trova un'equivalente di id che non cambia ongi volta che rinvii lo stesso messaggio
+            print("1")
 
             if user_data['last_update_id'] == update.message.message_id:
                 update.message.reply_text("Stai cercando di salvare lo stesso messaggio due volte!")
@@ -576,6 +577,8 @@ class Boss:
             users = self.db.get_users()
             users_name = [elem["username"] for elem in users]
             users_name_id = [(elem["username"], elem['id']) for elem in users]
+            print("2")
+
 
             if user_data['single_dict']: user_data['punteggi'] = [user_data[
                                                                       'punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
@@ -620,6 +623,9 @@ class Boss:
             if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
                 self.db.update_punteggi(user_data['punteggi'])
 
+            print("3")
+
+
             #notifica gli users che il punteggio è stato aggiornato
             # for elem in user_data['punteggi']:
             #     bot.sendMessage(elem['id'],"Le valutazioni sono state aggiornate!\n"
@@ -633,10 +639,13 @@ class Boss:
                 to_send += "Chiedigli di inviare /start a @" + bot.username
                 update.message.reply_text(to_send)
 
+            print("4")
+
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)
             update.message.reply_text("Dati salvati!\nAdesso fammi sapere in che formato vuoi ricevere le info",
                                       reply_markup=reply_markup)
+            print("5")
 
             return 1
 
