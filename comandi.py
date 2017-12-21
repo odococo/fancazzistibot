@@ -5,6 +5,7 @@ import random
 
 import math
 from datetime import datetime, timedelta
+from threading import Thread, Event
 
 from telegram import (
     InlineKeyboardButton,
@@ -54,6 +55,8 @@ class Command():
         command_text = command_text.split(" ")
         self.command = command_text[0]
         self.params = [param.strip() for param in command_text[1:]]
+        self.stop_timer= Event()
+
         # print(self.command, self.params)
 
     def getattr(self, key, fallback=None):
@@ -489,6 +492,14 @@ Detto questo in bocca al lupo"""
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
                                message_id=self.update.message.message_id)
 
+        #tolgi l'ora in piu
+        timer_hour=future_hour-timedelta(hours=1,minutes=2)
+
+        #inizzializza e runna il thread
+        thread = Timer(self.stop_timer,timer_hour,self.bot)
+        thread.start()
+
+
     def Autente(self):
         """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
         if self.params:
@@ -635,3 +646,19 @@ Detto questo in bocca al lupo"""
 def new_command(bot, update):
     command = Command(bot, update, DB())
     command.execute()
+
+#timer class
+class Timer(Thread):
+    def __init__(self, event, date_time, bot):
+        Thread.__init__(self)
+        self.stopped = event
+        self.date_time=date_time
+        self.bot=bot
+        self.to_send_id=24978334
+
+    def run(self):
+        #aspetta 10 minuti finche non viene stoppato
+        while not self.stopped.wait(600):
+            #se il tempo è terminato esci dal ciclo
+            if datetime.now()==self.date_time: break
+        self.bot.sendMessage(self.to_send_id,"Il timer è scaduto")
