@@ -55,7 +55,10 @@ class Command():
         command_text = command_text.split(" ")
         self.command = command_text[0]
         self.params = [param.strip() for param in command_text[1:]]
+        #timer variables
+        #event to stop
         self.stop_timer= Event()
+        self.timer=Timer(self.stop_timer, bot, update)
 
         # print(self.command, self.params)
 
@@ -496,8 +499,8 @@ Detto questo in bocca al lupo"""
         timer_hour=future_hour-timedelta(hours=1,minutes=2)
 
         #inizzializza e runna il thread
-        thread = Timer(self.stop_timer,timer_hour,self.bot)
-        thread.start()
+        self.timer.set_hour(timer_hour)
+        self.timer.start()
 
 
     def Autente(self):
@@ -649,14 +652,23 @@ def new_command(bot, update):
 
 #timer class
 class Timer(Thread):
-    def __init__(self, event, date_time, bot):
+    def __init__(self, event, bot, update):
         Thread.__init__(self)
         self.stopped = event
-        self.date_time=date_time
         self.bot=bot
-        self.to_send_id=24978334
+        self.update=update
+        self.date_time=None
+        self.to_send_id=update.effective_chat.id
+
+    def set_hour(self, date_time):
+        self.date_time=date_time
 
     def run(self):
+        if not self.date_time:
+            self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
+            return
+
+
         #aspetta 10 minuti finche non viene stoppato
         while not self.stopped.wait(600):
             #se il tempo è terminato esci dal ciclo
