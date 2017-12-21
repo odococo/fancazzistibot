@@ -377,6 +377,9 @@ class Boss:
         self.bot = updater.bot
         self.db = db
 
+        self.attacca_boss_frasi=["Attacca il boss dannazzione!",
+        "Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle","Attacca il boss ORA"]
+
         dispatcher = updater.dispatcher
 
         boss_user_decor = db.elegible_loot_user(self.boss_user)
@@ -474,8 +477,8 @@ class Boss:
         # print(user_data['lista_boss'], boss)
 
         #genera e invia risposta
-        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan", "Annulla"]], one_time_keyboard=True)
-        update.message.reply_text("Di quale boss stiamo parlando?",
+        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"],["Sveglia", "Annulla"]], one_time_keyboard=True)
+        update.message.reply_text("Scegli un boss oppure clicca sveglia per mandare un messaggio a chi non ha attaccato, oppure annulla.",
                                   reply_markup=reply_markup)
         return 1
 
@@ -582,7 +585,7 @@ class Boss:
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
 
-            print(user_data)
+           # print(user_data)
             found = False
 
             for username in user_data['lista_boss']:
@@ -620,6 +623,28 @@ class Boss:
 
         elif choice == "Annulla":
             return self.fine(bot, update, user_data, "Ok")
+        elif choice=="Sveglia":
+            #prendo gli users in punteggi e nel messaggio
+            punteggi_users=self.db.get_punteggi_username()
+            attacchi_users= user_data['lista_boss']
+
+            #prendo solo gli username di chi non ha attaccato
+            attacchi_users=[elem[0] for elem in attacchi_users if elem[2]==0]
+            #faccio lo stesso con i punteggi
+            punteggi_users=[elem for elem in punteggi_users if elem['username'] in attacchi_users]
+
+            #mando il messaggio a tutti i non attaccanti e creo la risposta
+            to_send="Ho mandato un messaggio ai seguenti users:\n"
+            for elem in punteggi_users:
+                bot.sendMessage(elem['id'],random.choice(self.attacca_boss_frasi))
+                to_send+="@"+elem['username']+"\n"
+
+            update.message.reply_text(to_send)
+
+            return self.fine(bot, update, user_data)
+
+
+
 
         else:
             # print(choice)
