@@ -397,8 +397,7 @@ class Boss:
         dispatcher.add_handler(coversation_boss)
 
         dispatcher.add_handler(CommandHandler("resetboss", reset_boss_ask_decor))
-        dispatcher.add_handler(
-            CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
+        dispatcher.add_handler( CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
 
     def cerca_boss(self, msg):
         """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
@@ -493,7 +492,7 @@ class Boss:
         self.inizzializza_user_data(user_data)
         user_data['punteggi'] = self.db.get_punteggi_username()
 
-        reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
+        reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Fine"]],
                                            one_time_keyboard=False)
         update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
         return 1
@@ -568,8 +567,7 @@ class Boss:
                                                                       'punteggi']]  # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
 
             for username in user_data['lista_boss']:
-                if username[0] in users_name and not bool(user_data['punteggi'][
-                                                              0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
+                if username[0] in users_name and not bool(user_data['punteggi'][0]):  # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
@@ -607,6 +605,12 @@ class Boss:
 
             if not len(skipped) == len(user_data['lista_boss']):  # se non ho saltato tutti gli username
                 self.db.update_punteggi(user_data['punteggi'])
+
+            #notifica gli users che il punteggio è stato aggiornato
+            for elem in user_data['punteggi']:
+                bot.sendMessage(elem['id'],"Le valutazioni sono state aggiornate!\n"
+                                           "Sei arrivato al punteggio <b>"+str(elem['valutazione'])+"</b>\n"
+                                            "Per consultare le regole usa il comando /regoleboss")
 
             if len(skipped) > 0:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
@@ -1479,7 +1483,8 @@ Successivamente potrete scegliere 4 opzioni:
 2)<i>Non Attaccanti</i> : Riceverai un messaggio con gli username di quelli che non hanno attaccato
 3)<i>Punteggio</i> : Una lista ordinata di username con relativi punteggi
 4)<i>Sveglia</i> : Manda un messaggio per incoraggare chi non ha attaccato a farlo
-5)<i>Annulla</i> : Per completare la fase di visualizzazione
+5)<i>Visualizza</i> : Permentte di vedere le informazioni senza salvare il punteggio
+6)<i>Annulla</i> : Per completare la fase di visualizzazione
 Per resettare i punteggi usa /resetboss, però fai attenzione poichè l'operazione non è reversibile
 
 <b>----Top----</b>
