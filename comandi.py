@@ -480,7 +480,6 @@ Detto questo in bocca al lupo"""
             return
 
         nomi_boss = ["il Titano", "Phoenix"]
-        ore=1+int()
         future_hour = datetime.now() + timedelta(hours=ore+1, minutes=minuti)
         message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
