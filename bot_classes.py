@@ -1770,8 +1770,6 @@ class Team:
             #prendi le date
             dates=self.db.get_all_teams()
 
-            if not dates:
-
 
             #trasorma dates in lista se è un siglolo dict
             if not isinstance(dates, list): dates=list(dates)

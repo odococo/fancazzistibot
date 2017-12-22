@@ -188,7 +188,8 @@ TABELLE = {
             "by_name":"SELECT * FROM teams WHERE name=%s"
         },
         "update":{
-            "pnt":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP WHERE name=%s"},
+            "pnt":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP WHERE name=%s",
+            "full":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP, pnt_set=%s, mean_set=%s WHERE name=%s"},
         "insert":"INSERT INTO teams (name, pnt, last_update, pnt_set, mean_net) VALUES (%s, %s, CURRENT_TIMESTAMP, 0 , 0) ON CONFLICT (name) DO NOTHING "
     }
 }
@@ -423,7 +424,7 @@ class DB:
         @:type: int"""
         self.execute(TABELLE['users']['update'],(new_username, id, ))
 
-    def update_single_team(self, team_name, pnt):
+    def update_team_pnt(self, team_name, pnt):
         """Esegue l'update di un team nella tabella teams
         @:param team_name: il nome del team da aggiornare
         @:type: str
@@ -431,6 +432,19 @@ class DB:
         @:type: int
         """
         self.execute(TABELLE['teams']['update']['pnt'],(pnt, team_name,))
+
+    def update_team_full(self, team_name, pnt, pnt_set, mean_set):
+            """Esegue l'update di un team nella tabella teams
+            @:param team_name: il nome del team da aggiornare
+            @:type: str
+            @:param pnt: i punti del team
+            @:type: int
+            @:param: pnt_set: punti presi di lunedi
+            @:type: int
+            @:param mean_set: media di incremento settimanale
+            @:type: int
+            """
+            self.execute(TABELLE['teams']['update']['full'], (pnt, pnt_set, mean_set, team_name,))
 
     def insert_team(self, tean_name, pnt):
         """Inserisce un team nella tabella
