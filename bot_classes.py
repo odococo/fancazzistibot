@@ -1638,3 +1638,121 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         )
 
+
+class Team:
+    def __init__(self, updater, db):
+        self.updater = updater
+        self.db=db
+        self.inline_cat= InlineKeyboardMarkup([
+            [InlineKeyboardButton("Admin", callback_data="/help admin"),
+             InlineKeyboardButton("User", callback_data="/help user"),
+             InlineKeyboardButton("Developer", callback_data="/help developer")],
+            [InlineKeyboardButton("Inoltro", callback_data="/help inoltro"),
+             InlineKeyboardButton("Crediti", callback_data="/help crediti"),
+             InlineKeyboardButton("Esci", callback_data="/help esci")]
+
+        ])
+
+        disp = updater.dispatcher
+
+        disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
+
+    def forward_team(self, bot, update):
+
+        #prendi i team nel messaggio e nel db
+        team_db=self.get_teams_db()
+        team_msg=self.extract_teams_from_msg(update.message.text)
+        #calcola la differenza
+        team_diff=self.get_teams_diff(team_msg,team_db)
+        to_send=self.pretty_diff(team_diff)
+
+        update.message.reply_text(to_send, parse_mode="HTML")
+
+    def extract_teams_from_msg(self, msg):
+        """Estrae i team da un messaggio teams
+        @:param msg: messaggio team
+        @:type: str
+        @:return: list of tuples (team_name, pnt)"""
+        #compila il regex
+        team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
+        #elimina la parte del tuo team
+        msg=msg.message.text.split("Il tuo team")[0]
+
+        #teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
+        teams=re.findall(team_regex, msg)
+
+        #rimuovi il punto dentro i pc e casta ad int
+        teams=[(elem[0], int(elem[1].replace(".",""))) for elem in teams]
+
+        return teams
+
+
+
+    def get_teams_diff(self, teams_list_msg, teams_list_db):
+        """Calcola la differenza di pc tra la lista team mandata e quella nel db
+        @:param teams_list_msg: lista di tuple (usa extract_teams_from_msg)
+        @:param teams_list_db: lista di triple (team_name, pnt, last_update)
+        @:return: lista di quattro elementi (nome_team, pnt_correnti, incremento, last_update)
+        """
+
+        #lista di triple
+        res=[]
+
+        for team_db in teams_list_db:
+            for team_msg in teams_list_msg:
+                #se non c'è corrispondenza tra i nomi passo all'iterazione successiva
+                if not team_db[0]==team_msg[0]: continue
+
+                res.append((team_msg[0],team_msg[1],team_msg[1]- team_db[1],team_db[2]))
+
+        return res
+
+
+    def get_teams_db(self):
+        """Ritorna la lista di teams del db
+        @:return:list of triples (team_name, pnt,last_update)"""
+        # prende i dati dal db
+        teams_db = self.db.get_all_teams()
+
+        # casta il risultato in lista se è un solo dizionario
+        if not isinstance(teams_db, list): teams_db = list(teams_db)
+
+        res=[]
+        for elem in teams_db:
+            res.append((elem['name'],elem['pnt'], elem['last_update']))
+
+        return res
+
+    def pretty_diff(self, team_diff, sorting_key=1):
+        """Formatta per bene un messaggio team_diff
+        @:param team_diff: lista generata dalla funzione get_teams_diff
+        @:type: lista di triple
+        @:param sorting_key: elemento della tripla secodno cui sortare (default 1:pnt)
+        @:type: 0<int<len(team_diff)-1
+        @:return: stringa formattata da inviare"""
+
+        if sorting_key>=len(team_diff): sorting_key=1
+
+        #sorta la lista
+        sorted_teams=sorted(team_diff, key= lambda elem: elem[sorting_key],reverse=True)
+
+        res=""
+        idx=1
+        for team in sorted_teams:
+            res+=str(idx)+") "+team[0]+" con <b>"+str(team[1])+"</b> pnt (incremento di <b>"+str(team[2])+"</b>) " \
+                "aggiornato il <i>"+str(team[3])+"</i>\n"
+        return res
+
+
+
+    def update_db(self, teams):
+        """Esegue l'update del db dato un messagigo team
+        @:param teams: lista di tuple (vedi extract_teams_from_msg)
+        @:type: str"""
+
+        # inserisci i nomi nel db
+        for team in teams:
+            self.db.insert_team(team[0], team[1])
+
+
+

@@ -426,6 +426,9 @@ Detto questo in bocca al lupo"""
         self.answer("Complimenti! il tuo nuovo nome è "+new_username)
 
 
+
+
+
     # admin command ------------------------------------------------------------
 
     def Asvegliamadre(self):
