@@ -1727,7 +1727,7 @@ class Team:
         res=[]
         for elem in teams_db:
             res.append((elem['name'],elem['pnt'], elem['last_update']))
-            print(elem['last_update'].isoweekday())
+            #print(elem['last_update'].isoweekday())
 
         return res
 
@@ -1798,7 +1798,7 @@ class Team:
                         self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],new_mean)
             return
 
-                    
+
         # inserisci i nomi nel db
         for team in teams:
             self.db.insert_team(team[0], team[1])
