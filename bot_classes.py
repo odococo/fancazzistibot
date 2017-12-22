@@ -1658,7 +1658,7 @@ class Team:
         disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
 
     def forward_team(self, bot, update):
-
+        """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
         #prendi i team nel messaggio e nel db
         team_db=self.get_teams_db()
         team_msg=self.extract_teams_from_msg(update.message.text)
