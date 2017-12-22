@@ -408,7 +408,7 @@ Detto questo in bocca al lupo"""
             return
         elif "@" in self.params[0]:
             self.answer("Non mettere la chiocciola")
-            return 
+            return
         user_id=self.update.message.from_user.id
         new_username=self.params[0]
 

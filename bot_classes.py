@@ -169,8 +169,9 @@ class Loot:
                 top_ten.append((elem[1], int(elem[0]) * int(elem[2]), elem[0], elem[2]))
             top_ten.sort(key=lambda tup: tup[1], reverse=True)
 
-            if (len(top_ten) > 10):
-                top_ten = top_ten[:9]
+            if (len(top_ten) > 3):
+                if not len(top_ten) <11: top_ten = top_ten[:9]
+
                 to_print = "I 10 oggetti piu costosi sono:\n"
                 for elem in top_ten:
                     to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
@@ -557,6 +558,7 @@ class Boss:
             return self.fine(bot, update, user_data)
 
         # se l'admin vuole modificare la lista
+        #todo: cerca perche triplo sette non appare nel db
         elif choice == "Phoenix" or choice == "Titan":
             if choice == "Phoenix":
                 user_data['phoenix'] = True
