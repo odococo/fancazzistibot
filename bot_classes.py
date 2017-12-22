@@ -1661,10 +1661,12 @@ class Team:
 
         #prendi i team nel messaggio e nel db
         team_db=self.get_teams_db()
+        team_msg=self.extract_teams_from_msg(update.message.text)
+        #controlla se sono presenti team nel databes
         if not team_db:
+            self.update_db(team_msg)
             update.message.reply_text("Database aggiornato!")
             return
-        team_msg=self.extract_teams_from_msg(update.message.text)
         #calcola la differenza
         team_diff=self.get_teams_diff(team_msg,team_db)
         to_send=self.pretty_diff(team_diff)
