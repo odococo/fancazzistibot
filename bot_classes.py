@@ -1745,8 +1745,9 @@ class Team:
         idx=1
         for team in sorted_teams:
             ora, data = pretty_time_date(team[3])
-            res+=str(idx)+") "+team[0]+" con <b>"+str(team[1])+"</b> pnt (incremento di <b>"+str(team[2])+"</b>) " \
-                "aggiornato il <i>"+ data +"</i> alle <i>"+ora+"</i>\n"
+            res+=str(idx)+") "+team[0]+" con <b>"+str(team[1])+"</b> pnt (+ <b>"+str(team[2])+"</b>) " \
+                "rispetto al  <i>"+ data +"</i> alle <i>"+ora+"</i>\n"
+            idx+=1
         return res
 
 
