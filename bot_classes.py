@@ -1727,6 +1727,7 @@ class Team:
         res=[]
         for elem in teams_db:
             res.append((elem['name'],elem['pnt'], elem['last_update']))
+            print(elem['last_update'].isoweekday())
 
         return res
 
