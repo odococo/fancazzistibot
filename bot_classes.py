@@ -11,7 +11,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 
 from comandi import Command
-from utils import is_numeric, catch_exception, text_splitter_bytes
+from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
 DEBUG = False
 
@@ -1744,8 +1744,9 @@ class Team:
         res=""
         idx=1
         for team in sorted_teams:
+            ora, data = pretty_time_date(team[3])
             res+=str(idx)+") "+team[0]+" con <b>"+str(team[1])+"</b> pnt (incremento di <b>"+str(team[2])+"</b>) " \
-                "aggiornato il <i>"+str(team[3])+"</i>\n"
+                "aggiornato il <i>"+ data +"</i> alle <i>"+ora+"</i>\n"
         return res
 
 

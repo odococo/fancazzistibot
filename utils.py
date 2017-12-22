@@ -97,6 +97,17 @@ def text_splitter_bytes(text,splitter="\n", split_every=4096):
     if not res: res.append(to_append)
     return res
 
+
+def pretty_time_date(timedate):
+
+    ora=str(timedate.time()).split(".")[0]
+    data=str(timedate.date().strftime('%d-%m-%Y'))
+
+    return ora, data
+
+
+
+
 def is_dev(id):
     """Verifica se l'id del bot è quello del fancazzista supremo"""
     return id == 333089594
