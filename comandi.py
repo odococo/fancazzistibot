@@ -619,7 +619,7 @@ Detto questo in bocca al lupo"""
 
         self.answer(str(self.bot.sendChatAction(self.params[0], "typing")), pretty_json=True)
 
-    def Ddeletefromall(self):
+    def Ddeletefrombot(self):
         """username - Rimuove un o piu users (separati da spazio) dal bot completamente"""
         if len(self.params)<1:
             self.answer("Il comando deve essere seguito da uno o piu username separati da spazio")
