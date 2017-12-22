@@ -1673,6 +1673,8 @@ class Team:
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
+        self.update_db(team_msg)
+
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
         @:param msg: messaggio team
