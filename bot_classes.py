@@ -1749,7 +1749,7 @@ class Team:
         for team in sorted_teams:
             ora, data = pretty_time_date(team[3])
             if "Fancazzisti" in team[0]:
-                res+=str(idx)+") ⭐️<b>"+team[0]+"</b>⭐️ con <b>"+str(team[1])+"</b> pnt (+ <b>"+str(team[2])+"</b>) " \
+                res+=str(idx)+") ⭐️<b>"+team[0]+"</b>⭐️ con <b>"+"{:,}".format(team[1]).replace(",",".")+"</b> pnt (+ <b>"+str(team[2])+"</b>) " \
                     "rispetto al <i>"+ data +"</i> alle <i>"+ora+"</i>\n"
             else:
                 res += str(idx) + ") <b>" + team[0] + "</b> con <b>" + "{:,}".format(team[1]).replace(",",".") + "</b> pnt (+ <b>" + str(
