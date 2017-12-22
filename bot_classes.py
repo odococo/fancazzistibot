@@ -1676,7 +1676,7 @@ class Team:
         #compila il regex
         team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
         #elimina la parte del tuo team
-        msg=msg.message.text.split("Il tuo team")[0]
+        msg=msg.text.split("Il tuo team")[0]
 
         #teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
         teams=re.findall(team_regex, msg)
