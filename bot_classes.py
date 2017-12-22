@@ -1661,6 +1661,9 @@ class Team:
 
         #prendi i team nel messaggio e nel db
         team_db=self.get_teams_db()
+        if not team_db:
+            update.message.reply_text("Database aggiornato!")
+            return
         team_msg=self.extract_teams_from_msg(update.message.text)
         #calcola la differenza
         team_diff=self.get_teams_diff(team_msg,team_db)
@@ -1676,7 +1679,7 @@ class Team:
         #compila il regex
         team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
         #elimina la parte del tuo team
-        msg=msg.text.split("Il tuo team")[0]
+        msg=msg.split("Il tuo team")[0]
 
         #teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
         teams=re.findall(team_regex, msg)
