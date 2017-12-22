@@ -1751,7 +1751,7 @@ class Team:
                 res+=str(idx)+") ⭐️<b>"+team[0]+"</b>⭐️ con <b>"+str(team[1])+"</b> pnt (+ <b>"+str(team[2])+"</b>) " \
                     "rispetto al <i>"+ data +"</i> alle <i>"+ora+"</i>\n"
             else:
-                res += str(idx) + ") <b>" + team[0] + "</b> con <b>" + str(team[1]) + "</b> pnt (+ <b>" + str(
+                res += str(idx) + ") <b>" + team[0] + "</b> con <b>" + "{:,}".format(team[1]).replace(",",".") + "</b> pnt (+ <b>" + str(
                     team[2]) + "</b>) " \
                                "rispetto al  <i>" + data + "</i> alle <i>" + ora + "</i>\n"
             idx+=1
