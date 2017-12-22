@@ -170,7 +170,7 @@ class Loot:
             top_ten.sort(key=lambda tup: tup[1], reverse=True)
 
             if (len(top_ten) > 3):
-                if not len(top_ten) <11: top_ten = top_ten[:9]
+                if not len(top_ten) <=10: top_ten = top_ten[:9]
 
                 to_print = "I 10 oggetti piu costosi sono:\n"
                 for elem in top_ten:
