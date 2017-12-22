@@ -1664,7 +1664,7 @@ class Team:
         team_msg=self.extract_teams_from_msg(update.message.text)
         #controlla se sono presenti team nel databes
         if not team_db:
-            self.update_db(team_msg)
+            self.update_db(team_msg, datetime.now())
             update.message.reply_text("Database aggiornato!")
             return
         #calcola la differenza
