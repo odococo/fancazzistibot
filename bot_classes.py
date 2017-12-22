@@ -1770,7 +1770,6 @@ class Team:
             #prendi le date
             dates=self.db.get_all_teams()
 
-
             #trasorma dates in lista se è un siglolo dict
             if not isinstance(dates, list): dates=list(dates)
 
@@ -1780,14 +1779,26 @@ class Team:
             #calcola nuovo incremento
             new_incr=[]
 
+            for team_msg in teams:
+                for team_db in pnt_set:
+                    if not team_msg[0]==team_db[0]: continue
+                    # se i pnt_sett sono zero aggiornali
+                    if not team_db[1]:
+                        self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],0)
+                        continue
+                    # se i pnt_sett ci sono ma non c'è la media aggiungila e aggiorna
+                    elif not team_db[2]:
+                        new_incr=team_db[1]-team_msg[1]
+                        self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],new_incr)
+                        continue
+                    #se sono presenti tutti i dati calcola la media
+                    else:
+                        new_incr=team_db[1]-team_msg[1]
+                        new_mean=int((team_db[2]+new_incr)/2)
+                        self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],new_mean)
+            return
 
-
-
-
-
-
-
-
+                    
         # inserisci i nomi nel db
         for team in teams:
             self.db.insert_team(team[0], team[1])
