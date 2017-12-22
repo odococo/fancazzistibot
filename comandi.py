@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import random
+import time
 
 import math
 from datetime import datetime, timedelta
+from threading import Thread, Event
 
 from telegram import (
     InlineKeyboardButton,
@@ -35,7 +37,7 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
 
 class Command():
     @utils.catch_exception
-    def __init__(self, bot, update, db):
+    def __init__(self, bot, update, db, timer):
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
@@ -54,6 +56,11 @@ class Command():
         command_text = command_text.split(" ")
         self.command = command_text[0]
         self.params = [param.strip() for param in command_text[1:]]
+        #timer variables
+        #event to stop
+        self.timer=timer
+        self.timer.set_bot_update(bot, update)
+
         # print(self.command, self.params)
 
     def getattr(self, key, fallback=None):
@@ -257,8 +264,9 @@ Crediti: @brandimax @Odococo""")
     def Uinfo(self):
         #todo: prendi nome dal db e formatta per bene
         """- Ottieni le informazioni riguardo il tuo account"""
-        user = self.update.message.from_user
-        self.answer(str(user), pretty_json=True)
+        user = self.db.get_user(self.update.message.from_user.id)
+        to_send=utils.get_user(user)
+        self.answer(to_send)
 
     def Upermessi(self):
         """- Ottieni info sui permessi relativi al tuo account"""
@@ -429,30 +437,78 @@ Detto questo in bocca al lupo"""
         for user in users:
             self.bot.send_message(user['id']," ".join(self.params))
 
+    # def Apinboss(self):
+    #     """Fissa un messaggio per l'attacco del boss con i seguenti valori:
+    #     boss -> 0 (titano) o 1 (phoenix)
+    #     giorno -> da 0 a 6 (da lunedì a domenica)
+    #     ora -> un'ora qualsiasi"""
+    #     if len(self.params) != 3:
+    #         self.answer("Non hai inserito i parametri giusti!\n"
+    #                     "boss -> 0 (titano) o 1 (phoenix)\n"
+    #                     "giorno -> da 0 a 6 (da lunedì a domenica)\n"
+    #                     "ora -> un'ora qualsiasi")
+    #     chat_id=self.update.effective_chat.id
+    #     boss = self.params[0]
+    #     giorno = self.params[1]
+    #     ore = self.params[2]
+    #     nomi_boss = ["il Titano", "Phoenix"]
+    #     giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
+    #     from_id = self.update.message.from_user.id
+    #     if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
+    #         message = self.bot.send_message(chat_id=chat_id,
+    #                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
+    #                                              giorni[int(giorno) % 7])
+    #         self.bot.pinChatMessage(chat_id, message.message_id, True)
+    #     self.bot.deleteMessage(chat_id=self.update.message.chat.id,
+    #                       message_id=self.update.message.message_id)
+
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
-        boss -> 0 (titano) o 1 (phoenix)
-        giorno -> da 0 a 6 (da lunedì a domenica)
-        ora -> un'ora qualsiasi"""
+               boss -> 0 (titano) o 1 (phoenix)
+               giorno -> 0 (oggi) 1 (domani)
+               ora -> un'ora qualsiasi nel formato hh:mm"""
         if len(self.params) != 3:
             self.answer("Non hai inserito i parametri giusti!\n"
                         "boss -> 0 (titano) o 1 (phoenix)\n"
-                        "giorno -> da 0 a 6 (da lunedì a domenica)\n"
-                        "ora -> un'ora qualsiasi")
-        chat_id=self.update.effective_chat.id
+                        "giorno -> 0 (oggi) 1 (domani)\n"
+                        "ora -> un'ora qualsiasi nel formato hh:mm")
+        chat_id = self.update.effective_chat.id
         boss = self.params[0]
         giorno = self.params[1]
-        ore = self.params[2]
+        try:
+            if not giorno:
+                ore = int(self.params[2].split(":")[0])+24
+            else:
+                ore=int(self.params[2].split(":")[0])
+            minuti = int(self.params[2].split(":")[1])
+        except ValueError:
+            self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /pinboss boss giorno hh:mm"
+                                           "\nEsempio: /pinboss 0 1 7:45")
+            return
+
         nomi_boss = ["il Titano", "Phoenix"]
-        giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
-        from_id = self.update.message.from_user.id
-        if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
-            message = self.bot.send_message(chat_id=chat_id,
-                                            text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
-                                                 giorni[int(giorno) % 7])
-            self.bot.pinChatMessage(chat_id, message.message_id, True)
+        future_hour = datetime.now() + timedelta(hours=ore+1, minutes=minuti)
+        message = self.bot.send_message(chat_id=chat_id,
+                                        text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
+                                             str(str(future_hour.time()).split(".")[0]) + " del "+
+                                             str(future_hour.date().strftime('%d-%m-%Y')))
+        self.bot.pinChatMessage(chat_id, message.message_id, True)
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
-                          message_id=self.update.message.message_id)
+                               message_id=self.update.message.message_id)
+
+        #tolgi l'ora in piu
+        timer_hour=future_hour-timedelta(hours=1,minutes=2)
+
+        #inizzializza e runna il thread
+        print(timer_hour)
+        self.timer.set_hour(timer_hour)
+        self.timer.start()
+
+    def Astoptimer(self):
+        if not self.timer.stopped:
+            self.answer("Il timer non è attivo")
+            return
+        self.answer("Il timer è stato fermato a "+self.timer.get_remning_time_str()+" ore dalla fine")
 
     def Autente(self):
         """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
@@ -598,5 +654,94 @@ Detto questo in bocca al lupo"""
 
 
 def new_command(bot, update):
-    command = Command(bot, update, DB())
+    timer=Timer()
+    command = Command(bot, update, DB(), timer)
     command.execute()
+
+#timer class
+class Timer(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.stop=False
+        self.bot=None
+        self.update=None
+        self.date_time=None
+        self.to_send_id=None
+
+    def set_bot_update(self, bot, update):
+        """Setter per bot e update"""
+        self.bot = bot
+        self.update = update
+        self.to_send_id = update.effective_chat.id
+
+    def set_hour(self, date_time):
+        """Setta l'ora in cui far partire il timer
+         #:param date_time: ora e data della fine del timer
+         #:type: datetime"""
+
+        self.date_time=date_time
+
+    def stop_timer(self):
+        self.stop=True
+
+    def get_stop_event(self):
+        """Ritorna lo stato del thread"""
+        return self.stop and self.is_alive()
+
+    def get_remning_time_str(self, string=True):
+        """Ritorna la stringa con il tempo rimanente
+        @:param string: boolena per ritornare in stringa o datetime
+        @:type: bool
+        #:return: str or datetime"""
+        if not self.date_time:
+            self.update.message.reply_text("Non c'è nessun timer impostato")
+            return
+        remaning_time=self.date_time - datetime.now()
+
+        if string: return str(str(remaning_time.time()).split(".")[0])
+        else: return remaning_time.time()
+
+    def get_remaning_time(self):
+        """Notifica l'utente del tempo rimanente"""
+        self.update.message.reply_text("Mancano "+self.get_remning_time_str())
+
+    def run(self):
+        """Runna il timer"""
+        if not self.date_time:
+            self.bot.sendMessage(self.to_send_id, "Devi prima usare il comando /pinboss")
+            return
+
+        self.stop=False
+
+        #prendi la differenza tra quanto c'è da aspettare e ora
+        d,h,m=self.dates_diff(self.date_time)
+        if h<0:
+            to_send="scadrà tra "+str(int(m))+" minuti"
+        else:
+            to_send="scadrà tra "+str(int(h))+" ore"
+        self.bot.sendMessage(self.to_send_id, "Timer avviato!"+to_send)
+
+        #se i minuti da aspettare sono meno di 10 usa quelli come wait time
+        wait_time=600
+        if m<600: wait_time=m
+
+        #aspetta 10 minuti finche non viene stoppato
+        while not self.stop:
+            #se il tempo è terminato esci dal ciclo
+            if datetime.now()==self.date_time: break
+            time.sleep(5)
+
+        self.bot.sendMessage(self.to_send_id,"Il timer è scaduto")
+
+    def dates_diff(self, date_time):
+        """Get the difference between a datetime and now
+        @:param date_time: the date time
+        @:type: datetime"""
+        diff = datetime.now() - date_time
+        days = diff.days
+        days_to_hours = days * 24
+        diff_btw_two_times = (diff.seconds) / 3600
+        overall_hours = days_to_hours + diff_btw_two_times
+        overall_minutes=overall_hours*60
+
+        return  days, overall_hours, overall_minutes

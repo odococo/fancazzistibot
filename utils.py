@@ -49,6 +49,7 @@ svegliamadre - manda un messaggio ai membri del team madre
 deletefromall - rimuove un user dal bot
 sveglia - invia un messaggio a uno o piu username per spronarli ad attaccare il boss
 top - mostra i top players in base a vari parametri
+migra - cambia username nel bot
 """
 
 
