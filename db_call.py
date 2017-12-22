@@ -187,8 +187,9 @@ TABELLE = {
             "all":"SELECT * FROM teams",
             "by_name":"SELECT * FROM teams WHERE name=%s"
         },
-        "update":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP WHERE name=%s",
-        "insert":"INSERT INTO teams (name, pnt, last_update) VALUES (%s, %s, CURRENT_TIMESTAMP) ON CONFLICT (name) DO NOTHING "
+        "update":{
+            "pnt":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP WHERE name=%s"},
+        "insert":"INSERT INTO teams (name, pnt, last_update, pnt_set, mean_net) VALUES (%s, %s, CURRENT_TIMESTAMP, 0 , 0) ON CONFLICT (name) DO NOTHING "
     }
 }
 
@@ -429,7 +430,7 @@ class DB:
         @:param pnt: i punti del team
         @:type: int
         """
-        self.execute(TABELLE['teams']['update'],(pnt, team_name,))
+        self.execute(TABELLE['teams']['update']['pnt'],(pnt, team_name,))
 
     def insert_team(self, tean_name, pnt):
         """Inserisce un team nella tabella

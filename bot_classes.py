@@ -3,7 +3,7 @@ import math
 import random
 import re
 from collections import OrderedDict, Counter
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
@@ -1673,7 +1673,7 @@ class Team:
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
-        self.update_db(team_msg)
+        self.update_db(team_msg, datetime.now())
 
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
@@ -1760,10 +1760,35 @@ class Team:
 
 
 
-    def update_db(self, teams):
+    def update_db(self, teams, date):
         """Esegue l'update del db dato un messagigo team
         @:param teams: lista di tuple (vedi extract_teams_from_msg)
         @:type: str"""
+
+        #se è lunedi
+        if date.isoweekday() ==1:
+            #prendi le date
+            dates=self.db.get_all_teams()
+
+            if not dates:
+
+
+            #trasorma dates in lista se è un siglolo dict
+            if not isinstance(dates, list): dates=list(dates)
+
+            #prendi i pnt_set e media settimanale
+            pnt_set=[(elem['name'], elem['pnt_set'], elem['mean_set']) for elem in dates]
+
+            #calcola nuovo incremento
+            new_incr=[]
+
+
+
+
+
+
+
+
 
         # inserisci i nomi nel db
         for team in teams:
