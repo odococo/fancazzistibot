@@ -1695,7 +1695,7 @@ class Team:
         team_diff=self.get_teams_diff(team_msg,team_db)
         to_send=self.pretty_diff(team_diff)
 
-        print(team_diff)
+        #print(team_diff)
 
         #update del dizionario
         if self.team_dict:
