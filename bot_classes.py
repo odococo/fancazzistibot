@@ -1663,7 +1663,7 @@ class Team:
             visualizza_team_decor=self.db.elegible_loot_user(self.visualiza_team)
             disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
             disp.add_handler(CommandHandler('teams', visualizza_team_decor))
-
+ 
 
     def visualiza_team(self, bot, update):
         """Visualizza gli incrementi senza aggiornarli"""
