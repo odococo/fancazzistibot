@@ -1713,7 +1713,7 @@ class Team:
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
-        self.update_db(team_msg, team_db[0]['last_update'])
+        self.update_db(team_msg, team_db[0][2])
 
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
