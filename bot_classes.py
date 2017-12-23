@@ -1695,6 +1695,8 @@ class Team:
         team_diff=self.get_teams_diff(team_msg,team_db)
         to_send=self.pretty_diff(team_diff)
 
+        print(team_diff)
+
         #update del dizionario
         if self.team_dict:
             for elem in team_diff:
@@ -1705,7 +1707,7 @@ class Team:
                 self.team_dict[elem[0]].append((elem[1],elem[2]))
 
 
-
+        print(self.team_dict)
 
         #savla per visualizzazione
         self.prior_str=to_send
