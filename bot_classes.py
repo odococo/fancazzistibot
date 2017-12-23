@@ -1702,7 +1702,7 @@ class Team:
             for elem in team_diff:
                 self.team_dict[elem[0]].append((elem[1],elem[2]))
         else:
-            for elem in team_msg:
+            for elem in team_diff:
                 self.team_dict[elem[0]]=[]
                 self.team_dict[elem[0]].append((elem[1],elem[2]))
 
