@@ -1702,10 +1702,10 @@ class Team:
         else:
             for elem in team_msg:
                 self.team_dict[elem[0]]=[]
+                self.team_dict[elem[0]].append((elem[1],elem[2]))
 
 
-        print(self.team_dict)
-        print(team_db)
+
 
         #savla per visualizzazione
         self.prior_str=to_send
