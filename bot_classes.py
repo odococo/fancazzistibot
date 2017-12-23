@@ -1689,7 +1689,6 @@ class Team:
             #update dict
             for elem in team_msg:
                 self.team_dict[elem[0]]=[]
-                self.team_dict[elem[0]].append((elem[2],elem[1]))
 
             return
         #calcola la differenza
