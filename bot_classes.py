@@ -1666,11 +1666,11 @@ class Team:
 
     def visualiza_team(self, bot, update):
         """Visualizza gli incrementi senza aggiornarli"""
-        ora, data=pretty_time_date(self.datetime)
         if not self.prior_str:
             update.message.reply_text("Non ci sono dati sui team, chiedi all'admin di aggiornarli")
             return
 
+        ora, data=pretty_time_date(self.datetime)
 
         update.message.reply_text(self.prior_str, parse_mode="HTML")
         update.message.reply_text("Aggiornato il "+data+" alle "+ora)
