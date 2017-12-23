@@ -1643,15 +1643,6 @@ class Team:
     def __init__(self, updater, db):
         self.updater = updater
         self.db=db
-        self.inline_cat= InlineKeyboardMarkup([
-            [InlineKeyboardButton("Admin", callback_data="/help admin"),
-             InlineKeyboardButton("User", callback_data="/help user"),
-             InlineKeyboardButton("Developer", callback_data="/help developer")],
-            [InlineKeyboardButton("Inoltro", callback_data="/help inoltro"),
-             InlineKeyboardButton("Crediti", callback_data="/help crediti"),
-             InlineKeyboardButton("Esci", callback_data="/help esci")]
-
-        ])
 
         disp = updater.dispatcher
 
@@ -1767,6 +1758,7 @@ class Team:
 
         #se è lunedi
         if date.isoweekday() ==1:
+            print("Is monday")
             #prendi le date
             dates=self.db.get_all_teams()
 
