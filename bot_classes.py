@@ -1648,10 +1648,32 @@ class Team:
     def __init__(self, updater, db):
         self.updater = updater
         self.db=db
+        self.prior_str=""
+        self.datetime=None
 
         disp = updater.dispatcher
 
-        disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
+        if DEBUG:
+            disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
+            disp.add_handler(CommandHandler('Fine', self.visualiza_team))
+        else:
+            forward_team_decor=self.db.elegible_loot_admin(self.forward_team)
+            visualizza_team_decor=self.db.elegible_loot_user(self.visualiza_team)
+            disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
+            disp.add_handler(CommandHandler('Fine', visualizza_team_decor))
+
+
+    def visualiza_team(self, bot, update):
+
+        ora, data=pretty_time_date(self.datetime)
+        if not self.prior_str:
+            update.message.reply_text("Non ci sono dati sui team, chiedi all'admin di aggiornarli")
+            return
+
+
+        update.message.reply_text(self.prior_str, parse_mode="HTML")
+        update.message.reply_text("Aggiornato il "+data+" alle "+ora)
+
 
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
@@ -1666,6 +1688,10 @@ class Team:
         #calcola la differenza
         team_diff=self.get_teams_diff(team_msg,team_db)
         to_send=self.pretty_diff(team_diff)
+
+        #savla per visualizzazione
+        self.prior_str=to_send
+        self.datetime=datetime.now()
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
