@@ -1547,6 +1547,11 @@ Otterrai il valore (in exp drago) di tutte le pietre del drago che sono presenti
 1) Punti individuali per ogni pietra
 2) Punti totali
 3) Avanzamento in termini di livello del drago se decidi di nutrirlo con tutte le pietre
+
+<b>----Top----</b>
+Questo comando viene attivato inoltrando il messaggio <b>Team->Hall of Fame</b> da @lootgamebot
+Al ricevuto inoltro verrà aggiornato il database corrispondente a i team compresi nella Hall of fame e verrà mostrato anche l'incremento di pc dall'ultima volta che è stato aggiornato
+Dovrebbe anche calcolare l'incremento settimanale di pc, dico 'dovrebbe' perche si vedrà nelle prossime settimane
 """
 
     def get_credits(self):
