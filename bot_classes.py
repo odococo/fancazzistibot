@@ -1697,23 +1697,15 @@ class Team:
 
         #print(team_diff)
 
-        #update del dizionario
+
+        # update del dizionario
         if self.team_dict:
             for elem in team_diff:
-                self.team_dict[elem[0]].append((elem[2],elem[1]))
+                self.team_dict[elem[0]].append((len(self.team_dict[elem[0]]), elem[1]))
         else:
             for elem in team_diff:
-                self.team_dict[elem[0]]=[]
-                self.team_dict[elem[0]].append((elem[2],elem[1]))
-        #
-        # # update del dizionario
-        # if self.team_dict:
-        #     for elem in team_diff:
-        #         self.team_dict[elem[0]].append((len(self.team_dict[elem[0]]), elem[1]))
-        # else:
-        #     for elem in team_diff:
-        #         self.team_dict[elem[0]] = []
-        #         self.team_dict[elem[0]].append((0, elem[1]))
+                self.team_dict[elem[0]] = []
+                self.team_dict[elem[0]].append((0, elem[1]))
 
         print(self.team_dict)
 
