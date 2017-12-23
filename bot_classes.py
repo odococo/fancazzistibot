@@ -1470,12 +1470,12 @@ class Help:
 
         #appende in tutte le liste nomeFunzione - doc
         for elem in funcs:
-            if elem[0][0] == "A":
+            if elem[0][0] == "A" and elem[1]:
                 admin.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
-            elif elem[0][0] == "U":
+            elif elem[0][0] == "U" and elem[1]:
                 user.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
 
-            elif elem[0][0] == "D":
+            elif elem[0][0] == "D" and elem[1]:
                 developer.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
 
         #appende i comandi non prenseti in Command
