@@ -1489,6 +1489,7 @@ class Help:
                     "emporio e il tuo budget")
         user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
                     "settimanali, edosoldi, abilità, rango]")
+        user.append("/teams - Visualizza i pc dei team presenti nella Hall of Fame e il relativo incremento")
 
         return user, admin, developer
 
