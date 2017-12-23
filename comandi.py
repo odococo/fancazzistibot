@@ -10,8 +10,8 @@ from threading import Thread, Event
 
 from telegram import (
     InlineKeyboardButton,
-    InlineKeyboardMarkup
-)
+    InlineKeyboardMarkup,
+    ReplyKeyboardRemove)
 
 import os
 import utils
@@ -424,6 +424,11 @@ Detto questo in bocca al lupo"""
         print(res)
 
         self.answer("Complimenti! il tuo nuovo nome è "+new_username)
+
+    def Uannulladefinitivo(self):
+        """- rimuove completamente la tastiera personalizzata (quella con i bottoni) da usare quando non se ne va"""
+
+        self.update.message.reply_text("Levata!",reply_markup=ReplyKeyboardRemove())
 
 
 
