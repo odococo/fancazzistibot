@@ -1655,16 +1655,16 @@ class Team:
 
         if DEBUG:
             disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
-            disp.add_handler(CommandHandler('Fine', self.visualiza_team))
+            disp.add_handler(CommandHandler('teams', self.visualiza_team))
         else:
             forward_team_decor=self.db.elegible_loot_admin(self.forward_team)
             visualizza_team_decor=self.db.elegible_loot_user(self.visualiza_team)
             disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
-            disp.add_handler(CommandHandler('Fine', visualizza_team_decor))
+            disp.add_handler(CommandHandler('teams', visualizza_team_decor))
 
 
     def visualiza_team(self, bot, update):
-
+        """Visualizza gli incrementi senza aggiornarli"""
         ora, data=pretty_time_date(self.datetime)
         if not self.prior_str:
             update.message.reply_text("Non ci sono dati sui team, chiedi all'admin di aggiornarli")
