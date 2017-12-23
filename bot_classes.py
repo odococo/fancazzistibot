@@ -1696,7 +1696,7 @@ class Team:
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
-        self.update_db(team_msg, datetime.now())
+        self.update_db(team_msg, team_db[0]['last_update'])
 
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
@@ -1789,7 +1789,7 @@ class Team:
         @:type: str"""
 
         #se è lunedi
-        if date.isoweekday() ==1:
+        if date.day != datetime.now().day:
             print("Is monday")
             #prendi le date
             dates=self.db.get_all_teams()
