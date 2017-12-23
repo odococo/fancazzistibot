@@ -1651,6 +1651,7 @@ class Team:
         self.db=db
         self.prior_str=""
         self.datetime=None
+        self.team_dict={}
 
         disp = updater.dispatcher
 
@@ -1685,10 +1686,21 @@ class Team:
         if not team_db:
             self.update_db(team_msg, datetime.now())
             update.message.reply_text("Database aggiornato!")
+            #update dict
+            for elem in team_msg:
+                self.team_dict[elem[0]]=[]
+
+            print(self.team_dict)
             return
         #calcola la differenza
         team_diff=self.get_teams_diff(team_msg,team_db)
         to_send=self.pretty_diff(team_diff)
+
+        #update del dizionario
+        for elem in team_diff:
+            self.team_dict[elem[0]].append((elem[1],elem[2]))
+
+        print(self.team_dict)
 
         #savla per visualizzazione
         self.prior_str=to_send
@@ -1713,6 +1725,8 @@ class Team:
 
         #rimuovi il punto dentro i pc e casta ad int
         teams=[(elem[0], int(elem[1].replace(".",""))) for elem in teams]
+
+
 
         return teams
 
