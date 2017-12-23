@@ -1690,15 +1690,19 @@ class Team:
             for elem in team_msg:
                 self.team_dict[elem[0]]=[]
 
-            print(self.team_dict)
             return
         #calcola la differenza
         team_diff=self.get_teams_diff(team_msg,team_db)
         to_send=self.pretty_diff(team_diff)
 
         #update del dizionario
-        for elem in team_diff:
-            self.team_dict[elem[0]].append((elem[1],elem[2]))
+        if self.team_dict:
+            for elem in team_diff:
+                self.team_dict[elem[0]].append((elem[1],elem[2]))
+        else:
+            for elem in team_msg:
+                self.team_dict[elem[0]]=[]
+
 
         print(self.team_dict)
         print(team_db)
