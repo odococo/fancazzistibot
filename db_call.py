@@ -190,7 +190,7 @@ TABELLE = {
         "update":{
             "pnt":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP WHERE name=%s",
             "full":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP, pnt_set=%s, mean_set=%s WHERE name=%s"},
-        "insert":"INSERT INTO teams (name, pnt, last_update, pnt_set, mean_net) VALUES (%s, %s, CURRENT_TIMESTAMP, 0 , 0) ON CONFLICT (name) DO NOTHING "
+        "insert":"INSERT INTO teams (name, pnt, last_update, pnt_set, mean_set) VALUES (%s, %s, CURRENT_TIMESTAMP, 0 , 0) ON CONFLICT (name) DO NOTHING "
     }
 }
 
