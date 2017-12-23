@@ -513,6 +513,7 @@ Detto questo in bocca al lupo"""
         self.timer.start()
 
     def Astoptimer(self):
+        """- ferma il timer"""
         if not self.timer.stopped:
             self.answer("Il timer non è attivo")
             return
