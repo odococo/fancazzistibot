@@ -2106,7 +2106,8 @@ class Team:
             return
 
         elif param == "grafico":
-            to_send = "Immagine inviata!"
+            msg = update.callback_query.message.reply_text("Attendi un secondo...")
+
 
             # crea immagine e inviala
             path2img = self.plot(self.data_dict)
@@ -2119,10 +2120,9 @@ class Team:
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
             )
-            msg = update.callback_query.message.reply_text(to_send)
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text=to_send,
+                text="Immagine inviata!",
                 message_id=msg.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_team
@@ -2238,7 +2238,6 @@ class Team:
 
 
         elif param == "indietro":
-            print("decision_inc indietro")
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
