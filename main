@@ -224,12 +224,12 @@ def main():
 
     db = DB()#database
 
-    mode=3
+    #mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     bot_id=get_bot_id(dev)
-    #token=str(bot_id)+db.get_token(bot_id)['token']
-    token=str(bot_id)+":AAFossfi9mGnY648Eb5mv3wKO0NbHedrXq0"
+    token=str(bot_id)+db.get_token(bot_id)['token']
+    #token=str(bot_id)+""
     updater = Updater(token)
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
     # add_bot(get_bot(updater.bot))
