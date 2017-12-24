@@ -1874,7 +1874,8 @@ class Team:
         complete_team=team_db
         #uso un counter per vedere quanti elementi ho nella lista (per ogni team)
         count=Counter(elem[0] for elem in complete_team)
-        key=random.choice(list(count.keys())) 
+        print(count)
+        key=random.choice(list(count.keys()))
         #setto l'idx (usato per salvare numero)
         idx=count[key]
 
@@ -1883,7 +1884,7 @@ class Team:
         for elem in team_msg:
             complete_team.append((elem[0],elem[1],idx,elem[2]))
 
-        print(complete_team)
+     #   print(complete_team)
 
         self.update_db(team_msg, len(team_db)+1 )
 
