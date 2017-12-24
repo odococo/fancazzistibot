@@ -1604,8 +1604,11 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         else: print("page found!")
 
         if 'pages' not in user_data.keys():user_data['pages'] = []
+        else:
+            print("pages found!")
 
         print("len di user_data = " + str(len(user_data['pages'])))
+        print("page="+str(user_data['page']))
 
         user, admin, developer = self.get_commands_help()
 
@@ -1636,7 +1639,6 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             return
 
 
-        print(user_data['page'])
 
         if param == "esci":
             # elimina messaggio di scelta
