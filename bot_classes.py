@@ -1,8 +1,10 @@
 import inspect
 import math
+import operator
 import random
 import re
-from collections import OrderedDict, Counter
+from collections import Counter
+from collections import OrderedDict
 from datetime import timedelta, datetime
 
 import emoji
@@ -1849,4 +1851,477 @@ class Team:
             self.db.insert_team(team[0], team[1])
 
 
+class Team:
+    def __init__(self, updater, db):
+        self.updater = updater
+        self.db = db
+        self.data_dict = {}
+        self.last_update = None
+        self.inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Incremento Orario", callback_data="/team orario"),
+             InlineKeyboardButton("Incremento Giornaliero", callback_data="/team giornaliero"),
+             InlineKeyboardButton("Incremento Mensile", callback_data="/team mensile")],
+            [InlineKeyboardButton("Incremento dall'ultimo aggiornamento", callback_data="/team update"),
+             InlineKeyboardButton("Incremento totale", callback_data="/team totale"),
+             InlineKeyboardButton("Incremento totale medio", callback_data="/team totale_medio")],
+            [InlineKeyboardButton("Grafico", callback_data="/team grafico"),
+             InlineKeyboardButton("Esci", callback_data="/team esci")]
 
+        ])
+
+        disp = updater.dispatcher
+
+        disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
+
+    def forward_team(self, bot, update):
+        """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
+        # prendi i team nel messaggio e nel db
+        team_db, least_update = self.get_teams_db()
+        team_msg = self.extract_teams_from_msg(update.message.text)
+        # controlla se sono presenti team nel databes
+        if not team_db:
+            self.update_db(team_msg, 0)
+            update.message.reply_text("Database aggiornato!")
+            return
+
+        self.last_update = least_update
+        complete_team = team_db
+        # uso un counter per vedere quanti elementi ho nella lista (per ogni team)
+        count = Counter(elem[0] for elem in complete_team)
+        # print(count)
+        key = random.choice(list(count.keys()))
+        # setto l'idx (usato per salvare numero)
+        idx = count[key]
+
+        # aggiungo l'ultimo update alla lista nel db
+        for elem in team_msg:
+            complete_team.append((elem[0], elem[1], idx, elem[2]))
+
+        # print(complete_team)
+        # salva il dizionario corrente
+        self.data_dict = self.list2dict(complete_team)
+
+        # esegue l'update del db
+        self.update_db(team_msg, idx)
+
+        to_send = "Quali informazioni vuoi visualizzare?"
+        update.message.reply_text(to_send, reply_markup=self.inline)
+
+    def decison(self, bot, update):
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+
+        if param == "orario":
+            res_dict = self.get_hour_increment(self.data_dict)
+            if not res_dict:
+                update.callback_query.message.reply_text(
+                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                return
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento orario medio:\n"),
+                                                     parse_mode="HTML", reply_markup=self.inline)
+        elif param == "giornaliero":
+            res_dict = self.get_day_increment(self.data_dict)
+            if not res_dict:
+                update.callback_query.message.reply_text(
+                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                return
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento giornaliero medio:\n"),
+                                                     parse_mode="HTML", reply_markup=self.inline)
+
+        elif param == "mensile":
+            res_dict = self.get_month_increment(self.data_dict)
+            if not res_dict:
+                update.callback_query.message.reply_text(
+                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                return
+
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento mensile medio:\n"),
+                                                     parse_mode="HTML", reply_markup=self.inline)
+
+        elif param == "totale":
+            res_dict = self.get_total_increment(self.data_dict)
+            if not res_dict:
+                update.callback_query.message.reply_text(
+                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                return
+
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "Incremento totale:\n"),
+                                                     parse_mode="HTML", reply_markup=self.inline)
+
+        elif param == "totale_medio":
+            res_dict = self.get_total_mean_increment(self.data_dict)
+            if not res_dict:
+                update.callback_query.message.reply_text(
+                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                return
+
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "Incremento totale medio:\n"),
+                                                     parse_mode="HTML", reply_markup=self.inline)
+
+        elif param == "update":
+            print("update")
+        elif param == "grafico":
+            print("grafico")
+
+
+        elif param == "esci":
+            update.callback_query.message.reply_text("Ok")
+            return
+
+    def update_db(self, teams, numero):
+        """Esegue l'update del db dato un messagigo team
+        @:param teams: lista di tuple (vedi extract_teams_from_msg)
+        @:type: str"""
+
+        # inserisci i nomi nel db
+        for team in teams:
+            self.db.update_teams(team[0], numero, team[1])
+
+    def get_teams_db(self):
+        """Ritorna la lista di teams del db
+        @:return:
+        res: list of elements (team_name, pnt, numero, last_update)
+        least_update: laste update in the form (team_name, pnt, numero, last_update)"""
+        # prende i dati dal db
+        teams_db = self.db.get_team_all()
+        print(teams_db)
+
+        if not teams_db:
+            return False, False
+        # casta il risultato in lista se è un solo dizionario
+        if not isinstance(teams_db, list): teams_db = list(teams_db)
+
+        res = []
+        for elem in teams_db:
+            res.append((elem['nome'], elem['pc'], elem['numero'], elem['update']))
+            # print(elem['last_update'].isoweekday())
+
+        # prendi l'aggiornamento piu recente
+        least_update = max(res, key=lambda x: x[3])
+
+        return res, least_update
+
+    def extract_teams_from_msg(self, msg):
+        """Estrae i team da un messaggio teams
+        @:param msg: messaggio team
+        @:type: str
+        @:return: list of triple (team_name, pnt, datetime.now)"""
+        # compila il regex
+        team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
+        # elimina la parte del tuo team
+        msg = msg.split("Il tuo team")[0]
+
+        # teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
+        teams = re.findall(team_regex, msg)
+
+        # rimuovi il punto dentro i pc e casta ad int
+        teams = [(elem[0], int(elem[1].replace(".", "")), datetime.now()) for elem in teams]
+
+        return teams
+
+    # def plot(self, data_dict):
+    #     """Salva un grafico dove le x sono l'unita di tempo e le y i pc totali per ogni Team
+    #     @:param data_dict: il dizionario ritornato da list2dict
+    #     @:type: dict
+    #     @:return: nome dell'immagine (str)
+    #     """
+    #
+    #     # definisco un font per la legenda
+    #     fontP = FontProperties()
+    #     fontP.set_size('medium')
+    #     NUM_COLORS = 15
+    #
+    #     cm = plt.get_cmap('gist_rainbow')
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(111)
+    #     ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
+    #
+    #     lines = []
+    #     for key, data_list in data_dict.items():
+    #         dates = [elem[1] for elem in data_list]
+    #         values = [elem[0] for elem in data_list]
+    #         # plot tracccia le linee, scatter i punti
+    #         a = plt.plot(dates, values, label=key)
+    #         lines.append(a[0])
+    #         plt.scatter(dates, values)
+    #
+    #     lgd = plt.legend(bbox_to_anchor=(1.12, 1.01))
+    #
+    #     plt.ylabel('PC totali in kk')
+    #     plt.xlabel('Messaggi Inoltrati')
+    #     plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 2))
+    #     save_name = "team_data.png"
+    #     plt.savefig(save_name, bbox_extra_artists=(lgd,), bbox_inches='tight')
+    #     return save_name
+
+    def list2dict(self, data_list):
+        """Converte una lista di elementi data dal db in un dizionario
+        @:param data: lista di elementi nel formato (vedi get_teams_db)
+        @:type: list
+        @:return: dizionario con chiavi = nome_team e valore lista di elementi (vedi get_teams_db senza nome team)"""
+        res = {}
+        # prendi tutti i nomi dei team
+        count = Counter(elem[0] for elem in data_list)
+        # print(count)
+
+        # aggiugili al dizionario res
+        for key in count.keys():
+            res[key] = []
+
+        # per ogni elemento nella lista appendi tutto tranne i nomi
+        for elem in data_list:
+            res[elem[0]].append(elem[1:])
+        return res
+
+    def get_hour_increment(self, data_dict):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
+        @:param data_dict: il dizionario ritornato da list2dict
+        @:type: dict
+        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
+
+        filter_dict = self.filter_dict_by(data_dict, 0)
+
+        iter_dict = {}
+
+        for key in filter_dict.keys():
+            # se la lista di incrementi contiene un solo elemento non posso fare la stima
+            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
+
+        if not iter_dict:
+            return False
+
+        res_dict = {}
+
+        # per ogni team nel dizionario
+        for key in iter_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in iter_dict[key]]
+            incr = 0
+            idx = 0
+            # prendo i pc a coppie di 2 per farne la differenza
+            for i in range(0, len(tot_pc), 2):
+                to_calc = tot_pc[i:i + 2]
+                # se sono arrivato all'ultimo passo
+                if len(to_calc) != 2: continue
+                # calcolo l'incremento
+                incr += abs(to_calc[0] - to_calc[1])
+                # print(incr)
+                # aggiungo uno a idx
+                idx += 1
+            # calcolo l'incremento medio
+            incr = incr / math.ceil(len(tot_pc) / idx)
+            # e lo aggiungo al dizionario
+            res_dict[key] = incr
+
+        return res_dict
+
+    def get_day_increment(self, data_dict):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
+        @:param data_dict: il dizionario ritornato da list2dict
+        @:type: dict
+        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
+
+        filter_dict = self.filter_dict_by(data_dict, 1)
+
+        iter_dict = {}
+
+        for key in filter_dict.keys():
+            # se la lista di incrementi contiene un solo elemento non posso fare la stima
+            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
+
+        if not iter_dict:
+            return False
+
+        res_dict = {}
+
+        # per ogni team nel dizionario
+        for key in iter_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in iter_dict[key]]
+            incr = 0
+            idx = 0
+            # prendo i pc a coppie di 2 per farne la differenza
+            for i in range(0, len(tot_pc), 2):
+                to_calc = tot_pc[i:i + 2]
+                # se sono arrivato all'ultimo passo
+                if len(to_calc) != 2: continue
+                # calcolo l'incremento
+                incr += abs(to_calc[0] - to_calc[1])
+                # print(incr)
+                # aggiungo uno a idx
+                idx += 1
+            # calcolo l'incremento medio
+            incr = incr / math.ceil(len(tot_pc) / idx)
+            # e lo aggiungo al dizionario
+            res_dict[key] = incr
+
+        return res_dict
+
+    def get_month_increment(self, data_dict):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
+        @:param data_dict: il dizionario ritornato da list2dict
+        @:type: dict
+        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
+
+        filter_dict = self.filter_dict_by(data_dict, 2)
+
+        iter_dict = {}
+
+        for key in filter_dict.keys():
+            # se la lista di incrementi contiene un solo elemento non posso fare la stima
+            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
+
+        if not iter_dict:
+            return False
+
+        res_dict = {}
+
+        # per ogni team nel dizionario
+        for key in iter_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in iter_dict[key]]
+            incr = 0
+            idx = 0
+            # prendo i pc a coppie di 2 per farne la differenza
+            for i in range(0, len(tot_pc), 2):
+                to_calc = tot_pc[i:i + 2]
+                # se sono arrivato all'ultimo passo
+                if len(to_calc) != 2: continue
+                # calcolo l'incremento
+                incr += abs(to_calc[0] - to_calc[1])
+                # print(incr)
+                # aggiungo uno a idx
+                idx += 1
+            # calcolo l'incremento medio
+            incr = incr / math.ceil(len(tot_pc) / idx)
+            # e lo aggiungo al dizionario
+            res_dict[key] = incr
+
+        return res_dict
+
+    def filter_dict_by(self, data_dict, what):
+        """Filtra il dizionario ritornato da list2dict a seconda del tempo:
+        @:param data_dict: dizionario da filtrare nella forma ritornata da list2dict
+        @:type: dict
+        @:param what: =0 (hour), =1(day) =2(month)
+        @:type: int
+        @:return: dizionario filtrato in base alla data
+        """
+        # prendi le chiavi dal dizionario
+        filer_dict = {k: [] for k in data_dict.keys()}
+        for key in data_dict.keys():
+            # crea una lista in cui salvare le date
+            dates = []
+            # per ogni elemento della lista di valori (pc, numero ,data)
+            for elem in data_dict[key]:
+                # se il giorno non è gia presente nella lista dates
+                if what == 0:
+                    if elem[2].hour not in [date.hour for date in dates]:
+                        # aggiungilo sia alle date che al filter dict
+                        dates.append(elem[2])
+                        filer_dict[key].append(elem)
+                elif what == 1:
+                    if elem[2].day not in [date.day for date in dates]:
+                        # aggiungilo sia alle date che al filter dict
+                        dates.append(elem[2])
+                        filer_dict[key].append(elem)
+                elif what == 2:
+                    if elem[2].month not in [date.month for date in dates]:
+                        # aggiungilo sia alle date che al filter dict
+                        dates.append(elem[2])
+                        filer_dict[key].append(elem)
+
+        return filer_dict
+
+    def pretty_increment(self, data, initial=""):
+        """Dato un dizionario ritorna lo stampabile
+        @:param data: dizionario con key=nome_team, value=int
+        @:type: dict
+        @:param initial: stringa iniziale da stampare
+        @:type: str
+        @:return: stringa da mandare allo user"""
+
+        # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
+        sorted_x = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
+
+        idx = 1
+        res = initial
+        for elem in sorted_x:
+            if idx == 1:
+                res += str(idx) + ")🥇 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1])).replace(",",
+                                                                                                                    ".") + "</b>\n"
+            elif idx == 2:
+                res += str(idx) + ")🥈 <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
+                    ",", ".") + "</b>\n"
+            elif idx == 3:
+                res += str(idx) + ")🥉 <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
+                    ",", ".") + "</b>\n"
+            else:
+                res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(",",
+                                                                                                                    ".") + "</b>\n"
+            idx += 1
+
+        return res
+
+    def get_total_increment(self, data_dict):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
+          @:param data_dict: il dizionario ritornato da list2dict
+          @:type: dict
+          @:return: ritorna un dizionario con coppia team-incrementoTotale"""
+
+        res_dict = {}
+
+        # per ogni team nel dizionario
+        for key in data_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in data_dict[key]]
+            incr = 0
+            idx = 0
+            # prendo i pc a coppie di 2 per farne la differenza
+            for i in range(0, len(tot_pc), 2):
+                to_calc = tot_pc[i:i + 2]
+                # se sono arrivato all'ultimo passo
+                if len(to_calc) != 2: continue
+                # calcolo l'incremento
+                incr += abs(to_calc[0] - to_calc[1])
+                # print(incr)
+                # aggiungo uno a idx
+                idx += 1
+            # calcolo l'incremento medio
+            # e lo aggiungo al dizionario
+            res_dict[key] = incr
+
+        return res_dict
+
+    def get_total_mean_increment(self, data_dict):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
+          @:param data_dict: il dizionario ritornato da list2dict
+          @:type: dict
+          @:return: ritorna un dizionario con coppia team-incrementoTotale"""
+
+        res_dict = {}
+
+        # per ogni team nel dizionario
+        for key in data_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in data_dict[key]]
+            incr = 0
+            idx = 0
+            # prendo i pc a coppie di 2 per farne la differenza
+            for i in range(0, len(tot_pc), 2):
+                to_calc = tot_pc[i:i + 2]
+                # se sono arrivato all'ultimo passo
+                if len(to_calc) != 2: continue
+                # calcolo l'incremento
+                incr += abs(to_calc[0] - to_calc[1])
+                # print(incr)
+                # aggiungo uno a idx
+                idx += 1
+            # calcolo l'incremento medio
+            incr = incr / math.ceil(len(tot_pc) / idx)
+            # e lo aggiungo al dizionario
+            res_dict[key] = incr
+
+        return res_dict
