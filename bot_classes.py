@@ -1599,7 +1599,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         if 'page' not in user_data.keys():
             print("page not found!")
-            user_data['page'] = -1
+            user_data['page'] = 0
         else: print("page found!")
         user_data['pages'] = []
 
@@ -1610,7 +1610,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         if param=="page_avanti":user_data['page'] +=1
         elif param=="page_indietro":user_data['page'] -=1
         elif param=="page_esci":
-            user_data['page'] =-1
+            user_data['page'] =0
             to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
 Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
 nome_comando parametri - spiegazione
@@ -1690,8 +1690,8 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 print("To send troppo grande!!")
-                if user_data['page']<0:
-                    print("To send <0!")
+                if user_data['page']==0:
+                    print("To send ==0!")
 
                     user_data['page'] = 0
                     user_data['pages'] = to_send
@@ -1713,7 +1713,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
         elif param == "crediti":
             to_send += self.get_credits()
 
-        if user_data['page'] < 0:
+        if user_data['page'] == 0:
             # modifica il messaggio con il to_send
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
@@ -1725,7 +1725,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             )
         else:
             # ultima pagina
-            if user_data['page'] == (len(user_data['pages'])-1):
+            if user_data['page'] == len(user_data['pages']):
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
                     text=to_send,
@@ -1737,7 +1737,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
 
                 )
             # prima pagina
-            elif user_data['page'] == 0:
+            elif user_data['page'] == 1:
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
                     text=to_send,
