@@ -1870,6 +1870,13 @@ class Team:
             update.message.reply_text("Database aggiornato!")
             return
 
+        complete_team=team_db
+
+        idx=1
+        for elem in team_msg:
+            complete_team.append((elem[0],elem[1],len(team_db)+idx,elem[2]))
+
+        print(complete_team)
 
         self.update_db(team_msg, len(team_db)+1 )
 
