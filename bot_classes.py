@@ -1605,7 +1605,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         user, admin, developer = self.get_commands_help()
 
-        to_send = ""
+        to_send = "o"
 
         if param=="page_avanti":user_data['page'] +=1
         elif param=="page_indietro":user_data['page'] -=1
