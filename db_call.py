@@ -181,16 +181,6 @@ TABELLE = {
         "select":{
             "all":"SELECT * FROM top NATURAL JOIN users;"
         }
-    },
-    "teams":{
-        "select":{
-            "all":"SELECT * FROM teams",
-            "by_name":"SELECT * FROM teams WHERE name=%s"
-        },
-        "update":{
-            "pnt":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP WHERE name=%s",
-            "full":"UPDATE teams SET pnt=%s , last_update=CURRENT_TIMESTAMP, pnt_set=%s, mean_set=%s WHERE name=%s"},
-        "insert":"INSERT INTO teams (name, pnt, last_update, pnt_set, mean_set) VALUES (%s, %s, CURRENT_TIMESTAMP, 0 , 0) ON CONFLICT (name) DO NOTHING "
     }
 }
 
@@ -276,16 +266,6 @@ class DB:
         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['top']['select']['all'])
 
-    def get_all_teams(self):
-        """Prende tutti i teams dalla tabella teams
-        @:return:dict (or list of dict se ci sono piu teams nella tabella) con le chiavi:
-        name , pnt, last_update"""
-        return self.execute(TABELLE['teams']['select']['all'])
-
-    def get_single_team(self, team_name):
-        """Prende un team dalla tabella teams
-        @:return: dict, con chiavi (name, pnt, last_update"""
-        return self.execute(TABELLE['teams']['select']['by_name'],(team_name,))
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
@@ -424,36 +404,6 @@ class DB:
         @:type: int"""
         self.execute(TABELLE['users']['update'],(new_username, id, ))
 
-    def update_team_pnt(self, team_name, pnt):
-        """Esegue l'update di un team nella tabella teams
-        @:param team_name: il nome del team da aggiornare
-        @:type: str
-        @:param pnt: i punti del team
-        @:type: int
-        """
-        self.execute(TABELLE['teams']['update']['pnt'],(pnt, team_name,))
-
-    def update_team_full(self, team_name, pnt, pnt_set, mean_set):
-            """Esegue l'update di un team nella tabella teams
-            @:param team_name: il nome del team da aggiornare
-            @:type: str
-            @:param pnt: i punti del team
-            @:type: int
-            @:param: pnt_set: punti presi di lunedi
-            @:type: int
-            @:param mean_set: media di incremento settimanale
-            @:type: int
-            """
-            self.execute(TABELLE['teams']['update']['full'], (pnt, pnt_set, mean_set, team_name,))
-
-    def insert_team(self, tean_name, pnt):
-        """Inserisce un team nella tabella
-        @:param team_name: il nome del team da aggiornare
-        @:type: str
-        @:param pnt: i punti del team
-        @:type: int
-        """
-        self.execute(TABELLE['teams']['insert'], (tean_name, pnt,))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):
