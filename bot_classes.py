@@ -1602,14 +1602,9 @@ Quindi ricorda di aggiungere i parametri giusti!"""
         if 'page' not in user_data.keys():
             print("page not found!")
             user_data['page'] = 0
-        else: print("page found!")
 
         if 'pages' not in user_data.keys():user_data['pages'] = []
-        else:
-            print("pages found!")
 
-        print("len di user_data = " + str(len(user_data['pages'])))
-        print("page="+str(user_data['page']))
 
         user, admin, developer = self.get_commands_help()
 
@@ -2039,7 +2034,7 @@ class Team:
         for elem in team_msg:
             complete_team.append((elem[0], elem[1], idx, elem[2]))
 
-        print(complete_team)
+        #print(complete_team)
         # salva il dizionario corrente
         self.data_dict = self.list2dict(complete_team)
 
@@ -2066,6 +2061,7 @@ class Team:
                 parse_mode="HTML",
                 reply_markup=self.inline_inc
             )
+            return 
 
 
         elif param == "grafico":
