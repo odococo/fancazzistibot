@@ -1,19 +1,12 @@
 import inspect
 import math
-import operator
 import random
 import re
-from collections import Counter
-from collections import OrderedDict
+from collections import OrderedDict, Counter
 from datetime import timedelta, datetime
+from collections import Counter
 
 import emoji
-# import matplotlib
-# matplotlib.use('Agg')
-#
-# import matplotlib.pyplot as plt
-
-from matplotlib.font_manager import FontProperties
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
@@ -178,9 +171,9 @@ class Loot:
             top_ten.sort(key=lambda tup: tup[1], reverse=True)
 
             if (len(top_ten) > 3):
-                if not len(top_ten) <= 10: top_ten = top_ten[:9]
+                if not len(top_ten) <=10: top_ten = top_ten[:9]
 
-                to_print = "I " + str(top_ten) + " oggetti piu costosi sono:\n"
+                to_print = "I "+str(top_ten)+" oggetti piu costosi sono:\n"
                 for elem in top_ten:
                     to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
                     if int(elem[2]) != 1:
@@ -307,7 +300,7 @@ class Loot:
     @catch_exception
     def salva_rarita_db(self, rarita, user_id):
         if not rarita:
-            # print("Non ho trovato rarità")
+           # print("Non ho trovato rarità")
             return
         rarita = dict(Counter(rarita))
         self.db.update_items(rarita, user_id)
@@ -386,9 +379,9 @@ class Boss:
         self.bot = updater.bot
         self.db = db
 
-        self.attacca_boss_frasi = ["Attacca il boss dannazzione!",
-                                   "Lo hai attaccato il boss?", "Se non attacchi il boss ti prendo a sberle",
-                                   "Attacca il boss ORA"]
+        self.attacca_boss_frasi=["Attacca il boss dannazzione!",
+        "Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle","Attacca il boss ORA"]
+
 
         dispatcher = updater.dispatcher
 
@@ -421,8 +414,7 @@ class Boss:
 
             dispatcher.add_handler(CommandHandler("resetboss", self.boss_reset_ask))
 
-        dispatcher.add_handler(
-            CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
+        dispatcher.add_handler( CallbackQueryHandler(self.boss_reset_confirm, pattern="^/resetBoss", pass_user_data=True))
 
     def cerca_boss(self, msg):
         """Dato il messaggio di attacco ai boss ritorna una lista di liste con elementi nel seguente ordine:\n
@@ -430,11 +422,11 @@ class Boss:
         lista[1]: Missione/cava + tempo se in missione o cava, 1 altrimenti\n
         lista[2]: 0 se non c'è stato attacco al boss, tupla altrimenti: tupla[0] danno, tupla[1] numero di boss"""
 
-        # prendi il messaggio
+        #prendi il messaggio
         prova = msg.split("Attività membri:\n")[1]
-        # trasforma le omoji in testo
+        #trasforma le omoji in testo
         prova = emoji.demojize(prova)
-        # compila i pattern
+        #compila i pattern
         name_reg1 = re.compile(r"([0-z_]+) :")
         name_reg2 = re.compile(r"^([0-z_]+) .*")
         obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
@@ -442,7 +434,7 @@ class Boss:
 
         res = []
 
-        # cerca tutto con i vari regex
+        #cerca tutto con i vari regex
         for elem in prova.split("\n\n"):
             try:
                 name = re.findall(name_reg1, elem)[0]
@@ -473,39 +465,37 @@ class Boss:
 
         # prendi il dizionario, lista  e id
         self.inizzializza_user_data(user_data)
-        # prendi i dati dal databse
+        #prendi i dati dal databse
         boss = self.db.get_punteggi_username()
-        # se è vuoto inizzializza
+        #se è vuoto inizzializza
         if not boss:
             boss = {}
             id = 0
         else:
-            # differenza tra dizionario e lista
+            #differenza tra dizionario e lista
             try:
                 id = boss[0]["msg_id"]
                 user_data['single_dict'] = False
             except KeyError:
                 id = boss["msg_id"]
 
-        # salva i dati
+        #salva i dati
         user_data['punteggi'] = boss
         user_data['last_update_id'] = id
 
         user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
-        # se il messaggio presenta le stesse info avverti l'user
+        #se il messaggio presenta le stesse info avverti l'user
         if self.same_message(boss, user_data['lista_boss']):
             update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
             return 1
 
         # print(user_data['lista_boss'], boss)
 
-        # genera e invia risposta
-        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],
-                                           one_time_keyboard=True)
-        update.message.reply_text(
-            "Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
-            reply_markup=reply_markup)
+        #genera e invia risposta
+        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"],["Sveglia", "Annulla"],["Visualizza"]], one_time_keyboard=True)
+        update.message.reply_text("Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
+                                  reply_markup=reply_markup)
         return 1
 
     @catch_exception
@@ -513,7 +503,8 @@ class Boss:
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche
                 @:return: ritorna lo state del prossimo handler"""
 
-        # prendi le info dal db
+
+        #prendi le info dal db
         self.inizzializza_user_data(user_data)
         user_data['punteggi'] = self.db.get_punteggi_username()
 
@@ -568,7 +559,7 @@ class Boss:
             return self.fine(bot, update, user_data)
 
         # se l'admin vuole modificare la lista
-        # todo: cerca perche triplo sette non appare nel db
+        #todo: cerca perche triplo sette non appare nel db
         elif choice == "Phoenix" or choice == "Titan":
             if choice == "Phoenix":
                 user_data['phoenix'] = True
@@ -592,19 +583,18 @@ class Boss:
             # se ho un solo dizionario ne creo una lista per far funzionare il cilo successivo
             if user_data['single_dict']: user_data['punteggi'] = [user_data['punteggi']]
 
+
             for username in user_data['lista_boss']:
                 # se lo username è presente nella tabella users del db ma la tabella dei punteggi è vuota
                 if username[0] in users_name and not bool(user_data['punteggi'][0]):
                     user_data['punteggi'].append({'username': username[0],
                                                   # aggiungo l'id associato
-                                                  'id': [elem[1] for elem in users_name_id if
-                                                         elem[0] == username[0]].pop(0),
+                                                  'id': [elem[1] for elem in users_name_id if elem[0] == username[0]].pop(0),
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
 
                 # se lo username è presente nella tabella users del db ma non nel dizionario (quindi non nella tabella punteggi del db)
-                elif username[0] in users_name and not username[0] in [elem['username'] for elem in
-                                                                       user_data['punteggi']]:
+                elif username[0] in users_name and not username[0] in [elem['username'] for elem in user_data[ 'punteggi']]:
                     user_data['punteggi'].append({'username': username[0],
                                                   'id': [elem[1] for elem in users_name_id if
                                                          elem[0] == username[0]].pop(0),
@@ -612,16 +602,16 @@ class Boss:
                                                   'valutazione': 0,
                                                   'attacchi': 0})  # aggiungo l'user alla lista
 
-            # print(user_data)
+            #print(user_data)
             found = False
-            # rimuovi dizionari vuoti
-            user_data['punteggi'] = list(filter(None, user_data['punteggi']))
+            #rimuovi dizionari vuoti
+            user_data['punteggi']=list(filter(None, user_data['punteggi']))
             print(user_data)
 
-            # per ogni elemento nel messaggio inviato
+            #per ogni elemento nel messaggio inviato
             for username in user_data['lista_boss']:
 
-                # per ogni username in punteggi
+                #per ogni username in punteggi
                 for single_dict in user_data['punteggi']:
 
                     # se è gia presente nel db
@@ -639,19 +629,23 @@ class Boss:
                             single_dict['valutazione'] += 1
 
                         elif isinstance(username[2], tuple):  # ha attaccato
-                            # aggiungo gli attacchi
+                            #aggiungo gli attacchi
                             single_dict['attacchi'] = username[2][1]
+
 
                 if not found:
                     skipped.append(username)
                 found = False
+
 
             # se non ho saltato tutti gli username
             if not len(skipped) == len(user_data['lista_boss']):
                 print("all skipped")
                 self.db.update_punteggi(user_data['punteggi'])
 
-            # notifica gli users che il punteggio è stato aggiornato
+
+
+            #notifica gli users che il punteggio è stato aggiornato
             # for elem in user_data['punteggi']:
             #     bot.sendMessage(elem['id'],"Le valutazioni sono state aggiornate!\n"
             #                                "Sei arrivato al punteggio <b>"+str(elem['valutazione'])+"</b>\n"
@@ -661,8 +655,9 @@ class Boss:
                 to_send = "I seguenti users non sono salvati nel bot :\n"
                 for users in skipped:
                     to_send += "@" + users[0] + "\n"
-                to_send += "Chiedigli di inviare /start a @" + bot.username + " , in privato"
+                to_send += "Chiedigli di inviare /start a @" + bot.username+" , in privato"
                 update.message.reply_text(to_send)
+
 
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)
@@ -673,29 +668,31 @@ class Boss:
 
         elif choice == "Annulla":
             return self.fine(bot, update, user_data, "Ok")
-        elif choice == "Sveglia":
-            # prendo gli users in punteggi e nel messaggio
-            punteggi_users = self.db.get_punteggi_username()
-            attacchi_users = user_data['lista_boss']
+        elif choice=="Sveglia":
+            #prendo gli users in punteggi e nel messaggio
+            punteggi_users=self.db.get_punteggi_username()
+            attacchi_users= user_data['lista_boss']
 
-            # prendo solo gli username di chi non ha attaccato
-            attacchi_users = [elem[0] for elem in attacchi_users if elem[2] == 0]
-            # faccio lo stesso con i punteggi
-            punteggi_users = [elem for elem in punteggi_users if elem['username'] in attacchi_users]
+
+            #prendo solo gli username di chi non ha attaccato
+            attacchi_users=[elem[0] for elem in attacchi_users if elem[2]==0]
+            #faccio lo stesso con i punteggi
+            punteggi_users=[elem for elem in punteggi_users if elem['username'] in attacchi_users]
 
             if not punteggi_users:
                 update.message.reply_text("Tutti gli users presenti nel bot hanno attaccato il boss")
                 return self.fine(bot, update, user_data)
 
-            # mando il messaggio a tutti i non attaccanti e creo la risposta
-            to_send = "Ho mandato un messaggio ai seguenti users:\n"
+
+            #mando il messaggio a tutti i non attaccanti e creo la risposta
+            to_send="Ho mandato un messaggio ai seguenti users:\n"
             for elem in punteggi_users:
-                bot.sendMessage(elem['id'], random.choice(self.attacca_boss_frasi))
-                to_send += "@" + elem['username'] + "\n"
+                bot.sendMessage(elem['id'],random.choice(self.attacca_boss_frasi))
+                to_send+="@"+elem['username']+"\n"
 
             update.message.reply_text(to_send)
 
-        elif choice == "Visualizza":
+        elif choice=="Visualizza":
             reply_markup = ReplyKeyboardMarkup([["Non Attaccanti", "Punteggio"], ["Completa", "Fine"]],
                                                one_time_keyboard=False)
             update.message.reply_text("Quali info vuoi visualizzare?", reply_markup=reply_markup)
@@ -770,7 +767,7 @@ class Boss:
             else:
                 to_send += str(i) + ") "
             to_send += str(elem[0]) + " : facendo <b>" + '{:,}'.format(int(elem[2][0])).replace(',',
-                                                                                                '\'') + "</b> danno con <b>" + str(
+                                                                                                      '\'') + "</b> danno con <b>" + str(
                 elem[2][1]) + "</b> attacchi\n"
             i += 1
 
@@ -823,12 +820,11 @@ class Boss:
         if not isinstance(boss_db, list):
             boss_db = [boss_db]  # rende boss_db una lista
 
-        # print(boss_db)
+        #print(boss_db)
         users_db = self.db.get_users()
         if not users_db: return False
         users_id = [(elem['username'], elem['id']) for elem in users_db]  # contiene la tupla username,id
-        users_punteggio = [elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in
-                                                                    boss_db]]  # ha solo gli elementi (username,id) che sono prenseti nel db punteggio
+        users_punteggio = [elem for elem in users_id if elem[1] in [punteggio['id'] for punteggio in boss_db]]  # ha solo gli elementi (username,id) che sono prenseti nel db punteggio
         users_db = [elem['username'] for elem in users_db]  # ha gli username presenti nel db users
 
         # guarda se ci sono nuovi utenti nel messaggio team che sono anche dentro users
@@ -869,11 +865,11 @@ class Cerca:
     def cerca_craft(self, bot, update, user_data):
         """Cerca oggetti nell'intervallo craft specificato dall'utente"""
 
-        # prendi l'intervallo
+        #prendi l'intervallo
         param = update.message.text.split()[1:]
         self.inizzializza_user_data(user_data)
 
-        # controlla che ci siano 1 o due parametri
+        #controlla che ci siano 1 o due parametri
         if len(param) == 0 or len(param) > 2:
             update.message.reply_text("Il comando deve essere usato in due modi:\n"
                                       "/cercaCcraft maggioreDi minoreDi\n"
@@ -881,13 +877,13 @@ class Cerca:
                                       " l'intervallo di punti craft in cui vuoi cercare.")
             return
 
-        # controlla che siano numerici
+        #controlla che siano numerici
         elif len(param) == 1 and is_numeric(param[0]):
             user_data['risultati'] = [elem for elem in self.craftabili if elem['craft_pnt'] >= int(param[0])]
         elif len(param) == 2 and is_numeric(param[0]) and is_numeric(param[1]):
             magg = int(param[0])
             min = int(param[1])
-            # print(magg, min)
+            #print(magg, min)
             if magg > min:
                 update.message.reply_text("Il numero maggioreDi non può essere minore del numero minoreDi")
                 return
@@ -898,11 +894,11 @@ class Cerca:
             update.message.reply_text("Non hai inviato dei numeri corretti")
             return
 
-        # cerca quanti oggetti sono stati trovati
+        #cerca quanti oggetti sono stati trovati
         num_ris = len(user_data['risultati'])
         if num_ris == 0: return self.no_results(bot, update)
 
-        # inline per la selezione della rarità
+        #inline per la selezione della rarità
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("X", callback_data="/rarita X"),
              InlineKeyboardButton("UE", callback_data="/rarita UE"),
@@ -911,7 +907,7 @@ class Cerca:
              InlineKeyboardButton("UR", callback_data="/rarita UR")],
             [InlineKeyboardButton("Tutti", callback_data="/rarita tutti")]
         ])
-        # generazione e invio del messaggio
+        #generazione e invio del messaggio
         text = "Ho trovato <b>" + str(num_ris) + "</b> oggetti che rispettano i tuoi parametri\n"
 
         update.message.reply_text(text +
@@ -922,18 +918,18 @@ class Cerca:
     def filtra_rarita(self, bot, update, user_data):
         """Filtra i risultati trovati precedentemente a seconda della rarità"""
         # todo: prova a far scegliere piu rarità
-        # prendi la rarità scelte dall'utente
-        # user_data['rarita'] = update.callback_query.data.split()[1]
+        #prendi la rarità scelte dall'utente
+        #user_data['rarita'] = update.callback_query.data.split()[1]
         rarita = update.callback_query.data.split()[1]
-        # filtra se non sono state scelte tutte
+        #filtra se non sono state scelte tutte
         if not "tutti" in rarita:
             user_data['risultati'] = [elem for elem in user_data['risultati'] if elem['rarity'] == rarita]
 
-        # conta i risultati
+        #conta i risultati
         num_ris = len(user_data['risultati'])
         if num_ris == 0: return self.no_results(bot, update)
 
-        # genera e invia risposta
+        #genera e invia risposta
         inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("r0", callback_data="/rinascita 1"),
              InlineKeyboardButton("r1", callback_data="/rinascita 2"),
@@ -966,17 +962,17 @@ class Cerca:
     @catch_exception
     def filtra_rinascita(self, bot, update, user_data):
         """Filtra i risualti ottenuti precedentemente in base alla rinascita"""
-        # prendi i parametri scelti dall'utente
+        #prendi i parametri scelti dall'utente
         rinascita = update.callback_query.data.split()[1]
 
         # print(self.maggioreDi, self.minoreDi, self.rarita, self.rinascita)
-        # filtra
+        #filtra
         user_data['risultati'] = [elem for elem in user_data['risultati'] if elem['reborn'] <= int(rinascita)]
 
-        # stessa storia
+        #stessa storia
         if len(user_data['risultati']) == 0: return self.no_results(bot, update)
 
-        # genera e invia risposta
+        #genera e invia risposta
         to_send = "Ho trovato <b>" + str(
             len(user_data['risultati'])) + "</b> oggetti.\nOra puoi scegliere scondo quale valore ordinarli oppure" \
                                            " annullare la ricerca"
@@ -1007,7 +1003,7 @@ class Cerca:
         if "annulla" in param:
             to_send.append("Ok annullo")
 
-        # ordina lista in base a parametro
+        #ordina lista in base a parametro
         elif "puntiCraft" in param:
             sorted_res = sorted(user_data['risultati'], key=lambda key: key["craft_pnt"])
         elif "rarita" in param:
@@ -1015,31 +1011,31 @@ class Cerca:
         elif "rinascita" in param:
             sorted_res = sorted(user_data['risultati'], key=lambda key: key["reborn"])
 
-        # prendi l'id del messaggio
+        #prendi l'id del messaggio
         message_id = update._effective_chat.id
 
-        # inizzializza titolo
+        #inizzializza titolo
         if sorted_res:
             bot.sendMessage(message_id, "<b>Nome   Punti Craft    Rarità     Rinascita</b>\n", parse_mode="HTML")
 
-        # aggiungi elemeenti
+        #aggiungi elemeenti
         for elem in sorted_res:
             to_send.append(
                 "<b>" + elem['name'] + "</b>   " + str(elem['craft_pnt']) + "   " + elem['rarity'] + "   " + str(
                     elem["reborn"]) + "\n")
 
-        # elimina messaggio di scelta
+        #elimina messaggio di scelta
         bot.delete_message(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id
         )
 
-        # manda i messaggi ogni 30 elementi
+        #manda i messaggi ogni 30 elementi
         while to_send:
             bot.sendMessage(message_id, "".join(to_send[:30]), parse_mode="HTML")
             to_send = to_send[30:]
 
-        # azzera lo user_data
+        #azzera lo user_data
         self.inizzializza_user_data(user_data)
 
 
@@ -1049,7 +1045,7 @@ class Compra:
         self.db = db
         self.scrigni = OrderedDict(
             [('Legno', 600), ('Ferro', 1200), ('Prezioso', 2400), ('Diamante', 3600), ('Leggendario', 7000),
-             ('Epico', 15000)])  # dizionario ordinato per mantenere la relazione quantità-tipo scrigno
+             ('Epico', 15000)]) #dizionario ordinato per mantenere la relazione quantità-tipo scrigno
 
         disp = updater.dispatcher
 
@@ -1060,7 +1056,7 @@ class Compra:
         else:
             disp.add_handler(CommandHandler("compra", self.sconti, pass_user_data=True))
 
-        # crea conversazione
+        #crea conversazione
         conversation = ConversationHandler(
             [CallbackQueryHandler(self.budget_ask, pattern="/sconti", pass_user_data=True)],
             states={
@@ -1118,6 +1114,7 @@ class Compra:
         """Salva budget e chiedi quantita di scrigni
         @:return: ritorna lo state del prossimo handler (guarda ConversationHandler)"""
 
+
         budget = update.message.text.strip()
         if not is_numeric(budget):
             update.message.reply_text("Non mi hai inviato un nuemro valido, annullo...")
@@ -1133,7 +1130,7 @@ class Compra:
     def scrigni_func(self, bot, update, user_data):
         """Salva gli scrigni e calcola la quantità da comprare """
         param = update.message.text.split(" ")
-        # check se l'user ha impostato correttamente gli scrigni
+        #check se l'user ha impostato correttamente gli scrigni
         if len(param) != 6:  # check sul numero dei parametri
             update.message.reply_text(
                 "Non hai inserito il numero per tutti gli scrigni! Ne ho ricevuti " + str(len(param)) + "/6")
@@ -1150,7 +1147,7 @@ class Compra:
             update.message.reply_text("La somma è errata " + str(sum(numbers)) + "/100")
             return self.inizzializza(bot, update, user_data)
 
-        # usa dizionario ordinato per non perdere la relazione quantita scrignio-tipo
+        #usa dizionario ordinato per non perdere la relazione quantita scrignio-tipo
         scontato = OrderedDict()
         res = {}
         # salvo i valori scontati
@@ -1164,7 +1161,7 @@ class Compra:
             res[cost] = math.floor(budget * (perc / 100) / scontato[cost])
 
         text = ""
-        # genera il messaggio da inviare e invia
+        #genera il messaggio da inviare e invia
         for elem in res.keys():
 
             if res[elem]: text += "Compra <b>" + str(res[elem]) + "</b> di Scrigno " + elem + "\n"
@@ -1172,7 +1169,7 @@ class Compra:
         if not text: text = "Si è verificato un errore...contatta @brandimax"
 
         update.message.reply_text(text, parse_mode="HTML")
-        # rinizzializza lo user_data
+        #rinizzializza lo user_data
         return self.inizzializza(bot, update, user_data)
 
 
@@ -1198,8 +1195,7 @@ class EasterEggs:
         num = random.uniform(0, 1)
         return num < self.prob
 
-
-# todo
+#todo
 class Constes:
 
     def __init__(self, updater):
@@ -1223,7 +1219,7 @@ class Top:
             [InlineKeyboardButton("Rango", callback_data="/top rango"),
              InlineKeyboardButton("Esci", callback_data="/top esci")]
 
-        ])  # inline per il messaggio
+        ])#inline per il messaggio
 
         disp = updater.dispatcher
         if DEBUG:
@@ -1287,7 +1283,7 @@ class Top:
             )
             return
 
-        # sono sfaticato
+        #sono sfaticato
         prov_dict = {
             "pc_tot": "📦Punti Craft Totali📦",
             "pc_set": "📁Punti Craft Settimanali📁",
@@ -1307,7 +1303,7 @@ class Top:
             to_send += self.pretty_user(pl, idx, sort_key)
             idx += 1
 
-        # modifica messaggio
+        #modifica messaggio
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
@@ -1338,10 +1334,10 @@ class Top:
         else:
             res += str(idx) + ") "
 
-        # heroku manda l'ora corrente indietro di uno, aggiungi un ora
+        #heroku manda l'ora corrente indietro di uno, aggiungi un ora
         future_hour = user['agg'] + timedelta(hours=1)
 
-        # crea messaggio formattato
+        #crea messaggio formattato
         res += "<b>" + user['username'] + "</b> con <b>" + "{:,}".format(user[sort_key]).replace(",",
                                                                                                  ".") + "</b> (<i>" + \
                str(future_hour.time()).split(".")[0] + " del " + str(
@@ -1354,20 +1350,21 @@ class PietreDrago:
 
     def __init__(self, updater, db):
         self.updater = updater
-        self.db = db
+        self.db=db
 
         disp = updater.dispatcher
 
         if DEBUG:
             disp.add_handler(RegexHandler("^.* possiedi \(D\):", self.calc_val))
         else:
-            calc_val_el = self.db.elegible_loot_user(self.calc_val)
+            calc_val_el=self.db.elegible_loot_user(self.calc_val)
             disp.add_handler(RegexHandler("^.* possiedi \(D\):", calc_val_el))
+
 
     def calc_val(self, bot, update):
 
         msg = update.message.text
-        # compila il pattern
+        #compila il pattern
         regex_legno = re.compile(r"Pietra Anima di Legno \(([0-9]+)")
         regex_ferro = re.compile(r"Pietra Anima di Ferro \(([0-9]+)")
         regex_preziosa = re.compile(r"Pietra Anima Preziosa \(([0-9]+)")
@@ -1375,7 +1372,7 @@ class PietreDrago:
         regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+)")
         regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+)")
 
-        # cerca dentro il messaggio
+        #cerca dentro il messaggio
         legno = re.findall(regex_legno, msg)
         ferro = re.findall(regex_ferro, msg)
         preziosa = re.findall(regex_preziosa, msg)
@@ -1383,7 +1380,7 @@ class PietreDrago:
         leggendario = re.findall(regex_leggendario, msg)
         epico = re.findall(regex_epico, msg)
 
-        # se è presente casta a int e moltiplica, altrimenti setta a zero
+        #se è presente casta a int e moltiplica, altrimenti setta a zero
         if len(legno) > 0:
             legno = int(legno[0])
         else:
@@ -1414,10 +1411,10 @@ class PietreDrago:
         else:
             epico = 0
 
-        # calcola il totale
+        #calcola il totale
         tot = legno + ferro + preziosa + diamante + leggendario + epico
 
-        # setta il messaggio da inviare
+        #setta il messaggio da inviare
         to_send = "Valore delle Pietre 🐲:\n"
         if legno: to_send += "Pietra Anima di Legno 🌴 : <b>" + str(legno) + "</b>\n"
         if ferro: to_send += "Pietra Anima di Ferro ⚙️ : <b>" + str(ferro) + "</b>\n"
@@ -1443,8 +1440,8 @@ class Help:
 
     def __init__(self, updater, db):
         self.updater = updater
-        self.db = db
-        self.inline_cat = InlineKeyboardMarkup([
+        self.db=db
+        self.inline_cat= InlineKeyboardMarkup([
             [InlineKeyboardButton("Admin", callback_data="/help admin"),
              InlineKeyboardButton("User", callback_data="/help user"),
              InlineKeyboardButton("Developer", callback_data="/help developer")],
@@ -1458,8 +1455,9 @@ class Help:
         if DEBUG:
             disp.add_handler(CommandHandler("help", self.help_init))
         if not DEBUG:
-            help_init_elegible = self.db.elegible_loot_user(self.help_init)
+            help_init_elegible=self.db.elegible_loot_user(self.help_init)
             disp.add_handler(CommandHandler("help", help_init_elegible))
+
 
         disp.add_handler(CallbackQueryHandler(self.help_decision, pattern="/help"))
 
@@ -1471,20 +1469,19 @@ class Help:
         user = []
         developer = []
 
-        # appende in tutte le liste nomeFunzione - doc
+        #appende in tutte le liste nomeFunzione - doc
         for elem in funcs:
             if elem[0][0] == "A" and elem[1]:
-                admin.append("/" + elem[0][1:] + "  " + elem[1].__doc__ + "\n")
+                admin.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
             elif elem[0][0] == "U" and elem[1]:
-                user.append("/" + elem[0][1:] + "  " + elem[1].__doc__ + "\n")
+                user.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
 
             elif elem[0][0] == "D" and elem[1]:
-                developer.append("/" + elem[0][1:] + "  " + elem[1].__doc__ + "\n")
+                developer.append("/"+elem[0][1:] + "  " + elem[1].__doc__ + "\n")
 
-        # appende i comandi non prenseti in Command
-        admin.append(
-            "/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
-            "i punteggi non sono piu recuperabili")
+        #appende i comandi non prenseti in Command
+        admin.append("/resetboss - resetta i punteggi associati agli attacchi Boss di tutti, da usare con cautela poichè una volta cancellati, "
+                     "i punteggi non sono piu recuperabili")
 
         user.append("/attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team")
         user.append("/cercaCraft num1 num2 - Ti permette di cercare oggetti in base ai punti craft, rarità e "
@@ -1496,6 +1493,7 @@ class Help:
         user.append("/teams - Visualizza i pc dei team presenti nella Hall of Fame e il relativo incremento")
 
         return user, admin, developer
+
 
     def get_forward_commands(self):
         return """
@@ -1566,81 +1564,78 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 """
 
     def help_init(self, bot, update):
-        to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
+        to_send="""Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
         Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
         nome_comando parametri - spiegazione
         Quindi ricorda di aggiungere i parametri giusti!"""
         update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
-    # todo: create multiple page help
+    #todo: create multiple page help
     def help_decision(self, bot, update):
         """Visulauzza i vari help a seconda della scelta dell'user"""
-        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        #prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        user, admin, developer = self.get_commands_help()
+        user,admin,developer=self.get_commands_help()
 
-        to_send = ""
-        if param == "esci":
-            # elimina messaggio di scelta
+        to_send=""
+        if param=="esci":
+            #elimina messaggio di scelta
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
             )
             bot.sendMessage(update.callback_query.message.chat.id, "Spero di esserti stato utile!")
             return
-        elif param == "admin":
+        elif param=="admin":
 
-            to_send += "<b>=====COMANDI ADMIN=====</b>\n\n"
-            # scrive tutti i comandi
+            to_send+="<b>=====COMANDI ADMIN=====</b>\n\n"
+            #scrive tutti i comandi
             for elem in admin:
-                to_send += elem + "\n\n"
-            # dividi il messaggio a seconda della lunghezza in bytes
-            to_send = text_splitter_bytes(to_send, splitter="\n\n")
-            # se ci sono piu elementi manda solo il pirmo, vedi todo
+                to_send+=elem+"\n\n"
+            #dividi il messaggio a seconda della lunghezza in bytes
+            to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            #se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 to_send = to_send[0]
-            # altrimenti usa il primo elemento
-            else:
-                to_send = to_send[0]
+            #altrimenti usa il primo elemento
+            else: to_send=to_send[0]
 
 
-        elif param == "user":
-            to_send += "<b>=====COMANDI USER=====</b>\n\n"
+        elif param=="user":
+            to_send+="<b>=====COMANDI USER=====</b>\n\n"
 
             for elem in user:
-                to_send += elem + "\n\n"
-            # dividi il messaggio a seconda della lunghezza in bytes
-            to_send = text_splitter_bytes(to_send, splitter="\n\n")
-            # se ci sono piu elementi manda solo il pirmo, vedi todo
+                to_send+=elem+"\n\n"
+            #dividi il messaggio a seconda della lunghezza in bytes
+            to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            #se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 to_send = to_send[0]
-            # altrimenti usa il primo elemento
-            else:
-                to_send = to_send[0]
+            #altrimenti usa il primo elemento
+            else: to_send=to_send[0]
 
 
         elif param == "developer":
-            to_send += "<b>=====COMANDI DEVELOPER=====</b>\n\n"
+            to_send+="<b>=====COMANDI DEVELOPER=====</b>\n\n"
 
             for elem in developer:
-                to_send += elem + "\n\n"
-            # dividi il messaggio a seconda della lunghezza in bytes
-            to_send = text_splitter_bytes(to_send, splitter="\n\n")
-            # se ci sono piu elementi manda solo il pirmo, vedi todo
+                to_send+=elem+"\n\n"
+            #dividi il messaggio a seconda della lunghezza in bytes
+            to_send=text_splitter_bytes(to_send, splitter="\n\n")
+            #se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 to_send = to_send[0]
-            # altrimenti usa il primo elemento
-            else:
-                to_send = to_send[0]
+            #altrimenti usa il primo elemento
+            else: to_send=to_send[0]
 
         elif param == "inoltro":
-            to_send += self.get_forward_commands()
+            to_send+=self.get_forward_commands()
 
-        elif param == "crediti":
-            to_send += self.get_credits()
+        elif param=="crediti":
+            to_send+=self.get_credits()
 
-        # modifica il messaggio con il to_send
+        #modifica il messaggio con il to_send
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
@@ -1654,10 +1649,10 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 class Team_Old:
     def __init__(self, updater, db):
         self.updater = updater
-        self.db = db
-        self.prior_str = ""
-        self.datetime = None
-        self.team_dict = {}
+        self.db=db
+        self.prior_str=""
+        self.datetime=None
+        self.team_dict={}
 
         disp = updater.dispatcher
 
@@ -1665,10 +1660,11 @@ class Team_Old:
             disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
             disp.add_handler(CommandHandler('teams', self.visualiza_team))
         else:
-            forward_team_decor = self.db.elegible_loot_admin(self.forward_team)
-            visualizza_team_decor = self.db.elegible_loot_user(self.visualiza_team)
+            forward_team_decor=self.db.elegible_loot_admin(self.forward_team)
+            visualizza_team_decor=self.db.elegible_loot_user(self.visualiza_team)
             disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
             disp.add_handler(CommandHandler('teams', visualizza_team_decor))
+ 
 
     def visualiza_team(self, bot, update):
         """Visualizza gli incrementi senza aggiornarli"""
@@ -1676,30 +1672,32 @@ class Team_Old:
             update.message.reply_text("Non ci sono dati sui team, chiedi all'admin di aggiornarli")
             return
 
-        ora, data = pretty_time_date(self.datetime)
+        ora, data=pretty_time_date(self.datetime)
 
         update.message.reply_text(self.prior_str, parse_mode="HTML")
-        update.message.reply_text("Aggiornato il " + data + " alle " + ora)
+        update.message.reply_text("Aggiornato il "+data+" alle "+ora)
+
 
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
-        # prendi i team nel messaggio e nel db
-        team_db = self.get_teams_db()
-        team_msg = self.extract_teams_from_msg(update.message.text)
-        # controlla se sono presenti team nel databes
+        #prendi i team nel messaggio e nel db
+        team_db=self.get_teams_db()
+        team_msg=self.extract_teams_from_msg(update.message.text)
+        #controlla se sono presenti team nel databes
         if not team_db:
             self.update_db(team_msg, datetime.now())
             update.message.reply_text("Database aggiornato!")
-            # update dict
+            #update dict
             for elem in team_msg:
-                self.team_dict[elem[0]] = []
+                self.team_dict[elem[0]]=[]
 
             return
-        # calcola la differenza
-        team_diff = self.get_teams_diff(team_msg, team_db)
-        to_send = self.pretty_diff(team_diff)
+        #calcola la differenza
+        team_diff=self.get_teams_diff(team_msg,team_db)
+        to_send=self.pretty_diff(team_diff)
 
-        # print(team_diff)
+        #print(team_diff)
+
 
         # update del dizionario
         if self.team_dict:
@@ -1712,9 +1710,9 @@ class Team_Old:
 
         print(self.team_dict)
 
-        # savla per visualizzazione
-        self.prior_str = to_send
-        self.datetime = datetime.now()
+        #savla per visualizzazione
+        self.prior_str=to_send
+        self.datetime=datetime.now()
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
@@ -1725,18 +1723,22 @@ class Team_Old:
         @:param msg: messaggio team
         @:type: str
         @:return: list of tuples (team_name, pnt)"""
-        # compila il regex
+        #compila il regex
         team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
-        # elimina la parte del tuo team
-        msg = msg.split("Il tuo team")[0]
+        #elimina la parte del tuo team
+        msg=msg.split("Il tuo team")[0]
 
-        # teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
-        teams = re.findall(team_regex, msg)
+        #teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
+        teams=re.findall(team_regex, msg)
 
-        # rimuovi il punto dentro i pc e casta ad int
-        teams = [(elem[0], int(elem[1].replace(".", ""))) for elem in teams]
+        #rimuovi il punto dentro i pc e casta ad int
+        teams=[(elem[0], int(elem[1].replace(".",""))) for elem in teams]
+
+
 
         return teams
+
+
 
     def get_teams_diff(self, teams_list_msg, teams_list_db):
         """Calcola la differenza di pc tra la lista team mandata e quella nel db
@@ -1745,17 +1747,18 @@ class Team_Old:
         @:return: lista di quattro elementi (nome_team, pnt_correnti, incremento, last_update)
         """
 
-        # lista di triple
-        res = []
+        #lista di triple
+        res=[]
 
         for team_db in teams_list_db:
             for team_msg in teams_list_msg:
-                # se non c'è corrispondenza tra i nomi passo all'iterazione successiva
-                if not team_db[0] == team_msg[0]: continue
+                #se non c'è corrispondenza tra i nomi passo all'iterazione successiva
+                if not team_db[0]==team_msg[0]: continue
 
-                res.append((team_msg[0], team_msg[1], team_msg[1] - team_db[1], team_db[2]))
+                res.append((team_msg[0],team_msg[1],team_msg[1]- team_db[1],team_db[2]))
 
         return res
+
 
     def get_teams_db(self):
         """Ritorna la lista di teams del db
@@ -1766,10 +1769,10 @@ class Team_Old:
         # casta il risultato in lista se è un solo dizionario
         if not isinstance(teams_db, list): teams_db = list(teams_db)
 
-        res = []
+        res=[]
         for elem in teams_db:
-            res.append((elem['name'], elem['pnt'], elem['last_update']))
-            # print(elem['last_update'].isoweekday())
+            res.append((elem['name'],elem['pnt'], elem['last_update']))
+            #print(elem['last_update'].isoweekday())
 
         return res
 
@@ -1781,66 +1784,66 @@ class Team_Old:
         @:type: 0<int<len(team_diff)-1
         @:return: stringa formattata da inviare"""
 
-        if sorting_key >= len(team_diff): sorting_key = 1
+        if sorting_key>=len(team_diff): sorting_key=1
 
-        # sorta la lista
-        sorted_teams = sorted(team_diff, key=lambda elem: elem[sorting_key], reverse=True)
+        #sorta la lista
+        sorted_teams=sorted(team_diff, key= lambda elem: elem[sorting_key],reverse=True)
 
-        res = ""
-        idx = 1
+        res=""
+        idx=1
         for team in sorted_teams:
             ora, data = pretty_time_date(team[3])
             if "Fancazzisti" in team[0]:
-                res += str(idx) + ") ⭐️<b>" + team[0] + "</b>⭐️ con <b>" + "{:,}".format(team[1]).replace(",",
-                                                                                                          ".") + "</b> pnt (+ <b>" + str(
-                    team[2]) + "</b>) " \
-                               "rispetto al <i>" + data + "</i> alle <i>" + ora + "</i>\n"
+                res+=str(idx)+") ⭐️<b>"+team[0]+"</b>⭐️ con <b>"+"{:,}".format(team[1]).replace(",",".")+"</b> pnt (+ <b>"+str(team[2])+"</b>) " \
+                    "rispetto al <i>"+ data +"</i> alle <i>"+ora+"</i>\n"
             else:
-                res += str(idx) + ") <b>" + team[0] + "</b> con <b>" + "{:,}".format(team[1]).replace(",",
-                                                                                                      ".") + "</b> pnt (+ <b>" + str(
+                res += str(idx) + ") <b>" + team[0] + "</b> con <b>" + "{:,}".format(team[1]).replace(",",".") + "</b> pnt (+ <b>" + str(
                     team[2]) + "</b>) " \
                                "rispetto al  <i>" + data + "</i> alle <i>" + ora + "</i>\n"
-            idx += 1
+            idx+=1
         return res
+
+
 
     def update_db(self, teams, date):
         """Esegue l'update del db dato un messagigo team
         @:param teams: lista di tuple (vedi extract_teams_from_msg)
         @:type: str"""
 
-        # se è lunedi
+        #se è lunedi
         if date.day != datetime.now().day:
             print("Is monday")
-            # prendi le date
-            dates = self.db.get_all_teams()
+            #prendi le date
+            dates=self.db.get_all_teams()
 
-            # trasorma dates in lista se è un siglolo dict
-            if not isinstance(dates, list): dates = list(dates)
+            #trasorma dates in lista se è un siglolo dict
+            if not isinstance(dates, list): dates=list(dates)
 
-            # prendi i pnt_set e media settimanale
-            pnt_set = [(elem['name'], elem['pnt_set'], elem['mean_set']) for elem in dates]
+            #prendi i pnt_set e media settimanale
+            pnt_set=[(elem['name'], elem['pnt_set'], elem['mean_set']) for elem in dates]
 
-            # calcola nuovo incremento
-            new_incr = []
+            #calcola nuovo incremento
+            new_incr=[]
 
             for team_msg in teams:
                 for team_db in pnt_set:
-                    if not team_msg[0] == team_db[0]: continue
+                    if not team_msg[0]==team_db[0]: continue
                     # se i pnt_sett sono zero aggiornali
                     if not team_db[1]:
-                        self.db.update_team_full(team_msg[0], team_msg[1], team_db[1], 0)
+                        self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],0)
                         continue
                     # se i pnt_sett ci sono ma non c'è la media aggiungila e aggiorna
                     elif not team_db[2]:
-                        new_incr = team_db[1] - team_msg[1]
-                        self.db.update_team_full(team_msg[0], team_msg[1], team_db[1], new_incr)
+                        new_incr=team_db[1]-team_msg[1]
+                        self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],new_incr)
                         continue
-                    # se sono presenti tutti i dati calcola la media
+                    #se sono presenti tutti i dati calcola la media
                     else:
-                        new_incr = team_db[1] - team_msg[1]
-                        new_mean = int((team_db[2] + new_incr) / 2)
-                        self.db.update_team_full(team_msg[0], team_msg[1], team_db[1], new_mean)
+                        new_incr=team_db[1]-team_msg[1]
+                        new_mean=int((team_db[2]+new_incr)/2)
+                        self.db.update_team_full(team_msg[0],team_msg[1],team_db[1],new_mean)
             return
+
 
         # inserisci i nomi nel db
         for team in teams:
@@ -1851,120 +1854,39 @@ class Team:
     def __init__(self, updater, db):
         self.updater = updater
         self.db = db
-        self.data_dict = {}
-        self.last_update = None
-        self.inline = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Incremento Orario", callback_data="/team orario"),
-             InlineKeyboardButton("Incremento Giornaliero", callback_data="/team giornaliero"),
-             InlineKeyboardButton("Incremento Mensile", callback_data="/team mensile")],
-            [InlineKeyboardButton("Incremento dall'ultimo aggiornamento", callback_data="/team update"),
-             InlineKeyboardButton("Incremento totale", callback_data="/team totale"),
-             InlineKeyboardButton("Incremento totale medio", callback_data="/team totale_medio")],
-            [InlineKeyboardButton("Grafico", callback_data="/team grafico"),
-             InlineKeyboardButton("Esci", callback_data="/team esci")]
-
-        ])
 
         disp = updater.dispatcher
 
         disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
 
+
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
-        # prendi i team nel messaggio e nel db
-        team_db, least_update = self.get_teams_db()
-        team_msg = self.extract_teams_from_msg(update.message.text)
-        # controlla se sono presenti team nel databes
+        #prendi i team nel messaggio e nel db
+        team_db, least_update =self.get_teams_db()
+        team_msg=self.extract_teams_from_msg(update.message.text)
+        #controlla se sono presenti team nel databes
         if not team_db:
             self.update_db(team_msg, 0)
             update.message.reply_text("Database aggiornato!")
             return
 
-        self.last_update = least_update
-        complete_team = team_db
-        # uso un counter per vedere quanti elementi ho nella lista (per ogni team)
-        count = Counter(elem[0] for elem in complete_team)
-        # print(count)
-        key = random.choice(list(count.keys()))
-        # setto l'idx (usato per salvare numero)
-        idx = count[key]
+        complete_team=team_db
+        #uso un counter per vedere quanti elementi ho nella lista (per ogni team)
+        count=Counter(elem[0] for elem in complete_team)
+       # print(count)
+        key=random.choice(list(count.keys()))
+        #setto l'idx (usato per salvare numero)
+        idx=count[key]
 
-        # aggiungo l'ultimo update alla lista nel db
+
+        #aggiungo l'ultimo update alla lista nel db
         for elem in team_msg:
-            complete_team.append((elem[0], elem[1], idx, elem[2]))
+            complete_team.append((elem[0],elem[1],idx,elem[2]))
 
-        # print(complete_team)
-        # salva il dizionario corrente
-        self.data_dict = self.list2dict(complete_team)
+        print(complete_team)
 
-        # esegue l'update del db
-        self.update_db(team_msg, idx)
-
-        to_send = "Quali informazioni vuoi visualizzare?"
-        update.message.reply_text(to_send, reply_markup=self.inline)
-
-    def decison(self, bot, update):
-
-        # prendi la scelta dell'user (guarda CallbackQueryHandler)
-        param = update.callback_query.data.split()[1]
-
-
-        if param == "orario":
-            res_dict = self.get_hour_increment(self.data_dict)
-            if not res_dict:
-                update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
-                return
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento orario medio:\n"),
-                                                     parse_mode="HTML", reply_markup=self.inline)
-        elif param == "giornaliero":
-            res_dict = self.get_day_increment(self.data_dict)
-            if not res_dict:
-                update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
-                return
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento giornaliero medio:\n"),
-                                                     parse_mode="HTML", reply_markup=self.inline)
-
-        elif param == "mensile":
-            res_dict = self.get_month_increment(self.data_dict)
-            if not res_dict:
-                update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
-                return
-
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento mensile medio:\n"),
-                                                     parse_mode="HTML", reply_markup=self.inline)
-
-        elif param == "totale":
-            res_dict = self.get_total_increment(self.data_dict)
-            if not res_dict:
-                update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
-                return
-
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "Incremento totale:\n"),
-                                                     parse_mode="HTML", reply_markup=self.inline)
-
-        elif param == "totale_medio":
-            res_dict = self.get_total_mean_increment(self.data_dict)
-            if not res_dict:
-                update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
-                return
-
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "Incremento totale medio:\n"),
-                                                     parse_mode="HTML", reply_markup=self.inline)
-
-        elif param == "update":
-            print("update")
-        elif param == "grafico":
-            print("grafico")
-
-
-        elif param == "esci":
-            update.callback_query.message.reply_text("Ok")
-            return
+        self.update_db(team_msg, idx )
 
     def update_db(self, teams, numero):
         """Esegue l'update del db dato un messagigo team
@@ -1973,7 +1895,7 @@ class Team:
 
         # inserisci i nomi nel db
         for team in teams:
-            self.db.update_teams(team[0], numero, team[1])
+            self.db.update_teams(team[0],numero, team[1])
 
     def get_teams_db(self):
         """Ritorna la lista di teams del db
@@ -1991,11 +1913,11 @@ class Team:
 
         res = []
         for elem in teams_db:
-            res.append((elem['nome'], elem['pc'], elem['numero'], elem['update']))
+            res.append((elem['nome'], elem['pc'],elem['numero'], elem['update']))
             # print(elem['last_update'].isoweekday())
 
-        # prendi l'aggiornamento piu recente
-        least_update = max(res, key=lambda x: x[3])
+        #prendi l'aggiornamento piu recente
+        least_update=max(res, key=lambda x:x[3])
 
         return res, least_update
 
@@ -2013,311 +1935,22 @@ class Team:
         teams = re.findall(team_regex, msg)
 
         # rimuovi il punto dentro i pc e casta ad int
-        teams = [(elem[0], int(elem[1].replace(".", "")), datetime.now()) for elem in teams]
+        teams = [(elem[0], int(elem[1].replace(".", "")),datetime.now()) for elem in teams]
 
         return teams
 
-    def plot(self, data_dict):
-        """Salva un grafico dove le x sono l'unita di tempo e le y i pc totali per ogni Team
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: nome dell'immagine (str)
-        """
-
-        # definisco un font per la legenda
-        fontP = FontProperties()
-        fontP.set_size('medium')
-        NUM_COLORS = 15
-
-        cm = plt.get_cmap('gist_rainbow')
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
-
-        lines = []
-        for key, data_list in data_dict.items():
-            dates = [elem[1] for elem in data_list]
-            values = [elem[0] for elem in data_list]
-            # plot tracccia le linee, scatter i punti
-            a = plt.plot(dates, values, label=key)
-            lines.append(a[0])
-            plt.scatter(dates, values)
-
-        lgd = plt.legend(bbox_to_anchor=(1.12, 1.01))
-
-        plt.ylabel('PC totali in kk')
-        plt.xlabel('Messaggi Inoltrati')
-        plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 2))
-        save_name = "team_data.png"
-        plt.savefig(save_name, bbox_extra_artists=(lgd,), bbox_inches='tight')
-        return save_name
-
-    def list2dict(self, data_list):
+    def list2dict(self, data):
         """Converte una lista di elementi data dal db in un dizionario
         @:param data: lista di elementi nel formato (vedi get_teams_db)
         @:type: list
         @:return: dizionario con chiavi = nome_team e valore lista di elementi (vedi get_teams_db senza nome team)"""
         res = {}
-        # prendi tutti i nomi dei team
-        count = Counter(elem[0] for elem in data_list)
+        count = Counter(elem[0] for elem in data)
         # print(count)
 
-        # aggiugili al dizionario res
         for key in count.keys():
             res[key] = []
 
-        # per ogni elemento nella lista appendi tutto tranne i nomi
-        for elem in data_list:
+        for elem in data:
             res[elem[0]].append(elem[1:])
         return res
-
-    def get_hour_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 0)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
-
-    def get_day_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 1)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
-
-    def get_month_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 2)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
-
-    def filter_dict_by(self, data_dict, what):
-        """Filtra il dizionario ritornato da list2dict a seconda del tempo:
-        @:param data_dict: dizionario da filtrare nella forma ritornata da list2dict
-        @:type: dict
-        @:param what: =0 (hour), =1(day) =2(month)
-        @:type: int
-        @:return: dizionario filtrato in base alla data
-        """
-        # prendi le chiavi dal dizionario
-        filer_dict = {k: [] for k in data_dict.keys()}
-        for key in data_dict.keys():
-            # crea una lista in cui salvare le date
-            dates = []
-            # per ogni elemento della lista di valori (pc, numero ,data)
-            for elem in data_dict[key]:
-                # se il giorno non è gia presente nella lista dates
-                if what == 0:
-                    if elem[2].hour not in [date.hour for date in dates]:
-                        # aggiungilo sia alle date che al filter dict
-                        dates.append(elem[2])
-                        filer_dict[key].append(elem)
-                elif what == 1:
-                    if elem[2].day not in [date.day for date in dates]:
-                        # aggiungilo sia alle date che al filter dict
-                        dates.append(elem[2])
-                        filer_dict[key].append(elem)
-                elif what == 2:
-                    if elem[2].month not in [date.month for date in dates]:
-                        # aggiungilo sia alle date che al filter dict
-                        dates.append(elem[2])
-                        filer_dict[key].append(elem)
-
-        return filer_dict
-
-    def pretty_increment(self, data, initial=""):
-        """Dato un dizionario ritorna lo stampabile
-        @:param data: dizionario con key=nome_team, value=int
-        @:type: dict
-        @:param initial: stringa iniziale da stampare
-        @:type: str
-        @:return: stringa da mandare allo user"""
-
-        # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
-        sorted_x = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
-
-        idx = 1
-        res = initial
-        for elem in sorted_x:
-            if idx == 1:
-                res += str(idx) + ")🥇 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1])).replace(",",
-                                                                                                                    ".") + "</b>\n"
-            elif idx == 2:
-                res += str(idx) + ")🥈 <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
-                    ",", ".") + "</b>\n"
-            elif idx == 3:
-                res += str(idx) + ")🥉 <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
-                    ",", ".") + "</b>\n"
-            else:
-                res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(",",
-                                                                                                                    ".") + "</b>\n"
-            idx += 1
-
-        return res
-
-    def get_total_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
-          @:param data_dict: il dizionario ritornato da list2dict
-          @:type: dict
-          @:return: ritorna un dizionario con coppia team-incrementoTotale"""
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in data_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in data_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
-
-    def get_total_mean_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
-          @:param data_dict: il dizionario ritornato da list2dict
-          @:type: dict
-          @:return: ritorna un dizionario con coppia team-incrementoTotale"""
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in data_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in data_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
