@@ -1610,6 +1610,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         if param=="page_avanti":user_data['page'] +=1
         elif param=="page_indietro":user_data['page'] -=1
         elif param=="page_indietro":user_data['page_esci'] =-1
+        print(user_data['page'])
 
         if param == "esci":
             # elimina messaggio di scelta
