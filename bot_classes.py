@@ -1874,7 +1874,7 @@ class Team:
         complete_team=team_db
         #uso un counter per vedere quanti elementi ho nella lista (per ogni team)
         count=Counter(elem[0] for elem in complete_team)
-        key=random.choice(list(count.keys()))
+        key=random.choice(list(count.keys())) 
         #setto l'idx (usato per salvare numero)
         idx=count[key]
 
