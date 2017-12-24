@@ -1988,10 +1988,10 @@ class Team:
         ])
 
         self.inline_stime = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Stime orarie", callback_data="/team_stima orarie"),
-             InlineKeyboardButton("Stime giornaliere", callback_data="/team_stima giornaliere")],
-            [InlineKeyboardButton("Stime settimanali", callback_data="/team_stima settimanali"),
-             InlineKeyboardButton("Stime mensili", callback_data="/team_stima mensili")],
+            [InlineKeyboardButton("Stime orarie", callback_data="/team_stima orario"),
+             InlineKeyboardButton("Stime giornaliere", callback_data="/team_stima giornaliero")],
+            [InlineKeyboardButton("Stime settimanali", callback_data="/team_stima settimanale"),
+             InlineKeyboardButton("Stime mensili", callback_data="/team_stima mensile")],
             [InlineKeyboardButton("Indietro", callback_data="/team_stima indietro")]
 
         ])
@@ -2148,22 +2148,22 @@ class Team:
         if param == "orario":
             res_dict = self.get_stima(self.data_dict,0)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Incremento orario medio</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Stima oraria</b>:\n")
 
         elif param == "giornaliero":
             res_dict = self.get_stima(self.data_dict,1)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Incremento giornaliero medio</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Stima giornaliera</b>:\n")
 
         elif param == "settimanale":
             res_dict = self.get_stima(self.data_dict,2)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Incremento settimanale medio</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Stima settimanale</b>:\n")
 
         elif param == "mensile":
             res_dict = self.get_stima(self.data_dict,3)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Incremento mensile medio</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Stima mensile</b>:\n")
 
 
         elif param == "indietro":
