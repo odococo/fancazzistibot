@@ -1993,7 +1993,7 @@ class Team:
             # print(elem['last_update'].isoweekday())
 
         # prendi l'aggiornamento piu recente
-        least_update = max(res, key=lambda x: x[3])
+        least_update = max(res, key=lambda x: x[3])[3]
 
         return res, least_update
 
