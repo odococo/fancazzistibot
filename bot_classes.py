@@ -1608,12 +1608,12 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         to_send = ""
 
         if param=="page_avanti":
-            user_data['page'] +=1
             to_send = to_send[user_data['page']]
+            user_data['page'] +=1
 
         elif param=="page_indietro":
-            user_data['page'] -=1
             to_send = to_send[user_data['page']]
+            user_data['page'] -=1
 
         elif param=="page_esci":
             user_data['page'] =0
@@ -1703,10 +1703,6 @@ Quindi ricorda di aggiungere i parametri giusti!"""
 
                     user_data['page'] = 1
                     to_send = to_send[0]
-                else:
-                    print("To send >0!")
-
-                    to_send = to_send[user_data['page']]
 
                 print(user_data['page'])
                 # for elem in user_data['pages']:
