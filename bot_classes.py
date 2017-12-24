@@ -1872,6 +1872,8 @@ class Team:
         disp = updater.dispatcher
 
         disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
+        disp.add_handler(CallbackQueryHandler(self.decison, pattern="/team"))
+
 
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
