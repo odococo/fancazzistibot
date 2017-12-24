@@ -1872,6 +1872,7 @@ class Team:
 
         complete_team=team_db
 
+        #aggiungo l'ultimo update alla lista nel db
         idx=1
         for elem in team_msg:
             complete_team.append((elem[0],elem[1],len(team_db)+idx,elem[2]))
@@ -1897,6 +1898,8 @@ class Team:
         # prende i dati dal db
         teams_db = self.db.get_team_ordered()
 
+        if not teams_db:
+            return False, False
         # casta il risultato in lista se è un solo dizionario
         if not isinstance(teams_db, list): teams_db = list(teams_db)
 
