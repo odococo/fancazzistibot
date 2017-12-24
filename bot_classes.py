@@ -1648,7 +1648,18 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
                 to_send = to_send[0]
 
         elif param == "inoltro":
-            to_send += self.get_forward_commands()
+            to_send += "<b>=====COMANDI DEVELOPER=====</b>\n\n"
+
+            to_send+=self.get_forward_commands()
+            # dividi il messaggio a seconda della lunghezza in bytes
+            to_send = text_splitter_bytes(to_send, splitter="\n\n")
+            # se ci sono piu elementi manda solo il pirmo, vedi todo
+            if len(to_send) > 1:
+                to_send = to_send[0]
+            # altrimenti usa il primo elemento
+            else:
+                to_send = to_send[0]
+
 
         elif param == "crediti":
             to_send += self.get_credits()
