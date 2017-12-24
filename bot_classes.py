@@ -2120,6 +2120,12 @@ class Team:
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
             )
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=msg.message_id
+            )
+            msg = update.callback_query.message.reply_text("Immagine inviata!")
+
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text="Immagine inviata!",
@@ -2167,7 +2173,6 @@ class Team:
 
 
         elif param == "indietro":
-            print("decision_inc indietro")
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
