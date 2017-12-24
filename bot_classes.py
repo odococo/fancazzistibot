@@ -1886,7 +1886,7 @@ class Team:
 
      #   print(complete_team)
 
-        self.update_db(team_msg, len(team_db)+1 )
+        self.update_db(team_msg, idx )
 
     def update_db(self, teams, numero):
         """Esegue l'update del db dato un messagigo team
