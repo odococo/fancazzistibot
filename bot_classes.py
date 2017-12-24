@@ -7,6 +7,12 @@ from collections import Counter
 from collections import OrderedDict
 from datetime import timedelta, datetime
 
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
+
+
 import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
@@ -2259,6 +2265,8 @@ class Team:
 
         return res
 
+    #todo: metti da quando
+    #todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict):
         """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
           @:param data_dict: il dizionario ritornato da list2dict
