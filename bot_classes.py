@@ -1855,6 +1855,7 @@ class Team:
         self.db = db
         self.data_dict = {}
         self.last_update = None
+        self.youngest_update=None
         self.inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Inc Orario", callback_data="/team orario"),
              InlineKeyboardButton("Inc Giornaliero", callback_data="/team giornaliero"),
@@ -1875,7 +1876,7 @@ class Team:
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
         # prendi i team nel messaggio e nel db
-        team_db, least_update = self.get_teams_db()
+        team_db = self.get_teams_db()
         team_msg = self.extract_teams_from_msg(update.message.text)
         # controlla se sono presenti team nel databes
         if not team_db:
@@ -1883,9 +1884,9 @@ class Team:
             update.message.reply_text("Database aggiornato!")
             return
 
-        #salva la data dell'ultimo aggiornamento nel db
-        self.last_update = least_update
-        print(self.last_update)
+
+
+        #print(self.last_update)
 
         #unisci i dati nel db con quelli nel messaggio
         complete_team = team_db
@@ -1936,21 +1937,20 @@ class Team:
         elif param == "totale":
             res_dict = self.get_total_increment(self.data_dict)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Incremento totale</b>:\n")
-
+                ora,data=pretty_time_date(self.youngest_update)
+                to_send = self.pretty_increment(res_dict, "<b>Incremento totale</b> (dal <i>"+data+" alle "+ora+"</i>:\n")
 
         elif param == "totale_medio":
             res_dict = self.get_total_mean_increment(self.data_dict)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Incremento totale medio</b>:\n")
+                ora,data=pretty_time_date(self.youngest_update)
+                to_send = self.pretty_increment(res_dict, "<b>Incremento totale medio</b> (dal <i>"+data+" alle "+ora+"</i>:\n")
 
         elif param == "update":
             res_dict = self.get_last_update_increment(self.data_dict)
             if res_dict:
                 ora, data = pretty_time_date(self.last_update)
                 to_send = self.pretty_increment(res_dict,"<b>Incremento dall'ultimo aggiornamento</b> (Il " + data + " alle " + ora + "):\n")
-
-
 
         elif param == "grafico":
             to_send="Immagine inviata!"
@@ -1975,7 +1975,6 @@ class Team:
                 reply_markup=self.inline
             )
             return
-
 
         elif param == "esci":
             update.callback_query.message.reply_text("Ok")
@@ -2021,10 +2020,11 @@ class Team:
             res.append((elem['nome'], elem['pc'], elem['numero'], elem['update']))
             # print(elem['last_update'].isoweekday())
 
-        # prendi l'aggiornamento piu recente
-        least_update = max(res, key=lambda x: x[3])[3]
+        # prendi l'aggiornamento piu recente e piu vecchio
+        self.last_update = max(res, key=lambda x: x[3])[3]
+        self.youngest_update=youngest_update=min(res,key=lambda x: x[3])[3]
 
-        return res, least_update
+        return res
 
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
