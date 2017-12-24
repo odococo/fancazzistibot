@@ -1455,8 +1455,9 @@ class Help:
 
         ])
         self.inline_page = InlineKeyboardMarkup([
-            [InlineKeyboardButton("➡️", callback_data="/help page_avanti"),
-             InlineKeyboardButton("⬅️", callback_data="/help page_indietro")],
+            [
+             InlineKeyboardButton("⬅️", callback_data="/help page_indietro"),
+                InlineKeyboardButton("➡️", callback_data="/help page_avanti")],
             [InlineKeyboardButton("Torna al help", callback_data="/help page_esci")]
 
         ])
@@ -1684,7 +1685,8 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
                     to_send = to_send[user_data['page']]
 
                 print(user_data['page'])
-                print(user_data['pages'])
+                for elem in user_data['pages']:
+                    print(elem)
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
