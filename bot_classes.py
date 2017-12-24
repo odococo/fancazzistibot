@@ -1872,12 +1872,15 @@ class Team:
             return
 
         complete_team=team_db
-        print(Counter(elem[0] for elem in complete_team))
+        #uso un counter per vedere quanti elementi ho nella lista (per ogni team)
+        count=Counter(elem[0] for elem in complete_team)
+        key=random.choice(count.keys())
+        idx=count[key]
+
+
         #aggiungo l'ultimo update alla lista nel db
-        idx=1
         for elem in team_msg:
             complete_team.append((elem[0],elem[1],len(team_db)+idx,elem[2]))
-            idx+=1
 
         print(complete_team)
 
