@@ -2032,7 +2032,7 @@ class Team:
         for elem in team_msg:
             complete_team.append((elem[0], elem[1], idx, elem[2]))
 
-        # print(complete_team)
+        print(complete_team)
         # salva il dizionario corrente
         self.data_dict = self.list2dict(complete_team)
 
@@ -2044,6 +2044,7 @@ class Team:
         update.message.reply_text(to_send, reply_markup=self.inline)
 
     def decison(self, bot, update):
+        """Serve per smistare le info a seconda della scelta dell'user"""
 
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
@@ -2064,7 +2065,6 @@ class Team:
             res_dict = self.get_week_increment(self.data_dict)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento settimanale medio</b>:\n")
-
 
         elif param == "mensile":
             res_dict = self.get_month_increment(self.data_dict)
@@ -2124,6 +2124,7 @@ class Team:
             )
             return
 
+        #modifica il messaggio in base ai parametri scelti dall'utente
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
