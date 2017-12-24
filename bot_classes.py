@@ -1879,6 +1879,7 @@ class Team:
         self.last_update = least_update
         print(self.last_update)
 
+        #unisci i dati nel db con quelli nel messaggio
         complete_team = team_db
         # uso un counter per vedere quanti elementi ho nella lista (per ogni team)
         count = Counter(elem[0] for elem in complete_team)
