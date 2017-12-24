@@ -1607,8 +1607,14 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         to_send = ""
 
-        if param=="page_avanti":user_data['page'] +=1
-        elif param=="page_indietro":user_data['page'] -=1
+        if param=="page_avanti":
+            user_data['page'] +=1
+            to_send = to_send[user_data['page']]
+
+        elif param=="page_indietro":
+            user_data['page'] -=1
+            to_send = to_send[user_data['page']]
+
         elif param=="page_esci":
             user_data['page'] =0
             to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
@@ -1689,17 +1695,17 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             print("len di to_send = "+str(len(to_send)))
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
+                user_data['pages'] = to_send
+
                 print("To send troppo grande!!")
                 if user_data['page']==0:
                     print("To send ==0!")
 
                     user_data['page'] = 1
-                    user_data['pages'] = to_send
                     to_send = to_send[0]
                 else:
                     print("To send >0!")
 
-                    user_data['pages'] = to_send
                     to_send = to_send[user_data['page']]
 
                 print(user_data['page'])
