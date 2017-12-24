@@ -1612,18 +1612,20 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         elif param=="page_esci":
             user_data['page_esci'] =-1
             to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
-                   Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
-                   nome_comando parametri - spiegazione
-                   Quindi ricorda di aggiungere i parametri giusti!"""
+Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
+nome_comando parametri - spiegazione
+Quindi ricorda di aggiungere i parametri giusti!"""
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=to_send,
                 message_id=update.callback_query.message.message_id,
-                reply_markup=self.inline_page,
+                reply_markup=self.inline_cat,
                 parse_mode="HTML"
 
             )
             return
+
+
         print(user_data['page'])
 
         if param == "esci":
@@ -1681,6 +1683,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         elif param == "inoltro":
             to_send += self.get_forward_commands()
+            print(to_send)
             # dividi il messaggio a seconda della lunghezza in bytes
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
             print(len(to_send))
