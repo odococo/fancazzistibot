@@ -22,7 +22,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
 from comandi import Command
 from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
-DEBUG = True
+DEBUG = False
 
 
 class Loot:
