@@ -1921,27 +1921,27 @@ class Team:
             res_dict = self.get_hour_increment(self.data_dict)
             if not res_dict:
                 update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                    "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi")
                 return
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento orario medio:\n"),
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"<b>Incremento orario medio</b>:\n"),
                                                      parse_mode="HTML", reply_markup=self.inline)
         elif param == "giornaliero":
             res_dict = self.get_day_increment(self.data_dict)
             if not res_dict:
                 update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                    "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi")
                 return
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento giornaliero medio:\n"),
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"<b>Incremento giornaliero medio</b>:\n"),
                                                      parse_mode="HTML", reply_markup=self.inline)
 
         elif param == "mensile":
             res_dict = self.get_month_increment(self.data_dict)
             if not res_dict:
                 update.callback_query.message.reply_text(
-                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                    "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi")
                 return
 
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"Incremento mensile medio:\n"),
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict,"<b>Incremento mensile medio</b>:\n"),
                                                      parse_mode="HTML", reply_markup=self.inline)
 
         elif param == "totale":
@@ -1951,7 +1951,7 @@ class Team:
                     "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
                 return
 
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "Incremento totale:\n"),
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "<b>Incremento totale</b>:\n"),
                                                      parse_mode="HTML", reply_markup=self.inline)
 
         elif param == "totale_medio":
@@ -1961,7 +1961,7 @@ class Team:
                     "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
                 return
 
-            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "Incremento totale medio:\n"),
+            update.callback_query.message.reply_text(self.pretty_increment(res_dict, "<b>Incremento totale medio</b>:\n"),
                                                      parse_mode="HTML", reply_markup=self.inline)
 
         elif param == "update":
