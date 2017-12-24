@@ -181,16 +181,10 @@ TABELLE = {
         "select":{
             "all":"SELECT * FROM top NATURAL JOIN users;"
         }
-    },
-    "teams":{
-        "select":{
-            "all_ordered":"SELECT numero, pc, update FROM teams WHERE team = %s ORDER BY numero",
-            "all":"SELECT nome, numero, pc, update FROM teams"
-},
-        "insert":"""INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(nome, numero) DO NOTHING"""
     }
 }
 
+COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"#comando per connettersi al db
 
 developer_dicts = {"brandimax": 24978334, "odococo": 89675136}
 developer_message = []#usata per salvare i messaggi di richiesta accesso
@@ -271,13 +265,6 @@ class DB:
         """Prende tutti gli user in top
         @:return: lista (o dizionario dipende da quanti user ci sono) di utenti """
         return self.execute(TABELLE['top']['select']['all'])
-
-    def get_team_ordered(self):
-        """Prende tutti gli elementi dentro team"""
-        return self.execute(TABELLE['teams']['select']['all_ordered'])
-
-    def get_team_all(self):
-        return self.execute(TABELLE['teams']['select']['all'])
 
 
     # ============ADDER/UPDATER======================================
@@ -416,17 +403,6 @@ class DB:
         @:param id: id dello user che vuole cambiare il nome
         @:type: int"""
         self.execute(TABELLE['users']['update'],(new_username, id, ))
-
-    def update_teams(self, team_name, numero, pc):
-        """Aggiunge una riga dentro la tabella teams
-        @:param team_name: nome del team
-        @:type: str
-        @:param numero: numero rappresentante la posizione temporale dell'elemento
-        @:type: int
-        @:param pc: punti craft totali
-        @:type: int"""
-
-        self.execute(TABELLE['teams']['insert'],(team_name, numero, pc))
 
 
     # ============DELETE/RESET======================================

@@ -51,6 +51,7 @@ sveglia - invia un messaggio a uno o piu username per spronarli ad attaccare il 
 top - mostra i top players in base a vari parametri
 migra - cambia username nel bot
 annulladefinitivo - toglie qualisasi tastiera personalizzata
+teams - visualizza i team
 """
 
 

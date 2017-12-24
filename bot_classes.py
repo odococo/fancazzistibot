@@ -4,7 +4,6 @@ import random
 import re
 from collections import OrderedDict, Counter
 from datetime import timedelta, datetime
-from collections import Counter
 
 import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
@@ -173,7 +172,7 @@ class Loot:
             if (len(top_ten) > 3):
                 if not len(top_ten) <=10: top_ten = top_ten[:9]
 
-                to_print = "I "+str(top_ten)+" oggetti piu costosi sono:\n"
+                to_print = "I 10 oggetti piu costosi sono:\n"
                 for elem in top_ten:
                     to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
                     if int(elem[2]) != 1:
@@ -1646,7 +1645,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         )
 
 
-class Team_Old:
+class Team:
     def __init__(self, updater, db):
         self.updater = updater
         self.db=db
@@ -1850,107 +1849,4 @@ class Team_Old:
             self.db.insert_team(team[0], team[1])
 
 
-class Team:
-    def __init__(self, updater, db):
-        self.updater = updater
-        self.db = db
 
-        disp = updater.dispatcher
-
-        disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
-
-
-    def forward_team(self, bot, update):
-        """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
-        #prendi i team nel messaggio e nel db
-        team_db, least_update =self.get_teams_db()
-        team_msg=self.extract_teams_from_msg(update.message.text)
-        #controlla se sono presenti team nel databes
-        if not team_db:
-            self.update_db(team_msg, 0)
-            update.message.reply_text("Database aggiornato!")
-            return
-
-        complete_team=team_db
-        #uso un counter per vedere quanti elementi ho nella lista (per ogni team)
-        count=Counter(elem[0] for elem in complete_team)
-       # print(count)
-        key=random.choice(list(count.keys()))
-        #setto l'idx (usato per salvare numero)
-        idx=count[key]
-
-
-        #aggiungo l'ultimo update alla lista nel db
-        for elem in team_msg:
-            complete_team.append((elem[0],elem[1],idx,elem[2]))
-
-        print(complete_team)
-
-        self.update_db(team_msg, idx )
-
-    def update_db(self, teams, numero):
-        """Esegue l'update del db dato un messagigo team
-        @:param teams: lista di tuple (vedi extract_teams_from_msg)
-        @:type: str"""
-
-        # inserisci i nomi nel db
-        for team in teams:
-            self.db.update_teams(team[0],numero, team[1])
-
-    def get_teams_db(self):
-        """Ritorna la lista di teams del db
-        @:return:
-        res: list of elements (team_name, pnt, numero, last_update)
-        least_update: laste update in the form (team_name, pnt, numero, last_update)"""
-        # prende i dati dal db
-        teams_db = self.db.get_team_all()
-        print(teams_db)
-
-        if not teams_db:
-            return False, False
-        # casta il risultato in lista se è un solo dizionario
-        if not isinstance(teams_db, list): teams_db = list(teams_db)
-
-        res = []
-        for elem in teams_db:
-            res.append((elem['nome'], elem['pc'],elem['numero'], elem['update']))
-            # print(elem['last_update'].isoweekday())
-
-        #prendi l'aggiornamento piu recente
-        least_update=max(res, key=lambda x:x[3])
-
-        return res, least_update
-
-    def extract_teams_from_msg(self, msg):
-        """Estrae i team da un messaggio teams
-        @:param msg: messaggio team
-        @:type: str
-        @:return: list of triple (team_name, pnt, datetime.now)"""
-        # compila il regex
-        team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
-        # elimina la parte del tuo team
-        msg = msg.split("Il tuo team")[0]
-
-        # teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
-        teams = re.findall(team_regex, msg)
-
-        # rimuovi il punto dentro i pc e casta ad int
-        teams = [(elem[0], int(elem[1].replace(".", "")),datetime.now()) for elem in teams]
-
-        return teams
-
-    def list2dict(self, data):
-        """Converte una lista di elementi data dal db in un dizionario
-        @:param data: lista di elementi nel formato (vedi get_teams_db)
-        @:type: list
-        @:return: dizionario con chiavi = nome_team e valore lista di elementi (vedi get_teams_db senza nome team)"""
-        res = {}
-        count = Counter(elem[0] for elem in data)
-        # print(count)
-
-        for key in count.keys():
-            res[key] = []
-
-        for elem in data:
-            res[elem[0]].append(elem[1:])
-        return res
