@@ -1645,7 +1645,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         )
 
 
-class Team:
+class Team_Old:
     def __init__(self, updater, db):
         self.updater = updater
         self.db=db
@@ -1849,4 +1849,87 @@ class Team:
             self.db.insert_team(team[0], team[1])
 
 
+class Team:
+    def __init__(self, updater, db):
+        self.updater = updater
+        self.db = db
 
+        disp = updater.dispatcher
+
+        disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
+
+
+    def forward_team(self, bot, update):
+        """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
+        #prendi i team nel messaggio e nel db
+        team_db, least_update =self.get_teams_db()
+        team_msg=self.extract_teams_from_msg(update.message.text)
+        #controlla se sono presenti team nel databes
+        if not team_db:
+            self.update_db(team_msg, 0)
+            update.message.reply_text("Database aggiornato!")
+            return
+
+
+        #calcola la differenza
+        team_diff=self.get_teams_diff(team_msg,team_db)
+        to_send=self.pretty_diff(team_diff)
+
+
+
+
+        #savla per visualizzazione
+        self.prior_str=to_send
+        self.datetime=datetime.now()
+
+        update.message.reply_text(to_send, parse_mode="HTML")
+
+        self.update_db(team_msg, len(team_db)+1 )
+
+    def update_db(self, teams, numero):
+        """Esegue l'update del db dato un messagigo team
+        @:param teams: lista di tuple (vedi extract_teams_from_msg)
+        @:type: str"""
+
+        # inserisci i nomi nel db
+        for team in teams:
+            self.db.update_teams(team[0],numero, team[1])
+
+    def get_teams_db(self):
+        """Ritorna la lista di teams del db
+        @:return:
+        res: list of elements (team_name, pnt, numero, last_update)
+        least_update: laste update in the form (team_name, pnt, numero, last_update)"""
+        # prende i dati dal db
+        teams_db = self.db.get_team_ordered()
+
+        # casta il risultato in lista se è un solo dizionario
+        if not isinstance(teams_db, list): teams_db = list(teams_db)
+
+        res = []
+        for elem in teams_db:
+            res.append((elem['nome'], elem['pc'],elem['numero'], elem['update']))
+            # print(elem['last_update'].isoweekday())
+
+        #prendi l'aggiornamento piu recente
+        least_update=max(res, key=lambda x:x[3])
+
+        return res, least_update
+
+    def extract_teams_from_msg(self, msg):
+        """Estrae i team da un messaggio teams
+        @:param msg: messaggio team
+        @:type: str
+        @:return: list of triple (team_name, pnt, datetime.now)"""
+        # compila il regex
+        team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
+        # elimina la parte del tuo team
+        msg = msg.split("Il tuo team")[0]
+
+        # teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
+        teams = re.findall(team_regex, msg)
+
+        # rimuovi il punto dentro i pc e casta ad int
+        teams = [(elem[0], int(elem[1].replace(".", "")),datetime.now()) for elem in teams]
+
+        return teams
