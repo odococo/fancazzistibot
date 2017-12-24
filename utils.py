@@ -96,7 +96,7 @@ def text_splitter_bytes(text,splitter="\n", split_every=4096):
         # altrimenti aggiungi elem
         to_append+=elem
     #se la lunghezza del text è inferiore a split_every appendi al res
-    if not res: res.append(to_append)
+    res.append(to_append)
     return res
 
 
