@@ -1609,7 +1609,21 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         if param=="page_avanti":user_data['page'] +=1
         elif param=="page_indietro":user_data['page'] -=1
-        elif param=="page_esci":user_data['page_esci'] =-1
+        elif param=="page_esci":
+            user_data['page_esci'] =-1
+            to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
+                   Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
+                   nome_comando parametri - spiegazione
+                   Quindi ricorda di aggiungere i parametri giusti!"""
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=to_send,
+                message_id=update.callback_query.message.message_id,
+                reply_markup=self.inline_page,
+                parse_mode="HTML"
+
+            )
+            return
         print(user_data['page'])
 
         if param == "esci":
