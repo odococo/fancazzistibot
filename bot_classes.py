@@ -1596,7 +1596,10 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        if 'page' not in user_data.keys(): user_data['page'] = -1
+        if 'page' not in user_data.keys():
+            print("page not found!")
+            user_data['page'] = -1
+        print("page found!")
         user_data['pages'] = []
 
         user, admin, developer = self.get_commands_help()
@@ -1664,15 +1667,24 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             to_send += self.get_forward_commands()
             # dividi il messaggio a seconda della lunghezza in bytes
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
+            print(len(to_send))
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
+                print("To send troppo grande!!")
                 if user_data['page']<0:
+                    print("To send <0!")
+
                     user_data['page'] = 0
                     user_data['pages'] = to_send
                     to_send = to_send[0]
                 else:
+                    print("To send >0!")
+
                     user_data['pages'] = to_send
                     to_send = to_send[user_data['page']]
+
+                print(user_data['page'])
+                print(user_data['pages'])
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
