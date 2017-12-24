@@ -1983,16 +1983,22 @@ class Team:
         self.data_dict = {}
         self.last_update = None
         self.youngest_update = None
-        self.inline = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Inc Orario", callback_data="/team orario"),
-             InlineKeyboardButton("Inc Giornaliero", callback_data="/team giornaliero"),
-             InlineKeyboardButton("Inc Settimanale", callback_data="/team settimanale")],
-             [InlineKeyboardButton("Inc Mensile", callback_data="/team mensile"),
-            InlineKeyboardButton("Inc ultimo aggiornamento", callback_data="/team update"),
-             InlineKeyboardButton("Inc totale", callback_data="/team totale")],
-             [InlineKeyboardButton("Inc totale medio", callback_data="/team totale_medio"),
+        self.inline_team = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Incrementi", callback_data="/team incrementi"),
             InlineKeyboardButton("Grafico", callback_data="/team grafico"),
              InlineKeyboardButton("Esci", callback_data="/team esci")]
+
+        ])
+
+        self.inline_inc=InlineKeyboardMarkup([
+            [InlineKeyboardButton("Inc Orario", callback_data="/team_inc orario"),
+             InlineKeyboardButton("Inc Giornaliero", callback_data="/team_inc giornaliero"),
+             InlineKeyboardButton("Inc Settimanale", callback_data="/team_inc settimanale"),
+             InlineKeyboardButton("Inc Mensile", callback_data="/team_inc mensile")],
+            [InlineKeyboardButton("Inc ultimo aggiornamento", callback_data="/team_inc update"),
+             InlineKeyboardButton("Inc totale", callback_data="/team_inc totale"),
+             InlineKeyboardButton("Inc totale medio", callback_data="/team_inc totale_medio"),
+             InlineKeyboardButton("Indietro", callback_data="/team_inc indietro")]
 
         ])
 
@@ -2004,7 +2010,8 @@ class Team:
             forward_team_decor = self.db.elegible_loot_user(self.forward_team)
             disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
 
-        disp.add_handler(CallbackQueryHandler(self.decison, pattern="/team"))
+        disp.add_handler(CallbackQueryHandler(self.decision_team, pattern="/team"))
+        disp.add_handler(CallbackQueryHandler(self.decision_inc, pattern="/team_inc"))
 
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
@@ -2041,9 +2048,68 @@ class Team:
 
         to_send = "Quali informazioni vuoi visualizzare?\n'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, " \
                   "ovvero di quanto aumentano i pc."
-        update.message.reply_text(to_send, reply_markup=self.inline)
+        update.message.reply_text(to_send, reply_markup=self.inline_team)
 
-    def decison(self, bot, update):
+    def decision_team(self, bot, update):
+        """Serve per smistare le info a seconda della scelta dell'user"""
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
+
+        if param == "incrementi":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Incrementi",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_inc
+            )
+
+
+        elif param == "grafico":
+            to_send = "Immagine inviata!"
+
+            # crea immagine e inviala
+            path2img = self.plot(self.data_dict)
+            with open(path2img, "rb") as file:
+                bot.sendPhoto(update.callback_query.message.chat_id, file)
+            # rimuovi immagine
+            os.remove(path2img)
+            # rimuovi messaggio
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
+            msg = update.callback_query.message.reply_text(to_send)
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=to_send,
+                message_id=msg.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_team
+            )
+            return
+
+        elif param == "esci":
+            update.callback_query.message.reply_text("Ok")
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
+            return
+
+        #modifica il messaggio in base ai parametri scelti dall'utente
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.inline_team
+        )
+
+    def decision_inc(self, bot, update):
         """Serve per smistare le info a seconda della scelta dell'user"""
 
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
@@ -2092,45 +2158,24 @@ class Team:
                 to_send = self.pretty_increment(res_dict,
                                                 "<b>Incremento dall'ultimo aggiornamento</b> (Il " + data + " alle " + ora + "):\n")
 
-        elif param == "grafico":
-            to_send = "Immagine inviata!"
 
-            # crea immagine e inviala
-            path2img = self.plot(self.data_dict)
-            with open(path2img, "rb") as file:
-                bot.sendPhoto(update.callback_query.message.chat_id, file)
-            # rimuovi immagine
-            os.remove(path2img)
-            # rimuovi messaggio
-            bot.delete_message(
-                chat_id=update.callback_query.message.chat_id,
-                message_id=update.callback_query.message.message_id
-            )
-            msg = update.callback_query.message.reply_text(to_send)
+        elif param == "indietro":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=to_send,
-                message_id=msg.message_id,
+                message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
-                reply_markup=self.inline
+                reply_markup=self.inline_team
             )
             return
 
-        elif param == "esci":
-            update.callback_query.message.reply_text("Ok")
-            bot.delete_message(
-                chat_id=update.callback_query.message.chat_id,
-                message_id=update.callback_query.message.message_id
-            )
-            return
-
-        #modifica il messaggio in base ai parametri scelti dall'utente
+        # modifica il messaggio in base ai parametri scelti dall'utente
         bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             text=to_send,
             message_id=update.callback_query.message.message_id,
             parse_mode="HTML",
-            reply_markup=self.inline
+            reply_markup=self.inline_inc
         )
 
     def update_db(self, teams, numero):
@@ -2560,3 +2605,43 @@ class Team:
             res_dict[key] = incr
 
         return res_dict
+
+    def get_total_pc(self, data_dict):
+        """Ritorna il dizionario con key=nomeTeam, value=pcTotali
+        @:param data_dict: il dizionario ritornato da list2dict
+        @:type: dict
+        @:return: ritorna un dizionario con coppia team-pcTotali"""
+
+        filtered_dict = {}
+        for key in data_dict.keys():
+            filtered_dict[key] = data_dict[key][-1][0]
+
+        return filtered_dict
+
+    def get_stima(self, data_dict, what):
+        """Ritorna i pc totali stimati secondo l'unita di tempo descritta da what
+         @:param data: dizionario con key=nome_team, value=int
+        @:type: dict
+        @:param what: unita di tempo =0 (ora), =1 (giorno), =2 (settimana), =3 (mese)
+        @:type:int
+        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
+
+        incr = None
+        if what == 0:
+            incr = self.get_hour_increment(data_dict)
+        elif what == 1:
+            incr = self.get_day_increment(data_dict)
+        elif what == 2:
+            incr = self.get_week_increment(data_dict)
+        elif what == 3:
+            incr = self.get_month_increment(data_dict)
+
+        if not incr: return False
+        tot_pc = self.get_total_pc(data_dict)
+
+        h_stima = {}
+
+        for key in tot_pc.keys():
+            h_stima[key] = incr[key] + tot_pc[key]
+
+        return h_stima
