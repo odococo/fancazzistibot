@@ -1912,6 +1912,7 @@ class Team:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
+        print(param)
 
         if param == "orario":
             res_dict = self.get_hour_increment(self.data_dict)
@@ -1986,7 +1987,7 @@ class Team:
         least_update: laste update in the form (team_name, pnt, numero, last_update)"""
         # prende i dati dal db
         teams_db = self.db.get_team_all()
-        print(teams_db)
+        #print(teams_db)
 
         if not teams_db:
             return False, False
