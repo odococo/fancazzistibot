@@ -1605,7 +1605,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
         user, admin, developer = self.get_commands_help()
 
-        to_send = "o"
+        to_send = ""
 
         if param=="page_avanti":user_data['page'] +=1
         elif param=="page_indietro":user_data['page'] -=1
@@ -1683,10 +1683,10 @@ Quindi ricorda di aggiungere i parametri giusti!"""
 
         elif param == "inoltro":
             to_send += self.get_forward_commands()
-            print(to_send)
+            #print(to_send)
             # dividi il messaggio a seconda della lunghezza in bytes
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
-            print(len(to_send))
+            print("len di to_send = "+str(len(to_send)))
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 print("To send troppo grande!!")
