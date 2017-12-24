@@ -1938,13 +1938,13 @@ class Team:
             res_dict = self.get_total_increment(self.data_dict)
             if res_dict:
                 ora,data=pretty_time_date(self.youngest_update)
-                to_send = self.pretty_increment(res_dict, "<b>Incremento totale</b> (dal <i>"+data+" alle "+ora+"</i>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Incremento totale</b> (dal <i>"+data+" alle "+ora+"</i>):\n")
 
         elif param == "totale_medio":
             res_dict = self.get_total_mean_increment(self.data_dict)
             if res_dict:
                 ora,data=pretty_time_date(self.youngest_update)
-                to_send = self.pretty_increment(res_dict, "<b>Incremento totale medio</b> (dal <i>"+data+" alle "+ora+"</i>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Incremento totale medio</b> (dal <i>"+data+" alle "+ora+"</i>):\n")
 
         elif param == "update":
             res_dict = self.get_last_update_increment(self.data_dict)

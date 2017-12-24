@@ -100,7 +100,7 @@ def text_splitter_bytes(text,splitter="\n", split_every=4096):
     return res
 
 
-def pretty_time_date(timedate, add_hour=1):
+def pretty_time_date(timedate_input, add_hour=1):
     """Formatta la data inviata per poter essere printata
         @:param timedate: la data
         @:type: timedata
@@ -108,7 +108,7 @@ def pretty_time_date(timedate, add_hour=1):
         @:type: int
         @:return: ritorna due stringhe, ora e data"""
 
-    timedate = timedate.now() + datetime.timedelta(hours=add_hour)
+    timedate = timedate_input + datetime.timedelta(hours=add_hour)
     ora=str(timedate.time()).split(".")[0]
     data=str(timedate.date().strftime('%d-%m-%Y'))
 
