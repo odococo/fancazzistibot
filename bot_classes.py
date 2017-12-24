@@ -173,7 +173,7 @@ class Loot:
             if (len(top_ten) > 3):
                 if not len(top_ten) <=10: top_ten = top_ten[:9]
 
-                to_print = "I 10 oggetti piu costosi sono:\n"
+                to_print = "I "+str(top_ten)+" oggetti piu costosi sono:\n"
                 for elem in top_ten:
                     to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
                     if int(elem[2]) != 1:
@@ -1938,3 +1938,19 @@ class Team:
         teams = [(elem[0], int(elem[1].replace(".", "")),datetime.now()) for elem in teams]
 
         return teams
+
+    def list2dict(self, data):
+        """Converte una lista di elementi data dal db in un dizionario
+        @:param data: lista di elementi nel formato (vedi get_teams_db)
+        @:type: list
+        @:return: dizionario con chiavi = nome_team e valore lista di elementi (vedi get_teams_db senza nome team)"""
+        res = {}
+        count = Counter(elem[0] for elem in data)
+        # print(count)
+
+        for key in count.keys():
+            res[key] = []
+
+        for elem in data:
+            res[elem[0]].append(elem[1:])
+        return res
