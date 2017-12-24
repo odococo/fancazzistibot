@@ -1588,7 +1588,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
     def help_init(self, bot, update):
         to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
 Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
-nome_comando parametri - spiegazione
+nomeComando parametri - spiegazione
 Quindi ricorda di aggiungere i parametri giusti!"""
         update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
@@ -1627,7 +1627,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             user_data['page'] =0
             to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
 Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
-nome_comando parametri - spiegazione
+nomeComando parametri - spiegazione
 Quindi ricorda di aggiungere i parametri giusti!"""
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
