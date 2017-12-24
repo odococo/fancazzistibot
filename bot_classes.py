@@ -1980,7 +1980,8 @@ class Team:
         self.youngest_update = None
         self.inline_team = InlineKeyboardMarkup([
             [InlineKeyboardButton("Incrementi", callback_data="/team_main incrementi"),
-            InlineKeyboardButton("Grafico", callback_data="/team_main grafico")],
+            InlineKeyboardButton("Grafico", callback_data="/team_main grafico"),
+             InlineKeyboardButton("Classifica", callback_data="/team_main classifica")],
              [InlineKeyboardButton("Stime", callback_data="/team_main stime"),
               InlineKeyboardButton("Esci", callback_data="/team_main esci")]
 
@@ -2012,6 +2013,7 @@ class Team:
                   "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
                   "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
                   "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
+                  "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame" \
                   "<b>Esci</b> : per uscira dalla visualizzazione\n" \
                   "Quindi quali informazioni vuoi vedere?"
 
@@ -2087,6 +2089,19 @@ class Team:
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_stime
+            )
+            return
+
+        elif param=="classifica":
+
+            to_send= self.get_total_pc(self.data_dict)
+            to_send=self.pretty_increment(to_send)
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=to_send,
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_team
             )
             return
 
