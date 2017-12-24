@@ -1997,6 +1997,14 @@ class Team:
 
         ])
 
+        self.team_init_msg="Ci sono varie categorie di informazioni che puoi visualizzare:\n" \
+                  "<b>Incrementi</b> : mostra di quanto aumentano i pc dei team in base a vari parametri temporali (ore, giorni settimane, mesi), " \
+                  "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
+                  "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
+                  "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
+                  "<b>Esci</b> : per uscira dalla visualizzazione\n" \
+                  "Quindi quali informazioni vuoi vedere?"
+
         disp = updater.dispatcher
 
         if DEBUG:
@@ -2041,14 +2049,7 @@ class Team:
         # esegue l'update del db
         self.update_db(team_msg, idx)
 
-        to_send = "Ci sono varie categorie di informazioni che puoi visualizzare:\n" \
-                  "<b>Incrementi</b> : mostra di quanto aumentano i pc dei team in base a vari parametri temporali (ore, giorni settimane, mesi), " \
-                  "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
-                  "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
-                  "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
-                  "<b>Esci</b> : per uscira dalla visualizzazione\n" \
-                  "Quindi quali informazioni vuoi vedere?"
-        update.message.reply_text(to_send, reply_markup=self.inline_team)
+        update.message.reply_text(self.team_init_msg, reply_markup=self.inline_team)
 
     def decision_team(self, bot, update):
         """Serve per smistare le info a seconda della scelta dell'user"""
@@ -2168,7 +2169,7 @@ class Team:
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text=to_send,
+                text=self.team_init_msg,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_team
