@@ -1979,9 +1979,9 @@ class Team:
         self.last_update = None
         self.youngest_update = None
         self.inline_team = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Incrementi", callback_data="/team incrementi"),
-            InlineKeyboardButton("Grafico", callback_data="/team grafico"),
-             InlineKeyboardButton("Esci", callback_data="/team esci")]
+            [InlineKeyboardButton("Incrementi", callback_data="/team_main incrementi"),
+            InlineKeyboardButton("Grafico", callback_data="/team_main grafico"),
+             InlineKeyboardButton("Esci", callback_data="/team_main esci")]
 
         ])
 
@@ -2013,7 +2013,7 @@ class Team:
             forward_team_decor = self.db.elegible_loot_user(self.forward_team)
             disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
 
-        disp.add_handler(CallbackQueryHandler(self.decision_team, pattern="/team"))
+        disp.add_handler(CallbackQueryHandler(self.decision_team, pattern="/team_main"))
         disp.add_handler(CallbackQueryHandler(self.decision_inc, pattern="/team_inc"))
 
     def forward_team(self, bot, update):
@@ -2057,7 +2057,6 @@ class Team:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
 
         if param == "incrementi":
             bot.edit_message_text(
@@ -2105,14 +2104,7 @@ class Team:
             return
         print("decision team")
 
-        #modifica il messaggio in base ai parametri scelti dall'utente
-        bot.edit_message_text(
-            chat_id=update.callback_query.message.chat_id,
-            text=to_send,
-            message_id=update.callback_query.message.message_id,
-            parse_mode="HTML",
-            reply_markup=self.inline_team
-        )
+
 
     def decision_inc(self, bot, update):
         """Serve per smistare le info a seconda della scelta dell'user"""
