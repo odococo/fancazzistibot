@@ -22,7 +22,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
 from comandi import Command
 from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
-DEBUG = False
+DEBUG = True
 
 
 class Loot:
@@ -1615,12 +1615,12 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         to_send = ""
 
         if param=="page_avanti":
-            to_send = to_send[user_data['page']]
             user_data['page'] +=1
+            to_send = user_data['pages'][user_data['page']-1]
 
         elif param=="page_indietro":
-            to_send = to_send[user_data['page']]
             user_data['page'] -=1
+            to_send = user_data['pages'][user_data['page']-1]
 
         elif param=="page_esci":
             user_data['page'] =0
@@ -1658,7 +1658,12 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
-                to_send = to_send[0]
+                user_data['pages'] = to_send
+
+                if user_data['page']==0:
+
+                    user_data['page'] = 1
+                    to_send = to_send[0]
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
@@ -1673,7 +1678,12 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
-                to_send = to_send[0]
+                user_data['pages'] = to_send
+
+                if user_data['page']==0:
+
+                    user_data['page'] = 1
+                    to_send = to_send[0]
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
@@ -1688,7 +1698,12 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
-                to_send = to_send[0]
+                user_data['pages'] = to_send
+
+                if user_data['page']==0:
+
+                    user_data['page'] = 1
+                    to_send = to_send[0]
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
@@ -1698,21 +1713,15 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             #print(to_send)
             # dividi il messaggio a seconda della lunghezza in bytes
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
-            print("len di to_send = "+str(len(to_send)))
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 user_data['pages'] = to_send
 
-                print("To send troppo grande!!")
                 if user_data['page']==0:
-                    print("To send ==0!")
 
                     user_data['page'] = 1
                     to_send = to_send[0]
 
-                print(user_data['page'])
-                # for elem in user_data['pages']:
-                #     print(elem)
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
