@@ -2080,6 +2080,15 @@ class Team:
             )
             return
 
+        elif param == "stime":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="<b>Stime</b>\nStima i pc totali di un team in un lasso di tempo.",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_stime
+            )
+            return
 
         elif param == "grafico":
             to_send = "Immagine inviata!"
