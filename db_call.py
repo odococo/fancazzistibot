@@ -187,7 +187,7 @@ TABELLE = {
             "all_ordered":"SELECT numero, pc, update FROM teams WHERE team = %s ORDER BY numero",
             "all":"SELECT nome, numero, pc, update FROM teams"
 },
-        "insert":"""INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(numero) DO NOTHING"""
+        "insert":"""INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(nome, numero) DO NOTHING"""
     }
 }
 
