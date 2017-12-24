@@ -2041,8 +2041,7 @@ class Team:
         # esegue l'update del db
         self.update_db(team_msg, idx)
 
-        to_send = "Quali informazioni vuoi visualizzare?\n'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, " \
-                  "ovvero di quanto aumentano i pc."
+        to_send = "Quali informazioni vuoi visualizzare?\n"
         update.message.reply_text(to_send, reply_markup=self.inline_team)
 
     def decision_team(self, bot, update):
@@ -2056,12 +2055,13 @@ class Team:
         if param == "incrementi":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="Incrementi",
+                text="<b>Incrementi</b>\n'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, " \
+                  "ovvero di quanto aumentano i pc.",
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_inc
             )
-            return 
+            return
 
 
         elif param == "grafico":
@@ -2112,6 +2112,7 @@ class Team:
         param = update.callback_query.data.split()[1]
 
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
+        print("decision_inc")
 
         if param == "orario":
             res_dict = self.get_hour_increment(self.data_dict)
@@ -2156,6 +2157,8 @@ class Team:
 
 
         elif param == "indietro":
+            print("decision_inc indietro")
+
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=to_send,
@@ -2164,6 +2167,7 @@ class Team:
                 reply_markup=self.inline_team
             )
             return
+        print("decision_inc avanti")
 
         # modifica il messaggio in base ai parametri scelti dall'utente
         bot.edit_message_text(
