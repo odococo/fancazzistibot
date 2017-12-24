@@ -1647,7 +1647,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         )
 
 
-class Team:
+class Team_old:
     def __init__(self, updater, db):
         self.updater = updater
         self.db=db
@@ -1858,12 +1858,12 @@ class Team:
         self.data_dict = {}
         self.last_update = None
         self.inline = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Incremento Orario", callback_data="/team orario"),
-             InlineKeyboardButton("Incremento Giornaliero", callback_data="/team giornaliero"),
-             InlineKeyboardButton("Incremento Mensile", callback_data="/team mensile")],
-            [InlineKeyboardButton("Incremento dall'ultimo aggiornamento", callback_data="/team update"),
-             InlineKeyboardButton("Incremento totale", callback_data="/team totale"),
-             InlineKeyboardButton("Incremento totale medio", callback_data="/team totale_medio")],
+            [InlineKeyboardButton("Inc Orario", callback_data="/team orario"),
+             InlineKeyboardButton("Inc Giornaliero", callback_data="/team giornaliero"),
+             InlineKeyboardButton("Inc Mensile", callback_data="/team mensile")],
+            [InlineKeyboardButton("Inc ultimo aggiornamento", callback_data="/team update"),
+             InlineKeyboardButton("Inc totale", callback_data="/team totale"),
+             InlineKeyboardButton("Inc totale medio", callback_data="/team totale_medio")],
             [InlineKeyboardButton("Grafico", callback_data="/team grafico"),
              InlineKeyboardButton("Esci", callback_data="/team esci")]
 
@@ -1906,7 +1906,8 @@ class Team:
         # esegue l'update del db
         self.update_db(team_msg, idx)
 
-        to_send = "Quali informazioni vuoi visualizzare?"
+        to_send = "Quali informazioni vuoi visualizzare?\n'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, " \
+                  "ovvero di quanto aumentano i pc."
         update.message.reply_text(to_send, reply_markup=self.inline)
 
     def decison(self, bot, update):
@@ -1971,6 +1972,10 @@ class Team:
 
         elif param == "esci":
             update.callback_query.message.reply_text("Ok")
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
             return
 
     def update_db(self, teams, numero):
