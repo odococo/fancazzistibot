@@ -8,7 +8,11 @@ from collections import OrderedDict
 from datetime import timedelta, datetime
 
 import emoji
+import matplotlib
+matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
+
 from matplotlib.font_manager import FontProperties
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
