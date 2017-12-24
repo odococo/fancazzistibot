@@ -1725,7 +1725,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             )
         else:
             # ultima pagina
-            if user_data['page'] == len(user_data['pages']):
+            if user_data['page'] == (len(user_data['pages'])-1):
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
                     text=to_send,
