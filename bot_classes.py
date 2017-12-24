@@ -1896,7 +1896,7 @@ class Team:
         res: list of elements (team_name, pnt, numero, last_update)
         least_update: laste update in the form (team_name, pnt, numero, last_update)"""
         # prende i dati dal db
-        teams_db = self.db.get_team_ordered()
+        teams_db = self.db.get_team_all()
 
         if not teams_db:
             return False, False

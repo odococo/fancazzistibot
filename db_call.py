@@ -276,6 +276,9 @@ class DB:
         """Prende tutti gli elementi dentro team"""
         return self.execute(TABELLE['teams']['select']['all_ordered'])
 
+    def get_team_all(self):
+        return self.execute(TABELLE['teams']['select']['all'])
+
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
