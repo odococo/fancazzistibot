@@ -1693,7 +1693,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
                 if user_data['page']==0:
                     print("To send ==0!")
 
-                    user_data['page'] = 0
+                    user_data['page'] = 1
                     user_data['pages'] = to_send
                     to_send = to_send[0]
                 else:
