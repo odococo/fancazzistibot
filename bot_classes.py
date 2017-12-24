@@ -1878,7 +1878,7 @@ class Team:
         #setto l'idx (usato per salvare numero)
         idx=count[key]
 
-
+ 
         #aggiungo l'ultimo update alla lista nel db
         for elem in team_msg:
             complete_team.append((elem[0],elem[1],idx,elem[2]))
