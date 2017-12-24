@@ -2049,7 +2049,7 @@ class Team:
         # esegue l'update del db
         self.update_db(team_msg, idx)
 
-        update.message.reply_text(self.team_init_msg, reply_markup=self.inline_team)
+        update.message.reply_text(self.team_init_msg, reply_markup=self.inline_team, parse_mode="HTML")
 
     def decision_team(self, bot, update):
         """Serve per smistare le info a seconda della scelta dell'user"""
@@ -2068,6 +2068,7 @@ class Team:
                 parse_mode="HTML",
                 reply_markup=self.inline_inc
             )
+            print("incrementi")
             return
 
 
@@ -2102,6 +2103,7 @@ class Team:
                 message_id=update.callback_query.message.message_id
             )
             return
+        print("decision team")
 
         #modifica il messaggio in base ai parametri scelti dall'utente
         bot.edit_message_text(
