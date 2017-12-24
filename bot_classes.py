@@ -1956,7 +1956,7 @@ class Team:
             to_send="Immagine inviata!"
             path2img=self.plot(self.data_dict)
             with open(path2img, "rb") as file:
-                bot.sendPhoto(update.callback_query.message.from_user.id, file)
+                bot.sendPhoto(update.callback_query.message.chat_id, file)
             os.remove(path2img)
 
 
