@@ -1593,7 +1593,8 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
 
     # todo: create multiple page help
     def help_decision(self, bot, update, user_data):
-        """Visulauzza i vari help a seconda della scelta dell'user"""
+        """Visulauzza i vari help a seconda della scelta dell'user, supporta la creazione automati di piu pagine
+        in caso di stringhe troppo lunghe"""
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
@@ -1601,7 +1602,10 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             print("page not found!")
             user_data['page'] = 0
         else: print("page found!")
+
         if 'pages' not in user_data.keys():user_data['pages'] = []
+
+        print("len di user_data = " + str(len(user_data['pages'])))
 
         user, admin, developer = self.get_commands_help()
 
