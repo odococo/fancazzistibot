@@ -4,6 +4,7 @@ import random
 import re
 from collections import OrderedDict, Counter
 from datetime import timedelta, datetime
+from collections import Counter
 
 import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
@@ -1871,11 +1872,12 @@ class Team:
             return
 
         complete_team=team_db
-
+        print(Counter(elem[0] for elem in complete_team))
         #aggiungo l'ultimo update alla lista nel db
         idx=1
         for elem in team_msg:
             complete_team.append((elem[0],elem[1],len(team_db)+idx,elem[2]))
+            idx+=1
 
         print(complete_team)
 
@@ -1897,6 +1899,7 @@ class Team:
         least_update: laste update in the form (team_name, pnt, numero, last_update)"""
         # prende i dati dal db
         teams_db = self.db.get_team_all()
+        print(teams_db)
 
         if not teams_db:
             return False, False
