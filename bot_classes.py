@@ -1965,7 +1965,18 @@ class Team:
                                                      parse_mode="HTML", reply_markup=self.inline)
 
         elif param == "update":
-            print("update")
+            res_dict = self.get_last_update_increment(self.data_dict)
+            if not res_dict:
+                update.callback_query.message.reply_text(
+                    "Spiancente non ci sono abbastanza dati per questo...riprova piu tardi")
+                return
+            
+            ora, data=pretty_time_date(self.last_update)
+            update.callback_query.message.reply_text(
+                self.pretty_increment(res_dict, "<b>Incremento Dall'ultimo aggiornamento</b> (Il "+data+" alle "+ora+":\n"),
+                parse_mode="HTML", reply_markup=self.inline)
+
+
         elif param == "grafico":
             print("grafico")
 
@@ -2333,3 +2344,27 @@ class Team:
             res_dict[key] = incr
 
         return res_dict
+
+    def get_last_update_increment(self, data):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento dall'ultimo aggiornamento (int)
+          @:param data_dict: il dizionario ritornato da list2dict
+          @:type: dict
+          @:return: ritorna un dizionario con coppia team-incremento"""
+
+        # prendo solo gli ultimi due elementi del dizionario
+        filtered_dict = {}
+        for key in data.keys():
+            filtered_dict[key] = data[key][-2:]
+
+        # calcolo l'incremento
+        res_dict = {}
+        for key in filtered_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in filtered_dict[key]]
+            incr = abs(tot_pc[0] - tot_pc[1])
+            idx = 0
+            res_dict[key] = incr
+
+        return res_dict
+
+
