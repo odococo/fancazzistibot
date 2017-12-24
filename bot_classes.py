@@ -1953,9 +1953,10 @@ class Team:
 
 
         elif param == "grafico":
+            to_send="Immagine inviata!"
             path2img=self.plot(self.data_dict)
             with open(path2img, "rb") as file:
-                self.bot.sendPhoto(update.callback_query.message.from_user.id, file)
+                bot.sendPhoto(update.callback_query.message.from_user.id, file)
             os.remove(path2img)
 
 
