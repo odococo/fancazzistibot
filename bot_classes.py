@@ -1601,7 +1601,7 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
             print("page not found!")
             user_data['page'] = 0
         else: print("page found!")
-        user_data['pages'] = []
+        if 'pages' not in user_data.keys():user_data['pages'] = []
 
         user, admin, developer = self.get_commands_help()
 
