@@ -1871,19 +1871,6 @@ class Team:
             return
 
 
-        #calcola la differenza
-        team_diff=self.get_teams_diff(team_msg,team_db)
-        to_send=self.pretty_diff(team_diff)
-
-
-
-
-        #savla per visualizzazione
-        self.prior_str=to_send
-        self.datetime=datetime.now()
-
-        update.message.reply_text(to_send, parse_mode="HTML")
-
         self.update_db(team_msg, len(team_db)+1 )
 
     def update_db(self, teams, numero):
