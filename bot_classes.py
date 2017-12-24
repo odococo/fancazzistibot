@@ -1980,8 +1980,18 @@ class Team:
         self.youngest_update = None
         self.inline_team = InlineKeyboardMarkup([
             [InlineKeyboardButton("Incrementi", callback_data="/team_main incrementi"),
-            InlineKeyboardButton("Grafico", callback_data="/team_main grafico"),
-             InlineKeyboardButton("Esci", callback_data="/team_main esci")]
+            InlineKeyboardButton("Grafico", callback_data="/team_main grafico")],
+             [InlineKeyboardButton("Stime", callback_data="/team_main stime"),
+              InlineKeyboardButton("Esci", callback_data="/team_main esci")]
+
+        ])
+
+        self.inline_stime = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Stime orarie", callback_data="/team_stima orarie"),
+             InlineKeyboardButton("Stime giornaliere", callback_data="/team_stima giornaliere")],
+            [InlineKeyboardButton("Stime settimanali", callback_data="/team_stima settimanali"),
+             InlineKeyboardButton("Stime mensili", callback_data="/team_stima mensili")],
+            [InlineKeyboardButton("Indietro", callback_data="/team_stima indietro")]
 
         ])
 
@@ -2015,6 +2025,7 @@ class Team:
 
         disp.add_handler(CallbackQueryHandler(self.decision_team, pattern="/team_main"))
         disp.add_handler(CallbackQueryHandler(self.decision_inc, pattern="/team_inc"))
+        disp.add_handler(CallbackQueryHandler(self.decision_stime, pattern="/team_stima"))
 
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
@@ -2067,7 +2078,6 @@ class Team:
                 parse_mode="HTML",
                 reply_markup=self.inline_inc
             )
-            print("incrementi")
             return
 
 
@@ -2102,9 +2112,56 @@ class Team:
                 message_id=update.callback_query.message.message_id
             )
             return
-        print("decision team")
+
+    def decision_stime(self, bot, update):
+        """Serve per smistare le info a seconda della scelta dell'user"""
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
+
+        if param == "orario":
+            res_dict = self.get_stima(self.data_dict,0)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Incremento orario medio</b>:\n")
+
+        elif param == "giornaliero":
+            res_dict = self.get_stima(self.data_dict,1)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Incremento giornaliero medio</b>:\n")
+
+        elif param == "settimanale":
+            res_dict = self.get_stima(self.data_dict,2)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Incremento settimanale medio</b>:\n")
+
+        elif param == "mensile":
+            res_dict = self.get_stima(self.data_dict,3)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Incremento mensile medio</b>:\n")
 
 
+        elif param == "indietro":
+            print("decision_inc indietro")
+
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=self.team_init_msg,
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_team
+            )
+            return
+
+        # modifica il messaggio in base ai parametri scelti dall'utente
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.inline_inc
+        )
 
     def decision_inc(self, bot, update):
         """Serve per smistare le info a seconda della scelta dell'user"""
@@ -2113,8 +2170,6 @@ class Team:
         param = update.callback_query.data.split()[1]
 
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
-        print("decision_inc")
-        print(param)
 
         if param == "orario":
             res_dict = self.get_hour_increment(self.data_dict)
@@ -2169,7 +2224,6 @@ class Team:
                 reply_markup=self.inline_team
             )
             return
-        print("decision_inc avanti")
 
         # modifica il messaggio in base ai parametri scelti dall'utente
         bot.edit_message_text(
