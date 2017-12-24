@@ -2113,6 +2113,7 @@ class Team:
 
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
         print("decision_inc")
+        print(param)
 
         if param == "orario":
             res_dict = self.get_hour_increment(self.data_dict)
