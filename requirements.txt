@@ -1,8 +1,8 @@
-emoji
-python-telegram-bot
-requests
-bs4
-psycopg2
-matplotlib
-pandas
-python-dotenv
+pandas==0.21.0
+matplotlib==2.1.0
+python_telegram_bot==8.1.1
+psycopg2==2.7.3.2
+emoji==0.4.5
+beautifulsoup4==4.6.0
+Requests==2.18.4
+telegram==0.0.1
