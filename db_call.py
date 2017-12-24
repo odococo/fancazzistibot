@@ -185,9 +185,14 @@ TABELLE = {
     "teams":{
         "select":{
             "all_ordered":"SELECT numero, pc, update FROM teams WHERE team = %s ORDER BY numero",
-            "all":"SELECT nome, numero, pc, update FROM teams"
-},
-        "insert":"""INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(nome, numero) DO NOTHING"""
+            "all":"SELECT nome, numero, pc, update FROM teams"},
+        "insert":"""INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(nome, numero) DO NOTHING""",
+        "delete":{
+            "by_date_today":"DELETE FROM teams WHERE update < CURRENT_TIMESTAMP",
+            "by_date":"DELETE FROM teams WHERE update < %s",
+            "by_team":"DELETE FROM teams WHERE nome=%s",
+            "all":"DELETE FROM teams"
+        }
     }
 }
 
@@ -477,6 +482,26 @@ class DB:
                 (userA['language_code'] == userB['language_code'])):
             return False
         return userA
+
+    def delete_teams_by_date_now(self):
+        """Elimina dalla tabella teams tutti gli elementi con data antecedente a ora"""
+        self.execute(TABELLE['teams']['delete']['by_date_today'])
+
+    def delete_teams_by_date(self, datetime):
+        """Elimina dalla tabella teams tutti gli elementi con data antecedente a datetime
+        @:param datetime: data da cui iniziare a cancellare le righe
+        @:type: datetime"""
+        self.execute(TABELLE['teams']['delete']['by_date'],(datetime,))
+
+    def delete_teams_by_name(self, team_name):
+        """Elimina dalla tabella teams tutti gli elementi con nome uguale a team_name
+        @:param team_name: nome del team
+        @:type: str"""
+        self.execute(TABELLE['teams']['delete']['by_team'],(team_name, ))
+
+    def delete_teams_all(self, team_name):
+        """Elimina dalla tabella teams tutti gli elementi"""
+        self.execute(TABELLE['teams']['delete']['all'])
 
     # def delete_from_all(self, id):
     #     self.execute(TABELLE['all']['delete'],(id,))
