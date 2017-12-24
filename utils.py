@@ -74,7 +74,7 @@ def text_splitter_lines(text, splitter="\n", split_every=5):
         to_append="\n".join(elem)
         if to_append: res.append(to_append)
     return res
-def text_splitter_bytes(text,splitter="\n", split_every=4096):
+def text_splitter_bytes(text,splitter="\n", split_every=2048):
     """Divide un messaggio da mandare in piu parti
     @:param text: messaggio da dividere
     @:type: str

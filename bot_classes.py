@@ -1567,6 +1567,7 @@ Una volta inoltrato il messaggio ti verranno offerte varie scelte di visualizzaz
 8) <i>Esci </i> : Termina la visualizzazione
 Per ora sarà possibile accedere a queste informaizoni solo tramite inoltro del messaggio <i>Hall of Fame</i>, poiche ad ogni ricezione vengono aggiungere dati su cui poter effettuare le stime.
 Quando avremo raggiunto una sufficente quantita di dati salterà fuori un comando che non necesita di inoltro.
+C'è anche da dire che alcune informazioni non sono ancora disponibili (Mensile e Giornaliero) per via della recente nascita del comando... tra un mese avremo a disposizione tutto
 Prossimamente aggiungerò anche qualche tecnica di Inteligenza Artificiale al bot per fergli prevedere come sarà la classifica tra un tot di tempo (ore, giorni, settimane...), prorpio per questo vi invito a inoltrare piu messaggi possibili!
 """
 
