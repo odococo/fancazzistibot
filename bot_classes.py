@@ -1556,7 +1556,18 @@ Otterrai il valore (in exp drago) di tutte le pietre del drago che sono presenti
 
 <b>----Teams----</b>
 Questo comando viene attivato inoltrando il messaggio <b>Team->Hall of Fame</b> da @lootgamebot
-
+Una volta inoltrato il messaggio ti verranno offerte varie scelte di visualizzazione (<b>NB</b>: 'Inc' è un acronimo di incremento e fa riferimento alla variazione di pc):
+1) <i>Inc Orario</i> : Mostra l'incremento orario medio di tutti i team presenti 
+2) <i>Inc Giornaliero</i> : Mostra l'incremento giornaliero medio di tutti i team presenti 
+3) <i>Inc Mensile</i> : Mostra l'incremento mensile medio di tutti i team presenti 
+4) <i>Inc Ultimo Aggiornamento </i> : Mostra l'incremento dall'ultimo aggiornamento 
+5) <i>Inc Totale </i> : Mostra l'incremento totale dal primo messaggio ricevuto 
+6) <i>Inc Totale Medio </i> : Mostra l'incremento totale medio dal primo messaggio ricevuto 
+7) <i>Grafico </i> : Invia una foto (in formato png) dell'andamento di tutti i team in termini ti pc totali. I pallini rappresentano un messaggio di inoltro ricevuto, mentre le line compongono la curva di andamento
+8) <i>Esci </i> : Termina la visualizzazione
+Per ora sarà possibile accedere a queste informaizoni solo tramite inoltro del messaggio <i>Hall of Fame</i>, poiche ad ogni ricezione vengono aggiungere dati su cui poter effettuare le stime.
+Quando avremo raggiunto una sufficente quantita di dati salterà fuori un comando che non necesita di inoltro.
+Prossimamente aggiungerò anche qualche tecnica di Inteligenza Artificiale al bot per fergli prevedere come sarà la classifica tra un tot di tempo (ore, giorni, settimane...), prorpio per questo vi invito a inoltrare piu messaggi possibili!
 """
 
     def get_credits(self):
