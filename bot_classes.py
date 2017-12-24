@@ -2184,7 +2184,7 @@ class Team:
             text=to_send,
             message_id=update.callback_query.message.message_id,
             parse_mode="HTML",
-            reply_markup=self.inline_inc
+            reply_markup=self.inline_stime
         )
 
     def decision_inc(self, bot, update):
