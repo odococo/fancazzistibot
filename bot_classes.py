@@ -1,6 +1,7 @@
 import inspect
 import math
 import operator
+import os
 import random
 import re
 from collections import Counter
@@ -8,12 +9,10 @@ from collections import OrderedDict
 from datetime import timedelta, datetime
 
 import matplotlib as mpl
-import os
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-
 
 import emoji
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
@@ -1455,6 +1454,12 @@ class Help:
              InlineKeyboardButton("Esci", callback_data="/help esci")]
 
         ])
+        self.inline_page = InlineKeyboardMarkup([
+            [InlineKeyboardButton("➡️", callback_data="/help page_avanti"),
+             InlineKeyboardButton("⬅️", callback_data="/help page_indietro")],
+            [InlineKeyboardButton("Torna al help", callback_data="/help page_esci")]
+
+        ])
 
         disp = updater.dispatcher
         if DEBUG:
@@ -1463,7 +1468,7 @@ class Help:
             help_init_elegible = self.db.elegible_loot_user(self.help_init)
             disp.add_handler(CommandHandler("help", help_init_elegible))
 
-        disp.add_handler(CallbackQueryHandler(self.help_decision, pattern="/help"))
+        disp.add_handler(CallbackQueryHandler(self.help_decision, pattern="/help", pass_user_data=True))
 
     def get_commands_help(self):
         """Prende le funzioni e relative doc dei metodi di Command
@@ -1586,14 +1591,22 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
     # todo: create multiple page help
-    def help_decision(self, bot, update):
+    def help_decision(self, bot, update, user_data):
         """Visulauzza i vari help a seconda della scelta dell'user"""
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
+        if 'page' not in user_data.keys(): user_data['page'] = -1
+        user_data['pages'] = []
+
         user, admin, developer = self.get_commands_help()
 
         to_send = ""
+
+        if param=="page_avanti":user_data['page'] +=1
+        elif param=="page_indietro":user_data['page'] -=1
+        elif param=="page_indietro":user_data['page_esci'] =-1
+
         if param == "esci":
             # elimina messaggio di scelta
             bot.delete_message(
@@ -1648,14 +1661,18 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
                 to_send = to_send[0]
 
         elif param == "inoltro":
-            to_send += "<b>=====COMANDI DEVELOPER=====</b>\n\n"
-
-            to_send+=self.get_forward_commands()
+            to_send += self.get_forward_commands()
             # dividi il messaggio a seconda della lunghezza in bytes
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
-                to_send = to_send[0]
+                if user_data['page']<0:
+                    user_data['page'] = 0
+                    user_data['pages'] = to_send
+                    to_send = to_send[0]
+                else:
+                    user_data['pages'] = to_send
+                    to_send = to_send[user_data['page']]
             # altrimenti usa il primo elemento
             else:
                 to_send = to_send[0]
@@ -1664,15 +1681,53 @@ Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storeb
         elif param == "crediti":
             to_send += self.get_credits()
 
-        # modifica il messaggio con il to_send
-        bot.edit_message_text(
-            chat_id=update.callback_query.message.chat_id,
-            text=to_send,
-            message_id=update.callback_query.message.message_id,
-            reply_markup=self.inline_cat,
-            parse_mode="HTML"
+        if user_data['page'] < 0:
+            # modifica il messaggio con il to_send
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=to_send,
+                message_id=update.callback_query.message.message_id,
+                reply_markup=self.inline_cat,
+                parse_mode="HTML"
 
-        )
+            )
+        else:
+            # ultima pagina
+            if user_data['page'] == len(user_data['pages']):
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("⬅️", callback_data="/help page_indietro")],
+                        [InlineKeyboardButton("Torna al help", callback_data="/help page_esci")]]),
+                    parse_mode="HTML"
+
+                )
+            # prima pagina
+            elif user_data['page'] == 0:
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("➡️", callback_data="/help page_avanti")],
+                        [InlineKeyboardButton("Torna al help", callback_data="/help page_esci")]
+
+                    ]),
+                    parse_mode="HTML"
+
+                )
+            # pagine in mezzo
+            else:
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    reply_markup=self.inline_page,
+                    parse_mode="HTML"
+
+                )
 
 
 class Team_old:
@@ -1877,7 +1932,7 @@ class Team:
         self.db = db
         self.data_dict = {}
         self.last_update = None
-        self.youngest_update=None
+        self.youngest_update = None
         self.inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Inc Orario", callback_data="/team orario"),
              InlineKeyboardButton("Inc Giornaliero", callback_data="/team giornaliero"),
@@ -1890,20 +1945,15 @@ class Team:
 
         ])
 
-
         disp = updater.dispatcher
 
         if DEBUG:
             disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
         else:
-            forward_team_decor=self.db.elegible_loot_user(self.forward_team)
+            forward_team_decor = self.db.elegible_loot_user(self.forward_team)
             disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
 
-
-
         disp.add_handler(CallbackQueryHandler(self.decison, pattern="/team"))
-
-
 
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
@@ -1916,11 +1966,9 @@ class Team:
             update.message.reply_text("Database aggiornato!")
             return
 
+        # print(self.last_update)
 
-
-        #print(self.last_update)
-
-        #unisci i dati nel db con quelli nel messaggio
+        # unisci i dati nel db con quelli nel messaggio
         complete_team = team_db
         # uso un counter per vedere quanti elementi ho nella lista (per ogni team)
         count = Counter(elem[0] for elem in complete_team)
@@ -1969,36 +2017,39 @@ class Team:
         elif param == "totale":
             res_dict = self.get_total_increment(self.data_dict)
             if res_dict:
-                ora,data=pretty_time_date(self.youngest_update)
-                to_send = self.pretty_increment(res_dict, "<b>Incremento totale</b> (dal <i>"+data+" alle "+ora+"</i>):\n")
+                ora, data = pretty_time_date(self.youngest_update)
+                to_send = self.pretty_increment(res_dict,
+                                                "<b>Incremento totale</b> (dal <i>" + data + " alle " + ora + "</i>):\n")
 
         elif param == "totale_medio":
             res_dict = self.get_total_mean_increment(self.data_dict)
             if res_dict:
-                ora,data=pretty_time_date(self.youngest_update)
-                to_send = self.pretty_increment(res_dict, "<b>Incremento totale medio</b> (dal <i>"+data+" alle "+ora+"</i>):\n")
+                ora, data = pretty_time_date(self.youngest_update)
+                to_send = self.pretty_increment(res_dict,
+                                                "<b>Incremento totale medio</b> (dal <i>" + data + " alle " + ora + "</i>):\n")
 
         elif param == "update":
             res_dict = self.get_last_update_increment(self.data_dict)
             if res_dict:
                 ora, data = pretty_time_date(self.last_update)
-                to_send = self.pretty_increment(res_dict,"<b>Incremento dall'ultimo aggiornamento</b> (Il " + data + " alle " + ora + "):\n")
+                to_send = self.pretty_increment(res_dict,
+                                                "<b>Incremento dall'ultimo aggiornamento</b> (Il " + data + " alle " + ora + "):\n")
 
         elif param == "grafico":
-            to_send="Immagine inviata!"
+            to_send = "Immagine inviata!"
 
-            #crea immagine e inviala
-            path2img=self.plot(self.data_dict)
+            # crea immagine e inviala
+            path2img = self.plot(self.data_dict)
             with open(path2img, "rb") as file:
                 bot.sendPhoto(update.callback_query.message.chat_id, file)
-            #rimuovi immagine
+            # rimuovi immagine
             os.remove(path2img)
-            #rimuovi messaggio
+            # rimuovi messaggio
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
             )
-            msg=update.callback_query.message.reply_text(to_send)
+            msg = update.callback_query.message.reply_text(to_send)
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=to_send,
@@ -2054,7 +2105,7 @@ class Team:
 
         # prendi l'aggiornamento piu recente e piu vecchio
         self.last_update = max(res, key=lambda x: x[3])[3]
-        self.youngest_update=youngest_update=min(res,key=lambda x: x[3])[3]
+        self.youngest_update = youngest_update = min(res, key=lambda x: x[3])[3]
 
         return res
 
@@ -2320,8 +2371,8 @@ class Team:
 
         return res
 
-    #todo: metti da quando
-    #todo: fai in modo che il head di quando possa essere resettato
+    # todo: metti da quando
+    # todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict):
         """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
           @:param data_dict: il dizionario ritornato da list2dict
