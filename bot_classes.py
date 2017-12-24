@@ -8,6 +8,8 @@ from collections import OrderedDict
 from datetime import timedelta, datetime
 
 import matplotlib as mpl
+import os
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
@@ -1951,7 +1953,10 @@ class Team:
 
 
         elif param == "grafico":
-            print("grafico")
+            path2img=self.plot(self.data_dict)
+            with open(path2img, "rb") as file:
+                self.bot.sendPhoto(update.callback_query.message.from_user.id, file)
+            os.remove(path2img)
 
 
         elif param == "esci":
@@ -2021,40 +2026,40 @@ class Team:
 
         return teams
 
-    # def plot(self, data_dict):
-    #     """Salva un grafico dove le x sono l'unita di tempo e le y i pc totali per ogni Team
-    #     @:param data_dict: il dizionario ritornato da list2dict
-    #     @:type: dict
-    #     @:return: nome dell'immagine (str)
-    #     """
-    #
-    #     # definisco un font per la legenda
-    #     fontP = FontProperties()
-    #     fontP.set_size('medium')
-    #     NUM_COLORS = 15
-    #
-    #     cm = plt.get_cmap('gist_rainbow')
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(111)
-    #     ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
-    #
-    #     lines = []
-    #     for key, data_list in data_dict.items():
-    #         dates = [elem[1] for elem in data_list]
-    #         values = [elem[0] for elem in data_list]
-    #         # plot tracccia le linee, scatter i punti
-    #         a = plt.plot(dates, values, label=key)
-    #         lines.append(a[0])
-    #         plt.scatter(dates, values)
-    #
-    #     lgd = plt.legend(bbox_to_anchor=(1.12, 1.01))
-    #
-    #     plt.ylabel('PC totali in kk')
-    #     plt.xlabel('Messaggi Inoltrati')
-    #     plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 2))
-    #     save_name = "team_data.png"
-    #     plt.savefig(save_name, bbox_extra_artists=(lgd,), bbox_inches='tight')
-    #     return save_name
+    def plot(self, data_dict):
+        """Salva un grafico dove le x sono l'unita di tempo e le y i pc totali per ogni Team
+        @:param data_dict: il dizionario ritornato da list2dict
+        @:type: dict
+        @:return: nome dell'immagine (str)
+        """
+
+        # definisco un font per la legenda
+        fontP = FontProperties()
+        fontP.set_size('medium')
+        NUM_COLORS = 15
+
+        cm = plt.get_cmap('gist_rainbow')
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
+
+        lines = []
+        for key, data_list in data_dict.items():
+            dates = [elem[1] for elem in data_list]
+            values = [elem[0] for elem in data_list]
+            # plot tracccia le linee, scatter i punti
+            a = plt.plot(dates, values, label=key)
+            lines.append(a[0])
+            plt.scatter(dates, values)
+
+        lgd = plt.legend(bbox_to_anchor=(1.12, 1.01))
+
+        plt.ylabel('PC totali in kk')
+        plt.xlabel('Messaggi Inoltrati')
+        plt.ticklabel_format(axis='y', style='sci', scilimits=(0, 2))
+        save_name = "team_data.png"
+        plt.savefig(save_name, bbox_extra_artists=(lgd,), bbox_inches='tight')
+        return save_name
 
     def list2dict(self, data_list):
         """Converte una lista di elementi data dal db in un dizionario
