@@ -2039,7 +2039,7 @@ class Team:
         disp.add_handler(CallbackQueryHandler(self.decision_inc, pattern="/team_inc"))
         disp.add_handler(CallbackQueryHandler(self.decision_stime, pattern="/team_stima"))
 
-#================Start and Decision==================
+    # ================Start and Decision==================
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
         # prendi i team nel messaggio e nel db
@@ -2210,34 +2210,34 @@ class Team:
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
 
         if param == "orario":
-            res_dict = self.get_temporal_increment(self.data_dict,0)
+            res_dict = self.get_temporal_increment(self.data_dict, 0)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento orario medio</b>:\n")
 
         elif param == "giornaliero":
-            res_dict = self.get_temporal_increment(self.data_dict,1)
+            res_dict = self.get_temporal_increment(self.data_dict, 1)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento giornaliero medio</b>:\n")
 
         elif param == "settimanale":
-            res_dict = self.get_temporal_increment(self.data_dict,2)
+            res_dict = self.get_temporal_increment(self.data_dict, 2)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento settimanale medio</b>:\n")
 
         elif param == "mensile":
-            res_dict = self.get_temporal_increment(self.data_dict,3)
+            res_dict = self.get_temporal_increment(self.data_dict, 3)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento mensile medio</b>:\n")
 
         elif param == "totale":
-            res_dict = self.get_total_increment(self.data_dict,False)
+            res_dict = self.get_total_increment(self.data_dict, False)
             if res_dict:
                 ora, data = pretty_time_date(self.youngest_update)
                 to_send = self.pretty_increment(res_dict,
                                                 "<b>Incremento totale</b> (dal <i>" + data + " alle " + ora + "</i>):\n")
 
         elif param == "totale_medio":
-            res_dict = self.get_total_increment(self.data_dict,True)
+            res_dict = self.get_total_increment(self.data_dict, True)
             if res_dict:
                 ora, data = pretty_time_date(self.youngest_update)
                 to_send = self.pretty_increment(res_dict,
@@ -2271,7 +2271,7 @@ class Team:
             reply_markup=self.inline_inc
         )
 
-#=====================DB=============================
+    # =====================DB=============================
 
     def update_db(self, teams, numero):
         """Esegue l'update del db dato un messagigo team
@@ -2307,8 +2307,7 @@ class Team:
 
         return res
 
-
-#====================UTILS===================
+    # ====================UTILS===========================
 
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
@@ -2470,8 +2469,7 @@ class Team:
 
         return False
 
-#===================Inc and Stima=====================
-
+    # ===================Inc and Stima=====================
 
     # todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict, mean):
@@ -2506,9 +2504,7 @@ class Team:
             # e lo aggiungo al dizionario
             res_dict[key] = incr
 
-
         return res_dict
-
 
     def get_last_update_increment(self, data):
         """Ritorna un dizionario con key=nomeTeam e value=incremento dall'ultimo aggiornamento (int)
@@ -2532,7 +2528,6 @@ class Team:
 
         return res_dict
 
-
     def get_total_pc(self, data_dict):
         """Ritorna il dizionario con key=nomeTeam, value=pcTotali
         @:param data_dict: il dizionario ritornato da list2dict
@@ -2553,16 +2548,8 @@ class Team:
         @:type:int
         @:return: ritorna un dizionario con coppia team-incrementoMedio"""
 
-        incr = None
-        if what == 0:
-            incr = self.get_hour_increment(data_dict)
-        elif what == 1:
-            incr = self.get_day_increment(data_dict)
-        elif what == 2:
-            incr = self.get_week_increment(data_dict)
-        elif what == 3:
-            incr = self.get_month_increment(data_dict)
-
+        incr = self.get_temporal_increment(data_dict,what)
+       
         if not incr: return False
         tot_pc = self.get_total_pc(data_dict)
 
@@ -2573,7 +2560,7 @@ class Team:
 
         return h_stima
 
-    def get_temporal_increment(self, data_dict,what):
+    def get_temporal_increment(self, data_dict, what):
         """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
         @:param data_dict: il dizionario ritornato da list2dict
         @:type: dict
