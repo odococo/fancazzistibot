@@ -1562,15 +1562,32 @@ Otterrai il valore (in exp drago) di tutte le pietre del drago che sono presenti
 
 <b>----Teams----</b>
 Questo comando viene attivato inoltrando il messaggio <b>Team->Hall of Fame</b> da @lootgamebot
-Una volta inoltrato il messaggio ti verranno offerte varie scelte di visualizzazione (<b>NB</b>: 'Inc' è un acronimo di incremento e fa riferimento alla variazione di pc):
-1) <i>Inc Orario</i> : Mostra l'incremento orario medio di tutti i team presenti 
-2) <i>Inc Giornaliero</i> : Mostra l'incremento giornaliero medio di tutti i team presenti 
-3) <i>Inc Mensile</i> : Mostra l'incremento mensile medio di tutti i team presenti 
-4) <i>Inc Ultimo Aggiornamento </i> : Mostra l'incremento dall'ultimo aggiornamento 
-5) <i>Inc Totale </i> : Mostra l'incremento totale dal primo messaggio ricevuto 
-6) <i>Inc Totale Medio </i> : Mostra l'incremento totale medio dal primo messaggio ricevuto 
-7) <i>Grafico </i> : Invia una foto (in formato png) dell'andamento di tutti i team in termini ti pc totali. I pallini rappresentano un messaggio di inoltro ricevuto, mentre le line compongono la curva di andamento
-8) <i>Esci </i> : Termina la visualizzazione
+Una volta inoltrato il messaggio ti verranno offerte varie scelte di visualizzazione:
+1)<b>--Incremento--</b>
+(<b>NB</b>: 'Inc' è un acronimo di incremento e fa riferimento alla variazione di pc):
+1.1) <i>Inc Orario</i> : Mostra l'incremento orario medio di tutti i team presenti 
+1.2) <i>Inc Giornaliero</i> : Mostra l'incremento giornaliero medio di tutti i team presenti 
+1.3) <i>Inc Settimanale</i> : Mostra l'incremento settimanale medio di tutti i team presenti 
+1.4) <i>Inc Mensile</i> : Mostra l'incremento mensile medio di tutti i team presenti 
+1.5) <i>Inc Ultimo Aggiornamento </i> : Mostra l'incremento dall'ultimo aggiornamento 
+1.6) <i>Inc Totale </i> : Mostra l'incremento totale dal primo messaggio ricevuto 
+1.7) <i>Inc Totale Medio </i> : Mostra l'incremento totale medio dal primo messaggio ricevuto
+
+2) <b>--Grafico--</b>
+Invia una foto (in formato png) dell'andamento di tutti i team in termini ti pc totali. I pallini rappresentano un messaggio di inoltro ricevuto, mentre le line compongono la curva di andamento
+
+3) <b>--Stime--</b>
+Le Stime rappresentano la classifica stimata in base all'unità di tempo, ovvero a quanti pc saranno arrivati i teams tra ore, giorni, settimane, mesi...
+2.1) <i>Stima Orarie</i> : Mostra i pc stimati tra un ora 
+2.2) <i>Stima Giornaliere</i> : Mostra i pc stimati tra un giorno 
+2.3) <i>Stima Settimanali</i> : Mostra i pc stimati tra una settimana
+2.4) <i>Stima Mensili</i> : Mostra i pc stimati tra un mese
+
+4) <b>--Classifica--</b>
+Visualizza la classica calssifica della Hall of Fame
+
+5) <b>--Esci--</b> 
+Termina la visualizzazione
 
 Per ora sarà possibile accedere a queste informaizoni solo tramite inoltro del messaggio <i>Hall of Fame</i>, poiche ad ogni ricezione vengono aggiungere dati su cui poter effettuare le stime.
 Quando avremo raggiunto una sufficente quantita di dati salterà fuori un comando che non necesita di inoltro.
