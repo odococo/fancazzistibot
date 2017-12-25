@@ -2039,6 +2039,7 @@ class Team:
         disp.add_handler(CallbackQueryHandler(self.decision_inc, pattern="/team_inc"))
         disp.add_handler(CallbackQueryHandler(self.decision_stime, pattern="/team_stima"))
 
+#================Start and Decision==================
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
         # prendi i team nel messaggio e nel db
@@ -2209,34 +2210,34 @@ class Team:
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
 
         if param == "orario":
-            res_dict = self.get_hour_increment(self.data_dict)
+            res_dict = self.get_temporal_increment(self.data_dict,0)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento orario medio</b>:\n")
 
         elif param == "giornaliero":
-            res_dict = self.get_day_increment(self.data_dict)
+            res_dict = self.get_temporal_increment(self.data_dict,1)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento giornaliero medio</b>:\n")
 
         elif param == "settimanale":
-            res_dict = self.get_week_increment(self.data_dict)
+            res_dict = self.get_temporal_increment(self.data_dict,2)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento settimanale medio</b>:\n")
 
         elif param == "mensile":
-            res_dict = self.get_month_increment(self.data_dict)
+            res_dict = self.get_temporal_increment(self.data_dict,3)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Incremento mensile medio</b>:\n")
 
         elif param == "totale":
-            res_dict = self.get_total_increment(self.data_dict)
+            res_dict = self.get_total_increment(self.data_dict,False)
             if res_dict:
                 ora, data = pretty_time_date(self.youngest_update)
                 to_send = self.pretty_increment(res_dict,
                                                 "<b>Incremento totale</b> (dal <i>" + data + " alle " + ora + "</i>):\n")
 
         elif param == "totale_medio":
-            res_dict = self.get_total_mean_increment(self.data_dict)
+            res_dict = self.get_total_increment(self.data_dict,True)
             if res_dict:
                 ora, data = pretty_time_date(self.youngest_update)
                 to_send = self.pretty_increment(res_dict,
@@ -2269,6 +2270,8 @@ class Team:
             parse_mode="HTML",
             reply_markup=self.inline_inc
         )
+
+#=====================DB=============================
 
     def update_db(self, teams, numero):
         """Esegue l'update del db dato un messagigo team
@@ -2303,6 +2306,9 @@ class Team:
         self.youngest_update = youngest_update = min(res, key=lambda x: x[3])[3]
 
         return res
+
+
+#====================UTILS===================
 
     def extract_teams_from_msg(self, msg):
         """Estrae i team da un messaggio teams
@@ -2375,132 +2381,6 @@ class Team:
         for elem in data_list:
             res[elem[0]].append(elem[1:])
         return res
-
-    def get_hour_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 0)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
-
-    def get_day_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 1)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
-
-    def get_month_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 3)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
 
     def filter_dict_by(self, data_dict, what):
         """Filtra il dizionario ritornato da list2dict a seconda del tempo:
@@ -2590,11 +2470,16 @@ class Team:
 
         return False
 
+#===================Inc and Stima=====================
+
+
     # todo: fai in modo che il head di quando possa essere resettato
-    def get_total_increment(self, data_dict):
+    def get_total_increment(self, data_dict, mean):
         """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
           @:param data_dict: il dizionario ritornato da list2dict
           @:type: dict
+          @:param mean: se vuoi la media o il totale
+          @:type: bool
           @:return: ritorna un dizionario con coppia team-incrementoTotale"""
 
         res_dict = {}
@@ -2616,41 +2501,14 @@ class Team:
                 # aggiungo uno a idx
                 idx += 1
             # calcolo l'incremento medio
+            if mean: incr = incr / math.ceil(len(tot_pc) / idx)
+
             # e lo aggiungo al dizionario
             res_dict[key] = incr
 
-        return res_dict
-
-    def get_total_mean_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
-          @:param data_dict: il dizionario ritornato da list2dict
-          @:type: dict
-          @:return: ritorna un dizionario con coppia team-incrementoTotale"""
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in data_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in data_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
 
         return res_dict
+
 
     def get_last_update_increment(self, data):
         """Ritorna un dizionario con key=nomeTeam e value=incremento dall'ultimo aggiornamento (int)
@@ -2674,47 +2532,6 @@ class Team:
 
         return res_dict
 
-    def get_week_increment(self, data_dict):
-        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
-        @:param data_dict: il dizionario ritornato da list2dict
-        @:type: dict
-        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
-
-        filter_dict = self.filter_dict_by(data_dict, 2)
-
-        iter_dict = {}
-
-        for key in filter_dict.keys():
-            # se la lista di incrementi contiene un solo elemento non posso fare la stima
-            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
-
-        if not iter_dict:
-            return False
-
-        res_dict = {}
-
-        # per ogni team nel dizionario
-        for key in iter_dict.keys():
-            # mi ricavo i tot_pc e inizzializzo due int
-            tot_pc = [elem[0] for elem in iter_dict[key]]
-            incr = 0
-            idx = 0
-            # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
-                to_calc = tot_pc[i:i + 2]
-                # se sono arrivato all'ultimo passo
-                if len(to_calc) != 2: continue
-                # calcolo l'incremento
-                incr += abs(to_calc[0] - to_calc[1])
-                # print(incr)
-                # aggiungo uno a idx
-                idx += 1
-            # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
-            # e lo aggiungo al dizionario
-            res_dict[key] = incr
-
-        return res_dict
 
     def get_total_pc(self, data_dict):
         """Ritorna il dizionario con key=nomeTeam, value=pcTotali
@@ -2755,3 +2572,47 @@ class Team:
             h_stima[key] = incr[key] + tot_pc[key]
 
         return h_stima
+
+    def get_temporal_increment(self, data_dict,what):
+        """Ritorna un dizionario con key=nomeTeam e value=incremento medio (int)
+        @:param data_dict: il dizionario ritornato da list2dict
+        @:type: dict
+        @:param what: unita di tempo da considerare =0 (ora), =1 (giorno), =2 (settimana), =3(mese)
+        @:type: int
+        @:return: ritorna un dizionario con coppia team-incrementoMedio"""
+
+        filter_dict = self.filter_dict_by(data_dict, what)
+
+        iter_dict = {}
+
+        for key in filter_dict.keys():
+            # se la lista di incrementi contiene un solo elemento non posso fare la stima
+            if len(filter_dict[key]) > 1: iter_dict[key] = filter_dict[key]
+
+        if not iter_dict:
+            return False
+
+        res_dict = {}
+
+        # per ogni team nel dizionario
+        for key in iter_dict.keys():
+            # mi ricavo i tot_pc e inizzializzo due int
+            tot_pc = [elem[0] for elem in iter_dict[key]]
+            incr = 0
+            idx = 0
+            # prendo i pc a coppie di 2 per farne la differenza
+            for i in range(0, len(tot_pc), 2):
+                to_calc = tot_pc[i:i + 2]
+                # se sono arrivato all'ultimo passo
+                if len(to_calc) != 2: continue
+                # calcolo l'incremento
+                incr += abs(to_calc[0] - to_calc[1])
+                # print(incr)
+                # aggiungo uno a idx
+                idx += 1
+            # calcolo l'incremento medio
+            incr = incr / math.ceil(len(tot_pc) / idx)
+            # e lo aggiungo al dizionario
+            res_dict[key] = incr
+
+        return res_dict
