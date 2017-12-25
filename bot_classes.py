@@ -1456,7 +1456,7 @@ class Help:
         ])
         self.inline_page = InlineKeyboardMarkup([
             [
-             InlineKeyboardButton("⬅️", callback_data="/help page_indietro"),
+                InlineKeyboardButton("⬅️", callback_data="/help page_indietro"),
                 InlineKeyboardButton("➡️", callback_data="/help page_avanti")],
             [InlineKeyboardButton("Torna al help", callback_data="/help page_esci")]
 
@@ -1603,23 +1603,22 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             print("page not found!")
             user_data['page'] = 0
 
-        if 'pages' not in user_data.keys():user_data['pages'] = []
-
+        if 'pages' not in user_data.keys(): user_data['pages'] = []
 
         user, admin, developer = self.get_commands_help()
 
         to_send = ""
 
-        if param=="page_avanti":
-            user_data['page'] +=1
-            to_send = user_data['pages'][user_data['page']-1]
+        if param == "page_avanti":
+            user_data['page'] += 1
+            to_send = user_data['pages'][user_data['page'] - 1]
 
-        elif param=="page_indietro":
-            user_data['page'] -=1
-            to_send = user_data['pages'][user_data['page']-1]
+        elif param == "page_indietro":
+            user_data['page'] -= 1
+            to_send = user_data['pages'][user_data['page'] - 1]
 
-        elif param=="page_esci":
-            user_data['page'] =0
+        elif param == "page_esci":
+            user_data['page'] = 0
             to_send = """Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot
 Seleziona una categoria di comandi per imapararne l'utilizzo. Ricorda che ogni comando ha la seguente sintassi:
 nomeComando parametri - spiegazione
@@ -1633,8 +1632,6 @@ Quindi ricorda di aggiungere i parametri giusti!"""
 
             )
             return
-
-
 
         if param == "esci":
             # elimina messaggio di scelta
@@ -1656,8 +1653,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             if len(to_send) > 1:
                 user_data['pages'] = to_send
 
-                if user_data['page']==0:
-
+                if user_data['page'] == 0:
                     user_data['page'] = 1
                     to_send = to_send[0]
             # altrimenti usa il primo elemento
@@ -1676,8 +1672,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             if len(to_send) > 1:
                 user_data['pages'] = to_send
 
-                if user_data['page']==0:
-
+                if user_data['page'] == 0:
                     user_data['page'] = 1
                     to_send = to_send[0]
             # altrimenti usa il primo elemento
@@ -1696,8 +1691,7 @@ Quindi ricorda di aggiungere i parametri giusti!"""
             if len(to_send) > 1:
                 user_data['pages'] = to_send
 
-                if user_data['page']==0:
-
+                if user_data['page'] == 0:
                     user_data['page'] = 1
                     to_send = to_send[0]
             # altrimenti usa il primo elemento
@@ -1706,15 +1700,14 @@ Quindi ricorda di aggiungere i parametri giusti!"""
 
         elif param == "inoltro":
             to_send += self.get_forward_commands()
-            #print(to_send)
+            # print(to_send)
             # dividi il messaggio a seconda della lunghezza in bytes
             to_send = text_splitter_bytes(to_send, splitter="\n\n")
             # se ci sono piu elementi manda solo il pirmo, vedi todo
             if len(to_send) > 1:
                 user_data['pages'] = to_send
 
-                if user_data['page']==0:
-
+                if user_data['page'] == 0:
                     user_data['page'] = 1
                     to_send = to_send[0]
 
@@ -1980,10 +1973,10 @@ class Team:
         self.youngest_update = None
         self.inline_team = InlineKeyboardMarkup([
             [InlineKeyboardButton("Incrementi", callback_data="/team_main incrementi"),
-            InlineKeyboardButton("Grafico", callback_data="/team_main grafico"),
+             InlineKeyboardButton("Grafico", callback_data="/team_main grafico"),
              InlineKeyboardButton("Classifica", callback_data="/team_main classifica")],
-             [InlineKeyboardButton("Stime", callback_data="/team_main stime"),
-              InlineKeyboardButton("Esci", callback_data="/team_main esci")]
+            [InlineKeyboardButton("Stime", callback_data="/team_main stime"),
+             InlineKeyboardButton("Esci", callback_data="/team_main esci")]
 
         ])
 
@@ -1996,7 +1989,7 @@ class Team:
 
         ])
 
-        self.inline_inc=InlineKeyboardMarkup([
+        self.inline_inc = InlineKeyboardMarkup([
             [InlineKeyboardButton("Inc Orario", callback_data="/team_inc orario"),
              InlineKeyboardButton("Inc Giornaliero", callback_data="/team_inc giornaliero"),
              InlineKeyboardButton("Inc Settimanale", callback_data="/team_inc settimanale"),
@@ -2008,14 +2001,14 @@ class Team:
 
         ])
 
-        self.team_init_msg="Ci sono varie categorie di informazioni che puoi visualizzare:\n" \
-                  "<b>Incrementi</b> : mostra di quanto aumentano i pc dei team in base a vari parametri temporali (ore, giorni settimane, mesi), " \
-                  "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
-                  "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
-                  "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
-                  "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame" \
-                  "<b>Esci</b> : per uscira dalla visualizzazione\n" \
-                  "Quindi quali informazioni vuoi vedere?"
+        self.team_init_msg = "Ci sono varie categorie di informazioni che puoi visualizzare:\n" \
+                             "<b>Incrementi</b> : mostra di quanto aumentano i pc dei team in base a vari parametri temporali (ore, giorni settimane, mesi), " \
+                             "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
+                             "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
+                             "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
+                             "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame" \
+                             "<b>Esci</b> : per uscira dalla visualizzazione\n" \
+                             "Quindi quali informazioni vuoi vedere?"
 
         disp = updater.dispatcher
 
@@ -2055,7 +2048,7 @@ class Team:
         for elem in team_msg:
             complete_team.append((elem[0], elem[1], idx, elem[2]))
 
-        #print(complete_team)
+        # print(complete_team)
         # salva il dizionario corrente
         self.data_dict = self.list2dict(complete_team)
 
@@ -2070,12 +2063,11 @@ class Team:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-
         if param == "incrementi":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text="<b>Incrementi</b>\n'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, " \
-                  "ovvero di quanto aumentano i pc.",
+                     "ovvero di quanto aumentano i pc.",
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_inc
@@ -2092,10 +2084,10 @@ class Team:
             )
             return
 
-        elif param=="classifica":
+        elif param == "classifica":
 
-            to_send= self.get_total_pc(self.data_dict)
-            to_send=self.pretty_increment(to_send)
+            to_send = self.get_total_pc(self.data_dict)
+            to_send = self.pretty_increment(to_send)
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=to_send,
@@ -2107,7 +2099,6 @@ class Team:
 
         elif param == "grafico":
             msg = update.callback_query.message.reply_text("Attendi un secondo...")
-
 
             # crea immagine e inviala
             path2img = self.plot(self.data_dict)
@@ -2152,22 +2143,22 @@ class Team:
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
 
         if param == "orario":
-            res_dict = self.get_stima(self.data_dict,0)
+            res_dict = self.get_stima(self.data_dict, 0)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Stima oraria</b>:\n")
 
         elif param == "giornaliero":
-            res_dict = self.get_stima(self.data_dict,1)
+            res_dict = self.get_stima(self.data_dict, 1)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Stima giornaliera</b>:\n")
 
         elif param == "settimanale":
-            res_dict = self.get_stima(self.data_dict,2)
+            res_dict = self.get_stima(self.data_dict, 2)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Stima settimanale</b>:\n")
 
         elif param == "mensile":
-            res_dict = self.get_stima(self.data_dict,3)
+            res_dict = self.get_stima(self.data_dict, 3)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Stima mensile</b>:\n")
 
@@ -2511,23 +2502,24 @@ class Team:
             for elem in data_dict[key]:
                 # se il giorno non è gia presente nella lista dates
                 if what == 0:
-                    if elem[2].hour not in [date.hour for date in dates]:
+                    # se non sono presenti altre date dentro dates con le caratteristiche di elem[2] (guarda same_datetime)
+                    if not any(list(map(lambda date: self.same_datetime(elem[2], date, what), dates))):
                         # aggiungilo sia alle date che al filter dict
                         dates.append(elem[2])
                         filer_dict[key].append(elem)
                 elif what == 1:
-                    if elem[2].day not in [date.day for date in dates]:
+                    if not any(list(map(lambda date: self.same_datetime(elem[2], date, what), dates))):
                         # aggiungilo sia alle date che al filter dict
                         dates.append(elem[2])
                         filer_dict[key].append(elem)
                 elif what == 2:
                     weekday = elem[2].weekday()
-                    if weekday == 0 and weekday not in [date.weekday() for date in dates]:
+                    if not any(list(map(lambda date: self.same_datetime(elem[2], date, what), dates))):
                         # aggiungilo sia alle date che al filter dict
                         dates.append(elem[2])
                         filer_dict[key].append(elem)
                 elif what == 3:
-                    if elem[2].month not in [date.month for date in dates]:
+                    if not any(list(map(lambda date: self.same_datetime(elem[2], date, what), dates))):
                         # aggiungilo sia alle date che al filter dict
                         dates.append(elem[2])
                         filer_dict[key].append(elem)
@@ -2563,6 +2555,23 @@ class Team:
             idx += 1
 
         return res
+
+    def same_datetime(self, datetime1, datetime2, what):
+        """Funzione per controllare l'equivalenza tra datetime
+        @:param datetime1/2: i due datetime
+        @:type: datetime
+        @:param what: dove fermarsi =0 (ora), =1 (giorno), =2(settimana), =3(mese)"""
+        if datetime1.year == datetime2.year:
+            if datetime1.month == datetime2.month:
+                if what == 3: return True
+                if datetime1.weekday() == datetime2.weekday():
+                    if what == 2: return True
+                    if datetime1.day == datetime2.day:
+                        if what == 1: return True
+                        if datetime1.hour == datetime2.hour:
+                            if what == 0: return True
+
+        return False
 
     # todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict):
