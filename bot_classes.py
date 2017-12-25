@@ -2023,7 +2023,7 @@ class Team:
                              "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
                              "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
                              "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
-                             "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame" \
+                             "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame\n" \
                              "<b>Esci</b> : per uscira dalla visualizzazione\n" \
                              "Quindi quali informazioni vuoi vedere?"
 
@@ -2549,7 +2549,7 @@ class Team:
         @:return: ritorna un dizionario con coppia team-incrementoMedio"""
 
         incr = self.get_temporal_increment(data_dict,what)
-       
+
         if not incr: return False
         tot_pc = self.get_total_pc(data_dict)
 
