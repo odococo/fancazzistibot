@@ -2351,7 +2351,7 @@ class Team:
             # plot tracccia le linee, scatter i punti
             a = plt.plot(dates, values, label=key)
             lines.append(a[0])
-            plt.scatter(dates, values)
+            #plt.scatter(dates, values)
 
         lgd = plt.legend(bbox_to_anchor=(1.12, 1.01))
 
