@@ -506,10 +506,13 @@ Detto questo in bocca al lupo"""
 
 
         nomi_boss = ["il Titano", "Phoenix"]
-        if giorno:
+        print(ore, minuti)
+        if giorno==1:
             future_hour = datetime.now() + timedelta(hours=24+1)
         else:
             future_hour = datetime.now() + timedelta(hours=1)
+
+        print(future_hour)
 
         future_hour.replace(hour=ore, minute=minuti)
         message = self.bot.send_message(chat_id=chat_id,
