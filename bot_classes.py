@@ -2519,6 +2519,7 @@ class Team:
         #todo: chiedi il nome del team all'utente
         team_name="I Fancazzisti"
         for name in data_dict.keys():
+            print(name)
             # se hai trovato il nome cambialo con la chiave
             if team_name in name:
                 found = True
