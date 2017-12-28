@@ -485,7 +485,7 @@ Detto questo in bocca al lupo"""
             ore=int(self.params[2].split(":")[0])
             try:
                 minuti = int(self.params[2].split(":")[1])
-            except ValueError:
+            except (IndexError , ValueError):
                 minuti=0
         except ValueError:
             self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /pinboss boss giorno hh:mm"
