@@ -486,8 +486,8 @@ Detto questo in bocca al lupo"""
         giorno = self.params[1]
 
         if len(self.params)==2:
-            ore=0
-            minuti=0
+            ore=datetime.now().hour
+            minuti=datetime.now().minute
         else:
             try:
                 ore = int(self.params[2].split(":")[0])
@@ -513,7 +513,7 @@ Detto questo in bocca al lupo"""
 
 
         nomi_boss = ["il Titano", "Phoenix"]
-        print(ore, minuti)
+        print(giorno,ore, minuti)
         if giorno:
             future_hour = datetime.now() + timedelta(hours=24+1)
         else:
