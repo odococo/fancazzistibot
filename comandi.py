@@ -486,8 +486,8 @@ Detto questo in bocca al lupo"""
         giorno = self.params[1]
 
         if len(self.params)==2:
-            ore=datetime.now().hour
-            minuti=datetime.now().minute
+            ore=0
+            minuti=0
         else:
             try:
                 ore = int(self.params[2].split(":")[0])
