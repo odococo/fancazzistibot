@@ -1574,7 +1574,7 @@ Una volta inoltrato il messaggio ti verranno offerte varie scelte di visualizzaz
 1.7) <i>Inc Totale Medio </i> : Mostra l'incremento totale medio dal primo messaggio ricevuto
 
 2) <b>--Grafico--</b>
-Invia una foto (in formato png) dell'andamento di tutti i team in termini ti pc totali. I pallini rappresentano un messaggio di inoltro ricevuto, mentre le line compongono la curva di andamento
+Invia una foto (in formato png) dell'andamento di tutti i team in termini ti pc totali. I pallini rappresentano un messaggio di inoltro ricevuto,  mentre le line compongono la curva di andamento
 
 3) <b>--Stime--</b>
 Le Stime rappresentano la classifica stimata in base all'unità di tempo, ovvero a quanti pc saranno arrivati i teams tra ore, giorni, settimane, mesi...
@@ -1785,200 +1785,6 @@ Quindi ricorda di aggiungere i parametri giusti!"""
                 )
 
 
-class Team_old:
-    def __init__(self, updater, db):
-        self.updater = updater
-        self.db = db
-        self.prior_str = ""
-        self.datetime = None
-        self.team_dict = {}
-
-        disp = updater.dispatcher
-
-        if DEBUG:
-            disp.add_handler(RegexHandler("^Classifica Team:", self.forward_team))
-            disp.add_handler(CommandHandler('teams', self.visualiza_team))
-        else:
-            forward_team_decor = self.db.elegible_loot_admin(self.forward_team)
-            visualizza_team_decor = self.db.elegible_loot_user(self.visualiza_team)
-            disp.add_handler(RegexHandler("^Classifica Team:", forward_team_decor))
-            disp.add_handler(CommandHandler('teams', visualizza_team_decor))
-
-    def visualiza_team(self, bot, update):
-        """Visualizza gli incrementi senza aggiornarli"""
-        if not self.prior_str:
-            update.message.reply_text("Non ci sono dati sui team, chiedi all'admin di aggiornarli")
-            return
-
-        ora, data = pretty_time_date(self.datetime)
-
-        update.message.reply_text(self.prior_str, parse_mode="HTML")
-        update.message.reply_text("Aggiornato il " + data + " alle " + ora)
-
-    def forward_team(self, bot, update):
-        """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
-        # prendi i team nel messaggio e nel db
-        team_db = self.get_teams_db()
-        team_msg = self.extract_teams_from_msg(update.message.text)
-        # controlla se sono presenti team nel databes
-        if not team_db:
-            self.update_db(team_msg, datetime.now())
-            update.message.reply_text("Database aggiornato!")
-            # update dict
-            for elem in team_msg:
-                self.team_dict[elem[0]] = []
-
-            return
-        # calcola la differenza
-        team_diff = self.get_teams_diff(team_msg, team_db)
-        to_send = self.pretty_diff(team_diff)
-
-        # print(team_diff)
-
-        # update del dizionario
-        if self.team_dict:
-            for elem in team_diff:
-                self.team_dict[elem[0]].append((len(self.team_dict[elem[0]]), elem[1]))
-        else:
-            for elem in team_diff:
-                self.team_dict[elem[0]] = []
-                self.team_dict[elem[0]].append((0, elem[1]))
-
-        print(self.team_dict)
-
-        # savla per visualizzazione
-        self.prior_str = to_send
-        self.datetime = datetime.now()
-
-        update.message.reply_text(to_send, parse_mode="HTML")
-
-        self.update_db(team_msg, team_db[0][2])
-
-    def extract_teams_from_msg(self, msg):
-        """Estrae i team da un messaggio teams
-        @:param msg: messaggio team
-        @:type: str
-        @:return: list of tuples (team_name, pnt)"""
-        # compila il regex
-        team_regex = re.compile(r"° ([A-z ]+)\(([0-9.]+)")
-        # elimina la parte del tuo team
-        msg = msg.split("Il tuo team")[0]
-
-        # teams è una lista di tuple con elem[0]=nome_team, elem[1]=punti
-        teams = re.findall(team_regex, msg)
-
-        # rimuovi il punto dentro i pc e casta ad int
-        teams = [(elem[0], int(elem[1].replace(".", ""))) for elem in teams]
-
-        return teams
-
-    def get_teams_diff(self, teams_list_msg, teams_list_db):
-        """Calcola la differenza di pc tra la lista team mandata e quella nel db
-        @:param teams_list_msg: lista di tuple (usa extract_teams_from_msg)
-        @:param teams_list_db: lista di triple (team_name, pnt, last_update)
-        @:return: lista di quattro elementi (nome_team, pnt_correnti, incremento, last_update)
-        """
-
-        # lista di triple
-        res = []
-
-        for team_db in teams_list_db:
-            for team_msg in teams_list_msg:
-                # se non c'è corrispondenza tra i nomi passo all'iterazione successiva
-                if not team_db[0] == team_msg[0]: continue
-
-                res.append((team_msg[0], team_msg[1], team_msg[1] - team_db[1], team_db[2]))
-
-        return res
-
-    def get_teams_db(self):
-        """Ritorna la lista di teams del db
-        @:return:list of triples (team_name, pnt,last_update)"""
-        # prende i dati dal db
-        teams_db = self.db.get_all_teams()
-
-        # casta il risultato in lista se è un solo dizionario
-        if not isinstance(teams_db, list): teams_db = list(teams_db)
-
-        res = []
-        for elem in teams_db:
-            res.append((elem['name'], elem['pnt'], elem['last_update']))
-            # print(elem['last_update'].isoweekday())
-
-        return res
-
-    def pretty_diff(self, team_diff, sorting_key=1):
-        """Formatta per bene un messaggio team_diff
-        @:param team_diff: lista generata dalla funzione get_teams_diff
-        @:type: lista di triple
-        @:param sorting_key: elemento della tripla secodno cui sortare (default 1:pnt)
-        @:type: 0<int<len(team_diff)-1
-        @:return: stringa formattata da inviare"""
-
-        if sorting_key >= len(team_diff): sorting_key = 1
-
-        # sorta la lista
-        sorted_teams = sorted(team_diff, key=lambda elem: elem[sorting_key], reverse=True)
-
-        res = ""
-        idx = 1
-        for team in sorted_teams:
-            ora, data = pretty_time_date(team[3])
-            if "Fancazzisti" in team[0]:
-                res += str(idx) + ") ⭐️<b>" + team[0] + "</b>⭐️ con <b>" + "{:,}".format(team[1]).replace(",",
-                                                                                                          ".") + "</b> pnt (+ <b>" + str(
-                    team[2]) + "</b>) " \
-                               "rispetto al <i>" + data + "</i> alle <i>" + ora + "</i>\n"
-            else:
-                res += str(idx) + ") <b>" + team[0] + "</b> con <b>" + "{:,}".format(team[1]).replace(",",
-                                                                                                      ".") + "</b> pnt (+ <b>" + str(
-                    team[2]) + "</b>) " \
-                               "rispetto al  <i>" + data + "</i> alle <i>" + ora + "</i>\n"
-            idx += 1
-        return res
-
-    def update_db(self, teams, date):
-        """Esegue l'update del db dato un messagigo team
-        @:param teams: lista di tuple (vedi extract_teams_from_msg)
-        @:type: str"""
-
-        # se è lunedi
-        if date.day != datetime.now().day:
-            print("Is monday")
-            # prendi le date
-            dates = self.db.get_all_teams()
-
-            # trasorma dates in lista se è un siglolo dict
-            if not isinstance(dates, list): dates = list(dates)
-
-            # prendi i pnt_set e media settimanale
-            pnt_set = [(elem['name'], elem['pnt_set'], elem['mean_set']) for elem in dates]
-
-            # calcola nuovo incremento
-            new_incr = []
-
-            for team_msg in teams:
-                for team_db in pnt_set:
-                    if not team_msg[0] == team_db[0]: continue
-                    # se i pnt_sett sono zero aggiornali
-                    if not team_db[1]:
-                        self.db.update_team_full(team_msg[0], team_msg[1], team_db[1], 0)
-                        continue
-                    # se i pnt_sett ci sono ma non c'è la media aggiungila e aggiorna
-                    elif not team_db[2]:
-                        new_incr = team_db[1] - team_msg[1]
-                        self.db.update_team_full(team_msg[0], team_msg[1], team_db[1], new_incr)
-                        continue
-                    # se sono presenti tutti i dati calcola la media
-                    else:
-                        new_incr = team_db[1] - team_msg[1]
-                        new_mean = int((team_db[2] + new_incr) / 2)
-                        self.db.update_team_full(team_msg[0], team_msg[1], team_db[1], new_mean)
-            return
-
-        # inserisci i nomi nel db
-        for team in teams:
-            self.db.insert_team(team[0], team[1])
 
 
 class Team:
@@ -2069,6 +1875,7 @@ class Team:
         # print(complete_team)
         # salva il dizionario corrente
         self.data_dict = self.list2dict(complete_team)
+        print(self.data_dict)
 
         # esegue l'update del db
         self.update_db(team_msg, idx)
