@@ -492,22 +492,29 @@ Detto questo in bocca al lupo"""
             try:
                 ore = int(self.params[2].split(":")[0])
             except ValueError:
-                self.update.message.reply_text("Non hai inserito dei numeri!")
+                self.update.message.reply_text("Non hai inserito un numero corretto per l'ora!")
                 return
 
             try:
                 minuti = int(self.params[2].split(":")[1])
             except ValueError:
-                self.update.message.reply_text("Non hai inserito dei numeri!")
+                self.update.message.reply_text("Non hai inserito un numero corretto per i minuti!")
                 return
             except IndexError:
                 minuti=0
 
 
+        try:
+            giorno=int(self.params[0])
+        except ValueError:
+            self.update.message.reply_text("Non hai inserito un numero corretto per il giorno!")
+            return
+
+
 
         nomi_boss = ["il Titano", "Phoenix"]
         print(ore, minuti)
-        if giorno==1:
+        if giorno:
             future_hour = datetime.now() + timedelta(hours=24+1)
         else:
             future_hour = datetime.now() + timedelta(hours=1)
