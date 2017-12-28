@@ -513,16 +513,16 @@ Detto questo in bocca al lupo"""
 
 
         nomi_boss = ["il Titano", "Phoenix"]
-        print(giorno,ore, minuti)
+       # print(giorno,ore, minuti)
         if giorno:
             future_hour = datetime.now() + timedelta(hours=24+1)
         else:
             future_hour = datetime.now() + timedelta(hours=1)
 
-        print(future_hour)
+        #print(future_hour)
 
-        future_hour.replace(hour=ore, minute=minuti)
-        print(future_hour)
+        future_hour=future_hour.replace(hour=ore, minute=minuti)
+        #print(future_hour)
 
         message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
