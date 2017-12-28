@@ -2530,6 +2530,7 @@ class Team:
                 break
 
         if not found:
+            print("not found")
             return False
 
 
@@ -2537,6 +2538,7 @@ class Team:
         temporal_inc = self.get_temporal_increment(data_dict, what)
 
         if not temporal_inc:
+            print("no temporal")
             return False
 
         # prendi l'ultimo toto_pc
