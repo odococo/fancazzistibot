@@ -472,25 +472,38 @@ Detto questo in bocca al lupo"""
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
                boss -> 0 (titano) o 1 (phoenix)
                giorno -> 0 (oggi) 1 (domani)
-               ora -> un'ora qualsiasi nel formato hh:mm"""
-        if len(self.params) != 3:
+               ora -> un'ora qualsiasi nel formato hh:mm (vuoto per attaccare subito)"""
+
+
+        if not len(self.params) == 3 and not len(self.params) == 2 :
             self.answer("Non hai inserito i parametri giusti!\n"
                         "boss -> 0 (titano) o 1 (phoenix)\n"
                         "giorno -> 0 (oggi) 1 (domani)\n"
-                        "ora -> un'ora qualsiasi nel formato hh:mm")
+                        "ora -> un'ora qualsiasi nel formato hh:mm (vuoto per attaccare subito)")
+
         chat_id = self.update.effective_chat.id
         boss = self.params[0]
         giorno = self.params[1]
-        try:
-            ore=int(self.params[2].split(":")[0])
+
+        if len(self.params)==2:
+            ore=0
+            minuti=0
+        else:
+            try:
+                ore = int(self.params[2].split(":")[0])
+            except ValueError:
+                self.update.message.reply_text("Non hai inserito dei numeri!")
+                return
+
             try:
                 minuti = int(self.params[2].split(":")[1])
-            except (IndexError , ValueError):
+            except ValueError:
+                self.update.message.reply_text("Non hai inserito dei numeri!")
+                return
+            except IndexError:
                 minuti=0
-        except ValueError:
-            self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /pinboss boss giorno hh:mm"
-                                           "\nEsempio: /pinboss 0 1 7:45")
-            return
+
+
 
         nomi_boss = ["il Titano", "Phoenix"]
         if giorno:
