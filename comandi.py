@@ -505,7 +505,7 @@ Detto questo in bocca al lupo"""
 
 
         try:
-            giorno=int(self.params[0])
+            giorno=int(self.params[1])
         except ValueError:
             self.update.message.reply_text("Non hai inserito un numero corretto per il giorno!")
             return
