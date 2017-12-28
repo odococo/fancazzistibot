@@ -1530,6 +1530,7 @@ Questo comando viene attivato quando inoltri il messaggio <b>Team</b> di @lootga
 Potrete scegliere tra tre opzioni:
 1) <i>Titan</i> : +1 punto per chi non ha attaccato
 2) <i>Phoenix</i> : +2 punti per chi non ha attaccato
+2) <i>Visualizza</i> : Permette di vedere le info senza salvare il punteggio
 3) <i>Annulla</i> : se vi siete sbagliati
 Scelto il tipo di boss verranno salvati i punti dei membri non attaccanti, ovviamente chi ha piu punti si trova in pericolo di kick dal team
 <b>NB</b>: Se qualcuno dei membri NON ha inviato il comando /start al bot non saranno salvati i punti del suddetto, ma verrai notificato.

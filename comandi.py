@@ -37,7 +37,7 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
 
 class Command():
     @utils.catch_exception
-    def __init__(self, bot, update, db, timer):
+    def __init__(self, bot, update, db):
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
@@ -56,10 +56,8 @@ class Command():
         command_text = command_text.split(" ")
         self.command = command_text[0]
         self.params = [param.strip() for param in command_text[1:]]
-        #timer variables
-        #event to stop
-        self.timer=timer
-        self.timer.set_bot_update(bot, update)
+
+
 
         # print(self.command, self.params)
 
@@ -507,10 +505,6 @@ Detto questo in bocca al lupo"""
         #tolgi l'ora in piu
         timer_hour=future_hour-timedelta(hours=1,minutes=2)
 
-        #inizzializza e runna il thread
-        print(timer_hour)
-        self.timer.set_hour(timer_hour)
-        self.timer.start()
 
     def Astoptimer(self):
         """- ferma il timer"""
@@ -663,8 +657,7 @@ Detto questo in bocca al lupo"""
 
 
 def new_command(bot, update):
-    timer=Timer()
-    command = Command(bot, update, DB(), timer)
+    command = Command(bot, update, DB())
     command.execute()
 
 #timer class
