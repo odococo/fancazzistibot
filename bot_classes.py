@@ -1799,6 +1799,7 @@ class Team:
              InlineKeyboardButton("Grafico", callback_data="/team_main grafico"),
              InlineKeyboardButton("Classifica", callback_data="/team_main classifica")],
             [InlineKeyboardButton("Stime", callback_data="/team_main stime"),
+             InlineKeyboardButton("Scalata", callback_data="/team_main scalata"),
              InlineKeyboardButton("Esci", callback_data="/team_main esci")]
 
         ])
@@ -1809,6 +1810,16 @@ class Team:
             [InlineKeyboardButton("Stime settimanali", callback_data="/team_stima settimanale"),
              InlineKeyboardButton("Stime mensili", callback_data="/team_stima mensile")],
             [InlineKeyboardButton("Indietro", callback_data="/team_stima indietro")]
+
+        ])
+
+
+        self.inline_scalata = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Scalata oraria", callback_data="/team_scala orario"),
+             InlineKeyboardButton("Scalata giornaliera", callback_data="/team_scala giornaliero")],
+            [InlineKeyboardButton("Scalata settimanale", callback_data="/team_scala settimanale"),
+             InlineKeyboardButton("Scalata mensile", callback_data="/team_scala mensile")],
+            [InlineKeyboardButton("Indietro", callback_data="/team_scala indietro")]
 
         ])
 
@@ -1829,6 +1840,7 @@ class Team:
                              "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
                              "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
                              "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
+                             "<b>Scalata</b> : visualizza i pc che servono al team per superare quelli in testa\n" \
                              "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame\n" \
                              "<b>Esci</b> : per uscira dalla visualizzazione\n" \
                              "Quindi quali informazioni vuoi vedere?"
@@ -1844,6 +1856,7 @@ class Team:
         disp.add_handler(CallbackQueryHandler(self.decision_team, pattern="/team_main"))
         disp.add_handler(CallbackQueryHandler(self.decision_inc, pattern="/team_inc"))
         disp.add_handler(CallbackQueryHandler(self.decision_stime, pattern="/team_stima"))
+        disp.add_handler(CallbackQueryHandler(self.decision_scalata, pattern="/team_scala"))
 
     # ================Start and Decision==================
     def forward_team(self, bot, update):
@@ -1875,7 +1888,7 @@ class Team:
         # print(complete_team)
         # salva il dizionario corrente
         self.data_dict = self.list2dict(complete_team)
-        print(self.data_dict)
+        #print(self.data_dict)
 
         # esegue l'update del db
         self.update_db(team_msg, idx)
@@ -1921,6 +1934,22 @@ class Team:
                 reply_markup=self.inline_team
             )
             return
+
+        elif param == "scalata":
+
+
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="<b>Scalata</b> : Qui puoi visualizzare i pc che servono al tuo team (in un'unità di tempo) per superare gli altri teams in classifica\n"
+                     "La sintassi è questa: n"
+                     "NomeTeam : pcTotali (pcIndividuali)\n"
+                     "Quidni verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servono al tuo team (in un ora, giorno, settimana, mese) complessivi e a testa",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_scalata
+            )
+            return
+
 
         elif param == "grafico":
             msg = update.callback_query.message.reply_text("Attendi un secondo...")
@@ -2078,6 +2107,55 @@ class Team:
             reply_markup=self.inline_inc
         )
 
+    def decision_scalata(self, bot, update):
+        """Serve per smistare le info a seconda della scelta dell'user"""
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
+
+        if param == "orario":
+            res_dict = self.get_scalata(self.data_dict,"", 0)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Scalata oraria</b>:\n")
+
+        elif param == "giornaliero":
+            res_dict = self.get_scalata(self.data_dict,"", 1)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Scalata giornaliera</b>:\n")
+
+        elif param == "settimanale":
+            res_dict = self.get_scalata(self.data_dict,"", 2)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Scalata settimanale</b>:\n")
+
+        elif param == "mensile":
+            res_dict = self.get_scalata(self.data_dict,"", 3)
+            if res_dict:
+                to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n")
+
+
+        elif param == "indietro":
+
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=self.team_init_msg,
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_team
+            )
+            return
+
+        # modifica il messaggio in base ai parametri scelti dall'utente
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.inline_scalata
+        )
+
     # =====================DB=============================
 
     def update_db(self, teams, numero):
@@ -2229,33 +2307,47 @@ class Team:
 
         return filer_dict
 
-    def pretty_increment(self, data, initial=""):
+    def pretty_increment(self, data, initial="", scala=False):
         """Dato un dizionario ritorna lo stampabile
         @:param data: dizionario con key=nome_team, value=int
         @:type: dict
         @:param initial: stringa iniziale da stampare
         @:type: str
+        @:param scala: bool per la scala
+        @:type: bool
         @:return: stringa da mandare allo user"""
 
-        # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
-        sorted_x = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
+        if not scala:
+            # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
+            sorted_x = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
 
-        idx = 1
-        res = initial
-        for elem in sorted_x:
-            if idx == 1:
-                res += str(idx) + ")🥇 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1])).replace(",",
-                                                                                                                    ".") + "</b>\n"
-            elif idx == 2:
-                res += str(idx) + ")🥈 <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
-                    ",", ".") + "</b>\n"
-            elif idx == 3:
-                res += str(idx) + ")🥉 <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
-                    ",", ".") + "</b>\n"
-            else:
-                res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(",",
-                                                                                                                    ".") + "</b>\n"
-            idx += 1
+            idx = 1
+            res = initial
+            for elem in sorted_x:
+                if idx == 1:
+                    res += str(idx) + ")🥇 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1])).replace(
+                        ",", ".") + "</b>\n"
+                elif idx == 2:
+                    res += str(idx) + ")🥈 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(
+                        (math.floor(elem[1]))).replace(",", ".") + "</b>\n"
+                elif idx == 3:
+                    res += str(idx) + ")🥉 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(
+                        (math.floor(elem[1]))).replace(",", ".") + "</b>\n"
+                else:
+                    res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
+                        ",", ".") + "</b>\n"
+                idx += 1
+        else:
+            # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
+            sorted_x = sorted(data.items(), key=operator.itemgetter(1), reverse=True)
+
+            idx = 1
+            res = initial
+            for elem in sorted_x:
+                res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1][0])).replace(
+                    ",", ".") \
+                       + "</b> (<i>" + "{:,}".format(math.floor(elem[1][1])).replace(",", ".") + " a testa </i>)\n"
+                idx += 1
 
         return res
 
@@ -2277,6 +2369,7 @@ class Team:
         return False
 
     # ===================Inc and Stima=====================
+
 
     # todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict, mean):
@@ -2408,5 +2501,71 @@ class Team:
             incr = incr / math.ceil(len(tot_pc) / idx)
             # e lo aggiungo al dizionario
             res_dict[key] = incr
+
+        return res_dict
+
+    def get_scalata(self, data_dict, team_name, what):
+        """Crea un dizionario per effettuare la scalata dei teams
+        @:param data_dict: dizionario (guarda list2dict)
+        @:type: dict
+        @:param team_name: nome del team digitato dall'utente
+        @:type: str
+        @:param what: unita di tempo =0(ore) =1 (giorni) =2 (settimane) =3 (mesi)
+        @:type: int
+        @:return"""
+
+        # guarda se il nome digitato è presente tra le chiavi (minuscole e maiuscole)
+        found = False
+        #todo: chiedi il nome del team all'utente
+        team_name="fancazzisti"
+        for name in data_dict.keys():
+            # se hai trovato il nome cambialo con la chiave
+            if team_name in name:
+                found = True
+                team_name = name
+                break
+            elif team_name in name.lower():
+                found = True
+                team_name = name
+                break
+
+        if not found:
+            return False
+
+
+        # prendi l'incremento temporale
+        temporal_inc = self.get_temporal_increment(data_dict, what)
+
+        if not temporal_inc:
+            return False
+
+        # prendi l'ultimo toto_pc
+        last_pc = {}
+        for key in data_dict.keys():
+            last_pc[key] = data_dict[key][-1:][0][0]
+
+        # unisci i due dizionari
+        union_dict = {}
+        for key in temporal_inc.keys():
+            union_dict[key] = (last_pc[key], temporal_inc[key])
+
+        # prendi il team d'interesse in formato tupla
+        team = union_dict[team_name]
+
+        # rimuovi tutti quelli sotto
+        filter_dict = {}
+        for key in union_dict.keys():
+            # salta la scelta dell'utente
+            if key == team_name:
+                continue
+            elif union_dict[key][0] > team[0]:
+                filter_dict[key] = union_dict[key]
+
+        res_dict = {}
+
+        for key in filter_dict.keys():
+            val = filter_dict[key]
+            new_incr = val[0] + val[1] - team[1] - team[0]
+            res_dict[key] = (new_incr, new_incr / 20)
 
         return res_dict
