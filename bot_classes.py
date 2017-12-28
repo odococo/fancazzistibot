@@ -1583,10 +1583,19 @@ Le Stime rappresentano la classifica stimata in base all'unità di tempo, ovvero
 2.3) <i>Stima Settimanali</i> : Mostra i pc stimati tra una settimana
 2.4) <i>Stima Mensili</i> : Mostra i pc stimati tra un mese
 
-4) <b>--Classifica--</b>
+4) <b>--Scalata--</b>
+La scalata ti fornisce una sclassifica con i pc necessari per superare i team in testa a Fancazzisti. 
+Come per gli altri comandi anche queste si dividono a seconda dell'unità di tempo, la sintassi è:
+NomeTeam : pcNecessariPerSuperarlo (pcNecessariIndividuali)
+4.1) <i>Scalata Oraria</i> : Mostra i pc necessari per superare il team in un ora
+4.2) <i>Scalata Giornaliera</i> : Mostra i pc necessari per superare il team in un giorno
+4.3) <i>Scalata Settimanale</i> : Mostra i pc necessari per superare il team in una settimana
+4.4) <i>Scalata Mensile</i> : Mostra i pc necessari per superare il team in un mese
+
+5) <b>--Classifica--</b>
 Visualizza la classica calssifica della Hall of Fame
 
-5) <b>--Esci--</b> 
+6) <b>--Esci--</b> 
 Termina la visualizzazione
 
 Per ora sarà possibile accedere a queste informaizoni solo tramite inoltro del messaggio <i>Hall of Fame</i>, poiche ad ogni ricezione vengono aggiungere dati su cui poter effettuare le stime.
@@ -2519,7 +2528,7 @@ class Team:
         #todo: chiedi il nome del team all'utente
         team_name="I Fancazzisti"
         for name in data_dict.keys():
-            print(name)
+            #print(name)
             # se hai trovato il nome cambialo con la chiave
             if team_name in name:
                 found = True
