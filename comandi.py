@@ -505,7 +505,7 @@ Detto questo in bocca al lupo"""
 
 
         try:
-            giorno=int(self.params[1])
+            giorno=int(giorno)
         except ValueError:
             self.update.message.reply_text("Non hai inserito un numero corretto per il giorno!")
             return
@@ -522,6 +522,8 @@ Detto questo in bocca al lupo"""
         print(future_hour)
 
         future_hour.replace(hour=ore, minute=minuti)
+        print(future_hour)
+
         message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
                                              str(str(future_hour.time()).split(".")[0]) + " del "+
