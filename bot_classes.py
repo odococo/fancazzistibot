@@ -2118,22 +2118,22 @@ class Team:
         if param == "orario":
             res_dict = self.get_scalata(self.data_dict,"", 0)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata oraria</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Scalata oraria</b>:\n",scala=True)
 
         elif param == "giornaliero":
             res_dict = self.get_scalata(self.data_dict,"", 1)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata giornaliera</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Scalata giornaliera</b>:\n",scala=True)
 
         elif param == "settimanale":
             res_dict = self.get_scalata(self.data_dict,"", 2)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata settimanale</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Scalata settimanale</b>:\n",scala=True)
 
         elif param == "mensile":
             res_dict = self.get_scalata(self.data_dict,"", 3)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n")
+                to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n",scala=True)
 
 
         elif param == "indietro":
