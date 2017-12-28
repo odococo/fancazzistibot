@@ -482,18 +482,23 @@ Detto questo in bocca al lupo"""
         boss = self.params[0]
         giorno = self.params[1]
         try:
-            if not giorno:
-                ore = int(self.params[2].split(":")[0])+24
-            else:
-                ore=int(self.params[2].split(":")[0])
-            minuti = int(self.params[2].split(":")[1])
+            ore=int(self.params[2].split(":")[0])
+            try:
+                minuti = int(self.params[2].split(":")[1])
+            except ValueError:
+                minuti=0
         except ValueError:
             self.update.message.reply_text("Non hai inserito dei numeri!\nUso: /pinboss boss giorno hh:mm"
                                            "\nEsempio: /pinboss 0 1 7:45")
             return
 
         nomi_boss = ["il Titano", "Phoenix"]
-        future_hour = datetime.now() + timedelta(hours=ore+1, minutes=minuti)
+        if giorno:
+            future_hour = datetime.now() + timedelta(hours=24+1)
+        else:
+            future_hour = datetime.now() + timedelta(hours=1)
+
+        future_hour.replace(hour=ore, minute=minuti)
         message = self.bot.send_message(chat_id=chat_id,
                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
                                              str(str(future_hour.time()).split(".")[0]) + " del "+
@@ -502,8 +507,7 @@ Detto questo in bocca al lupo"""
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
                                message_id=self.update.message.message_id)
 
-        #tolgi l'ora in piu
-        timer_hour=future_hour-timedelta(hours=1,minutes=2)
+
 
 
     def Astoptimer(self):
