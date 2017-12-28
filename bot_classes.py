@@ -2517,7 +2517,7 @@ class Team:
         # guarda se il nome digitato è presente tra le chiavi (minuscole e maiuscole)
         found = False
         #todo: chiedi il nome del team all'utente
-        team_name="fancazzisti"
+        team_name="I Fancazzisti"
         for name in data_dict.keys():
             # se hai trovato il nome cambialo con la chiave
             if team_name in name:
