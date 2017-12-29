@@ -1202,55 +1202,70 @@ class EasterEggs:
 
 class Contest:
 
-    def __init__(self, updater):
+    def __init__(self, updater,db):
         self.updater = updater
+        self.db=db
+
+
         self.contest_flag = False
         self.contest_creator = False
 
-        self.contest_regole=""
-        self.contest_ricompensa=""
-        self.contest_partecipanti=[]
+        self.contest_regole = ""
+        self.contest_ricompensa = ""
+        self.contest_partecipanti = []
+        self.contest_min_partecipanti = 2
+        self.contest_max_partecipanti = 100
+        self.contest_risposte = []
 
         disp = updater.dispatcher
 
         converstion = ConversationHandler(
-            [CommandHandler("iniziacontest",self.init_contest)],
+            [CommandHandler("iniziacontest", self.init_contest)],
             states={
                 1: [MessageHandler(Filters.text, self.regole_init)],
                 2: [MessageHandler(Filters.text, self.ricompensa_init)],
-                3: [MessageHandler(Filters.text, self.conferma_contest)],
+                3: [MessageHandler(Filters.text, self.min_max_partecipanti)],
+                4: [MessageHandler(Filters.text, self.conferma_contest)],
 
             }, fallbacks=[CommandHandler('Fine', self.init_params, pass_user_data=True)])
 
         disp.add_handler(converstion)
+        disp.add_handler(CommandHandler("contest",self.visualizza_contest))
+        disp.add_handler(CommandHandler("rispondicontest",self.visualizza_contest))
+        disp.add_handler(CommandHandler("annullacontest",self.annulla_contest))
+        disp.add_handler(CallbackQueryHandler(self.conferma_partecipazione, pattern="/contest_partecipa"))
+
+
+#==================CONTEST CREATION =================================
 
     def init_contest(self, bot, update):
 
-        #se c'è gia un contest informa
+        # se c'è gia un contest informa
         if self.contest_flag:
-            #todo: scrivi chi è il creatore
-            update.message.reply_text("Un contest è gia in progresso")
+            update.message.reply_text(
+                "Un contest è gia in progresso!\nIl creatore è " + self.contest_creator['username'])
             return
 
-        #salva il creatore e
-        self.contest_flag=True
-        self.contest_creator=update.message.from_user
+        # salva il creatore e
+        self.contest_flag = True
+        self.contest_creator = update.message.from_user
 
-        update.message.reply_text("Perfetto "+self.contest_creator['username']+", ora inviami le regole del contest")
+        update.message.reply_text(
+            "Perfetto " + self.contest_creator['username'] + ", ora inviami le regole del contest")
+        return 1
 
     def regole_init(self, bot, update):
 
-        #se il messaggio è vuoto chiedi di rinviarlo
+        # se il messaggio è vuoto chiedi di rinviarlo
         if not update.message.text:
             update.message.reply_text("Non hai inviato delle regole valide! Riprova")
             return 1
-        #salva le regole
-        self.contest_regole=update.message.text
+        # salva le regole
+        self.contest_regole = update.message.text
 
-        #chiedi la ricompensa
+        # chiedi la ricompensa
         update.message.reply_text("Regole salvate! Ora mandami le ricompense (deve essere minimo una)")
         return 2
-
 
     def ricompensa_init(self, bot, update):
         # se il messaggio è vuoto chiedi di rinviarlo
@@ -1258,53 +1273,220 @@ class Contest:
             update.message.reply_text("Non hai inviato una ricompensa valida! Riprova")
             return 2
         # salva le regole
-        self.contest_regole = update.message.text
+        self.contest_ricompensa = update.message.text
 
         # chiedi la ricompensa
-        update.message.reply_text("Ricompensa salvata salvate!\nConfermi la creazione del seguente contest?")
+        to_send = """
+Ricompensa salvata!
+Un contest ha bisogno di partecipanti per essere divertente
+Inviami il numero minimo e massimo di persone che possono partecipare, con due numeri separati da spazio (o uno solo se non vuoi specificare il massimo)
+Il minimo deve essere compreso tra 2 e 10, mentre il massimo tra 20 e 100
+Di default il minimo è 3 e non c'è massimo
+Se non raggiungerai il minimo dei partecipanti entro le 24 ore dalla creazione del contest questo sarà automaticamente annullato
+Quindi fai in modo di scegliere un numero adeguato
+"""
+        update.message.reply_text(to_send)
 
-        reply_markup = ReplyKeyboardMarkup([["Si", "No"]], one_time_keyboard=True)
-        update.message.reply_text(self.get_contest(),parse_mode="HTML", reply_markup=reply_markup)
+        #update.message.reply_text(self.get_contest(), parse_mode="HTML")
         return 3
 
-    def conferma_contest(self, bot, update):
-        choice=update.message.text
+    def min_max_partecipanti(self, bot, update):
+        partecipanti = update.message.text
+        min = 2
+        max = 0
 
-        if choice=="Si":
+        # se l'utente ha specificato solo un minimo
+        if len(partecipanti.split()) == 1:
+            # controlla che sia un numero
+            try:
+                min = int(partecipanti)
+            except ValueError:
+                update.message.reply_text("Non hai inserito un numero corretto per il minimo")
+                return self.init_params(bot, update)
+        # se l'utente ha specificato due parametri
+        elif len(partecipanti.split()) == 2:
+            try:
+                min = int(partecipanti.split()[0])
+                max = int(partecipanti.split()[1])
+            except ValueError:
+                update.message.reply_text("Non hai inserito dei numeri corretti!")
+                return self.init_params(bot, update)
+
+        # se siamo arrivati qua l'utente ha inserito dei valori corretti
+        # salvali
+        self.contest_min_partecipanti = min
+        if max: self.contest_max_partecipanti = max
+
+        to_send = "Perfetto!Confermi il seguente contest?"
+        update.message.reply_text(to_send)
+        reply_markup = ReplyKeyboardMarkup([["Si", "No"]], one_time_keyboard=True)
+        update.message.reply_text(self.get_contest(), reply_markup=reply_markup, parse_mode="HTML")
+        return 4
+
+    def conferma_contest(self, bot, update):
+        choice = update.message.text
+
+        if choice.lower() == "si":
             update.message.reply_text("Contest salvato!")
-            #todo: invia messaggio a tutti
-        elif choice=="No":
-            #todo: chiedi cosa vuole modificare
+            self.insert_into_db()
+            self.ask_partecipazione(bot)
+
+        elif choice.lower() == "no":
+            # todo: chiedi cosa vuole modificare
             update.message.reply_text("Contest annullato! Usa il comando per crearne un altro")
             self.init_params(bot, update)
 
         else:
-            update.message.reply_text("Non ho capito")
+            update.message.reply_text("Non ho capito...annullo")
             self.init_params(bot, update)
+
+        return ConversationHandler.END
+
+    def annulla_contest(self, bot, update):
+
+        #se non ci sono contest
+        if not self.contest_flag:
+            update.message.reply_text("Non ci sono contest in corso al momento... creane uno con /iniziacontest")
             return
 
 
+        if not update.message.from_user['id']==self.contest_creator['id']:
+            update.message.reply_text(self.contest_creator['username']+" è il creatore del contest, chiedi a lui di annullarlo")
+            return
+
+        #todo: avverti i partecipanti
+        self.sent_to_partecipanti(bot, "Il contest è stato annullato!")
+        self.init_params(bot,update)
+        self.db.delete_contest_creator()
+        update.message.reply_text("Contest eliminato!")
+
+    def ask_partecipazione(self,bot):
+
+        #users=self.db.get_users()
+        users=[24978334,89675136]
+
+        inline=InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Si", callback_data="/contest_partecipa si"),
+                InlineKeyboardButton("No️", callback_data="/contest_partecipa no")]])
+
+        to_send="Vuoi partecipare a questo contest?\n"+self.get_contest()
+
+        for user in users:
+            #if user['id']==self.contest_creator['id']:continue
+            #bot.sendMessage(user['id'],to_send,parse_mode="HTML",reply_markup=inline)
+            bot.sendMessage(user,to_send,parse_mode="HTML",reply_markup=inline)
+
+    def conferma_partecipazione(self, bot, update):
+        param = update.callback_query.data.split()[1]
+        to_send=""
+        if param=="si":
+            self.contest_partecipanti.append(update.callback_query.from_user)
+            to_send="Sei stato aggiunto al contest"
+        else:
+            to_send="Non sei stato aggiunto al contest"
+
+        bot.delete_message(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id
+        )
+
+        bot.sendMessage(update.callback_query.from_user['id'],to_send)
+
+    # ==================DB =================================
+
+    def insert_into_db(self):
+        self.db.insert_creator(self.contest_creator['id'],self.contest_creator['username'],
+                              self.contest_regole,self.contest_ricompensa,self.contest_min_partecipanti, self.contest_max_partecipanti )
+
+    def get_creator_db(self, all=True, keys=[]):
+
+        if all:
+            res=self.db.get_key_contest_creator(["creator","rules","rewards","min_max"])
+            creator={'id':res[0][0],'username':res[0][1]}
+            self.contest_creator=creator
+            self.contest_regole=res[1]
+            self.contest_ricompensa=res[2]
+            self.contest_min_partecipanti=res[3][0]
+            self.contest_max_partecipanti=res[3][1]
+
+    # ==================UTILS =================================
 
     def init_params(self, bot, update):
 
-        self.contest_creator=False
-        self.contest_ricompensa=""
-        self.contest_regole=""
-        self.contest_flag=False
+        self.contest_flag = False
+        self.contest_creator = False
+
+        self.contest_regole = ""
+        self.contest_ricompensa = ""
+        self.contest_partecipanti = []
+        self.contest_min_partecipanti = 2
+        self.contest_max_partecipanti = 100
+        self.contest_risposte = []
 
     def get_contest(self):
 
-        #se non ci sono questi elementi non è possibile creare la stringa
-        if not self.contest_regole or self.contest_creator or self.contest_ricompensa:
+        # se non ci sono questi elementi non è possibile creare la stringa
+        if not self.contest_regole or not self.contest_creator or not self.contest_ricompensa:
             return ""
 
-        res="<b>===Contest===</b>\n<b>Regole</b>\n"
-        res+=self.contest_regole
-        res+="\n<b>Ricompensa</b>\n"
-        res+=self.contest_ricompensa
-        res+="\n<b>Creatore</b>\n@"+self.contest_creator['username']
+        res = "<b>===Contest===</b>\n\n<b>Regole</b>\n"
+        res += self.contest_regole
+        res += "\n\n<b>Ricompensa</b>\n"
+        res += self.contest_ricompensa
+        res += "\n\nIl minimo numero di partecipanti è <b>" + str(self.contest_min_partecipanti) + \
+               "</b> mentre il massimo è <b>" + str(self.contest_max_partecipanti) + "</b>\n"
+        res += "\n\n<b>Creatore</b>\n@" + self.contest_creator['username']
 
         return res
+
+    def is_contest(self, bot, update):
+        contest = self.get_contest()
+        if not contest:
+            update.message.reply_text(
+                "Non ci sono contest al momento :(\nPuoi crearne uno utilizzando il comando /iniziacontest")
+            return
+
+        update.message.reply_text(contest)
+
+# ==================FOR USERS =================================
+
+    def visualizza_contest(self, bot, update):
+
+        #se c'è un contest gia creato
+        if self.contest_flag:
+            update.message.reply_text(self.get_contest(),parse_mode="HTML")
+        else:
+            update.message.reply_text("Non ci sono contest al momento, creane uno con /iniziacontest")
+
+    def sent_to_partecipanti(self, bot, to_send):
+
+        for user in self.contest_partecipanti:
+            bot.sendMessage(user['id'],to_send)
+
+    def rispondi_contest(self, bot, update):
+        #prendi tutto quello dopo il comando
+        param=update.split()[1:]
+
+        #controlla che ci sia un contesrt
+        if not self.contest_flag:
+            update.message.reply_text("Non ci sono contest in progresso al momento")
+            return
+            #controlla che la risposta sia valida
+        if len(param)==0:
+            update.message.reply_text("Non è una risposta valida")
+            return
+        #controlla che l'user sia iscritto al contest
+        if update.message.from_user.id not in [elem['id'] for elem in self.contest_partecipanti]:
+            update.message.reply_text("Non sei iscritto a questo contest!")
+            return
+
+        #rimuovi la vecchia risposta se presente
+        self.contest_risposte= [elem for elem in self.contest_risposte if elem[0]['id']!=update.message.from_user.id]
+
+        #salva la risposta
+        self.contest_risposte.append((update.message.from_user,param))
+        update.message.reply_text("Risposta salvata!Puoi sempre modificarla usando lo stesso comando")
 
 
 class Top:
@@ -1916,7 +2098,6 @@ class Team:
 
         ])
 
-
         self.inline_scalata = InlineKeyboardMarkup([
             [InlineKeyboardButton("Scalata oraria", callback_data="/team_scala orario"),
              InlineKeyboardButton("Scalata giornaliera", callback_data="/team_scala giornaliero")],
@@ -1948,18 +2129,16 @@ Ci sono varie categorie di informazioni che puoi visualizzare:
 <b>Esci</b> : per uscira dalla visualizzazione
 Quindi quali informazioni vuoi?"""
 
-        self.scalata_init_msg="""
+        self.scalata_init_msg = """
 <b>Scalata</b> : Qui puoi visualizzare i pc che servono al team Fancazzisti (in un'unità di tempo) per superare gli altri teams in classifica\n
 La sintassi è questa: 
 NomeTeamDaSuperare : pcTotali (pcIndividuali)
 Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servono al tuo team (in un ora, giorno, settimana, mese) complessivi e a testa"""
 
-
-        self.inc_init_msg="""
+        self.inc_init_msg = """
 <b>Incrementi</b>
 'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, ovvero di quanto aumentano i pc.
         """
-
 
         disp = updater.dispatcher
 
@@ -2004,7 +2183,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         # print(complete_team)
         # salva il dizionario corrente
         self.data_dict = self.list2dict(complete_team)
-        #print(self.data_dict)
+        # print(self.data_dict)
 
         # esegue l'update del db
         self.update_db(team_msg, idx)
@@ -2051,7 +2230,6 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             return
 
         elif param == "scalata":
-
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
@@ -2228,24 +2406,24 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         to_send = "Spiacente non ci sono abbastanza dati per questo...riprova piu tardi"
 
         if param == "orario":
-            res_dict = self.get_scalata(self.data_dict,"", 0)
+            res_dict = self.get_scalata(self.data_dict, "", 0)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata oraria</b>:\n",scala=True)
+                to_send = self.pretty_increment(res_dict, "<b>Scalata oraria</b>:\n", scala=True)
 
         elif param == "giornaliero":
-            res_dict = self.get_scalata(self.data_dict,"", 1)
+            res_dict = self.get_scalata(self.data_dict, "", 1)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata giornaliera</b>:\n",scala=True)
+                to_send = self.pretty_increment(res_dict, "<b>Scalata giornaliera</b>:\n", scala=True)
 
         elif param == "settimanale":
-            res_dict = self.get_scalata(self.data_dict,"", 2)
+            res_dict = self.get_scalata(self.data_dict, "", 2)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata settimanale</b>:\n",scala=True)
+                to_send = self.pretty_increment(res_dict, "<b>Scalata settimanale</b>:\n", scala=True)
 
         elif param == "mensile":
-            res_dict = self.get_scalata(self.data_dict,"", 3)
+            res_dict = self.get_scalata(self.data_dict, "", 3)
             if res_dict:
-                to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n",scala=True)
+                to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n", scala=True)
 
 
         elif param == "indietro":
@@ -2339,7 +2517,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         cm = plt.get_cmap('gist_rainbow')
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        #ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
+        # ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
         ax.set_color_cycle(['black', 'red', 'sienna', 'olivedrab', 'darkgreen', 'deepskyblue',
                             'navy', 'm', 'darkorchid', 'gold', 'coral', 'aqua', 'gray', 'brown', 'indigo'])
         lines = []
@@ -2349,7 +2527,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             # plot tracccia le linee, scatter i punti
             a = plt.plot(dates, values, label=key)
             lines.append(a[0])
-            #plt.scatter(dates, values)
+            # plt.scatter(dates, values)
 
         lgd = plt.legend(bbox_to_anchor=(1.12, 1.01))
 
@@ -2457,7 +2635,8 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             idx = 1
             res = initial
             for elem in sorted_x:
-                res += str(idx) + ") <b>" + elem[0] + "</b> superabile con <b>" + "{:,}".format(math.floor(elem[1][0])).replace(
+                res += str(idx) + ") <b>" + elem[0] + "</b> superabile con <b>" + "{:,}".format(
+                    math.floor(elem[1][0])).replace(
                     ",", ".") \
                        + "</b> (<i>" + "{:,}".format(math.floor(elem[1][1])).replace(",", ".") + " a testa </i>)\n"
                 idx += 1
@@ -2482,7 +2661,6 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         return False
 
     # ===================Inc and Stima=====================
-
 
     # todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict, mean):
@@ -2561,7 +2739,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         @:type:int
         @:return: ritorna un dizionario con coppia team-incrementoMedio"""
 
-        incr = self.get_temporal_increment(data_dict,what)
+        incr = self.get_temporal_increment(data_dict, what)
 
         if not incr: return False
         tot_pc = self.get_total_pc(data_dict)
@@ -2629,10 +2807,10 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
 
         # guarda se il nome digitato è presente tra le chiavi (minuscole e maiuscole)
         found = False
-        #todo: chiedi il nome del team all'utente
-        team_name="I Fancazzisti"
+        # todo: chiedi il nome del team all'utente
+        team_name = "I Fancazzisti"
         for name in data_dict.keys():
-            #print(name)
+            # print(name)
             # se hai trovato il nome cambialo con la chiave
             if team_name in name:
                 found = True
@@ -2646,7 +2824,6 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         if not found:
             print("not found")
             return False
-
 
         # prendi l'incremento temporale
         temporal_inc = self.get_temporal_increment(data_dict, what)
@@ -2685,5 +2862,3 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             res_dict[key] = (new_incr, new_incr / 20)
 
         return res_dict
-
-

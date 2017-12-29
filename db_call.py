@@ -193,6 +193,17 @@ TABELLE = {
             "by_team":"DELETE FROM teams WHERE nome=%s",
             "all":"DELETE FROM teams"
         }
+    },
+    "contest_creator":{
+        "select":{
+            "creator":"SELECT creator_id, creator_username FROM contest_creator",
+            "rules": "SELECT rules FROM contest_creator",
+            "rewards": "SELECT rewards FROM contest_creator",
+            "min_max": "SELECT min_participants, max_participants FROM contest_creator",
+        },
+        "insert":"INSERT INTO contest_creator (creator_id , creator_username, rules, rewards, min_participants, max_participants)"
+                 " VALUES (%s, %s, %s, %s, %s, %s)",
+        "delete":"DELETE FROM contest_creator"
     }
 }
 
@@ -285,6 +296,17 @@ class DB:
     def get_team_all(self):
         return self.execute(TABELLE['teams']['select']['all'])
 
+    def get_key_contest_creator(self, keys):
+        """Prende gli elementi dentro key dalla tabella contest_creator
+        @:param key: lista di stringhe contenenti le chiavi del dizionario TABELLE['constest_creator']['select']
+        @:type: list of str
+        @:return: lista di valori contenuti dentro la tabella nell'ordine in cui sono stati richiesti in keys"""
+
+        res=[]
+        for key in keys:
+            res.append(self.execute(TABELLE['constest_creator']['select'][key],()))
+
+        return res
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
@@ -434,6 +456,11 @@ class DB:
 
         self.execute(TABELLE['teams']['insert'],(team_name, numero, pc))
 
+    def insert_creator(self, creator_id , creator_username, rules, rewards, min_participants, max_participants):
+        """Inserisce dentro la tabella constest_creator i parametri"""
+
+        self.execute( TABELLE['constest_creator']['insert'],
+                      (creator_id , creator_username, rules, rewards, min_participants, max_participants,))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):
@@ -502,6 +529,11 @@ class DB:
     def delete_teams_all(self, team_name):
         """Elimina dalla tabella teams tutti gli elementi"""
         self.execute(TABELLE['teams']['delete']['all'])
+
+    def delete_contest_creator(self):
+        """Elimina tutti i valori dentro contest_creator"""
+
+        self.execute( TABELLE['constest_creator']['delete'])
 
     # def delete_from_all(self, id):
     #     self.execute(TABELLE['all']['delete'],(id,))
