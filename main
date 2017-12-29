@@ -27,7 +27,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     MessageHandler, Filters, CommandHandler)
 
-from bot_classes import Loot, Boss, Cerca, Compra, EasterEggs, Top, PietreDrago, Help, Team
+from bot_classes import Loot, Boss, Cerca, Compra, EasterEggs, Top, PietreDrago, Help, Team, Contest
 from comandi import new_command, videos
 from db_call import DB, developer_dicts
 from negozi_loot import use_api, ITEMS
@@ -274,7 +274,7 @@ def main():
     PietreDrago(updater,db)
     Help(updater,db)
     Team(updater,db)
-
+    Contest(updater)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

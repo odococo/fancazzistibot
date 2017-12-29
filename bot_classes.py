@@ -1200,7 +1200,7 @@ class EasterEggs:
         return num < self.prob
 
 
-class Constes:
+class Contest:
 
     def __init__(self, updater):
         self.updater = updater
