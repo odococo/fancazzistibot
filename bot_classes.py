@@ -1208,7 +1208,104 @@ class Constes:
         self.contest_flag = False
         self.contest_creator = False
 
+        self.contest_regole=""
+        self.contest_ricompensa=""
+        self.contest_partecipanti=[]
+
         disp = updater.dispatcher
+
+        converstion = ConversationHandler(
+            [CommandHandler("iniziacontest",self.init_contest)],
+            states={
+                1: [MessageHandler(Filters.text, self.regole_init)],
+                2: [MessageHandler(Filters.text, self.ricompensa_init)],
+                3: [MessageHandler(Filters.text, self.conferma_contest)],
+
+            }, fallbacks=[CommandHandler('Fine', self.init_params, pass_user_data=True)])
+
+        disp.add_handler(converstion)
+
+    def init_contest(self, bot, update):
+
+        #se c'è gia un contest informa
+        if self.contest_flag:
+            #todo: scrivi chi è il creatore
+            update.message.reply_text("Un contest è gia in progresso")
+            return
+
+        #salva il creatore e
+        self.contest_flag=True
+        self.contest_creator=update.message.from_user
+
+        update.message.reply_text("Perfetto "+self.contest_creator['username']+", ora inviami le regole del contest")
+
+    def regole_init(self, bot, update):
+
+        #se il messaggio è vuoto chiedi di rinviarlo
+        if not update.message.text:
+            update.message.reply_text("Non hai inviato delle regole valide! Riprova")
+            return 1
+        #salva le regole
+        self.contest_regole=update.message.text
+
+        #chiedi la ricompensa
+        update.message.reply_text("Regole salvate! Ora mandami le ricompense (deve essere minimo una)")
+        return 2
+
+
+    def ricompensa_init(self, bot, update):
+        # se il messaggio è vuoto chiedi di rinviarlo
+        if not update.message.text:
+            update.message.reply_text("Non hai inviato una ricompensa valida! Riprova")
+            return 2
+        # salva le regole
+        self.contest_regole = update.message.text
+
+        # chiedi la ricompensa
+        update.message.reply_text("Ricompensa salvata salvate!\nConfermi la creazione del seguente contest?")
+
+        reply_markup = ReplyKeyboardMarkup([["Si", "No"]], one_time_keyboard=True)
+        update.message.reply_text(self.get_contest(),parse_mode="HTML", reply_markup=reply_markup)
+        return 3
+
+    def conferma_contest(self, bot, update):
+        choice=update.message.text
+
+        if choice=="Si":
+            update.message.reply_text("Contest salvato!")
+            #todo: invia messaggio a tutti
+        elif choice=="No":
+            #todo: chiedi cosa vuole modificare
+            update.message.reply_text("Contest annullato! Usa il comando per crearne un altro")
+            self.init_params(bot, update)
+
+        else:
+            update.message.reply_text("Non ho capito")
+            self.init_params(bot, update)
+            return
+
+
+
+    def init_params(self, bot, update):
+
+        self.contest_creator=False
+        self.contest_ricompensa=""
+        self.contest_regole=""
+        self.contest_flag=False
+
+    def get_contest(self):
+
+        #se non ci sono questi elementi non è possibile creare la stringa
+        if not self.contest_regole or self.contest_creator or self.contest_ricompensa:
+            return ""
+
+        res="<b>===Contest===</b>\n<b>Regole</b>\n"
+        res+=self.contest_regole
+        res+="\n<b>Ricompensa</b>\n"
+        res+=self.contest_ricompensa
+        res+="\n<b>Creatore</b>\n@"+self.contest_creator['username']
+
+        return res
 
 
 class Top:
@@ -1792,8 +1889,6 @@ Quindi ricorda di aggiungere i parametri giusti!"""
                     parse_mode="HTML"
 
                 )
-
-
 
 
 class Team:
