@@ -2498,7 +2498,7 @@ class Team:
             incr = 0
             idx = 0
             # prendo i pc a coppie di 2 per farne la differenza
-            for i in range(0, len(tot_pc), 2):
+            for i in range(0, len(tot_pc)):
                 to_calc = tot_pc[i:i + 2]
                 # se sono arrivato all'ultimo passo
                 if len(to_calc) != 2: continue
@@ -2508,7 +2508,7 @@ class Team:
                 # aggiungo uno a idx
                 idx += 1
             # calcolo l'incremento medio
-            incr = incr / math.ceil(len(tot_pc) / idx)
+            incr = incr / math.ceil(idx)
             # e lo aggiungo al dizionario
             res_dict[key] = incr
 
