@@ -1619,7 +1619,6 @@ nomeComando parametri - spiegazione
 Quindi ricorda di aggiungere i parametri giusti!"""
         update.message.reply_text(to_send, reply_markup=self.inline_cat)
 
-    # todo: create multiple page help
     def help_decision(self, bot, update, user_data):
         """Visulauzza i vari help a seconda della scelta dell'user, supporta la creazione automati di piu pagine
         in caso di stringhe troppo lunghe"""
@@ -2246,8 +2245,9 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         cm = plt.get_cmap('gist_rainbow')
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
-
+        #ax.set_color_cycle([cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)])
+        ax.set_color_cycle(['black', 'red', 'sienna', 'olivedrab', 'darkgreen', 'deepskyblue',
+                            'navy', 'm', 'darkorchid', 'gold', 'coral', 'aqua', 'gray', 'brown', 'indigo'])
         lines = []
         for key, data_list in data_dict.items():
             dates = [elem[1] for elem in data_list]
