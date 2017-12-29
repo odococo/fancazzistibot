@@ -1200,7 +1200,6 @@ class EasterEggs:
         return num < self.prob
 
 
-# todo
 class Constes:
 
     def __init__(self, updater):
