@@ -2354,7 +2354,7 @@ class Team:
             idx = 1
             res = initial
             for elem in sorted_x:
-                res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1][0])).replace(
+                res += str(idx) + ") <b>" + elem[0] + "</b> superabile con <b>" + "{:,}".format(math.floor(elem[1][0])).replace(
                     ",", ".") \
                        + "</b> (<i>" + "{:,}".format(math.floor(elem[1][1])).replace(",", ".") + " a testa </i>)\n"
                 idx += 1
@@ -2582,3 +2582,5 @@ class Team:
             res_dict[key] = (new_incr, new_incr / 20)
 
         return res_dict
+
+
