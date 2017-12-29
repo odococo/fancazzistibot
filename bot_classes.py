@@ -1845,15 +1845,28 @@ class Team:
 
         ])
 
-        self.team_init_msg = "Ci sono varie categorie di informazioni che puoi visualizzare:\n" \
-                             "<b>Incrementi</b> : mostra di quanto aumentano i pc dei team in base a vari parametri temporali (ore, giorni settimane, mesi), " \
-                             "alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili\n" \
-                             "<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo\n" \
-                             "<b>Stime</b> : stima i pc totali che un team avra fra una certa unità di tempo (ore, giorni, settimane, mesi)\n" \
-                             "<b>Scalata</b> : visualizza i pc che servono al team per superare quelli in testa\n" \
-                             "<b>Classifica</b> : mostra la stessa classifica della Hall of Fame\n" \
-                             "<b>Esci</b> : per uscira dalla visualizzazione\n" \
-                             "Quindi quali informazioni vuoi vedere?"
+        self.team_init_msg = """
+Ci sono varie categorie di informazioni che puoi visualizzare:
+<b>Incrementi</b> : mostra di quanto aumentano i pc dei team in base a vari parametri temporali (ore, giorni settimane, mesi), alcuni di questi potrebbero essere vuoti per mancanza di dati, ma non disperare, con il tempo saranno disponibili
+<b>Grafico</b> : mostra l'andamento dei pc totali dei team nel tempo
+<b>Stime</b> : stima i pc totali che un team avrà tra una certa unità di tempo (ore, giorni, settimane, mesi)
+<b>Scalata</b> : visualizza i pc che servono al team Fancazzisti per superare quelli in testa
+<b>Classifica</b> : mostra la stessa classifica della Hall of Fame
+<b>Esci</b> : per uscira dalla visualizzazione
+Quindi quali informazioni vuoi?"""
+
+        self.scalata_init_msg="""
+<b>Scalata</b> : Qui puoi visualizzare i pc che servono al team Fancazzisti (in un'unità di tempo) per superare gli altri teams in classifica\n
+La sintassi è questa: 
+NomeTeamDaSuperare : pcTotali (pcIndividuali)
+Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servono al tuo team (in un ora, giorno, settimana, mese) complessivi e a testa"""
+
+
+        self.inc_init_msg="""
+<b>Incrementi</b>
+'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, ovvero di quanto aumentano i pc.
+        """
+
 
         disp = updater.dispatcher
 
@@ -1914,8 +1927,7 @@ class Team:
         if param == "incrementi":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="<b>Incrementi</b>\n'Inc' sta per incremento e si riferisce alla differenza di pc tra un messaggio e l'altro, " \
-                     "ovvero di quanto aumentano i pc.",
+                text=self.inc_init_msg,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_inc
@@ -1950,10 +1962,7 @@ class Team:
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="<b>Scalata</b> : Qui puoi visualizzare i pc che servono al tuo team (in un'unità di tempo) per superare gli altri teams in classifica\n"
-                     "La sintassi è questa: n"
-                     "NomeTeam : pcTotali (pcIndividuali)\n"
-                     "Quidni verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servono al tuo team (in un ora, giorno, settimana, mese) complessivi e a testa",
+                text=self.scalata_init_msg,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_scalata
