@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
 
-DEBUG = True
+DEBUG = False
 
 
 class Loot:
