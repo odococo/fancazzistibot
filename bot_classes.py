@@ -2803,6 +2803,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
 
         return res_dict
 
+    #fixme
     def get_scalata(self, data_dict, team_name, what):
         """Crea un dizionario per effettuare la scalata dei teams
         @:param data_dict: dizionario (guarda list2dict)
@@ -2882,11 +2883,12 @@ class Crafter:
         disp.add_handler(RegexHandler("^Lista craft per.*:", self.ricerca))
 
     def ricerca(self, bot, update):
+        """Dato un messaggio di craftlootbot , invia tutti i messaggi separatamente"""
         #controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
             return
         to_send = ""
-        for elem in update.message.text.split(":")[1].split("\n"):
+        for elem in update.message.text.split(":")[1].split("\n")[1:]:
             to_send += elem + "\n" + "Si\n"
 
         for elem in to_send.split("\n"):
