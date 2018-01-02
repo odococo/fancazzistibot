@@ -52,6 +52,7 @@ top - mostra i top players in base a vari parametri
 migra - cambia username nel bot
 annulladefinitivo - toglie qualisasi tastiera personalizzata
 teams - visualizza i team
+mancanti - mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata
 """
 
 

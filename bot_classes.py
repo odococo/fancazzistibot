@@ -1787,6 +1787,7 @@ class Help:
         user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
                     "settimanali, edosoldi, abilità, rango]")
         user.append("/teams - Visualizza i pc dei team presenti nella Hall of Fame e il relativo incremento")
+        user.append("/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
 
         return user, admin, developer
 
@@ -3053,7 +3054,7 @@ class Mancanti:
     def annulla(self, bot, update,user_data,msg=""):
         """Annulla la conversazione e inizzializza lo user data"""
         if msg:
-            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove)
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
 
         if "quantita" in user_data.keys():
             user_data['quantita']=0
