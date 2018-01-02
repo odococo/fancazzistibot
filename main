@@ -263,6 +263,10 @@ def main():
         rea = file.read()
         oggetti = eval(rea.replace("null", "None"))
 
+    with codecs.open("base_file", encoding='utf-8') as file:
+        rea = file.read()
+        base_items = eval(rea.replace("null", "None"))
+
     # classi per craftlootbot e comandi boss
 
     Loot(updater, db)
@@ -276,6 +280,7 @@ def main():
     Team(updater,db)
     #Contest(updater)
     Crafter(updater,db)
+    Mancanti(updater,db,base_items)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

@@ -8,6 +8,13 @@ from collections import Counter
 from collections import OrderedDict
 from datetime import timedelta, datetime
 import time
+import emoji
+from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
+    CallbackQueryHandler
+
+from comandi import Command
+from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
 
 import matplotlib as mpl
@@ -16,13 +23,6 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
-import emoji
-from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
-from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
-    CallbackQueryHandler
-
-from comandi import Command
-from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
 DEBUG = False
 
@@ -2913,3 +2913,152 @@ class Crafter:
                 idx=0
             idx+=1
 
+class Mancanti:
+    def __init__(self, updater, db, base_items):
+        self.db = db
+        self.base_items=base_items
+
+        disp = updater.dispatcher
+
+        if not DEBUG:
+            eleg = self.db.elegible_loot_user(self.init_mancanti)
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("mancanti", eleg, pass_user_data=True)],
+                states={
+                    1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
+                    2: [MessageHandler(Filters.text, self.scrigni_func, pass_user_data=True)]
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla)]
+            )
+
+        else:
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("mancanti", self.init_mancanti, pass_user_data=True)],
+                states={
+                    1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
+                    2: [MessageHandler(Filters.text, self.scrigni_func, pass_user_data=True)]
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
+            )
+
+
+        disp.add_handler(conversation)
+
+    def init_mancanti(self, bot, update):
+        """Funzione per inizzializzare la conversazione per sapere quali oggetti mancano nello zaino"""
+        # controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            return
+
+        update.message.reply_text("Prima di iniziare fammi sapere la quanità minima\n"
+                                  "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale")
+
+        return 1
+
+
+
+    def conferma_quantita(self, bot, update, user_data):
+        """Funzione per confermare la quantità scelta dall'utente e chiedere lo zaino"""
+        #prendi cio che ha scritto l'utente
+        quantita=update.message.text
+
+        #controlla che non sia vuoto
+        if not quantita:
+           return self.annulla(bot,update,user_data,"Non hai inviato un numero corretto...annullo")
+
+        #controlla che sia un numero
+        try:
+            quantita=int(quantita)
+        except ValueError:
+            return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
+        #salva la quantita
+        user_data['quantita']=quantita
+        user_data['zaino']=""
+
+        reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
+
+        update.message.reply_text("Verrai notificato solo per gli oggetti con quantità inferiore a <b>"+str(quantita)+"</b>\n"
+        "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",parse_mode="HTML",
+                                  reply_markup=reply_markup)
+        return 2
+
+    def ask_zaino(self, bot, update,user_data):
+
+        text=update.message.text
+
+        #se il messaggio è quello dello zaino
+        if ">" in text:
+            user_data['zaino'] +=text
+            return 2
+
+        #se l'utente vuole annullare
+        elif "annulla" in text.lower():
+            return self.annulla(bot, update,user_data,"Annullo")
+
+        #se ha finito di mandare lo zaino
+        elif "fine" in text.lower():
+            update.message.reply_text("Calcolo oggetti mancanti...")
+            #se lo zaino è vuoto annulla
+            if not user_data['zaino'] :
+                return self.annulla(bot,update,user_data,"Non hai inviato mesaggi zaino")
+            #altrimenti calcola cio che devi mandare
+            to_send=self.mancanti(user_data)
+            update.message.reply_text(to_send,parse_mode="HTML")
+            return
+
+        #non ho capito cosa ha mandato e quindi annullo
+        else:
+            return self.annulla(bot, update, user_data, "Non ho capito...annullo")
+
+
+    def mancanti(self, user_data):
+        """Funzione per calcolare gli oggetti mancanti
+        @:param user_data: dizionario contentete le chiavi zaino e quantita
+        @:type: dict
+        @:return: stringa da mandare allo user"""
+
+        #creo il regex
+        regex = re.compile(r"> (.*) \(([0-9]+)")
+        # cerco gli oggetti
+        all = re.findall(regex, user_data['zaino'])
+        # filtro per quantita
+        all = [elem for elem in all if int(elem[1]) <= user_data['quantita']]
+
+        # nomi dgli oggetti trovati nello zaino
+        all_names = [elem[0] for elem in all]
+
+        res_list = []
+
+        # filtro per quelli presenti nel file
+        for elem in self.base_items:
+            if elem['name'] in all_names:
+                # aggiungo la quantità che ha l'utente
+                elem['quantita'] = int([item[1] for item in all if item[0] == elem['name']][0])
+                res_list.append(elem)
+
+        # ordino la lista
+        res_list = sorted(res_list, key=lambda k: k['quantita'])
+
+        to_send = "Oggetti con quantità inferiore a <b>"+str(user_data['quantita'])+"</b>\n"
+        # creo la stringa da mandare
+        for elem in res_list:
+            to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
+
+
+        return to_send
+    def annulla(self, bot, update,user_data,msg=""):
+        """Annulla la conversazione e inizzializza lo user data"""
+        if msg:
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove)
+
+        if "quantita" in user_data.keys():
+            user_data['quantita']=0
+
+        if "zaino" in user_data.keys():
+            user_data['zaino']=""
+
+        return ConversationHandler.END
