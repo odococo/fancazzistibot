@@ -3009,7 +3009,7 @@ class Mancanti:
             #altrimenti calcola cio che devi mandare
             to_send=self.mancanti(user_data)
             update.message.reply_text(to_send,parse_mode="HTML")
-            return
+            return self.annulla(bot,update,user_data,"Fine")
 
         #non ho capito cosa ha mandato e quindi annullo
         else:
@@ -3051,6 +3051,8 @@ class Mancanti:
 
 
         return to_send
+
+
     def annulla(self, bot, update,user_data,msg=""):
         """Annulla la conversazione e inizzializza lo user data"""
         if msg:
