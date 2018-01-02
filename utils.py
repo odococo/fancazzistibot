@@ -72,7 +72,7 @@ def text_splitter_lines(text, splitter="\n", split_every=5):
 
     res=[]
     for elem in text:
-        to_append="\n".join(elem)
+        to_append="".join(elem)
         if to_append: res.append(to_append)
     return res
 

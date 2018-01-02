@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
 
-DEBUG = False
+DEBUG = True
 
 
 class Loot:
@@ -3007,8 +3007,12 @@ class Mancanti:
                 return self.annulla(bot,update,user_data,"Non hai inviato mesaggi zaino")
             #altrimenti calcola cio che devi mandare
             to_send=self.mancanti(user_data)
-            to_send=text_splitter_lines(to_send,split_every=10)
+            if not to_send:
+                return self.annulla(bot, update, user_data, "Possiedi tutti gli oggetti nella quantità specificata...che riccone")
+            to_send=text_splitter_bytes(to_send,splitter="\n\n", split_every=2048)
+            update.message.reply_text("Oggetti con quantità inferiore a <b>"+str(user_data['quantita'])+"</b>\n", parse_mode="HTML")
             for elem in to_send:
+                if not elem:continue
                 update.message.reply_text(elem,parse_mode="HTML")
             return self.annulla(bot,update,user_data,"Fine")
 
@@ -3027,8 +3031,7 @@ class Mancanti:
         regex = re.compile(r"> (.*) \(([0-9]+)")
         # cerco gli oggetti
         all = re.findall(regex, user_data['zaino'])
-        # filtro per quantita
-        all = [elem for elem in all if int(elem[1]) <= user_data['quantita']]
+
 
         # nomi dgli oggetti trovati nello zaino
         all_names = [elem[0] for elem in all]
@@ -3045,13 +3048,33 @@ class Mancanti:
                 elem['quantita'] = 0
                 res_list.append(elem)
 
+        # filtro per quantita
+        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita']]
         # ordino la lista
         res_list = sorted(res_list, key=lambda k: k['quantita'])
 
-        to_send = "Oggetti con quantità inferiore a <b>"+str(user_data['quantita'])+"</b>\n"
+        idx=0
+        step=0
+        counter=1
+        if user_data['quantita']>10:
+            step=math.floor(user_data['quantita']/10)
         # creo la stringa da mandare
+        to_send = "<b>---Quantita inferiore a "+str(step)+"---</b>\n"
+
         for elem in res_list:
-            to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
+
+            if elem['quantita']>step*counter and idx!=elem['quantita']:
+                idx=elem['quantita']
+                counter+=1
+
+                if step>0:to_send+="\n<b>---Quantita inferiore a "+str(step*counter)+"---</b>\n"
+                else:to_send+="\n<b>---Quantita inferiore a "+str(step*counter+idx +1)+"---</b>\n"
+
+
+
+
+            if elem['quantita']>0:to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
+            else:to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>\n"
 
 
         return to_send
