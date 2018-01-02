@@ -1888,6 +1888,17 @@ Per ora sarà possibile accedere a queste informaizoni solo tramite inoltro del 
 Quando avremo raggiunto una sufficente quantita di dati salterà fuori un comando che non necesita di inoltro.
 C'è anche da dire che alcune informazioni non sono ancora disponibili (Mensile e Giornaliero) per via della recente nascita del comando... tra un mese avremo a disposizione tutto
 Prossimamente aggiungerò anche qualche tecnica di Inteligenza Artificiale al bot per fergli prevedere come sarà la classifica tra un tot di tempo (ore, giorni, settimane...), prorpio per questo vi invito a inoltrare piu messaggi possibili!
+
+<b>----Crafter----</b>
+Questo comando viene attivato inoltrando il messaggio <b>/craft->Messaggio</b> da @craftlootbot
+Ti verranno inviati una serie di messaggi del tipo:
+Crea oggetto1
+si
+Crea oggetto2
+si
+....
+Da inoltrare a @lootgamebot per craftare velocemente (efficace specialmente con plus)
+
 """
 
     def get_credits(self):
