@@ -1164,6 +1164,10 @@ class Compra:
 
         budget = user_data['budget']
 
+        if not budget:
+            update.message.reply_text("Non hai mai usato la funzione da inoltro!\nConsulta l'help sezione 'inoltro' e cerca 'Loot'")
+            return
+
         for perc, cost in zip(numbers, scontato.keys()):
             res[cost] = math.floor(budget * (perc / 100) / scontato[cost])
 
@@ -1800,6 +1804,7 @@ Una volta inoltrato ti sarà chiesta quale informazione vuoi visualizzare tra le
 <b>Negozi</b>
 Ti permette di ottenere una comoda stringa di negozi degli oggetti mancanti da poter inoltrare a @lootbotplus
 <b>Ricerca</b>
+Quando clicchi ricerca verranno automaticamente salvate le rarità che ti mancano per poter utilizzare il comando /compra
 Questo comando prevede piu passi:
 1) Una volta premuto il bottone ti saranno inviati dei messaggi "/ricerca oggetto1, oggetto2, oggetto3" per ogni oggetto che ti manca
 2) Inoltra questi messaggi a @lootplusbot
@@ -2954,7 +2959,8 @@ class Mancanti:
             return
 
         update.message.reply_text("Prima di iniziare inviami la quantità minima.\n"
-                                  "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale")
+                                  "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale\n"
+                                  "Usa il valore 0 se vuoi visualizzare gli oggetti che ti mancano")
 
         return 1
 
@@ -2980,11 +2986,12 @@ class Mancanti:
 
         update.message.reply_text(
             "Verrai notificato solo per gli oggetti con quantità inferiore a <b>" + str(quantita) + "</b>\n"
-                                                                                                    "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",
+                     "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",
             parse_mode="HTML",
             reply_markup=reply_markup)
         return 2
 
+    @catch_exception
     def ask_zaino(self, bot, update, user_data):
 
         text = update.message.text
@@ -3058,7 +3065,7 @@ class Mancanti:
         if user_data['quantita'] > 10:
             step = math.floor(user_data['quantita'] / 10)
         # creo la stringa da mandare
-        to_send = "<b>---Quantita inferiore uguale a " + str(step) + "---</b>\n"
+        to_send = "<b>---Quantita minore uguale a " + str(step) + "---</b>\n"
 
         for elem in res_list:
 
@@ -3067,9 +3074,9 @@ class Mancanti:
                 counter += 1
 
                 if step > 0:
-                    to_send += "\n<b>---Quantita inferiore uguale a " + str(step * counter) + "---</b>\n"
+                    to_send += "\n<b>---Quantita minore uguale a " + str(step * counter) + "---</b>\n"
                 else:
-                    to_send += "\n<b>---Quantita inferiore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
+                    to_send += "\n<b>---Quantita minore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
 
             if elem['quantita'] > 0:
                 to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
