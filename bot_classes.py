@@ -1164,10 +1164,6 @@ class Compra:
 
         budget = user_data['budget']
 
-        if not budget:
-            update.message.reply_text("Non hai mai usato la funzione da inoltro!\nConsulta l'help sezione 'inoltro' e cerca 'Loot'")
-            return
-
         for perc, cost in zip(numbers, scontato.keys()):
             res[cost] = math.floor(budget * (perc / 100) / scontato[cost])
 
@@ -1177,7 +1173,7 @@ class Compra:
 
             if res[elem]: text += "Compra <b>" + str(res[elem]) + "</b> di Scrigno " + elem + "\n"
 
-        if not text: text = "Si è verificato un errore...contatta @brandimax"
+        if not text: text = "Non hai mai usato la funzione da inoltro!\nConsulta l'help sezione 'inoltro' e cerca 'Loot'"
 
         update.message.reply_text(text, parse_mode="HTML")
         # rinizzializza lo user_data
