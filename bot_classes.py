@@ -4,24 +4,23 @@ import operator
 import os
 import random
 import re
+import time
 from collections import Counter
 from collections import OrderedDict
 from datetime import timedelta, datetime
-import time
+
 import emoji
+import matplotlib as mpl
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
 from comandi import Command
-from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date, text_splitter_lines
-
-import matplotlib as mpl
+from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
-
 
 DEBUG = False
 
@@ -1206,10 +1205,9 @@ class EasterEggs:
 
 class Contest:
 
-    def __init__(self, updater,db):
+    def __init__(self, updater, db):
         self.updater = updater
-        self.db=db
-
+        self.db = db
 
         self.contest_flag = False
         self.contest_creator = False
@@ -1234,13 +1232,12 @@ class Contest:
             }, fallbacks=[CommandHandler('Fine', self.init_params, pass_user_data=True)])
 
         disp.add_handler(converstion)
-        disp.add_handler(CommandHandler("contest",self.visualizza_contest))
-        disp.add_handler(CommandHandler("rispondicontest",self.visualizza_contest))
-        disp.add_handler(CommandHandler("annullacontest",self.annulla_contest))
+        disp.add_handler(CommandHandler("contest", self.visualizza_contest))
+        disp.add_handler(CommandHandler("rispondicontest", self.visualizza_contest))
+        disp.add_handler(CommandHandler("annullacontest", self.annulla_contest))
         disp.add_handler(CallbackQueryHandler(self.conferma_partecipazione, pattern="/contest_partecipa"))
 
-
-#==================CONTEST CREATION =================================
+    # ==================CONTEST CREATION =================================
 
     def init_contest(self, bot, update):
 
@@ -1291,7 +1288,7 @@ Quindi fai in modo di scegliere un numero adeguato
 """
         update.message.reply_text(to_send)
 
-        #update.message.reply_text(self.get_contest(), parse_mode="HTML")
+        # update.message.reply_text(self.get_contest(), parse_mode="HTML")
         return 3
 
     def min_max_partecipanti(self, bot, update):
@@ -1348,71 +1345,72 @@ Quindi fai in modo di scegliere un numero adeguato
 
     def annulla_contest(self, bot, update):
 
-        #se non ci sono contest
+        # se non ci sono contest
         if not self.contest_flag:
             update.message.reply_text("Non ci sono contest in corso al momento... creane uno con /iniziacontest")
             return
 
-
-        if not update.message.from_user['id']==self.contest_creator['id']:
-            update.message.reply_text(self.contest_creator['username']+" è il creatore del contest, chiedi a lui di annullarlo")
+        if not update.message.from_user['id'] == self.contest_creator['id']:
+            update.message.reply_text(
+                self.contest_creator['username'] + " è il creatore del contest, chiedi a lui di annullarlo")
             return
 
-        #todo: avverti i partecipanti
+        # todo: avverti i partecipanti
         self.sent_to_partecipanti(bot, "Il contest è stato annullato!")
-        self.init_params(bot,update)
+        self.init_params(bot, update)
         self.db.delete_contest_creator()
         update.message.reply_text("Contest eliminato!")
 
-    def ask_partecipazione(self,bot):
+    def ask_partecipazione(self, bot):
 
-        #users=self.db.get_users()
-        users=[24978334,89675136]
+        # users=self.db.get_users()
+        users = [24978334, 89675136]
 
-        inline=InlineKeyboardMarkup([
+        inline = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton("Si", callback_data="/contest_partecipa si"),
                 InlineKeyboardButton("No️", callback_data="/contest_partecipa no")]])
 
-        to_send="Vuoi partecipare a questo contest?\n"+self.get_contest()
+        to_send = "Vuoi partecipare a questo contest?\n" + self.get_contest()
 
         for user in users:
-            #if user['id']==self.contest_creator['id']:continue
-            #bot.sendMessage(user['id'],to_send,parse_mode="HTML",reply_markup=inline)
-            bot.sendMessage(user,to_send,parse_mode="HTML",reply_markup=inline)
+            # if user['id']==self.contest_creator['id']:continue
+            # bot.sendMessage(user['id'],to_send,parse_mode="HTML",reply_markup=inline)
+            bot.sendMessage(user, to_send, parse_mode="HTML", reply_markup=inline)
 
     def conferma_partecipazione(self, bot, update):
         param = update.callback_query.data.split()[1]
-        to_send=""
-        if param=="si":
+        to_send = ""
+        if param == "si":
             self.contest_partecipanti.append(update.callback_query.from_user)
-            to_send="Sei stato aggiunto al contest"
+            to_send = "Sei stato aggiunto al contest"
         else:
-            to_send="Non sei stato aggiunto al contest"
+            to_send = "Non sei stato aggiunto al contest"
 
         bot.delete_message(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id
         )
 
-        bot.sendMessage(update.callback_query.from_user['id'],to_send)
+        bot.sendMessage(update.callback_query.from_user['id'], to_send)
 
     # ==================DB =================================
 
     def insert_into_db(self):
-        self.db.insert_creator(self.contest_creator['id'],self.contest_creator['username'],
-                              self.contest_regole,self.contest_ricompensa,self.contest_min_partecipanti, self.contest_max_partecipanti )
+        self.db.insert_creator(self.contest_creator['id'], self.contest_creator['username'],
+                               self.contest_regole, self.contest_ricompensa, self.contest_min_partecipanti,
+                               self.contest_max_partecipanti)
 
     def get_creator_db(self, all=True, keys=[]):
 
         if all:
-            res=self.db.get_key_contest_creator(["creator","rules","rewards","min_max"])
-            creator={'id':res[0][0],'username':res[0][1]}
-            self.contest_creator=creator
-            self.contest_regole=res[1]
-            self.contest_ricompensa=res[2]
-            self.contest_min_partecipanti=res[3][0]
-            self.contest_max_partecipanti=res[3][1]
+            res = self.db.get_key_contest_creator(["creator", "rules", "rewards", "min_max"])
+            creator = {'id': res[0][0], 'username': res[0][1]}
+            self.contest_creator = creator
+            self.contest_regole = res[1]
+            self.contest_ricompensa = res[2]
+            self.contest_min_partecipanti = res[3][0]
+            self.contest_max_partecipanti = res[3][1]
 
     # ==================UTILS =================================
 
@@ -1453,43 +1451,43 @@ Quindi fai in modo di scegliere un numero adeguato
 
         update.message.reply_text(contest)
 
-# ==================FOR USERS =================================
+    # ==================FOR USERS =================================
 
     def visualizza_contest(self, bot, update):
 
-        #se c'è un contest gia creato
+        # se c'è un contest gia creato
         if self.contest_flag:
-            update.message.reply_text(self.get_contest(),parse_mode="HTML")
+            update.message.reply_text(self.get_contest(), parse_mode="HTML")
         else:
             update.message.reply_text("Non ci sono contest al momento, creane uno con /iniziacontest")
 
     def sent_to_partecipanti(self, bot, to_send):
 
         for user in self.contest_partecipanti:
-            bot.sendMessage(user['id'],to_send)
+            bot.sendMessage(user['id'], to_send)
 
     def rispondi_contest(self, bot, update):
-        #prendi tutto quello dopo il comando
-        param=update.split()[1:]
+        # prendi tutto quello dopo il comando
+        param = update.split()[1:]
 
-        #controlla che ci sia un contesrt
+        # controlla che ci sia un contesrt
         if not self.contest_flag:
             update.message.reply_text("Non ci sono contest in progresso al momento")
             return
-            #controlla che la risposta sia valida
-        if len(param)==0:
+            # controlla che la risposta sia valida
+        if len(param) == 0:
             update.message.reply_text("Non è una risposta valida")
             return
-        #controlla che l'user sia iscritto al contest
+        # controlla che l'user sia iscritto al contest
         if update.message.from_user.id not in [elem['id'] for elem in self.contest_partecipanti]:
             update.message.reply_text("Non sei iscritto a questo contest!")
             return
 
-        #rimuovi la vecchia risposta se presente
-        self.contest_risposte= [elem for elem in self.contest_risposte if elem[0]['id']!=update.message.from_user.id]
+        # rimuovi la vecchia risposta se presente
+        self.contest_risposte = [elem for elem in self.contest_risposte if elem[0]['id'] != update.message.from_user.id]
 
-        #salva la risposta
-        self.contest_risposte.append((update.message.from_user,param))
+        # salva la risposta
+        self.contest_risposte.append((update.message.from_user, param))
         update.message.reply_text("Risposta salvata!Puoi sempre modificarla usando lo stesso comando")
 
 
@@ -1786,7 +1784,8 @@ class Help:
         user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
                     "settimanali, edosoldi, abilità, rango]")
         user.append("/teams - Visualizza i pc dei team presenti nella Hall of Fame e il relativo incremento")
-        user.append("/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
+        user.append(
+            "/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
 
         return user, admin, developer
 
@@ -2174,7 +2173,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
     # ================Start and Decision==================
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
-        #controlla che il messaggio sia mandato in privato
+        # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
             return
         # prendi i team nel messaggio e nel db
@@ -2816,7 +2815,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
 
         return res_dict
 
-    #fixme
+    # fixme
     def get_scalata(self, data_dict, team_name, what):
         """Crea un dizionario per effettuare la scalata dei teams
         @:param data_dict: dizionario (guarda list2dict)
@@ -2891,32 +2890,33 @@ class Crafter:
         self.updater = updater
         self.db = db
 
-        disp=updater.dispatcher
+        disp = updater.dispatcher
 
         disp.add_handler(RegexHandler("^Lista craft per.*:", self.ricerca))
 
     def ricerca(self, bot, update):
         """Dato un messaggio di craftlootbot , invia tutti i messaggi separatamente"""
-        #controlla che il messaggio sia mandato in privato
+        # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
             return
         to_send = ""
         for elem in update.message.text.split(":")[1].split("\n")[1:]:
             to_send += elem + "\n" + "Si\n"
 
-        idx=0
+        idx = 0
         for elem in to_send.split("\n"):
             if not elem: continue
             update.message.reply_text(elem)
-            if idx==10:
+            if idx == 10:
                 time.sleep(3)
-                idx=0
-            idx+=1
+                idx = 0
+            idx += 1
+
 
 class Mancanti:
     def __init__(self, updater, db, base_items):
         self.db = db
-        self.base_items=base_items
+        self.base_items = base_items
 
         disp = updater.dispatcher
 
@@ -2945,7 +2945,6 @@ class Mancanti:
                 fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
             )
 
-
         disp.add_handler(conversation)
 
     def init_mancanti(self, bot, update):
@@ -2959,67 +2958,68 @@ class Mancanti:
 
         return 1
 
-
-
     def conferma_quantita(self, bot, update, user_data):
         """Funzione per confermare la quantità scelta dall'utente e chiedere lo zaino"""
-        #prendi cio che ha scritto l'utente
-        quantita=update.message.text
+        # prendi cio che ha scritto l'utente
+        quantita = update.message.text
 
-        #controlla che non sia vuoto
+        # controlla che non sia vuoto
         if not quantita:
-           return self.annulla(bot,update,user_data,"Non hai inviato un numero corretto...annullo")
+            return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
 
-        #controlla che sia un numero
+        # controlla che sia un numero
         try:
-            quantita=int(quantita)
+            quantita = int(quantita)
         except ValueError:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
-        #salva la quantita e inizzializza la chiave zaino
-        user_data['quantita']=quantita
-        user_data['zaino']=""
+        # salva la quantita e inizzializza la chiave zaino
+        user_data['quantita'] = quantita
+        user_data['zaino'] = ""
 
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
-        update.message.reply_text("Verrai notificato solo per gli oggetti con quantità inferiore a <b>"+str(quantita)+"</b>\n"
-        "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",parse_mode="HTML",
-                                  reply_markup=reply_markup)
+        update.message.reply_text(
+            "Verrai notificato solo per gli oggetti con quantità inferiore a <b>" + str(quantita) + "</b>\n"
+                                                                                                    "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",
+            parse_mode="HTML",
+            reply_markup=reply_markup)
         return 2
 
-    def ask_zaino(self, bot, update,user_data):
+    def ask_zaino(self, bot, update, user_data):
 
-        text=update.message.text
+        text = update.message.text
 
-        #se il messaggio è quello dello zaino
+        # se il messaggio è quello dello zaino
         if ">" in text:
-            user_data['zaino'] +=text
+            user_data['zaino'] += text
             return 2
 
-        #se l'utente vuole annullare
+        # se l'utente vuole annullare
         elif "annulla" in text.lower():
-            return self.annulla(bot, update,user_data,"Annullo")
+            return self.annulla(bot, update, user_data, "Annullo")
 
-        #se ha finito di mandare lo zaino
+        # se ha finito di mandare lo zaino
         elif "fine" in text.lower():
             update.message.reply_text("Calcolo oggetti mancanti...")
-            #se lo zaino è vuoto annulla
-            if not user_data['zaino'] :
-                return self.annulla(bot,update,user_data,"Non hai inviato mesaggi zaino")
-            #altrimenti calcola cio che devi mandare
-            to_send=self.mancanti(user_data)
+            # se lo zaino è vuoto annulla
+            if not user_data['zaino']:
+                return self.annulla(bot, update, user_data, "Non hai inviato mesaggi zaino")
+            # altrimenti calcola cio che devi mandare
+            to_send = self.mancanti(user_data)
             if not to_send:
-                return self.annulla(bot, update, user_data, "Possiedi tutti gli oggetti nella quantità specificata...che riccone")
-            to_send=text_splitter_bytes(to_send,splitter="\n\n", split_every=2048)
-            update.message.reply_text("Oggetti con quantità inferiore a <b>"+str(user_data['quantita'])+"</b>\n", parse_mode="HTML")
+                return self.annulla(bot, update, user_data,
+                                    "Possiedi tutti gli oggetti nella quantità specificata...che riccone")
+            to_send = text_splitter_bytes(to_send, splitter="\n\n", split_every=2048)
+            update.message.reply_text("Oggetti con quantità inferiore a <b>" + str(user_data['quantita']) + "</b>\n",
+                                      parse_mode="HTML")
             for elem in to_send:
-                if not elem:continue
-                update.message.reply_text(elem,parse_mode="HTML")
-            return self.annulla(bot,update,user_data,"Fine")
+                if not elem: continue
+                update.message.reply_text(elem, parse_mode="HTML")
+            return self.annulla(bot, update, user_data, "Fine")
 
-        #non ho capito cosa ha mandato e quindi annullo
+        # non ho capito cosa ha mandato e quindi annullo
         else:
             return self.annulla(bot, update, user_data, "Non ho capito...annullo")
-
 
     def mancanti(self, user_data):
         """Funzione per calcolare gli oggetti mancanti
@@ -3027,11 +3027,10 @@ class Mancanti:
         @:type: dict
         @:return: stringa da mandare allo user"""
 
-        #creo il regex
+        # creo il regex
         regex = re.compile(r"> (.*) \(([0-9]+)")
         # cerco gli oggetti
         all = re.findall(regex, user_data['zaino'])
-
 
         # nomi dgli oggetti trovati nello zaino
         all_names = [elem[0] for elem in all]
@@ -3053,42 +3052,41 @@ class Mancanti:
         # ordino la lista
         res_list = sorted(res_list, key=lambda k: k['quantita'])
 
-        idx=0
-        step=0
-        counter=1
-        if user_data['quantita']>10:
-            step=math.floor(user_data['quantita']/10)
+        idx = 0
+        step = 0
+        counter = 1
+        if user_data['quantita'] > 10:
+            step = math.floor(user_data['quantita'] / 10)
         # creo la stringa da mandare
-        to_send = "<b>---Quantita inferiore a "+str(step)+"---</b>\n"
+        to_send = "<b>---Quantita inferiore uguale a " + str(step) + "---</b>\n"
 
         for elem in res_list:
 
-            if elem['quantita']>step*counter and idx!=elem['quantita']:
-                idx=elem['quantita']
-                counter+=1
+            if elem['quantita'] > step * counter and idx != elem['quantita']:
+                idx = elem['quantita']
+                counter += 1
 
-                if step>0:to_send+="\n<b>---Quantita inferiore a "+str(step*counter)+"---</b>\n"
-                else:to_send+="\n<b>---Quantita inferiore a "+str(step*counter+idx +1)+"---</b>\n"
+                if step > 0:
+                    to_send += "\n<b>---Quantita inferiore uguale a " + str(step * counter) + "---</b>\n"
+                else:
+                    to_send += "\n<b>---Quantita inferiore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
 
-
-
-
-            if elem['quantita']>0:to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
-            else:to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>\n"
-
+            if elem['quantita'] > 0:
+                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
+            else:
+                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>\n"
 
         return to_send
 
-
-    def annulla(self, bot, update,user_data,msg=""):
+    def annulla(self, bot, update, user_data, msg=""):
         """Annulla la conversazione e inizzializza lo user data"""
         if msg:
             update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
 
         if "quantita" in user_data.keys():
-            user_data['quantita']=0
+            user_data['quantita'] = 0
 
         if "zaino" in user_data.keys():
-            user_data['zaino']=""
+            user_data['zaino'] = ""
 
         return ConversationHandler.END
