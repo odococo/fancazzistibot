@@ -2955,7 +2955,7 @@ class Mancanti:
         if "private" not in update.message.chat.type:
             return
 
-        update.message.reply_text("Prima di iniziare fammi sapere la quanità minima\n"
+        update.message.reply_text("Prima di iniziare inviami la quantità minima.\n"
                                   "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale")
 
         return 1
@@ -3034,11 +3034,14 @@ class Mancanti:
 
         res_list = []
 
-        # filtro per quelli presenti nel file
         for elem in self.base_items:
             if elem['name'] in all_names:
                 # aggiungo la quantità che ha l'utente
                 elem['quantita'] = int([item[1] for item in all if item[0] == elem['name']][0])
+                res_list.append(elem)
+            else:
+                # aggiungo la quantità che non ha l'utente
+                elem['quantita'] = 0
                 res_list.append(elem)
 
         # ordino la lista
