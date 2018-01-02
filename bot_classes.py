@@ -14,8 +14,7 @@ from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filt
     CallbackQueryHandler
 
 from comandi import Command
-from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
-
+from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date, text_splitter_lines
 
 import matplotlib as mpl
 
@@ -3008,7 +3007,9 @@ class Mancanti:
                 return self.annulla(bot,update,user_data,"Non hai inviato mesaggi zaino")
             #altrimenti calcola cio che devi mandare
             to_send=self.mancanti(user_data)
-            update.message.reply_text(to_send,parse_mode="HTML")
+            to_send=text_splitter_lines(to_send,split_every=10)
+            for elem in to_send:
+                update.message.reply_text(elem,parse_mode="HTML")
             return self.annulla(bot,update,user_data,"Fine")
 
         #non ho capito cosa ha mandato e quindi annullo
