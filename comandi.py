@@ -443,32 +443,7 @@ Detto questo in bocca al lupo"""
         for user in users:
             self.bot.send_message(user['id']," ".join(self.params))
 
-    # def Apinboss(self):
-    #     """Fissa un messaggio per l'attacco del boss con i seguenti valori:
-    #     boss -> 0 (titano) o 1 (phoenix)
-    #     giorno -> da 0 a 6 (da lunedì a domenica)
-    #     ora -> un'ora qualsiasi"""
-    #     if len(self.params) != 3:
-    #         self.answer("Non hai inserito i parametri giusti!\n"
-    #                     "boss -> 0 (titano) o 1 (phoenix)\n"
-    #                     "giorno -> da 0 a 6 (da lunedì a domenica)\n"
-    #                     "ora -> un'ora qualsiasi")
-    #     chat_id=self.update.effective_chat.id
-    #     boss = self.params[0]
-    #     giorno = self.params[1]
-    #     ore = self.params[2]
-    #     nomi_boss = ["il Titano", "Phoenix"]
-    #     giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"]
-    #     from_id = self.update.message.from_user.id
-    #     if utils.is_admin(from_id) or utils.is_fanca_admin(from_id):
-    #         message = self.bot.send_message(chat_id=chat_id,
-    #                                         text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " + ore + " di " +
-    #                                              giorni[int(giorno) % 7])
-    #         self.bot.pinChatMessage(chat_id, message.message_id, True)
-    #     self.bot.deleteMessage(chat_id=self.update.message.chat.id,
-    #                       message_id=self.update.message.message_id)
 
-    #todo: manda u messaggio ai membri del team madre
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
                boss -> 0 (titano) o 1 (phoenix)
@@ -535,6 +510,11 @@ Detto questo in bocca al lupo"""
         self.bot.pinChatMessage(chat_id, message.message_id, True)
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
                                message_id=self.update.message.message_id)
+
+        #invio messaggio ai membri del team madre
+        users = self.db.get_punteggi()
+        for user in users:
+            self.bot.send_message(user['id'], to_send)
 
 
 

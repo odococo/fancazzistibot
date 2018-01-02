@@ -2895,6 +2895,7 @@ class Crafter:
 
         idx=0
         for elem in to_send.split("\n"):
+            if not elem: continue
             update.message.reply_text(elem)
             if idx==10:
                 time.sleep(3)
