@@ -337,10 +337,10 @@ class Loot:
             try:
                 num = num[0]  # prendo l'elemento trovato
                 if num[0] != num[1]:  # se i due numeri sono diversi
-                    new_num = int(num[1]) - int(num[0])  # calcolo la differenza
+                    #new_num = int(num[1]) - int(num[0])  # calcolo la differenza
 
-                    new_line = line.replace(num[0], str(new_num), 1)  # rimpiazzo il primo
-                    new_line = new_line.replace(num[1], str(new_num), 1)  # e il secondo
+                    #new_line = line.replace(num[0], str(new_num), 1)  # rimpiazzo il primo
+                    new_line = line.replace(num[1], num[0], 1)  # e il secondo
                     aggiornato += new_line + "\n"  # aggiungo la riga aggiornata
                 else:
                     aggiornato += line + "\n"
