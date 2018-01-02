@@ -468,6 +468,7 @@ Detto questo in bocca al lupo"""
     #     self.bot.deleteMessage(chat_id=self.update.message.chat.id,
     #                       message_id=self.update.message.message_id)
 
+    #todo: manda u messaggio ai membri del team madre
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
                boss -> 0 (titano) o 1 (phoenix)

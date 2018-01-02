@@ -60,6 +60,9 @@ class Loot:
     @catch_exception
     def ricerca(self, bot, update, user_data):
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
+        # controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            return
 
         # inizzializza i campi di user data
         user_data['costo_craft'] = 0
@@ -1518,7 +1521,9 @@ class Top:
 
     def add_player(self, bot, update):
         """Aggiunge user nel db e visualizza top player"""
-
+        # controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            return
         # getting demojized message
         msg = update.message.text
         msg = emoji.demojize(msg)
@@ -2156,7 +2161,11 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
     # ================Start and Decision==================
     def forward_team(self, bot, update):
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
+        #controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            return
         # prendi i team nel messaggio e nel db
+
         team_db = self.get_teams_db()
         team_msg = self.extract_teams_from_msg(update.message.text)
         # controlla se sono presenti team nel databes
@@ -2662,7 +2671,6 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
 
     # ===================Inc and Stima=====================
 
-    # todo: fai in modo che il head di quando possa essere resettato
     def get_total_increment(self, data_dict, mean):
         """Ritorna un dizionario con key=nomeTeam e value=incremento totale (int)
           @:param data_dict: il dizionario ritornato da list2dict
@@ -2862,3 +2870,25 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             res_dict[key] = (new_incr, new_incr / 20)
 
         return res_dict
+
+
+class Crafter:
+    def __init__(self, updater, db):
+        self.updater = updater
+        self.db = db
+
+        disp=updater.dispatcher
+
+        disp.add_handler(RegexHandler("^Lista craft per.*:", self.ricerca))
+
+    def ricerca(self, bot, update):
+        #controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            return
+        to_send = ""
+        for elem in update.message.text.split(":")[1].split("\n"):
+            to_send += elem + "\n" + "Si\n"
+
+        for elem in to_send.split("\n"):
+            update.message.reply_text(elem)
+
