@@ -3075,9 +3075,9 @@ class Mancanti:
                     to_send += "\n<b>---Quantita minore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
 
             if elem['quantita'] > 0:
-                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
+                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
             else:
-                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>\n"
+                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
 
         return to_send
 
