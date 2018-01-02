@@ -2924,7 +2924,7 @@ class Mancanti:
             eleg = self.db.elegible_loot_user(self.init_mancanti)
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("mancanti", eleg, pass_user_data=True)],
+                [CommandHandler("mancanti", eleg)],
                 states={
                     1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
                     2: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)]
@@ -2936,7 +2936,7 @@ class Mancanti:
         else:
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("mancanti", self.init_mancanti, pass_user_data=True)],
+                [CommandHandler("mancanti", self.init_mancanti)],
                 states={
                     1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
                     2: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)]
@@ -2975,7 +2975,7 @@ class Mancanti:
             quantita=int(quantita)
         except ValueError:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
-        #salva la quantita
+        #salva la quantita e inizzializza la chiave zaino
         user_data['quantita']=quantita
         user_data['zaino']=""
 
