@@ -473,7 +473,8 @@ Detto questo in bocca al lupo"""
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
                boss -> 0 (titano) o 1 (phoenix)
                giorno -> 0 (oggi) 1 (domani)
-               ora -> un'ora qualsiasi nel formato hh:mm (vuoto per attaccare subito)"""
+               ora -> un'ora qualsiasi nel formato hh:mm (vuoto per attaccare subito)
+               E manda un messaggio ai membri del team madre"""
 
 
         if not len(self.params) == 3 and not len(self.params) == 2 :
@@ -525,10 +526,12 @@ Detto questo in bocca al lupo"""
         future_hour=future_hour.replace(hour=ore, minute=minuti)
         #print(future_hour)
 
+        to_send="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +\
+                                             str(str(future_hour.time()).split(".")[0]) + " del "+\
+                                             str(future_hour.date().strftime('%d-%m-%Y'))
+
         message = self.bot.send_message(chat_id=chat_id,
-                                        text="Attaccate " + nomi_boss[int(boss) % 2] + " entro le " +
-                                             str(str(future_hour.time()).split(".")[0]) + " del "+
-                                             str(future_hour.date().strftime('%d-%m-%Y')))
+                                        text=to_send)
         self.bot.pinChatMessage(chat_id, message.message_id, True)
         self.bot.deleteMessage(chat_id=self.update.message.chat.id,
                                message_id=self.update.message.message_id)

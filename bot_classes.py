@@ -7,6 +7,8 @@ import re
 from collections import Counter
 from collections import OrderedDict
 from datetime import timedelta, datetime
+import time
+
 
 import matplotlib as mpl
 
@@ -2891,6 +2893,11 @@ class Crafter:
         for elem in update.message.text.split(":")[1].split("\n")[1:]:
             to_send += elem + "\n" + "Si\n"
 
+        idx=0
         for elem in to_send.split("\n"):
             update.message.reply_text(elem)
+            if idx==10:
+                time.sleep(3)
+                idx=0
+            idx+=1
 
