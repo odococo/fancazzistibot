@@ -2927,7 +2927,7 @@ class Mancanti:
                 [CommandHandler("mancanti", eleg, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
-                    2: [MessageHandler(Filters.text, self.scrigni_func, pass_user_data=True)]
+                    2: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)]
 
                 },
                 fallbacks=[CommandHandler('Fine', self.annulla)]
@@ -2939,7 +2939,7 @@ class Mancanti:
                 [CommandHandler("mancanti", self.init_mancanti, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
-                    2: [MessageHandler(Filters.text, self.scrigni_func, pass_user_data=True)]
+                    2: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)]
 
                 },
                 fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
