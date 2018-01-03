@@ -1798,6 +1798,7 @@ class Help:
         user.append(
             "/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
 
+        user.append("/diffschede - Visualizza la differenza in pc tra due schede 'Dettaglio Membri' in 'Team'")
         return user, admin, developer
 
     def get_forward_commands(self):
