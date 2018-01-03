@@ -3215,8 +3215,8 @@ class DiffSchede:
         @:type: dict
         @:return: stringa da mandare allo user"""
 
-        data_number={k: v for k, v in data.items() if isinstance(v[1],int)}
-        none_number={k: v for k, v in data.items() if isinstance(v[1],str)}
+        data_number={k: v for k, v in data.items() if not isinstance(v,str)}
+        none_number={k: v for k, v in data.items() if isinstance(v,str)}
 
         # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
         sorted_x = sorted(data_number.items(), key=operator.itemgetter(1), reverse=True)
