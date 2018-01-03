@@ -2682,6 +2682,27 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
 
         return False
 
+    def get_temporal_difference(self, initial_date, final_date, what):
+        """Calcola la differenza tra due date
+        @:param initial/final_date: la data iniziale e finale
+        @:type: datetime
+        @:param what: l'unità di tempo (0,1,2,3)->(ore,giorni,settimane,mesi)
+        @:type:int
+        @:return: numero di unità temporali passate tra la data iniziale e quella finale"""
+
+        difference = final_date - initial_date
+        res = -1
+        if what == 0:
+            res = divmod(difference.total_seconds(), 3600)[0]
+        elif what == 1:
+            res = difference.days
+        elif what == 2:
+            res = difference.days / 7
+        elif what == 3:
+            res = difference.days / 30
+
+        return res
+
     # ===================Inc and Stima=====================
 
     def get_total_increment(self, data_dict, mean):
@@ -2798,7 +2819,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             # mi ricavo i tot_pc e inizzializzo due int
             tot_pc = [elem[0] for elem in iter_dict[key]]
             incr = 0
-            idx = 0
+            to_divide = self.get_temporal_difference(iter_dict[key][0][2], iter_dict[key][-1][2], what)
             # prendo i pc a coppie di 2 per farne la differenza
             for i in range(0, len(tot_pc)):
                 to_calc = tot_pc[i:i + 2]
@@ -2808,9 +2829,8 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
                 incr += abs(to_calc[0] - to_calc[1])
                 # print(incr)
                 # aggiungo uno a idx
-                idx += 1
             # calcolo l'incremento medio
-            incr=math.ceil(incr/idx)
+            incr=math.ceil(incr/to_divide)
             #incr = incr / math.ceil(idx)
             # e lo aggiungo al dizionario
             res_dict[key] = incr
