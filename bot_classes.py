@@ -62,6 +62,7 @@ class Loot:
         """Condensa la lista di oggetti di @craftlootbot in comodi gruppi da 3,basta inoltrare la lista di @craftlootbot"""
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
 
         # inizzializza i campi di user data
@@ -474,7 +475,9 @@ class Boss:
     def boss_admin(self, bot, update, user_data):
         """Inoltra il messaggio del boss, solo per admin
         @:return: ritorna lo state del prossimo handler"""
-
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
         # prendi il dizionario, lista  e id
         self.inizzializza_user_data(user_data)
         # prendi i dati dal databse
@@ -550,7 +553,9 @@ class Boss:
     @catch_exception
     def boss_reset_ask(self, bot, update):
         """Chiede la conferma per il reset dei punteggi"""
-
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
         update.message.reply_text("Sei sicuro di voler resettare i punteggi?\nNon potrai piu recuperarli",
                                   reply_markup=InlineKeyboardMarkup([[
                                       InlineKeyboardButton("Si", callback_data="/resetBossSi"),
@@ -872,7 +877,9 @@ class Cerca:
     @catch_exception
     def cerca_craft(self, bot, update, user_data):
         """Cerca oggetti nell'intervallo craft specificato dall'utente"""
-
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
         # prendi l'intervallo
         param = update.message.text.split()[1:]
         self.inizzializza_user_data(user_data)
@@ -1088,7 +1095,9 @@ class Compra:
 
     def sconti(self, bot, update, user_data):
         """Chiedi allo user se sono presenti sconti all'emporio"""
-
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
         self.inizzializza(bot, update, user_data)
         text = "Ci sono sconti all'emporio?"
 
@@ -1520,8 +1529,10 @@ class Top:
 
     def add_player(self, bot, update):
         """Aggiunge user nel db e visualizza top player"""
+
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
         # getting demojized message
         msg = update.message.text
@@ -2176,6 +2187,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
         # prendi i team nel messaggio e nel db
 
@@ -2920,6 +2932,7 @@ class Crafter:
         """Dato un messaggio di craftlootbot , invia tutti i messaggi separatamente"""
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
         to_send = ""
         for elem in update.message.text.split(":")[1].split("\n")[1:]:
@@ -2973,6 +2986,7 @@ class Mancanti:
         """Funzione per inizzializzare la conversazione per sapere quali oggetti mancano nello zaino"""
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
 
         update.message.reply_text("Prima di iniziare inviami la quantità minima.\n"

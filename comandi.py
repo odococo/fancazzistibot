@@ -56,6 +56,7 @@ class Command():
         command_text = command_text.split(" ")
         self.command = command_text[0]
         self.params = [param.strip() for param in command_text[1:]]
+        self.is_private="private" in update.message.chat.type
 
 
 
@@ -109,57 +110,12 @@ class Command():
 
     def Ustart(self):
         """- Inizzializza il bot con la schermata di help"""
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
         self.answer("""Benvenuto al Fancabot. Ha diverse funzionalità! Scoprile con /help!\n
     
 Crediti: @brandimax @Odococo""")
-#
-#     def Uhelp(self):
-#         """Visualizza l'elenco dei comandi con relativa descrizione"""
-#         commands = self.command_list(utils.is_admin(
-#             self.update.message.from_user.id), utils.is_dev(self.bot.id))
-#         commands = {"/" + command: commands.get(command) for command in commands}
-#         text = "Benvenuto nel FancaBot! Questo bot ha diverse funzionalità per semplificare il gioco @lootgamebot\n\n" \
-#                "<b>=====COMANDI SEMPLICI=====</b>\n\n"
-#         prov = [key + " " + str(value) for key, value in commands.items()]
-#         text += "\n\n".join(prov)
-#         text += COMANDI_PLUS
-#         text += """Inoltre è anche possibile usufruire delle funzionalità dell'inoltro da @craftlootbot e @lootplusbot.
-# Quando hai un lungo elenco di oggetti data da /lista in @craftlootbot, la puoi inoltrare, ti sarà chiesta quale informazione vuoi visualizzare:
-# <b>Negozi</b>
-# Ti permette di ottenere una comoda lista di negozi degli oggetti mancanti da poter inoltrare a @lootbotplus
-# <b>Ricerca</b>
-# Ti sarà inviata una comoda lista di comandi /ricerca da inoltrare a @lootplusbot.
-# Una volta fatto questo puoi inoltrare tutti i risultati di /ricerca qui e infine confermare premendo "Stima" per ottenere il costo totale del craft, i 10 oggetti piu costosi, il tempo medio per acquistarli tutti e una lista di comandi negozio.
-# Se, invece non ti interessa avere queste informazioni premi "Annulla".
-#
-# <b>Boss</b>
-# In più il bot è anche abilitato per funzionare nel gruppo di Fancazzisti! Se sei un admin puoi inoltrare il messaggio "Team" in @lootgamebot per salvare gli attacchi che ha fatto il team madre al boss! Ti verra chiesto di scegliere il boss in questione (Phoenix o Titan) e il gioco è fatto.\
-#
-# <b>Top</b>
-# Inviando il messaggio "Giocatore" che ottieni in @lootgamebot aggiornerai il database e potrai visualizzare la tuo posizione in classifica! (leggi il comando /top per ulteriori informazioni)
-#
-# <b>Pietre del Drago</b>
-# Inoltrando il messagio "/zaino D" da @lootplusbot, otterrai il valore di tutte le pietre del drago che sono presenti nel tuo zaino
-# \n\n<b>=====FINE=====</b>\n\n
-# Votaci sullo <a href="https://telegram.me/storebot?start=fancazzisti_bot">Storebot</a>!
-# Questo è tutto per adesso (ma siamo in continuo sviluppo!), se hai idee o suggerimenti scrivici e non tarderemo a risponderti!
-# Crediti: @brandimax @Odococo e un ringraziamento speciale a @PioggiaDiStelle per avermi aiutato ❤️."""
-#         self.answer(text, parse_mode="HTML")
-
-    # def Uinline(self):
-    #   """Esempio di comandi inline"""
-    #   keyboard = [
-    #     [InlineKeyboardButton(
-    #       "Option 1",
-    #       callback_data='1'),
-    #     InlineKeyboardButton(
-    #       "Option 2",
-    #       callback_data='2')],
-    #     [InlineKeyboardButton(
-    #       "Option 3",
-    #       callback_data='3')]]
-    #   reply_markup = InlineKeyboardMarkup(keyboard)
-    #   self.answer('Please choose:', reply_markup=reply_markup)
 
     def Uhelpvideo(self):
         """- Invia il video tutorial per i comandi di difficile comprensione"""
@@ -309,6 +265,9 @@ Crediti: @brandimax @Odococo""")
 
     def Urarita(self):
         """- Quando inoltri un messagio di craftlootbot vengono automaticamente salvate le rarità degli oggetti che non possiedi. Questo comando ti permette di avere (in percentuale) le informazioni su quali rarità hai mancanza nel tuo zaino. Ottimo da utilizzare in con il comando /compra"""
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
         user_id = self.update.message.from_user.id
         user_item = self.db.get_user_items(user_id)
         tot = 0
@@ -329,13 +288,18 @@ Crediti: @brandimax @Odococo""")
 
     def Uresetrarita(self):
         """- Ti permette di resettare tutte le rarità relative al tuo username, da usare quando hai comprato scrigni all'emporio"""
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
         user_id = self.update.message.from_user.id
         self.db.reset_rarita_user(user_id)
         self.answer("Rarità resettate")
 
     def Uconsiglia(self):
         """num1 num2 num3 num4 num5 - Invia un'immagine con una tabella sui numeri che dovresti cambiare e le relative probabilità di vincita"""
-
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
         # se ci sono troppi o pochi numeri non va bene
         if len(self.params) != 5:
             self.answer("Devi inserire 5 numeri separati da spazio! Esempio /consiglia 1 2 3 4 5")
@@ -409,6 +373,10 @@ Detto questo in bocca al lupo"""
 
     def Umigra(self):
         """nuovoUsername - Cambia il tuo username dentro al bot"""
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
+
         if len(self.params)!=1:
             self.answer("Devi inserire un nome che sarà il tuo nuovo username associato al bot")
             return
@@ -425,10 +393,10 @@ Detto questo in bocca al lupo"""
 
     def Uannulladefinitivo(self):
         """- rimuove completamente la tastiera personalizzata (quella con i bottoni) da usare quando non se ne va"""
-
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
         self.update.message.reply_text("Levata!",reply_markup=ReplyKeyboardRemove())
-
-
 
 
 
@@ -442,7 +410,6 @@ Detto questo in bocca al lupo"""
         users=self.db.get_punteggi()
         for user in users:
             self.bot.send_message(user['id']," ".join(self.params))
-
 
     def Apinboss(self):
         """Fissa un messaggio per l'attacco del boss con i seguenti valori:
@@ -516,16 +483,6 @@ Detto questo in bocca al lupo"""
         for user in users:
             self.bot.send_message(user['id'], to_send)
 
-
-
-
-    def Astoptimer(self):
-        """- ferma il timer"""
-        if not self.timer.stopped:
-            self.answer("Il timer non è attivo")
-            return
-        self.answer("Il timer è stato fermato a "+self.timer.get_remning_time_str()+" ore dalla fine")
-
     def Autente(self):
         """username - Visualizza le informazioni relative a un utente. Ricerca tramite username o id"""
         if self.params:
@@ -540,6 +497,9 @@ Detto questo in bocca al lupo"""
 
     def Autenti(self):
         """- Visualizza gli utenti che utilizzano un determinato bot"""
+        if not self.is_private:
+            self.answer("Questo comando è disponibile solo in privata")
+            return
         users = self.db.get_users_and_id()
         if users:
             users = [users] if isinstance(users, dict) else users
@@ -563,7 +523,6 @@ Detto questo in bocca al lupo"""
 
         for elem in utils.text_splitter_lines(text, splitter="\n\n"):
             self.answer(elem, parse_mode="HTML")
-
 
     def Aregistra(self):
         """username permesso - Aggiorna i permessi di un utente tra [tester, admin ,loot_admin ,loot_user, banned]"""
