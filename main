@@ -281,6 +281,7 @@ def main():
     #Contest(updater)
     Crafter(updater,db)
     Mancanti(updater,db,base_items)
+    DiffSchede(updater,db)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

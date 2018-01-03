@@ -3128,3 +3128,155 @@ class Mancanti:
             user_data['zaino'] = ""
 
         return ConversationHandler.END
+
+
+class DiffSchede:
+    def __init__(self, updater, db):
+        self.db = db
+
+        disp = updater.dispatcher
+
+        if not DEBUG:
+            eleg = self.db.elegible_loot_user(self.init_diff)
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("mancanti", eleg)],
+                states={
+                    1: [MessageHandler(Filters.text, self.diff_loop, pass_user_data=True)]
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla)]
+            )
+
+        else:
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("mancanti", self.init_diff)],
+                states={
+                    1: [MessageHandler(Filters.text, self.diff_loop, pass_user_data=True)]
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
+            )
+
+        disp.add_handler(conversation)
+
+    def init_diff(self, bot, update,user_data):
+
+        reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
+
+        to_send="Perfetto ora mandami tutte le schede dettaglio membri una alla volta\n" \
+                "Clicca fine quando le hai inviate tutte altrimenti annulla."
+        update.message.reply_text(to_send,reply_markup=reply_markup)
+
+        user_data['text']=[]
+        return 1
+
+
+    def diff_loop(self, bot, update, user_data):
+
+
+
+        choice=update.message.text
+
+        if "Fine" in choice:
+            #esegui un check su ogni messaggio
+
+            for msg in user_data['text']:
+                if "pnt creazione" not in msg:
+                    return self.annulla(bot, update,user_data, msg+"\n\nNon è valido")
+
+                res=self.diff("\n".join(user_data['text']))
+                update.message.reply_text(self.pretty_diff(res))
+        elif "Annulla" in choice:
+            print("annulla")
+            return self.annulla(bot, update, user_data, "Ok annullo")
+
+        else:
+            user_data['text'].append(choice)
+            return 1
+
+
+
+    def annulla(self, bot, update, user_data, msg=""):
+        """Annulla la conversazione e inizzializza lo user data"""
+        if msg:
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+
+        if "text" in user_data.keys():
+            user_data['text'] = []
+
+
+        return ConversationHandler.END
+
+    def pretty_diff(self, data):
+        """Dato un dizionario ritorna lo stampabile
+        @:param data: dizionario con key=nome_team, value=pc
+        @:type: dict
+        @:return: stringa da mandare allo user"""
+
+        data_number={k: v for k, v in data.items() if isinstance(v[1],int)}
+        none_number={k: v for k, v in data.items() if isinstance(v[1],str)}
+
+        # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
+        sorted_x = sorted(data_number.items(), key=operator.itemgetter(1), reverse=True)
+
+        idx = 1
+        res = ""
+        for elem in sorted_x:
+            if idx == 1:
+                res += str(idx) + ")🥇 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(math.floor(elem[1])).replace(
+                    ",", ".") + "</b>\n"
+            elif idx == 2:
+                res += str(idx) + ")🥈 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(
+                    (math.floor(elem[1]))).replace(",", ".") + "</b>\n"
+            elif idx == 3:
+                res += str(idx) + ")🥉 <b>" + elem[0] + "</b> con <b>" + "{:,}".format(
+                    (math.floor(elem[1]))).replace(",", ".") + "</b>\n"
+            else:
+                res += str(idx) + ") <b>" + elem[0] + "</b> con <b>" + "{:,}".format((math.floor(elem[1]))).replace(
+                    ",", ".") + "</b>\n"
+            idx += 1
+
+        for elem in none_number:
+            res += str(idx) + ") <b>" + elem[0] + "</b>, " +elem[1]+ "\n"
+            idx += 1
+
+
+        return res
+
+    def diff(self, text):
+        """Prende in ingresso i messaggi contentei due dettagli memerbi e ritorna il dizionario con gli incrementi
+        @:param text: l'unione di due schede messaggio
+        @:type: str
+        @:return: dizionario con key=username value=pc"""
+
+        regex_name = re.compile(r"^(.*) :")
+        regex_pc = re.compile(r"package: ([0-9]+)")
+        text = emoji.demojize(text)
+
+        res = []
+        for elem in text.split("\n\n"):
+            nome = re.findall(regex_name, elem)
+            pc = re.findall(regex_pc, elem)
+            if not nome or not pc: continue
+            nome = nome[0]
+            pc = pc[0]
+            res.append((nome, pc))
+
+        names = set([elem[0] for elem in res])
+
+        res_dict = {}
+        for name in names:
+            res_dict[name] = []
+
+        for elem in res:
+            res_dict[elem[0]].append(elem[1])
+
+        for key in res_dict.keys():
+            try:
+                res_dict[key] = abs(int(res_dict[key][0]) - int(res_dict[key][1]))
+            except IndexError:
+                res_dict[key] = "Questo user compare solo una volta"
+
+        return res_dict
