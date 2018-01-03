@@ -3186,8 +3186,9 @@ class DiffSchede:
                 if "pnt creazione" not in msg:
                     return self.annulla(bot, update,user_data, msg+"\n\nNon è valido")
 
-                res=self.diff("\n".join(user_data['text']))
-                update.message.reply_text(self.pretty_diff(res))
+            res=self.diff("\n".join(user_data['text']))
+            update.message.reply_text(self.pretty_diff(res),reply_markup=ReplyKeyboardRemove(),parse_mode="HTML")
+            return self.annulla(bot,update,user_data)
         elif "Annulla" in choice:
             print("annulla")
             return self.annulla(bot, update, user_data, "Ok annullo")
