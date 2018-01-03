@@ -3140,18 +3140,18 @@ class DiffSchede:
             eleg = self.db.elegible_loot_user(self.init_diff)
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("diffschede", eleg)],
+                [CommandHandler("diffschede", eleg, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.diff_loop, pass_user_data=True)]
 
                 },
-                fallbacks=[CommandHandler('Fine', self.annulla)]
+                fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
             )
 
         else:
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("diffschede", self.init_diff)],
+                [CommandHandler("diffschede", self.init_diff, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.diff_loop, pass_user_data=True)]
 
