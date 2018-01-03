@@ -3140,7 +3140,7 @@ class DiffSchede:
             eleg = self.db.elegible_loot_user(self.init_diff)
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("mancanti", eleg)],
+                [CommandHandler("diffschede", eleg)],
                 states={
                     1: [MessageHandler(Filters.text, self.diff_loop, pass_user_data=True)]
 
@@ -3151,7 +3151,7 @@ class DiffSchede:
         else:
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("mancanti", self.init_diff)],
+                [CommandHandler("diffschede", self.init_diff)],
                 states={
                     1: [MessageHandler(Filters.text, self.diff_loop, pass_user_data=True)]
 
