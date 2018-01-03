@@ -2810,7 +2810,8 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
                 # aggiungo uno a idx
                 idx += 1
             # calcolo l'incremento medio
-            incr = incr / math.ceil(idx)
+            incr=math.ceil(incr/idx)
+            #incr = incr / math.ceil(idx)
             # e lo aggiungo al dizionario
             res_dict[key] = incr
 
