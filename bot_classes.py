@@ -629,7 +629,7 @@ class Boss:
                 for single_dict in user_data['punteggi']:
 
                     # se è gia presente nel db
-                    if single_dict['username'] == username[0]:
+                    if single_dict['username'].lower() == username[0].lower():
                         found = True
 
                         single_dict['msg_id'] = user_data['last_update_id']
