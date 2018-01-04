@@ -3013,6 +3013,7 @@ class Mancanti:
         # salva la quantita e inizzializza la chiave zaino
         user_data['quantita'] = quantita
         user_data['zaino'] = ""
+        user_data['rarita']=[]
 
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
@@ -3051,9 +3052,37 @@ class Mancanti:
             to_send = text_splitter_bytes(to_send, splitter="\n\n", split_every=2048)
             update.message.reply_text("Oggetti con quantità inferiore a <b>" + str(user_data['quantita']) + "</b>\n",
                                       parse_mode="HTML")
+
             for elem in to_send:
                 if not elem: continue
                 update.message.reply_text(elem, parse_mode="HTML")
+
+            #calcolo le percentuali di rarità mancanti
+            #conto le occorrenze
+            c=Counter(user_data['rarita'])
+            #calcolo il totale
+            tot=sum(c.values())
+            #converto in percentuale
+            perc={}
+            for key in c.keys():
+                perc[key]=math.floor(c[key]/tot)
+
+            #ordino
+            sorted_x = sorted(perc.items(), key=operator.itemgetter(0), reverse=True)
+
+            #creo la stringa da mandare
+            to_send="Percentuali di rarità mancanti:\n"
+            
+            for elem in sorted_x:
+                to_send+="<b>"+elem[0]+"</b> - <b>"+str(elem[1])+"</b>\n"
+
+            #invio il messaggio
+            update.message.reply_text(to_send,parse_mode="HTML")
+
+
+
+
+
             return self.annulla(bot, update, user_data, "Fine")
 
         # non ho capito cosa ha mandato e quindi annullo
@@ -3115,6 +3144,8 @@ class Mancanti:
             else:
                 to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
 
+            user_data['rarita'].append(elem['rarity'])
+
         return to_send
 
     def annulla(self, bot, update, user_data, msg=""):
@@ -3127,6 +3158,9 @@ class Mancanti:
 
         if "zaino" in user_data.keys():
             user_data['zaino'] = ""
+
+        if 'rarita' in user_data:
+            user_data['rarita'] = []
 
         return ConversationHandler.END
 
