@@ -3074,7 +3074,7 @@ class Mancanti:
             to_send="Percentuali di rarità mancanti:\n"
 
             for elem in sorted_x:
-                to_send+="<b>"+elem[0]+"</b> - <b>"+str(elem[1])+"</b>\n"
+                to_send+="<b>"+elem[0]+"</b> - <b>"+str(elem[1])+"</b>%\n"
 
             #invio il messaggio
             update.message.reply_text(to_send,parse_mode="HTML")
