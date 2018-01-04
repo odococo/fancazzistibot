@@ -3065,14 +3065,14 @@ class Mancanti:
             #converto in percentuale
             perc={}
             for key in c.keys():
-                perc[key]=math.floor(c[key]/tot)
+                perc[key]=math.floor(c[key]*100/tot)
 
             #ordino
             sorted_x = sorted(perc.items(), key=operator.itemgetter(0), reverse=True)
 
             #creo la stringa da mandare
             to_send="Percentuali di rarità mancanti:\n"
-            
+
             for elem in sorted_x:
                 to_send+="<b>"+elem[0]+"</b> - <b>"+str(elem[1])+"</b>\n"
 
