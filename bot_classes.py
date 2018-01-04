@@ -443,7 +443,7 @@ class Boss:
         name_reg1 = re.compile(r"([0-z_]+) :")
         name_reg2 = re.compile(r"^([0-z_]+) .*")
         obl_reg = re.compile(r":per.*: ([0-z /(/)]+)")
-        boss_reg = re.compile(r":boar: ([0-9]+) .*/([0-9])")
+        boss_reg = re.compile(r":boar: ([0-9]+) .*/([0-9]+)")
 
         res = []
 
