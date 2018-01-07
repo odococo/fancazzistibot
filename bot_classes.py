@@ -3254,7 +3254,7 @@ class Mancanti:
             reply_markup=reply_markup)
         return 2
 
-    @catch_exception
+    #@catch_exception
     def ask_zaino(self, bot, update, user_data):
 
         text = update.message.text
@@ -3346,20 +3346,23 @@ class Mancanti:
                 res_list.append(elem)
 
         # filtro per quantita e rarità
-        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][0] and elem['rarity']=="C"]
-        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][1] and elem['rarity']=="NC"]
-        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][2] and elem['rarity']=="R"]
-        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][3] and elem['rarity']=="UR"]
-        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][4] and elem['rarity']=="L"]
-        res_list = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][5] and elem['rarity']=="E"]
+        res_list_C = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][0] and elem['rarity']=="C" ]
+        res_list_NC = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][1] and elem['rarity']=="NC"]
+        res_list_R = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][2] and elem['rarity']=="R"]
+        res_list_UR = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][3] and elem['rarity']=="UR"]
+        res_list_L = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][4] and elem['rarity']=="L"]
+        res_list_E = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][5] and elem['rarity']=="E"]
+
+        #unisco le liste
+        res_list=res_list_C+res_list_E+res_list_L+res_list_NC+res_list_R+res_list_UR
         # ordino la lista
         res_list = sorted(res_list, key=lambda k: k['quantita'])
 
         idx = 0
         step = 0
         counter = 1
-        if user_data['quantita'] > 10:
-            step = math.floor(user_data['quantita'] / 10)
+        if user_data['quantita'][0] > 10:
+            step = math.floor(user_data['quantita'][0] / 10)
         # creo la stringa da mandare
         to_send = "<b>---Quantita minore uguale a " + str(step) + "---</b>\n"
 
@@ -3375,9 +3378,9 @@ class Mancanti:
                     to_send += "\n<b>---Quantita minore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
 
             if elem['quantita'] > 0:
-                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>\n"
+                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
             else:
-                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>\n"
+                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
 
             user_data['rarita'].append(elem['rarity'])
 
