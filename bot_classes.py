@@ -1139,8 +1139,10 @@ class Compra:
         text = "Perfetto, adesso madami una serie di numeri separati da spazio, ad ogni numero corrisponde la relativa percentuale" \
                " del tuo budget che vuoi spendere sullo scrigno. La posizione dei numeri è associata alla posizione degli scrigni per esempio:\n" \
                "se mandi '0 0 20 30 25 25' vuol dire:\n" \
-               "0 Lengo [C], 0 Ferro [NC], 20% Prezioso [R], 30% Diamante [UR], 25% Leggendario [L] e 25% Epico [E].\nNota bene la somma dei numeri deve fare 100!"
-        update.message.reply_text(text)
+               "0 Lengo [C], 0 Ferro [NC], 20% Prezioso [R], 30% Diamante [UR], 25% Leggendario [L] e 25% Epico [E].\nNota bene la somma dei numeri deve fare 100!\n" \
+               "Mayo consiglia <code> 5 10 20 25 30 10 </code>\n" \
+               "Osho consiglia <code> 4 8 20 25 33 10 </code>"
+        update.message.reply_text(text, parse_mode="HTML")
         return 2
 
     def scrigni_func(self, bot, update, user_data):
