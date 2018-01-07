@@ -214,8 +214,9 @@ def send_help_video(bot, update):
 def admin_supremo(bot, update):
     to_send=["Zi padrone...come lei gomanda","Yes master!","Hai! sempai onii-chan"]
     if "supergroup" in update.message.chat.type:
-        if update.message.from_user.id==24978334:
-            update.message.reply_text(random.choice(to_send))
+        if update.message.reply_to_message.from_user.id==490902479:
+            if update.message.from_user.id==24978334:
+                update.message.reply_text(random.choice(to_send))
 
 def send_stiker(bot, update):
     if "supergroup" in update.message.chat.type:
