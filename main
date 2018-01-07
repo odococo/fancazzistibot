@@ -196,7 +196,7 @@ def photo_reciver(bot, update):
 
 def sticker_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id stiker = <code>"+str(update.sticker.file_id)+"</code>",parse_mode="HTML")
+        update.message.reply_text("id stiker = <code>"+str(update.message.sticker.file_id)+"</code>",parse_mode="HTML")
 
 
 
