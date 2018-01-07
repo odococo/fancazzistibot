@@ -212,10 +212,16 @@ def send_help_video(bot, update):
 # ==================MAIN==========================================
 
 def admin_supremo(bot, update):
-    to_send=["Zi padrone...come lei gomanda","Yes master!","Hai sempai onii-chan"]
+    to_send=["Zi padrone...come lei gomanda","Yes master!","Hai! sempai onii-chan"]
     if "supergroup" in update.message.chat.type:
         if update.message.from_user.id==24978334:
             update.message.reply_text(random.choice(to_send))
+
+def send_stiker(bot, update):
+    if "supergroup" in update.message.chat.type:
+        if update.message.from_user.id == 24978334:
+            bot.sendSticker(update.message.chat_id, update.message.text.split()[1])
+
 
 
 def main():
@@ -260,6 +266,7 @@ def main():
     #         updater.bot.send_message(elem["id"],"",reply_markup=ReplyKeyboardRemove())
 
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
+    disp.add_handler(CommandHandler("sendsticker",send_stiker))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
     disp.add_handler(MessageHandler(Filters.reply, admin_supremo))
     disp.add_handler(MessageHandler(Filters.sticker and Filters.document , sticker_reciver))
