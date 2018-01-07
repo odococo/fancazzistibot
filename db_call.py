@@ -167,54 +167,55 @@ TABELLE = {
         'reset': """UPDATE items SET c=0, nc=0, r=0, ur=0, l=0, e=0, u=0, ue=0 WHERE id =%s""",
         'delete': "DELETE FROM items WHERE id = %s"
     },
-    "all":{
-        "delete":"""DELETE FROM punteggio WHERE id = %s;
+    "all": {
+        "delete": """DELETE FROM punteggio WHERE id = %s;
                     DELETE FROM activity WHERE id = %s;
                     DELETE FROM users WHERE id = %s;
                     DELETE FROM id_users WHERE id = %s"""
     },
-    "top":{
-        "insert":"""INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id, agg ) VALUES 
+    "top": {
+        "insert": """INSERT INTO top ( pc_tot , pc_set,  money,  ability,  rango,  id, agg ) VALUES 
                     (%s,%s,%s,%s,%s,%s, CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET pc_tot=EXCLUDED.pc_tot, 
                       pc_set=EXCLUDED.pc_set, money=EXCLUDED.money, ability=EXCLUDED.ability,
                        rango=EXCLUDED.rango, agg=CURRENT_TIMESTAMP""",
-        "select":{
-            "all":"SELECT * FROM top NATURAL JOIN users;"
+        "select": {
+            "all": "SELECT * FROM top NATURAL JOIN users;"
         }
     },
-    "teams":{
-        "select":{
-            "all_ordered":"SELECT numero, pc, update FROM teams WHERE team = %s ORDER BY numero",
-            "all":"SELECT nome, numero, pc, update FROM teams"},
-        "insert":"""INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(nome, numero) DO NOTHING""",
-        "delete":{
-            "by_date_today":"DELETE FROM teams WHERE update < CURRENT_TIMESTAMP",
-            "by_date":"DELETE FROM teams WHERE update < %s",
-            "by_team":"DELETE FROM teams WHERE nome=%s",
-            "all":"DELETE FROM teams"
+    "teams": {
+        "select": {
+            "all_ordered": "SELECT numero, pc, update FROM teams WHERE team = %s ORDER BY numero",
+            "all": "SELECT nome, numero, pc, update FROM teams"},
+        "insert": """INSERT INTO teams (nome , numero, pc, update) VALUES (%s, %s, %s, CURRENT_TIMESTAMP) ON CONFLICT(nome, numero) DO NOTHING""",
+        "delete": {
+            "by_date_today": "DELETE FROM teams WHERE update < CURRENT_TIMESTAMP",
+            "by_date": "DELETE FROM teams WHERE update < %s",
+            "by_team": "DELETE FROM teams WHERE nome=%s",
+            "all": "DELETE FROM teams"
         }
     },
-    "contest_creator":{
-        "select":{
-            "creator":"SELECT creator_id, creator_username FROM contest_creator",
+    "contest_creator": {
+        "select": {
+            "creator": "SELECT creator_id, creator_username FROM contest_creator",
             "rules": "SELECT rules FROM contest_creator",
             "rewards": "SELECT rewards FROM contest_creator",
             "min_max": "SELECT min_participants, max_participants FROM contest_creator",
         },
-        "insert":"INSERT INTO contest_creator (creator_id , creator_username, rules, rewards, min_participants, max_participants)"
-                 " VALUES (%s, %s, %s, %s, %s, %s)",
-        "delete":"DELETE FROM contest_creator"
+        "insert": "INSERT INTO contest_creator (creator_id , creator_username, rules, rewards, min_participants, max_participants)"
+                  " VALUES (%s, %s, %s, %s, %s, %s)",
+        "delete": "DELETE FROM contest_creator"
     }
 }
 
-COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"#comando per connettersi al db
+COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"  # comando per connettersi al db
 
 developer_dicts = {"brandimax": 24978334, "odococo": 89675136}
-developer_message = []#usata per salvare i messaggi di richiesta accesso
+developer_message = []  # usata per salvare i messaggi di richiesta accesso
 
 
 class DB:
     """Classe per gestire l'interfacciamento con il database"""
+
     def __init__(self):
 
         self.connect_db()
@@ -302,9 +303,9 @@ class DB:
         @:type: list of str
         @:return: lista di valori contenuti dentro la tabella nell'ordine in cui sono stati richiesti in keys"""
 
-        res=[]
+        res = []
         for key in keys:
-            res.append(self.execute(TABELLE['constest_creator']['select'][key],()))
+            res.append(self.execute(TABELLE['constest_creator']['select'][key], ()))
 
         return res
 
@@ -418,9 +419,9 @@ class DB:
         """Aggiunge uno user in bot_users
         @:param effective_user: utente, necessita delle chiavi id, language_code
         @:type: dict"""
-        self.execute(TABELLE['bot_users']['insert'],(bot_id, effective_user['id'],effective_user['language_code'],))
+        self.execute(TABELLE['bot_users']['insert'], (bot_id, effective_user['id'], effective_user['language_code'],))
 
-    def add_update_top_user(self, pc_tot , pc_set,  money,  ability,  rango,  id):
+    def add_update_top_user(self, pc_tot, pc_set, money, ability, rango, id):
         """Aggiunge un user alla tabella top, se gia esiste lo aggiorna
         @:param pc_tot: punti craft totali
         @:type: int
@@ -435,7 +436,7 @@ class DB:
         @:param id: id dell'user
         @:type: int
         """
-        self.execute(TABELLE['top']['insert'],(pc_tot , pc_set,  money,  ability,  rango,  id,))
+        self.execute(TABELLE['top']['insert'], (pc_tot, pc_set, money, ability, rango, id,))
 
     def update_username(self, new_username, id):
         """Cambia lo username nel tabella users
@@ -443,7 +444,7 @@ class DB:
         @:type: str
         @:param id: id dello user che vuole cambiare il nome
         @:type: int"""
-        self.execute(TABELLE['users']['update'],(new_username, id, ))
+        self.execute(TABELLE['users']['update'], (new_username, id,))
 
     def update_teams(self, team_name, numero, pc):
         """Aggiunge una riga dentro la tabella teams
@@ -454,13 +455,13 @@ class DB:
         @:param pc: punti craft totali
         @:type: int"""
 
-        self.execute(TABELLE['teams']['insert'],(team_name, numero, pc))
+        self.execute(TABELLE['teams']['insert'], (team_name, numero, pc))
 
-    def insert_creator(self, creator_id , creator_username, rules, rewards, min_participants, max_participants):
+    def insert_creator(self, creator_id, creator_username, rules, rewards, min_participants, max_participants):
         """Inserisce dentro la tabella constest_creator i parametri"""
 
-        self.execute( TABELLE['constest_creator']['insert'],
-                      (creator_id , creator_username, rules, rewards, min_participants, max_participants,))
+        self.execute(TABELLE['constest_creator']['insert'],
+                     (creator_id, creator_username, rules, rewards, min_participants, max_participants,))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):
@@ -518,13 +519,13 @@ class DB:
         """Elimina dalla tabella teams tutti gli elementi con data antecedente a datetime
         @:param datetime: data da cui iniziare a cancellare le righe
         @:type: datetime"""
-        self.execute(TABELLE['teams']['delete']['by_date'],(datetime,))
+        self.execute(TABELLE['teams']['delete']['by_date'], (datetime,))
 
     def delete_teams_by_name(self, team_name):
         """Elimina dalla tabella teams tutti gli elementi con nome uguale a team_name
         @:param team_name: nome del team
         @:type: str"""
-        self.execute(TABELLE['teams']['delete']['by_team'],(team_name, ))
+        self.execute(TABELLE['teams']['delete']['by_team'], (team_name,))
 
     def delete_teams_all(self, team_name):
         """Elimina dalla tabella teams tutti gli elementi"""
@@ -533,11 +534,10 @@ class DB:
     def delete_contest_creator(self):
         """Elimina tutti i valori dentro contest_creator"""
 
-        self.execute( TABELLE['constest_creator']['delete'])
+        self.execute(TABELLE['constest_creator']['delete'])
 
     # def delete_from_all(self, id):
     #     self.execute(TABELLE['all']['delete'],(id,))
-
 
     # ============================STATIC METHODS===================================
     # esegue una query arbitraria
@@ -600,12 +600,12 @@ class DB:
             # print("cerco user con id " + str(user_id) + ", nel database")
             user = DB.execute(TABELLE["id_users"]["select"]["from_id"], (user_id['id'],))
             # print("ho trovato : " + str(user))
-            if not user:#user non prensete nel db id_users
-                if 'private' in update.message.chat.type:# se il messaggio è stato mandato in privata allora devo chiedere l'accesso
+            if not user:  # user non prensete nel db id_users
+                if 'private' in update.message.chat.type:  # se il messaggio è stato mandato in privata allora devo chiedere l'accesso
                     self.request_access(bot, user_id)
-                elif 'supergroup' in update.message.chat.type:# altrimenti guardo se è presente nei bot_users
-                    bot_users=DB.execute(TABELLE['bot_users']['select']['by_ids'],(user_id, bot.id))
-                    if not bot_users:#se non è presente glielo dico e lo salvo nel db
+                elif 'supergroup' in update.message.chat.type:  # altrimenti guardo se è presente nei bot_users
+                    bot_users = DB.execute(TABELLE['bot_users']['select']['by_ids'], (user_id, bot.id))
+                    if not bot_users:  # se non è presente glielo dico e lo salvo nel db
                         update.message.reply_text("E tu chi sei? Non ti ho mai visto da queste parti..."
                                                   "Perche non mi invii un bel messaggio di start cosi diventiamo amici?",
                                                   reply_to_message_id=update.message.message_id)
@@ -621,9 +621,6 @@ class DB:
                     return func(bot, update, *args, **kwargs)
                 else:
                     return func(*args, **kwargs)
-
-
-
 
         return check_if_user_can_interact
 
@@ -720,9 +717,10 @@ class DB:
         text = update.callback_query.data.split(" ")
         command = text[0]
         user_lst = text[1:]
-        #costruisce il dizionario dal messaggio
+        # costruisce il dizionario dal messaggio
         user = {"id": user_lst[0], "username": " ".join(user_lst[1:])}
-        if (command.strip("/") == "consentiAccessoSi"):   #se viene garantito l'accesso salva l'user nel db e notifa user e developer
+        if (command.strip(
+                "/") == "consentiAccessoSi"):  # se viene garantito l'accesso salva l'user nel db e notifa user e developer
 
             if DB.execute(TABELLE["id_users"]["select"]["from_id"], (user['id'],)):
                 for msg in developer_message:
@@ -746,7 +744,7 @@ class DB:
                     parse_mode="HTML"
                 )
 
-        else:#altrimenti aggiungi l'user alla lista bannati e notifica i developers
+        else:  # altrimenti aggiungi l'user alla lista bannati e notifica i developers
             # print("Accesso negato")
             bot.send_message(user["id"], "Non ti è stato garantito l'accesso al bot :(")
             self.ban_user(user)
@@ -769,12 +767,12 @@ class DB:
                   str(bot.username) + "\nConsenti?"
         bot.send_message(user['id'], "La richiesta di accesso al bot è stata inoltrata, aspetta la risposta")
 
-        #costruisce il messaggio da inivare dal dizionario
+        # costruisce il messaggio da inivare dal dizionario
         user = str(user["id"]) + " " + str(user["username"])
 
         # print(to_send,user)
         for dev in developer_dicts.values():
-            #manditiene in memoria i messaggi inviati per evitare doppie risposte
+            # manditiene in memoria i messaggi inviati per evitare doppie risposte
             developer_message.append(bot.send_message(dev, to_send, reply_markup=InlineKeyboardMarkup([[
                 InlineKeyboardButton("Si", callback_data="/consentiAccessoSi " + user),
                 InlineKeyboardButton("No", callback_data="/consentiAccessoNo " + user)

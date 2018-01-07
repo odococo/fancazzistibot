@@ -338,9 +338,9 @@ class Loot:
             try:
                 num = num[0]  # prendo l'elemento trovato
                 if num[0] != num[1]:  # se i due numeri sono diversi
-                    #new_num = int(num[1]) - int(num[0])  # calcolo la differenza
+                    # new_num = int(num[1]) - int(num[0])  # calcolo la differenza
 
-                    #new_line = line.replace(num[0], str(new_num), 1)  # rimpiazzo il primo
+                    # new_line = line.replace(num[0], str(new_num), 1)  # rimpiazzo il primo
                     new_line = line.replace(num[1], num[0], 1)  # e il secondo
                     aggiornato += new_line + "\n"  # aggiungo la riga aggiornata
                 else:
@@ -2843,8 +2843,8 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
                 # print(incr)
                 # aggiungo uno a idx
             # calcolo l'incremento medio
-            incr=math.ceil(incr/to_divide)
-            #incr = incr / math.ceil(idx)
+            incr = math.ceil(incr / to_divide)
+            # incr = incr / math.ceil(idx)
             # e lo aggiungo al dizionario
             res_dict[key] = incr
 
@@ -3013,13 +3013,13 @@ class Mancanti2:
         # salva la quantita e inizzializza la chiave zaino
         user_data['quantita'] = quantita
         user_data['zaino'] = ""
-        user_data['rarita']=[]
+        user_data['rarita'] = []
 
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
         update.message.reply_text(
             "Verrai notificato solo per gli oggetti con quantità inferiore a <b>" + str(quantita) + "</b>\n"
-                     "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",
+                                                                                                    "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>",
             parse_mode="HTML",
             reply_markup=reply_markup)
         return 2
@@ -3057,31 +3057,27 @@ class Mancanti2:
                 if not elem: continue
                 update.message.reply_text(elem, parse_mode="HTML")
 
-            #calcolo le percentuali di rarità mancanti
-            #conto le occorrenze
-            c=Counter(user_data['rarita'])
-            #calcolo il totale
-            tot=sum(c.values())
-            #converto in percentuale
-            perc={}
+            # calcolo le percentuali di rarità mancanti
+            # conto le occorrenze
+            c = Counter(user_data['rarita'])
+            # calcolo il totale
+            tot = sum(c.values())
+            # converto in percentuale
+            perc = {}
             for key in c.keys():
-                perc[key]=math.floor(c[key]*100/tot)
+                perc[key] = math.floor(c[key] * 100 / tot)
 
-            #ordino
+            # ordino
             sorted_x = sorted(perc.items(), key=operator.itemgetter(0), reverse=True)
 
-            #creo la stringa da mandare
-            to_send="Percentuali di rarità mancanti:\n"
+            # creo la stringa da mandare
+            to_send = "Percentuali di rarità mancanti:\n"
 
             for elem in sorted_x:
-                to_send+="<b>"+elem[0]+"</b> - <b>"+str(elem[1])+"</b>%\n"
+                to_send += "<b>" + elem[0] + "</b> - <b>" + str(elem[1]) + "</b>%\n"
 
-            #invio il messaggio
-            update.message.reply_text(to_send,parse_mode="HTML")
-
-
-
-
+            # invio il messaggio
+            update.message.reply_text(to_send, parse_mode="HTML")
 
             return self.annulla(bot, update, user_data, "Fine")
 
@@ -3140,9 +3136,10 @@ class Mancanti2:
                     to_send += "\n<b>---Quantita minore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
 
             if elem['quantita'] > 0:
-                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
+                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>, rarità <b>" + \
+                           elem['rarity'] + "</b>\n"
             else:
-                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
+                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>" + elem['rarity'] + "</b>\n"
 
             user_data['rarita'].append(elem['rarity'])
 
@@ -3223,13 +3220,12 @@ class Mancanti:
         if not quantita:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
 
-        #controllo che siano sei numeri
-        if len(quantita.split())!=6:
+        # controllo che siano sei numeri
+        if len(quantita.split()) != 6:
             return self.annulla(bot, update, user_data,
                                 msg="Non hai inserito il numero corretto di parametri (devono essere sei numeri)...annullo")
 
-
-        quantita_num=[]
+        quantita_num = []
         # controlla che siano tutti numeri
         try:
             for elem in quantita.split():
@@ -3239,22 +3235,21 @@ class Mancanti:
         # salva la quantita e inizzializza la chiave zaino
         user_data['quantita'] = quantita_num
         user_data['zaino'] = ""
-        user_data['rarita']=[]
+        user_data['rarita'] = []
 
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
-        to_send="Verrai notificato solo per gli oggetti di rarità [C NC R UR L E] con le rispettive quanità minime ["
+        to_send = "Verrai notificato solo per gli oggetti di rarità [C NC R UR L E] con le rispettive quanità minime ["
         for elem in quantita_num:
-            to_send+=str(elem)+" "
-        to_send+="]\nOra inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>"
-
+            to_send += str(elem) + " "
+        to_send += "]\nOra inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>"
 
         update.message.reply_text(to_send,
-            parse_mode="HTML",
-            reply_markup=reply_markup)
+                                  parse_mode="HTML",
+                                  reply_markup=reply_markup)
         return 2
 
-    #@catch_exception
+    # @catch_exception
     def ask_zaino(self, bot, update, user_data):
 
         text = update.message.text
@@ -3287,31 +3282,27 @@ class Mancanti:
                 if not elem: continue
                 update.message.reply_text(elem, parse_mode="HTML")
 
-            #calcolo le percentuali di rarità mancanti
-            #conto le occorrenze
-            c=Counter(user_data['rarita'])
-            #calcolo il totale
-            tot=sum(c.values())
-            #converto in percentuale
-            perc={}
+            # calcolo le percentuali di rarità mancanti
+            # conto le occorrenze
+            c = Counter(user_data['rarita'])
+            # calcolo il totale
+            tot = sum(c.values())
+            # converto in percentuale
+            perc = {}
             for key in c.keys():
-                perc[key]=math.floor(c[key]*100/tot)
+                perc[key] = math.floor(c[key] * 100 / tot)
 
-            #ordino
+            # ordino
             sorted_x = sorted(perc.items(), key=operator.itemgetter(0), reverse=True)
 
-            #creo la stringa da mandare
-            to_send="Percentuali di rarità mancanti:\n"
+            # creo la stringa da mandare
+            to_send = "Percentuali di rarità mancanti:\n"
 
             for elem in sorted_x:
-                to_send+="<b>"+elem[0]+"</b> - <b>"+str(elem[1])+"</b>%\n"
+                to_send += "<b>" + elem[0] + "</b> - <b>" + str(elem[1]) + "</b>%\n"
 
-            #invio il messaggio
-            update.message.reply_text(to_send,parse_mode="HTML")
-
-
-
-
+            # invio il messaggio
+            update.message.reply_text(to_send, parse_mode="HTML")
 
             return self.annulla(bot, update, user_data, "Fine")
 
@@ -3346,15 +3337,21 @@ class Mancanti:
                 res_list.append(elem)
 
         # filtro per quantita e rarità
-        res_list_C = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][0] and elem['rarity']=="C" ]
-        res_list_NC = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][1] and elem['rarity']=="NC"]
-        res_list_R = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][2] and elem['rarity']=="R"]
-        res_list_UR = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][3] and elem['rarity']=="UR"]
-        res_list_L = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][4] and elem['rarity']=="L"]
-        res_list_E = [elem for elem in res_list if int(elem['quantita']) <= user_data['quantita'][5] and elem['rarity']=="E"]
+        res_list_C = [elem for elem in res_list if
+                      int(elem['quantita']) <= user_data['quantita'][0] and elem['rarity'] == "C"]
+        res_list_NC = [elem for elem in res_list if
+                       int(elem['quantita']) <= user_data['quantita'][1] and elem['rarity'] == "NC"]
+        res_list_R = [elem for elem in res_list if
+                      int(elem['quantita']) <= user_data['quantita'][2] and elem['rarity'] == "R"]
+        res_list_UR = [elem for elem in res_list if
+                       int(elem['quantita']) <= user_data['quantita'][3] and elem['rarity'] == "UR"]
+        res_list_L = [elem for elem in res_list if
+                      int(elem['quantita']) <= user_data['quantita'][4] and elem['rarity'] == "L"]
+        res_list_E = [elem for elem in res_list if
+                      int(elem['quantita']) <= user_data['quantita'][5] and elem['rarity'] == "E"]
 
-        #unisco le liste
-        res_list=res_list_C+res_list_E+res_list_L+res_list_NC+res_list_R+res_list_UR
+        # unisco le liste
+        res_list = res_list_C + res_list_E + res_list_L + res_list_NC + res_list_R + res_list_UR
         # ordino la lista
         res_list = sorted(res_list, key=lambda k: k['quantita'])
 
@@ -3378,9 +3375,10 @@ class Mancanti:
                     to_send += "\n<b>---Quantita minore uguale a " + str(step * counter + idx + 1) + "---</b>\n"
 
             if elem['quantita'] > 0:
-                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
+                to_send += "<b>" + elem['name'] + "</b>, ne hai solo <b>" + str(elem['quantita']) + "</b>, rarità <b>" + \
+                           elem['rarity'] + "</b>\n"
             else:
-                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>"+elem['rarity']+"</b>\n"
+                to_send += "Non possidi l'oggetto <b>" + elem['name'] + "</b>, rarità <b>" + elem['rarity'] + "</b>\n"
 
             user_data['rarita'].append(elem['rarity'])
 
@@ -3434,34 +3432,31 @@ class DiffSchede:
 
         disp.add_handler(conversation)
 
-    def init_diff(self, bot, update,user_data):
+    def init_diff(self, bot, update, user_data):
 
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
-        to_send="Perfetto ora mandami tutte le schede dettaglio membri una alla volta\n" \
-                "Clicca fine quando le hai inviate tutte altrimenti annulla."
-        update.message.reply_text(to_send,reply_markup=reply_markup)
+        to_send = "Perfetto ora mandami tutte le schede dettaglio membri una alla volta\n" \
+                  "Clicca fine quando le hai inviate tutte altrimenti annulla."
+        update.message.reply_text(to_send, reply_markup=reply_markup)
 
-        user_data['text']=[]
+        user_data['text'] = []
         return 1
-
 
     def diff_loop(self, bot, update, user_data):
 
-
-
-        choice=update.message.text
+        choice = update.message.text
 
         if "Fine" in choice:
-            #esegui un check su ogni messaggio
+            # esegui un check su ogni messaggio
 
             for msg in user_data['text']:
                 if "pnt creazione" not in msg:
-                    return self.annulla(bot, update,user_data, msg+"\n\nNon è valido")
+                    return self.annulla(bot, update, user_data, msg + "\n\nNon è valido")
 
-            res=self.diff("\n".join(user_data['text']))
-            update.message.reply_text(self.pretty_diff(res),reply_markup=ReplyKeyboardRemove(),parse_mode="HTML")
-            return self.annulla(bot,update,user_data)
+            res = self.diff("\n".join(user_data['text']))
+            update.message.reply_text(self.pretty_diff(res), reply_markup=ReplyKeyboardRemove(), parse_mode="HTML")
+            return self.annulla(bot, update, user_data)
         elif "Annulla" in choice:
             print("annulla")
             return self.annulla(bot, update, user_data, "Ok annullo")
@@ -3470,8 +3465,6 @@ class DiffSchede:
             user_data['text'].append(choice)
             return 1
 
-
-
     def annulla(self, bot, update, user_data, msg=""):
         """Annulla la conversazione e inizzializza lo user data"""
         if msg:
@@ -3479,7 +3472,6 @@ class DiffSchede:
 
         if "text" in user_data.keys():
             user_data['text'] = []
-
 
         return ConversationHandler.END
 

@@ -15,24 +15,17 @@ bot.
 """
 import codecs
 import logging
-import os
 import sys
 
 import telegram
-from telegram import ReplyKeyboardRemove
-from telegram.error import Unauthorized
 from telegram.ext import (
-    Updater,
-    RegexHandler,
-    CallbackQueryHandler,
-    MessageHandler, Filters, CommandHandler)
+    Updater)
 
 from bot_classes import *
 from comandi import new_command, videos
 from db_call import DB, developer_dicts
-from negozi_loot import use_api, ITEMS
 from utils import (is_numeric, get_pretty_json)
-import random
+
 # ==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -40,9 +33,9 @@ logger = logging.getLogger(__name__)
 
 PORT = int(os.environ.get('PORT', '5000'))
 
-
 # ==================FUNCTIONS==========================================
-bot_ids=[333089594,490902479]
+bot_ids = [333089594, 490902479]
+
 
 def get_bot_id(dev):
     if dev:
@@ -126,11 +119,13 @@ def unset(bot, update, chat_data):
 
     update.message.reply_text('Timer successfully unset!')
 
+
 def basta_stikers(bot, update):
-    sender=update.message.from_user
-    to_send=["Ma basta con sti sticker cancerogeni","Ancora?! facciamola finita con questi stickers","Un altro sticker? regolati perfavore"]
+    sender = update.message.from_user
+    to_send = ["Ma basta con sti sticker cancerogeni", "Ancora?! facciamola finita con questi stickers",
+               "Un altro sticker? regolati perfavore"]
     if "Vyllain" in sender['username']:
-        update.message.reply_text(random.choice(to_send),reply_to_message_id=update.message.message_id)
+        update.message.reply_text(random.choice(to_send), reply_to_message_id=update.message.message_id)
 
 
 def error(bot, update, error):
@@ -186,43 +181,47 @@ def error(bot, update, error):
 def log_update(bot, update):
     logger.info(update)
 
+
 def video_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id video = "+str(update.message.video.file_id))
+        update.message.reply_text("id video = " + str(update.message.video.file_id))
+
 
 def photo_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id image = "+str(update.message.photo[0].file_id))
+        update.message.reply_text("id image = " + str(update.message.photo[0].file_id))
+
 
 def sticker_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id stiker = <code>"+str(update.message.sticker.file_id)+"</code>",parse_mode="HTML")
-
+        update.message.reply_text("id stiker = <code>" + str(update.message.sticker.file_id) + "</code>",
+                                  parse_mode="HTML")
 
 
 def send_help_video(bot, update):
     """Manda il video di help"""
-    video= update.callback_query.data.split()[1]
+    video = update.callback_query.data.split()[1]
     bot.delete_message(
         chat_id=update.callback_query.message.chat_id,
         message_id=update.callback_query.message.message_id
     )
     bot.sendVideo(update.callback_query.message.chat_id, videos[video][1])
 
+
 # ==================MAIN==========================================
 
 def admin_supremo(bot, update):
-    to_send=["Zi padrone...come lei gomanda","Yes master!","Hai! sempai onii-chan"]
+    to_send = ["Zi padrone...come lei gomanda", "Yes master!", "Hai! sempai onii-chan"]
     if "supergroup" in update.message.chat.type:
-        if update.message.reply_to_message.from_user.id==490902479:
-            if update.message.from_user.id==24978334:
+        if update.message.reply_to_message.from_user.id == 490902479:
+            if update.message.from_user.id == 24978334:
                 update.message.reply_text(random.choice(to_send))
+
 
 def send_stiker(bot, update):
     if "supergroup" in update.message.chat.type:
         if update.message.from_user.id == 24978334:
             bot.sendSticker(update.message.chat_id, update.message.text.split()[1])
-
 
 
 def main():
@@ -235,14 +234,14 @@ def main():
     python3 main 3 il bot dev in polling 
     """
 
-    db = DB()#database
+    db = DB()  # database
 
-    #mode=3
+    # mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
-    bot_id=get_bot_id(dev)
-    token=str(bot_id)+db.get_token(bot_id)['token']
-    #token=str(bot_id)+""
+    bot_id = get_bot_id(dev)
+    token = str(bot_id) + db.get_token(bot_id)['token']
+    # token=str(bot_id)+""
     updater = Updater(token)
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
     # add_bot(get_bot(updater.bot))
@@ -267,13 +266,12 @@ def main():
     #         updater.bot.send_message(elem["id"],"",reply_markup=ReplyKeyboardRemove())
 
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
-    disp.add_handler(CommandHandler("sendsticker",send_stiker))
+    disp.add_handler(CommandHandler("sendsticker", send_stiker))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
     disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
     disp.add_handler(MessageHandler(Filters.reply, admin_supremo))
-    disp.add_handler(MessageHandler(Filters.sticker and Filters.document , sticker_reciver))
-    disp.add_handler(CallbackQueryHandler(send_help_video,pattern="/helpvideo"))
-
+    disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
+    disp.add_handler(CallbackQueryHandler(send_help_video, pattern="/helpvideo"))
 
     with codecs.open("craftables_file", encoding='utf-8') as file:
         rea = file.read()
@@ -288,16 +286,16 @@ def main():
     Loot(updater, db)
     Boss(updater, db)
     Cerca(updater, db, oggetti)
-    Compra(updater,db)
-    #EasterEggs(updater)
-    Top(updater,db)
-    PietreDrago(updater,db)
-    Help(updater,db)
-    Team(updater,db)
-    #Contest(updater)
-    Crafter(updater,db)
-    Mancanti(updater,db,base_items)
-    DiffSchede(updater,db)
+    Compra(updater, db)
+    # EasterEggs(updater)
+    Top(updater, db)
+    PietreDrago(updater, db)
+    Help(updater, db)
+    Team(updater, db)
+    # Contest(updater)
+    Crafter(updater, db)
+    Mancanti(updater, db, base_items)
+    DiffSchede(updater, db)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))
@@ -305,8 +303,7 @@ def main():
     disp.add_handler(RegexHandler("^[.!/]", new_command))
 
     disp.add_handler(CallbackQueryHandler(new_command, pattern="^[/.!]dice"))
-    #disp.add_handler(MessageHandler(Filters.sticker,basta_stikers))
-
+    # disp.add_handler(MessageHandler(Filters.sticker,basta_stikers))
 
     # log all errors
     disp.add_error_handler(error)
