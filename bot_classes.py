@@ -3377,13 +3377,13 @@ class Alarm:
                 update.message.reply_text('Non puoi mettere un orario gia passato')
                 return
             print(args)
-            if ":" in args[1]:
-                ore=int(args[1].split(":")[0])
-                minuti = int(args[1].split(":")[1])
+            if ":" in args[0]:
+                ore=int(args[0].split(":")[0])
+                minuti = int(args[0].split(":")[1])
             else:
-                ore=int(args[1])
+                ore=int(args[0])
                 minuti=0
-            when=datetime.now() +timedelta(hours=ore,minutes=minuti)
+            when=datetime.now() + timedelta(hours=ore,minutes=minuti)
             chat_data['when']=when
 
             msg=args[1]
