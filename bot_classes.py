@@ -1525,7 +1525,8 @@ class Top:
             add_player_decor = self.db.elegible_loot_user(self.add_player)
             top_command_decor = self.db.elegible_loot_user(self.top_command)
             disp.add_handler(RegexHandler("^Giocatore 👤", add_player_decor))
-            disp.add_handler(CommandHandler("top", top_command_decor))
+            disp.add_handler(CommandHandler("top", top_command_decor,pass_job_queue=True
+))
 
         disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top"))
 
@@ -1569,7 +1570,7 @@ class Top:
         to_send = "In base a cosa desideri visualizzare la classifica?"
         update.message.reply_text(to_send, reply_markup=self.inline)
 
-    def get_top(self, bot, update):
+    def get_top(self, bot, update,job_queue):
         """Visualizza informazioni per il top player"""
         # getting list of players and sort_key
         top_ps = self.db.get_all_top()
@@ -1612,6 +1613,18 @@ class Top:
             parse_mode="HTML"
 
         )
+        # starta un timer per eliminare il messaggio dopo un ora
+        job_queue.run_once(self.delete_message, timedelta(hours=1), context={'chat_id':update.callback_query.message.chat_id,
+                                                                     'message_id':update.callback_query.message.message_id})
+
+    def delete_message(self, bot, job):
+        try:
+            bot.delete_message(
+                chat_id=job.context['chat_id'],
+                message_id=job.context['message_id']
+            )
+        finally:
+            return 
 
     def pretty_user(self, user, idx, sort_key):
         """Formatta messaggio di user da inviare
