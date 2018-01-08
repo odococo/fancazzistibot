@@ -3275,7 +3275,8 @@ class DiffSchede:
 
         # sorto il dizionario, ottenendo una lista di tuple del tipo (nome, incr)
         sorted_x = sorted(data_number.items(), key=operator.itemgetter(1), reverse=True)
-
+        if not any([elem[1] for elem in sorted_x]):
+            return "Hai mandato due volte la stessa scheda...babbo"
         idx = 1
         res = ""
         for elem in sorted_x:
