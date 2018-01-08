@@ -46,9 +46,9 @@ class Command():
         if update.callback_query:
             command_text = update.callback_query.data
         # Se il messaggio ricevuto è stato inoltrato
-        elif update.message.forward_from:
-            if update.message.forward_from.username == "craftlootbot":
-                command_text = "/loot " + update.message.text
+        #elif update.message.forward_from:
+         #   if update.message.forward_from.username == "craftlootbot":
+          #      command_text = "/loot " + update.message.text
         # Altrimenti se si tratta di un semplice messaggio
         else:
             command_text = update.message.text
@@ -103,7 +103,7 @@ class Command():
 
     def unknown_command(self):
         print(self.update)
-        if "private" in self.update.message.chat.type :
+        if self.is_private:
             self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
 
     # ----------------------------------------------------------------------------------
