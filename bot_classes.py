@@ -3361,11 +3361,15 @@ class Alarm:
 
     def alarm(self,bot, job):
         """Send the alarm message."""
-        bot.send_message(job.context, text='Timer scaduto!')
+        bot.send_message(job.context['chat_id'], text=job.context['msg'])
 
     def set_timer(self, bot, update, args, job_queue, chat_data):
         """Add a job to the queue."""
         chat_id = update.message.chat_id
+        if len(args)!=2:
+            update.message.reply_text("Non hai inviato i parametri corretti!\n"
+                                      "/timerset hh:mm msg")
+            return
         try:
             # args[0] should contain the time for the timer in seconds
             due = int(args[0])
@@ -3373,14 +3377,16 @@ class Alarm:
                 update.message.reply_text('Non puoi mettere un orario gia passato')
                 return
 
+            msg=args[1]
+            context_dict={'chat_id':chat_id, 'msg':msg}
             # Add job to queue
-            job = job_queue.run_once(self.alarm, due, context=chat_id)
+            job = job_queue.run_once(self.alarm, due, context=context_dict)
             chat_data['job'] = job
 
-            update.message.reply_text('Timer successfully set!')
+            update.message.reply_text('Hai settato il timer correttamente')
 
         except (IndexError, ValueError):
-            update.message.reply_text('Usage: /set <seconds>')
+            update.message.reply_text('/timerset hh:mm msg')
 
     def unset(self, bot, update, chat_data):
         """Remove the job if the user changed their mind."""
