@@ -3342,7 +3342,7 @@ class Alarm:
 
         disp = updater.dispatcher
 
-        if not DEBUG:
+        if DEBUG:
             disp.add_handler(CommandHandler("timerset", self.set_timer,
                                           pass_args=True,
                                           pass_job_queue=True,
@@ -3356,7 +3356,7 @@ class Alarm:
                                             pass_args=True,
                                             pass_job_queue=True,
                                             pass_chat_data=True))
-            disp.add_handler(CommandHandler("timerunset", disp, pass_chat_data=True))
+            disp.add_handler(CommandHandler("timerunset", unset_el, pass_chat_data=True))
 
 
     def alarm(self,bot, job):
