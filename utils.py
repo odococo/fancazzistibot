@@ -54,6 +54,8 @@ annulladefinitivo - toglie qualisasi tastiera personalizzata
 teams - visualizza i team
 mancanti - mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata
 diffschede - visualizza la differenza in pc tra due schede (team->dettaglio membri)
+timerset - setta il timer
+timerunset - elimina il timer precedentemente settato
 """
 
 

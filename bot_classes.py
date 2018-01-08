@@ -1797,10 +1797,10 @@ class Help:
         user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
                     "settimanali, edosoldi, abilità, rango]")
         user.append("/teams - Visualizza i pc dei team presenti nella Hall of Fame e il relativo incremento")
-        user.append(
-            "/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
-
+        user.append("/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
         user.append("/diffschede - Visualizza la differenza in pc tra due schede 'Dettaglio Membri' in 'Team'")
+        user.append("/timerset hh:mm msg - setta un timer tra <b>hh</b> ore e <b>mm</b> minuti (si possono anche specificare solo le ore) e allo scadere del tempo invia il messaggio <b>msg</b>")
+        user.append("/timerunset - Rimuove il timer precedentemente settato")
         return user, admin, developer
 
     def get_forward_commands(self):
