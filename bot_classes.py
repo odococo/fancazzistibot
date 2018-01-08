@@ -3411,7 +3411,7 @@ class Alarm:
         rimanente=chat_data['when']-datetime.now()
         del chat_data['when']
         giorni=rimanente.days
-        ore=divmod(rimanente.days * 86400 + rimanente.seconds, 3600)[0]
+        ore=abs(giorni*24 -divmod(rimanente.days * 86400 + rimanente.seconds, 3600)[0])
         minuti=abs(ore*60 -divmod(rimanente.seconds, 60)[0])
 
         to_send="Hai eliminato il timer a "
