@@ -3335,3 +3335,62 @@ class DiffSchede:
                 res_dict[key] = "Questo user compare solo una volta"
 
         return res_dict
+
+class Alarm:
+    def __init__(self, updater, db):
+        self.db = db
+
+        disp = updater.dispatcher
+
+        if not DEBUG:
+            disp.add_handler(CommandHandler("timerset", self.set_timer,
+                                          pass_args=True,
+                                          pass_job_queue=True,
+                                          pass_chat_data=True))
+            disp.add_handler(CommandHandler("timerunset", self.unset, pass_chat_data=True))
+        else:
+            # crea conversazione
+            set_el=db.elegible_loot_user(self.set_timer)
+            unset_el=db.elegible_loot_user(self.unset)
+            disp.add_handler(CommandHandler("timerset", set_el,
+                                            pass_args=True,
+                                            pass_job_queue=True,
+                                            pass_chat_data=True))
+            disp.add_handler(CommandHandler("timerunset", disp, pass_chat_data=True))
+
+
+    def alarm(self,bot, job):
+        """Send the alarm message."""
+        bot.send_message(job.context, text='Timer scaduto!')
+
+    def set_timer(self, bot, update, args, job_queue, chat_data):
+        """Add a job to the queue."""
+        chat_id = update.message.chat_id
+        try:
+            # args[0] should contain the time for the timer in seconds
+            due = int(args[0])
+            if due < 0:
+                update.message.reply_text('Non puoi mettere un orario gia passato')
+                return
+
+            # Add job to queue
+            job = job_queue.run_once(self.alarm, due, context=chat_id)
+            chat_data['job'] = job
+
+            update.message.reply_text('Timer successfully set!')
+
+        except (IndexError, ValueError):
+            update.message.reply_text('Usage: /set <seconds>')
+
+    def unset(self, bot, update, chat_data):
+        """Remove the job if the user changed their mind."""
+        if 'job' not in chat_data:
+            update.message.reply_text('Non ci sono timer attivi')
+            return
+
+        job = chat_data['job']
+        job.schedule_removal()
+        del chat_data['job']
+
+        update.message.reply_text('Hai eliminato il timer')
+
