@@ -1525,8 +1525,7 @@ class Top:
             add_player_decor = self.db.elegible_loot_user(self.add_player)
             top_command_decor = self.db.elegible_loot_user(self.top_command)
             disp.add_handler(RegexHandler("^Giocatore 👤", add_player_decor))
-            disp.add_handler(CommandHandler("top", top_command_decor,pass_job_queue=True
-))
+            disp.add_handler(CommandHandler("top", top_command_decor))
 
         disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top",pass_job_queue=True))
 
@@ -1566,6 +1565,7 @@ class Top:
             to_send = "Si è verificato un errore, contatta @brandimax e inoltragli il messaggio che hai inviato"
             update.message.reply_text(to_send)
 
+    @catch_exception
     def top_command(self, bot, update):
 
         to_send = "In base a cosa desideri visualizzare la classifica?"
