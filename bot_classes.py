@@ -3363,6 +3363,7 @@ class Alarm:
         """Send the alarm message."""
         bot.send_message(job.context['chat_id'], text="<b>TIMER SCADUTO</b>\n"+job.context['msg'],parse_mode="HTML")
 
+    @catch_exception
     def set_timer(self, bot, update, args, job_queue, chat_data):
         """Add a job to the queue."""
         chat_id = update.message.chat_id
@@ -3398,8 +3399,9 @@ class Alarm:
         except (IndexError, ValueError) as e:
             update.message.reply_text(str(e))
             update.message.reply_text("Non hai inviato i parametri corretti!\n"
+           
                                       "/timerset hh:mm msg")
-
+    @catch_exception
     def unset(self, bot, update, chat_data):
         """Remove the job if the user changed their mind."""
         if 'job' not in chat_data:
@@ -3413,7 +3415,7 @@ class Alarm:
         rimanente=chat_data['when']-datetime.now()
         del chat_data['when']
         giorni=rimanente.days
-        ore=rimanente.hours
+        ore=divmod(rimanente.days * 86400 + rimanente.seconds, 3600)[0]
         minuti=rimanente.minutes
 
         to_send="Hai eliminato il timer a "
