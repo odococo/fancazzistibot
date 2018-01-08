@@ -3373,10 +3373,6 @@ class Alarm:
             return
         try:
             # args[0] should contain the time for the timer in seconds
-            due = int(args[0])
-            if due < 0:
-                update.message.reply_text('Non puoi mettere un orario gia passato')
-                return
             print(args)
             if ":" in args[0]:
                 ore=int(args[0].split(":")[0])
