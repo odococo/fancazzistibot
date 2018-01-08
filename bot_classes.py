@@ -3378,10 +3378,10 @@ class Alarm:
                 return
 
             if ":" in args[1]:
-                ore=args[1].split(":")[0]
-                minuti = args[1].split(":")[1]
+                ore=int(args[1].split(":")[0])
+                minuti = int(args[1].split(":")[1])
             else:
-                ore=args[1]
+                ore=int(args[1])
                 minuti=0
             when=datetime.now() +timedelta(hours=ore,minutes=minuti)
             chat_data['when']=when
@@ -3396,7 +3396,8 @@ class Alarm:
             update.message.reply_text(to_send,parse_mode="HTML")
 
         except (IndexError, ValueError):
-            update.message.reply_text('/timerset hh:mm msg')
+            update.message.reply_text("Non hai inviato i parametri corretti!\n"
+                                      "/timerset hh:mm msg")
 
     def unset(self, bot, update, chat_data):
         """Remove the job if the user changed their mind."""
