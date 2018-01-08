@@ -3361,7 +3361,7 @@ class Alarm:
 
     def alarm(self,bot, job):
         """Send the alarm message."""
-        bot.send_message(job.context['chat_id'], text=job.context['msg'])
+        bot.send_message(job.context['chat_id'], text="<b>TIMER SCADUTO</b>\n"+job.context['msg'],parse_mode="HTML")
 
     def set_timer(self, bot, update, args, job_queue, chat_data):
         """Add a job to the queue."""
@@ -3377,13 +3377,23 @@ class Alarm:
                 update.message.reply_text('Non puoi mettere un orario gia passato')
                 return
 
+            if ":" in args[1]:
+                ore=args[1].split(":")[0]
+                minuti = args[1].split(":")[1]
+            else:
+                ore=args[1]
+                minuti=0
+            when=datetime.now() +timedelta(hours=ore,minutes=minuti)
+            chat_data['when']=when
+
             msg=args[1]
             context_dict={'chat_id':chat_id, 'msg':msg}
             # Add job to queue
-            job = job_queue.run_once(self.alarm, due, context=context_dict)
+            job = job_queue.run_once(self.alarm, when, context=context_dict)
             chat_data['job'] = job
-
-            update.message.reply_text('Hai settato il timer correttamente')
+            ora,data=pretty_time_date(when)
+            to_send="Hai settato il timer correttamente!\nIl timer scadrà alle <b>"+ora+"</b> del <i>"+data+"</i>"
+            update.message.reply_text(to_send,parse_mode="HTML")
 
         except (IndexError, ValueError):
             update.message.reply_text('/timerset hh:mm msg')
@@ -3397,6 +3407,10 @@ class Alarm:
         job = chat_data['job']
         job.schedule_removal()
         del chat_data['job']
+
+        rimanente=chat_data['when']-datetime.now()
+        del chat_data['when']
+        ora,data=pretty_time_date(rimanente)
 
         update.message.reply_text('Hai eliminato il timer')
 
