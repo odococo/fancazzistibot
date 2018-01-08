@@ -3395,7 +3395,8 @@ class Alarm:
             to_send="Hai settato il timer correttamente!\nIl timer scadrà alle <b>"+ora+"</b> del <i>"+data+"</i>"
             update.message.reply_text(to_send,parse_mode="HTML")
 
-        except (IndexError, ValueError):
+        except (IndexError, ValueError) as e:
+            update.message.reply_text(str(e))
             update.message.reply_text("Non hai inviato i parametri corretti!\n"
                                       "/timerset hh:mm msg")
 
