@@ -102,7 +102,7 @@ class Command():
         return commands
 
     def unknown_command(self):
-        print(self.update)
+        #print(self.update)
         if self.is_private:
             self.answer("Ti sembra che {} sia nell'elenco?\n/help per la lista dei comandi".format(self.command))
 
@@ -127,7 +127,7 @@ Crediti: @brandimax @Odococo""")
         for key in videos.keys():
             inline.append(InlineKeyboardButton(key, callback_data="/helpvideo "+key))
 
-        print(inline)
+        #print(inline)
 
         #self.update.message.reply_text(descrizione, reply_markup=InlineKeyboardMarkup(inline), parse_mode="HTML")
         self.bot.send_message(self.update.message.from_user.id,descrizione, reply_markup=InlineKeyboardMarkup([inline]), parse_mode="HTML")
@@ -387,7 +387,7 @@ Detto questo in bocca al lupo"""
         new_username=self.params[0]
 
         res=self.db.update_username(new_username,user_id)
-        print(res)
+        #print(res)
 
         self.answer("Complimenti! il tuo nuovo nome è "+new_username)
 
@@ -565,7 +565,7 @@ Detto questo in bocca al lupo"""
 
         for elem in self.params:
             user = self.db.get_user(elem)
-            print(user)
+            #print(user)
             try:
                 self.bot.send_message(user['id'], random.choice(to_send))
 
@@ -600,7 +600,7 @@ Detto questo in bocca al lupo"""
             self.answer("Il comando deve essere seguito da uno o piu username separati da spazio")
         for elem in self.params:
             user=self.db.get_user(elem)
-            print(user)
+            #print(user)
             try:
                 self.db.delete_from_all(user['id'])
                 self.bot.send_message(user['id'], "Sei stao rimosso dal bot")
