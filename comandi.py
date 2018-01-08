@@ -623,6 +623,7 @@ Detto questo in bocca al lupo"""
             for  user in users:
                 self.answer("Mando messaggio a "+str(user['id']))
                 self.bot.sendChatAction(user['id'],"typing")
+            self.answer("Fine")
 
         inner(self.bot, self.update)
 
