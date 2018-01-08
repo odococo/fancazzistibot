@@ -3418,7 +3418,8 @@ class Alarm:
         if giorni: to_send+=str(giorni)+" giorni, "
         if ore: to_send+=str(ore)+" ore , "
         if minuti: to_send+=str(minuti)+" minuti, "
-        to_send+=" dalla fine"
+        if minuti or ore or giorni: to_send+=" dalla fine"
+        else: to_send+=" qualche secondo dalla fine"
 
         update.message.reply_text(to_send)
 
