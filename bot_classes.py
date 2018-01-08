@@ -1528,8 +1528,9 @@ class Top:
             disp.add_handler(CommandHandler("top", top_command_decor,pass_job_queue=True
 ))
 
-        disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top"))
+        disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top",pass_job_queue=True))
 
+    @catch_exception
     def add_player(self, bot, update):
         """Aggiunge user nel db e visualizza top player"""
 
@@ -1570,7 +1571,7 @@ class Top:
         to_send = "In base a cosa desideri visualizzare la classifica?"
         update.message.reply_text(to_send, reply_markup=self.inline)
 
-    def get_top(self, bot, update,job_queue):
+    def get_top(self, bot, update, job_queue):
         """Visualizza informazioni per il top player"""
         # getting list of players and sort_key
         top_ps = self.db.get_all_top()
