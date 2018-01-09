@@ -56,6 +56,8 @@ mancanti - mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una
 diffschede - visualizza la differenza in pc tra due schede (team->dettaglio membri)
 timerset - setta il timer
 timerunset - elimina il timer precedentemente settato
+stanzavuota - invia i drop per le stanze vuote
+
 """
 
 

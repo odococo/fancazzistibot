@@ -399,6 +399,7 @@ Detto questo in bocca al lupo"""
         self.update.message.reply_text("Levata!",reply_markup=ReplyKeyboardRemove())
 
     def Ustanzavuota(self):
+        """- Invia i drop per le stanze vuote"""
         to_send="""
 <b>LISTA DROP DUNGEON</b> (aka Stanza vuota)
 Qua sono presenti tutti i drop per le stanze del tipo:
