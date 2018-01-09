@@ -398,7 +398,23 @@ Detto questo in bocca al lupo"""
             return
         self.update.message.reply_text("Levata!",reply_markup=ReplyKeyboardRemove())
 
+    def Ustanzavuota(self):
+        to_send="""
+<b>LISTA DROP DUNGEON</b> (aka Stanza vuota)
+Qua sono presenti tutti i drop per le stanze del tipo:
+<i>Succede qualcosa, qualcosa che..[qualosa]..procedi alla prossima stanza con aria interrogativa</i>
 
+- forse ti farebbe sentire più <b>fortunato</b> —-> <b>Gettone</b>
+- ti fa sentire un po' più <b>esperto</b> di prima —-> <b>10 Exp</b>
+- in effetti potrebbe farti <b>sentire meglio</b>—-> <b>Pozione</b>
+- <b>luccica e riflette</b> la luce in modo incredibile —-> <b>Gemma</b>
+- ti provoca un <b>brivido</b> nella schiena —-> <b>Necronucleo</b>
+- ti fa stare un po' più al <b>caldo</b> —-> <b>Lana</b>
+- ti fa provoca un <b>prurito</b> fastidioso —-> <b>Polvere</b>
+- può farti <b>rialzare</b> una volta in più —-> <b>Piuma di Fenice</b>
+"""
+
+        self.answer(to_send, parse_mode="HTML")
 
     # admin command ------------------------------------------------------------
 
