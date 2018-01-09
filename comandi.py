@@ -578,7 +578,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
             self.answer("Non hai inserito nessun username")
             return
 
-        to_send=["Attacca il boss dannazzione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
+        to_send=["Attacca il boss dannazione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
 
         for elem in self.params:
             user = self.db.get_user(elem)
