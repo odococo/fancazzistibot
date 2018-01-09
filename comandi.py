@@ -336,19 +336,19 @@ Crediti: @brandimax @Odococo""")
     def Uartefatti(self):
         """- Invia la lista di artefatti"""
         msg="""
-FIAMMEGGIANTE
+<b>FIAMMEGGIANTE</b>
 Per ottenere questo artefatto devi raggiungere 85 punti dungeon e possedere 5.000.000§, questi ultimi ti verranno sottratti per completare il rituale.
 
-ELETTRICO
+<b>ELETTRICO</b>
 Per ottenere questo artefatto devi raggiungere 10.000 punti creazione, il drago al livello 100 e possedere 10.000.000§, questi ultimi ti verranno sottratti per completare il rituale.
 
-TEMPESTA
+<b>TEMPESTA</b>
 Per ottenere questo artefatto devi portare al livello 10 almeno 5 Talenti, possedere 20 Gemme (verranno consumate) e raggiungere le 200 Imprese completate.
 
-BUIO
+<b>BUIO</b>
 Per ottenere questo artefatto devi aver completato 1000 missioni, vinto 500 ispezioni (effettuate o respinte), e ottenuto 2000 Polvere (S).
 
-DIVINATORIO
+<b>DIVINATORIO</b>
 Per ottenere questo artefatto devi:
 > Raggiungere il livello 1000
 > Aver raggiunto rango 350
