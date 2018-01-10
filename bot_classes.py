@@ -2960,7 +2960,7 @@ class Crafter:
             if not elem: continue
             update.message.reply_text(elem)
             if idx == 10:
-                time.sleep(3)
+                time.sleep(1)
                 idx = 0
             idx += 1
 
