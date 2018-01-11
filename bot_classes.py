@@ -185,7 +185,7 @@ class Loot:
             if (len(top_ten) > 3):
                 if not len(top_ten) <= 10: top_ten = top_ten[:9]
 
-                to_print = "I 10 oggetti piu costosi sono:\n"
+                to_print = "I "+str(len(top_ten))+" oggetti piu costosi sono:\n"
                 for elem in top_ten:
                     to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
                     if int(elem[2]) != 1:
