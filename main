@@ -184,7 +184,11 @@ def log_update(bot, update):
 
 def video_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id video = " + str(update.message.video))
+        update.message.reply_text("id video = " + str(update.message.video.file_id))
+
+def document_reciver(bot, update):
+    if "private" in update.message.chat.type:
+        update.message.reply_text("id video = " + str(update.message.document.file_id))
 
 
 def photo_reciver(bot, update):
@@ -278,6 +282,7 @@ def main():
     disp.add_handler(CommandHandler("uganda", Uganda))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
     disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
+    disp.add_handler(MessageHandler(Filters.document, document_reciver))
     disp.add_handler(MessageHandler(Filters.reply, admin_supremo))
     disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video, pattern="/helpvideo"))
