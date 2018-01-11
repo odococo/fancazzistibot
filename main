@@ -184,7 +184,7 @@ def log_update(bot, update):
 
 def video_reciver(bot, update):
     if "private" in update.message.chat.type:
-        update.message.reply_text("id video = " + str(update.message.video.file_id))
+        update.message.reply_text("id video = " + str(update.message))
 
 
 def photo_reciver(bot, update):
