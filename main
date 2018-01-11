@@ -223,6 +223,14 @@ def send_stiker(bot, update):
         if update.message.from_user.id == 24978334:
             bot.sendSticker(update.message.chat_id, update.message.text.split()[1])
 
+def Uganda(bot, update):
+    if "supergroup" in update.message.chat.type:
+        to_send=["Do u know de wey?","I can show u de wey of de devil","Click Click Click Click Click Click Click",
+                 "its never gay if its in zimbabwe", "in zimbabwe we do not have water",
+                 "i will teach u de wey, de wey of de devil", "show us de wey commander!",
+                 "spit on de fake queen"]
+        update.message.reply_text(random.choice(to_send))
+
 
 def main():
     # Create the EventHandler and pass it your bot's token.
@@ -267,6 +275,7 @@ def main():
 
     disp.add_handler(MessageHandler(Filters.video, video_reciver))
     disp.add_handler(CommandHandler("sendsticker", send_stiker))
+    disp.add_handler(CommandHandler("uganda", Uganda))
     disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
     disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
     disp.add_handler(MessageHandler(Filters.reply, admin_supremo))
