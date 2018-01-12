@@ -116,12 +116,21 @@ class Loot:
             user_data['stima_flag'] = True
             return 1
         elif "negozi" in param:
+            to_send_list=[]
             to_send = "/negozio "
+            idx=0
             for elem in user_data['quantita']:
                 to_send += elem[1] + "::" + elem[0] + ","
+                idx+=1
+                if idx==9:
+                    to_send_list.append(to_send.rstrip(","))
+                    to_send="/negozio "
+                    idx=0
 
             to_send = to_send.rstrip(",")
-            bot.sendMessage(update.callback_query.message.chat.id, to_send)
+            to_send_list.append(to_send)
+            for elem in to_send_list:
+                bot.sendMessage(update.callback_query.message.chat.id, elem)
             return ConversationHandler.END
         elif "annulla" in param:
             return self.annulla(bot, update, user_data, msg="Ok annullo")
