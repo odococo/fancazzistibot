@@ -336,27 +336,31 @@ Crediti: @brandimax @Odococo""")
     def Uartefatti(self):
         """- Invia la lista di artefatti"""
         msg="""
-FIAMMEGGIANTE
+<b>FIAMMEGGIANTE</b>
 Per ottenere questo artefatto devi raggiungere 85 punti dungeon e possedere 5.000.000§, questi ultimi ti verranno sottratti per completare il rituale.
 
-ELETTRICO
+<b>ELETTRICO</b>
 Per ottenere questo artefatto devi raggiungere 10.000 punti creazione, il drago al livello 100 e possedere 10.000.000§, questi ultimi ti verranno sottratti per completare il rituale.
 
-TEMPESTA
+Una volta ottenuti i primi due potrai accedere alla rinascita r4
+
+<b>TEMPESTA</b>
 Per ottenere questo artefatto devi portare al livello 10 almeno 5 Talenti, possedere 20 Gemme (verranno consumate) e raggiungere le 200 Imprese completate.
 
-BUIO
+<b>BUIO</b>
 Per ottenere questo artefatto devi aver completato 1000 missioni, vinto 500 ispezioni (effettuate o respinte), e ottenuto 2000 Polvere (S).
+Ti permette di accedere alla trasmogrificazione
 
-DIVINATORIO
+<b>DIVINATORIO</b>
 Per ottenere questo artefatto devi:
 > Raggiungere il livello 1000
 > Aver raggiunto rango 350
 > Aver completato 20 scalate complete nello stesso team
 > Aver venduto almeno 500 oggetti al Contrabbandiere
 > Aver partecipato e aiutato a vincere 5 imprese globali
+Una volta ottenuto potrai accedere al potenziamento flaridion
 
-L'artefatto è pronto ma non può essere ancora ottenuto in quanto potrebbe essere aggiornato lievemente"""
+"""
         self.answer(msg)
 
     def Uregoleboss(self):
@@ -578,7 +582,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
             self.answer("Non hai inserito nessun username")
             return
 
-        to_send=["Attacca il boss dannazzione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
+        to_send=["Attacca il boss dannazione!","Lo hai attaccato il boss?","Se non attacchi il boss ti prendo a sberle"]
 
         for elem in self.params:
             user = self.db.get_user(elem)

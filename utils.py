@@ -57,7 +57,7 @@ diffschede - visualizza la differenza in pc tra due schede (team->dettaglio memb
 timerset - setta il timer
 timerunset - elimina il timer precedentemente settato
 stanzavuota - invia i drop per le stanze vuote
-
+uganda - do u know de wey?
 """
 
 
