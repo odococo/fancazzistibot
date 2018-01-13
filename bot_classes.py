@@ -528,7 +528,9 @@ class Boss:
     def boss_user(self, bot, update, user_data):
         """Se un user vuole visualizzare le stesse info degli admin non ha diritto alle modifiche
                 @:return: ritorna lo state del prossimo handler"""
-
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
         # prendi le info dal db
         self.inizzializza_user_data(user_data)
         user_data['punteggi'] = self.db.get_punteggi_username()
@@ -3358,6 +3360,7 @@ class DiffSchede:
                 res_dict[key] = "Questo user compare solo una volta"
 
         return res_dict
+
 
 class Alarm:
     def __init__(self, updater, db):

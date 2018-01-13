@@ -56,7 +56,12 @@ class Command():
         command_text = command_text.split(" ")
         self.command = command_text[0]
         self.params = [param.strip() for param in command_text[1:]]
-        self.is_private="private" in update.message.chat.type
+        try:
+            self.is_private="private" in update.message.chat.type
+        except AttributeError:
+            self.is_private="private" in update.callback_query.message.chat.type
+        finally:
+            self.is_private=False
 
 
 
