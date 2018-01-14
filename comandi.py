@@ -683,8 +683,9 @@ Qua sono presenti tutti i drop per le stanze del tipo:
             self.answer("Non ci sono bug")
             return
         #se ne è presente uno solo trasformalo da dict a list
-        if not isinstance(bugs,list): bugs=list(bugs)
+        if not isinstance(bugs,list): bugs=[bugs]
 
+        print(bugs)
         sortedD = sorted(bugs, key=lambda k: k['id'])
 
         print(sortedD)
