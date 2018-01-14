@@ -208,7 +208,7 @@ TABELLE = {
     "bugs":{
         "insert":"INSERT INTO bugs (bug,id) VALUES (%s, %s)",
         "delete":"DELETE FROM bugs WHERE id=%s",
-        "select":"SELECT FROM bugs"
+        "select":"SELECT * FROM bugs"
     }
 }
 
