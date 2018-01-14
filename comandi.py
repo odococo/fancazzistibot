@@ -676,6 +676,8 @@ Qua sono presenti tutti i drop per le stanze del tipo:
     def Dviewbugs(self):
         bugs=self.db.get_bugs()
 
+        print(bugs)
+
         #controlla che ci siano bug nella tabella
         if not bugs:
             self.answer("Non ci sono bug")
