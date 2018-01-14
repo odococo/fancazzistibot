@@ -676,6 +676,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         self.answer("Bug eliminato")
 
     def Dviewbugs(self):
+        """ manda la sita dei bug da correggere"""
         bugs=self.db.get_bugs()
 
         print(bugs)
