@@ -484,6 +484,7 @@ class Boss:
     def boss_admin(self, bot, update, user_data):
         """Inoltra il messaggio del boss, solo per admin
         @:return: ritorna lo state del prossimo handler"""
+
         if "private" not in update.message.chat.type:
             update.message.reply_text("Questo comando è disponibile solo in privata")
             return
@@ -509,19 +510,25 @@ class Boss:
 
         user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
-        # se il messaggio presenta le stesse info avverti l'user
-        if self.same_message(boss, user_data['lista_boss']):
-            update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
-            return 1
 
-        # print(user_data['lista_boss'], boss)
 
         # genera e invia risposta
-        reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],
-                                           one_time_keyboard=True)
-        update.message.reply_text(
-            "Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
-            reply_markup=reply_markup)
+
+        if self.db.is_admin(update.message.from_user.id):
+            # se il messaggio presenta le stesse info avverti l'user
+            if self.same_message(boss, user_data['lista_boss']):
+                update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
+                return 1
+
+            reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],one_time_keyboard=True)
+            update.message.reply_text(
+                "Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
+                reply_markup=reply_markup)
+        else:
+            reply_markup = ReplyKeyboardMarkup([["Visualizza"]],
+                                               one_time_keyboard=True)
+            update.message.reply_text("Clicca su visualizza per proseguire",
+                reply_markup=reply_markup)
         return 1
 
     @catch_exception

@@ -565,8 +565,23 @@ class DB:
         @:type: int"""
         self.execute(TABELLE['bugs']['delete'],(id,))
 
-    # def delete_from_all(self, id):
-    #     self.execute(TABELLE['all']['delete'],(id,))
+    #============================UTILS======================================
+    def is_admin(self, id):
+        """Verifica che l'id passato sia di un admin o admin loot
+        @:param id: l'id dello user
+        @:type: str
+        @:return: bool"""
+        users=self.execute(TABELLE['id_users']['select']['from_id'])
+        if not users: return False
+        if not isinstance(users, list): users=[users]
+
+        for elem in users:
+            if elem['id']==id:
+                if elem['admin'] or elem['loot_admin']: return True
+                else: break
+
+        return False
+
 
     # ============================STATIC METHODS===================================
     # esegue una query arbitraria
