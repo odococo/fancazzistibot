@@ -60,8 +60,7 @@ class Command():
             self.is_private="private" in update.message.chat.type
         except AttributeError:
             self.is_private="private" in update.callback_query.message.chat.type
-        finally:
-            self.is_private=False
+
 
 
 
