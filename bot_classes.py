@@ -408,7 +408,7 @@ class Boss:
 
         if not DEBUG:
             boss_user_decor = db.elegible_loot_user(self.boss_user)
-            boss_admin_decor = db.elegible_loot_admin(self.boss_admin)
+            boss_admin_decor = db.elegible_loot_user(self.boss_completa)
             reset_boss_ask_decor = db.elegible_loot_admin(self.boss_reset_ask)
 
             coversation_boss = ConversationHandler(
@@ -425,7 +425,7 @@ class Boss:
         else:
             coversation_boss = ConversationHandler(
                 [CommandHandler("attacchiboss", self.boss_user, pass_user_data=True),
-                 RegexHandler("^🏆", self.boss_admin, pass_user_data=True)],
+                 RegexHandler("^🏆", self.boss_completa, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.boss_loop, pass_user_data=True)]
                 },
@@ -481,7 +481,7 @@ class Boss:
         user_data['single_dict'] = True
 
     @catch_exception
-    def boss_admin(self, bot, update, user_data):
+    def boss_completa(self, bot, update, user_data):
         """Inoltra il messaggio del boss, solo per admin
         @:return: ritorna lo state del prossimo handler"""
 
@@ -514,10 +514,13 @@ class Boss:
 
         # genera e invia risposta
 
-        if self.db.is_admin(update.message.from_user.id):
+        if self.db.is_loot_admin(update.message.from_user.id):
             # se il messaggio presenta le stesse info avverti l'user
             if self.same_message(boss, user_data['lista_boss']):
-                update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato")
+                reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],
+                                                   one_time_keyboard=True)
+
+                update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato",reply_markup=reply_markup)
                 return 1
 
             reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],one_time_keyboard=True)

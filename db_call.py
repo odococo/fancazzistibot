@@ -566,7 +566,7 @@ class DB:
         self.execute(TABELLE['bugs']['delete'],(id,))
 
     #============================UTILS======================================
-    def is_admin(self, id):
+    def is_loot_admin(self, id):
         """Verifica che l'id passato sia di un admin o admin loot
         @:param id: l'id dello user
         @:type: str
