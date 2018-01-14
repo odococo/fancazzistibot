@@ -482,6 +482,7 @@ class DB:
         if not bugs:id_b=0
         elif not isinstance(bugs,list): id_b=1
         else: id_b=len(bugs)
+        id_b+=1
 
         self.execute(TABELLE['bugs']['insert'],(bug, id_b,))
 
