@@ -659,6 +659,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
             return
         bug=" ".join(self.params)
         self.db.add_bug(bug)
+        self.answer("Bug aggiunto")
 
     def Ddeletebug(self):
         """id - rimuove un bug dal bot"""
@@ -672,6 +673,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
             return
 
         self.db.delete_bug(bug_id)
+        self.answer("Bug eliminato")
 
     def Dviewbugs(self):
         bugs=self.db.get_bugs()
@@ -689,9 +691,9 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         sortedD = sorted(bugs, key=lambda k: k['id'])
 
         print(sortedD)
-        to_send="<b>BUGS</b>"
+        to_send="<b>BUGS</b>\n"
         for elem in sortedD:
-            to_send+=str(elem["id"])+") "+elem["bug"]
+            to_send+=str(elem["id"])+") "+elem["bug"]+"\n"
         self.answer(to_send,parse_mode="HTML")
 
 
