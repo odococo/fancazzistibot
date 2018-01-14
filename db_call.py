@@ -204,6 +204,11 @@ TABELLE = {
         "insert": "INSERT INTO contest_creator (creator_id , creator_username, rules, rewards, min_participants, max_participants)"
                   " VALUES (%s, %s, %s, %s, %s, %s)",
         "delete": "DELETE FROM contest_creator"
+    },
+    "bugs":{
+        "insert":"INSERT INTO bugs (bug,id) VALUES (%s, %s)",
+        "delete":"DELETE FROM bugs WHERE id=%s",
+        "select":"SELECT FROM bugs"
     }
 }
 
@@ -308,6 +313,10 @@ class DB:
             res.append(self.execute(TABELLE['constest_creator']['select'][key], ()))
 
         return res
+
+    def get_bugs(self):
+        """Return all bugs in table bugs"""
+        return self.execute(TABELLE['bugs']['select'])
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
@@ -463,6 +472,19 @@ class DB:
         self.execute(TABELLE['constest_creator']['insert'],
                      (creator_id, creator_username, rules, rewards, min_participants, max_participants,))
 
+    def add_bug(self, bug):
+        """Add a row in bugs
+        @:param bug: the bug
+        @:type: str"""
+        #conta le row in bugs
+        bugs=self.get_bugs()
+
+        if not bugs:id_b=0
+        elif not isinstance(bugs,list): id_b=1
+        else: id_b=len(bugs)
+
+        self.execute(TABELLE['bugs']['insert'],(bug, id_b,))
+
     # ============DELETE/RESET======================================
     def ban_user(self, user):
         """Banna un user dal bot
@@ -535,6 +557,12 @@ class DB:
         """Elimina tutti i valori dentro contest_creator"""
 
         self.execute(TABELLE['constest_creator']['delete'])
+
+    def delete_bug(self,id):
+        """Cancella una row dalla tabella bugs in base all'id
+        @:param id: l'id del bug
+        @:type: int"""
+        self.execute(TABELLE['bugs']['delete'],(id,))
 
     # def delete_from_all(self, id):
     #     self.execute(TABELLE['all']['delete'],(id,))

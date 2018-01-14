@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
+import operator
 import random
 import time
 
@@ -652,6 +652,43 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
         inner(self.bot, self.update)
 
+    def Daddbug(self):
+        """bug - aggiunge un bug al todo del bot"""
+        if len(self.params)==0:
+            self.answer("Non hai inviato nessuna stringa rappresentante il bug")
+            return
+        bug=" ".join(self.params)
+        self.db.add_bug(bug)
+
+    def Ddeletebug(self):
+        """id - rimuove un bug dal bot"""
+        if len(self.params)!=1:
+            self.answer("Devi usare l'id del bug per poterlo eliminare")
+            return
+        try:
+            bug_id=int(self.params[0])
+        except ValueError:
+            self.answer("Non hai inserito un id valido")
+            return
+
+        self.db.delete_bug(bug_id)
+
+    def Dviewbugs(self):
+        bugs=self.db.get_bugs()
+
+        #controlla che ci siano bug nella tabella
+        if not bugs:
+            self.answer("Non ci sono bug")
+            return
+        #se ne è presente uno solo trasformalo da dict a list
+        if not isinstance(bugs,list): bugs=list(bugs)
+
+        sortedD = sorted([(elem['id'], elem['bug']) for elem in bugs], reverse=True)
+
+        to_send="<b>BUGS</b>"
+        for elem in sortedD:
+            to_send+=str(elem[0])+") "+elem[1]
+        self.answer(to_send,parse_mode="HTML")
 
 
 def new_command(bot, update):
