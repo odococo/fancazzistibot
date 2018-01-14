@@ -691,7 +691,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         print(sortedD)
         to_send="<b>BUGS</b>"
         for elem in sortedD:
-            to_send+=str(elem[0])+") "+elem[1]
+            to_send+=str(elem["id"])+") "+elem["bug"]
         self.answer(to_send,parse_mode="HTML")
 
 
