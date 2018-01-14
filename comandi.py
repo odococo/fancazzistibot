@@ -685,8 +685,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         #se ne è presente uno solo trasformalo da dict a list
         if not isinstance(bugs,list): bugs=list(bugs)
 
-
-        sortedD = sorted([(elem['id'], elem['bug']) for elem in bugs], reverse=True)
+        sortedD = sorted(bugs, key=lambda k: k['id'])
 
         print(sortedD)
         to_send="<b>BUGS</b>"
