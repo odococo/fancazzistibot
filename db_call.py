@@ -572,11 +572,14 @@ class DB:
         @:type: str
         @:return: bool"""
         users=self.execute(TABELLE['id_users']['select']['from_id'])
+        print(users)
         if not users: return False
         if not isinstance(users, list): users=[users]
+        print("1")
 
         for elem in users:
             if elem['id']==id:
+                print(elem)
                 if elem['admin'] or elem['loot_admin']: return True
                 else: break
 
