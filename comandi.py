@@ -36,6 +36,7 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
 
 
 class Command():
+    @utils.catch_exception
     def __init__(self, bot, update, db):
         """Salva bot, update, comando e parametri"""
         self.bot = bot
@@ -700,7 +701,6 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         self.answer(to_send,parse_mode="HTML")
 
 
-@utils.catch_exception
 def new_command(bot, update):
     command = Command(bot, update, DB())
     command.execute()
