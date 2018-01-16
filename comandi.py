@@ -576,10 +576,12 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
         username=self.params[0]
         user=self.db.get_user(username)
+        print(user)
+
         if not user:
             self.answer("Non ci sono users con quell'username")
             return
-        
+
         if isinstance(user,list):
             print(user)
             user=user[0]
