@@ -2951,7 +2951,7 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
 
         for key in filter_dict.keys():
             val = filter_dict[key]
-            new_incr = val[0] + val[1] - team[1] - team[0]
+            new_incr = val[0] + val[1] - team[0]
             res_dict[key] = (new_incr, new_incr / 20)
 
         return res_dict
