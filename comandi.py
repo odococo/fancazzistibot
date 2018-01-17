@@ -37,11 +37,12 @@ videos={'loot':("Video tutorial su come utilizzare i messaggi di inoltro da @cra
 
 class Command():
     @utils.catch_exception
-    def __init__(self, bot, update, db):
+    def __init__(self, bot, update, db,insulti):
         """Salva bot, update, comando e parametri"""
         self.bot = bot
         self.update = update
         self.db = db
+        self.insulti=insulti
         # Se ho un messaggio dato da tasto inline
         if update.callback_query:
             command_text = update.callback_query.data
@@ -430,6 +431,19 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
         self.answer(to_send, parse_mode="HTML")
 
+    def Uinsulta(self):
+        "- insulta un'utente a caso"
+        if self.is_private:
+            self.answer("Questo comando è disponibile solo nel supergruppo")
+            return
+
+        #prendi gli uesers dal db
+        users=self.db.get_users()
+
+        user=random.choice(users)
+        self.bot.sendMessage(user['id'],random.choice(self.insulti))
+
+
     # admin command ------------------------------------------------------------
 
     def Asvegliamadre(self):
@@ -763,7 +777,13 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
 
 def new_command(bot, update):
-    command = Command(bot, update, DB())
+
+    insulti=[]
+    with open("insulti.txt","r+") as file:
+        insulti=file.readlines()
+
+
+    command = Command(bot, update, DB(),insulti)
     command.execute()
 
 #timer class
