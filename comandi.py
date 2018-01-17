@@ -621,6 +621,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
             to_send+="<code>"+str(elem['id'])+"</code>\n"
 
         to_send+="Usa @usinfobot per visualizzare il nome utente"
+        self.answer(to_send,parse_mode="HTML")
 
     def Aunban(self):
         """user_id - unbanna uno user dal bot tramite id (usa /banned per avere la lista dei bannati)"""
