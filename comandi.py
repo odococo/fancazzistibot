@@ -616,10 +616,9 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
         if not isinstance(banned,list): banned=[banned]
 
-        print(banned)
         to_send="<b>Id utenti bannati</b>:\n"
         for elem in banned:
-            to_send+="<code>"+elem['id']+"</code>\n"
+            to_send+="<code>"+str(elem['id'])+"</code>\n"
 
         to_send+="Usa @usinfobot per visualizzare il nome utente"
 
