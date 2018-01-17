@@ -54,7 +54,12 @@ class Command():
             command_text = update.message.text
 
         command_text = command_text.split(" ")
-        self.command = command_text[0]
+        #controlla che ci sia la chiocciola
+        if "@" in command_text[0]:
+            if not "fancazzisti_bot" in command_text[0].split("@")[1]: return
+            self.command=command_text[0].split("@")[0]
+        else: self.command = command_text[0]
+
         self.params = [param.strip() for param in command_text[1:]]
         try:
             self.is_private="private" in update.message.chat.type
