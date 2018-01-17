@@ -441,7 +441,8 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         users=self.db.get_users()
 
         user=random.choice(users)
-        self.bot.sendMessage(user['id'],random.choice(self.insulti))
+        to_send="@"+user['username']+" ti insulta\n"+random.choice(self.insulti)
+        self.bot.sendMessage(user['id'],to_send)
 
 
     # admin command ------------------------------------------------------------
