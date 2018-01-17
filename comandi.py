@@ -740,7 +740,6 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         """ manda la sita dei bug da correggere"""
         bugs=self.db.get_bugs()
 
-        print(bugs)
 
         #controlla che ci siano bug nella tabella
         if not bugs:
@@ -749,10 +748,8 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         #se ne è presente uno solo trasformalo da dict a list
         if not isinstance(bugs,list): bugs=[bugs]
 
-        print(bugs)
         sortedD = sorted(bugs, key=lambda k: k['id'])
 
-        print(sortedD)
         to_send="<b>BUGS</b>\n"
         for elem in sortedD:
             to_send+=str(elem["id"])+") "+elem["bug"]+"\n"
