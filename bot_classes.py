@@ -1556,7 +1556,6 @@ class Top:
 
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
-            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
         # getting demojized message
         msg = update.message.text
@@ -2225,7 +2224,6 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
         """Quando riceve un messaggio team, invia imessaggio con incremento di pc e aggiorna il db"""
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
-            update.message.reply_text("Questo comando è disponibile solo in privata")
             return
         # prendi i team nel messaggio e nel db
 

@@ -607,6 +607,58 @@ Qua sono presenti tutti i drop per le stanze del tipo:
                 self.answer("Non ho trovato " + str(elem) + " tra gli users del bot")
         self.answer("Messaggio inviato")
 
+    def Abanned(self):
+        """- Ritorna una lista di tutti gli utenti bannati dal bot"""
+        banned=self.db.get_banned()
+        if not banned:
+            self.answer("Non ci sono utenti bannati nel bot")
+            return
+
+        if not isinstance(banned,list): banned=[banned]
+
+        to_send="<b>Id utenti bannati</b>:\n"
+        for elem in banned:
+            to_send+="<code>"+elem['id']+"</code>\n"
+
+        to_send+="Usa @usinfobot per visualizzare il nome utente"
+
+    def Aunban(self):
+        """user_id - unbanna uno user dal bot tramite id (usa /banned per avere la lista dei bannati)"""
+        if len(self.params)!=1:
+            self.answer("Devi inserire un solo id dopo il comando")
+            return
+
+        id=self.params[0]
+
+        if not id.isnumeric():
+            self.answer("Non hai inserito un id valido")
+            return
+
+        id=int(id)
+
+        users=self.db.get_id_users()
+
+        if not users:
+            self.answer("Non sono presneti users nel database")
+            return
+
+        if not isinstance(users, list):users=[users]
+
+        found=False
+        for user in users:
+            if user['id']==id:
+                found=True
+                break
+
+        if not found:
+            self.answer("Non ho trovato l'id specificato nel database")
+            return
+
+        self.db.delete_user(id)
+        self.bot.sendMessage(id, "Sei stato sbannato! Premi /start per accedere alle funzionalità del bot")
+        self.answer("L'id "+str(id)+" è stato sbannato")
+
+
     # developer comands ----------------------------------------
 
     def Dsendtoall(self):

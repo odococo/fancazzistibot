@@ -42,7 +42,8 @@ TABELLE = {
         "select": {
             'all_id': """SELECT * FROM id_users""",
             'from_id': """SELECT * FROM id_users WHERE id = %s""",
-            'all': """SELECT * FROM id_users NATURAL JOIN users"""
+            'all': """SELECT * FROM id_users NATURAL JOIN users""",
+            'banned':"""SELECT * FROM id_users WHERE banned = true"""
         },
         "insert": {
             'single_id': """INSERT INTO id_users (id) 
@@ -317,6 +318,10 @@ class DB:
     def get_bugs(self):
         """Return all bugs in table bugs"""
         return self.execute(TABELLE['bugs']['select'])
+
+    def get_banned(self):
+        """Ritorna tutti gli id degli utenti bannati"""
+        return self.execute(TABELLE['id_users']['select']['banned'])
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
