@@ -60,6 +60,7 @@ stanzavuota - invia i drop per le stanze vuote
 uganda - do u know de wey?
 unban - unbanna uno user dal bot tramite id (usa /banned per avere la lista dei bannati)
 banned - Ritorna una lista di tutti gli utenti bannati dal bot
+insulta  insulta un'utente a caso
 """
 
 
