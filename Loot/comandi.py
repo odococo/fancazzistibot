@@ -781,7 +781,8 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
 def new_command(bot, update):
 
-    with open("Resources/insulti.txt","r+") as file:
+    os.chdir("../Resources")
+    with open("insulti.txt","r+") as file:
         insulti=file.readlines()
 
 

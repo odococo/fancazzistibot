@@ -248,12 +248,12 @@ def main():
 
     db = DB()  # database
 
-    # mode=3
+    #mode=3
     dev = mode % 2 != 0
     debug = mode // 2 == 1
     bot_id = get_bot_id(dev)
     token = str(bot_id) + db.get_token(bot_id)['token']
-    # token=str(bot_id)+""
+    #token=str(bot_id)+""
     updater = Updater(token)
     logger.info("Modalità di avvio: {}\nDev = {}\nDebug = {}\nbot = {}".format(mode, dev, debug, updater.bot))
     # add_bot(get_bot(updater.bot))
@@ -287,6 +287,10 @@ def main():
     disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video, pattern="/helpvideo"))
 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    os.chdir(dir_path+"/Resources/")
+
+
     with codecs.open("craftables_file", encoding='utf-8') as file:
         rea = file.read()
         oggetti = eval(rea.replace("null", "None"))
@@ -294,6 +298,9 @@ def main():
     with codecs.open("base_file", encoding='utf-8') as file:
         rea = file.read()
         base_items = eval(rea.replace("null", "None"))
+
+    os.chdir("../")
+
 
     # classi per craftlootbot e comandi boss
 
