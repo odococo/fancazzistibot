@@ -331,12 +331,15 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             sorted_x = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
             tot=len(sorted_x)
 
+            print(sorted_x)
+
             sorted_x=[(elem[0],math.ceil(elem[1]/tot*100)) for elem in sorted_x]
+            print(sorted_x)
 
             to_send=user_data['username']+" hai inviato un totale di "+str(tot)+" messaggi... di cui:\n"
 
             for elem in sorted_x:
-                to_send+="Il <b>"+str(elem[1])+"</b> sono <b>"+self.ita_types[elem[0]]+"</b> "
+                to_send+="Il <b>"+str(elem[1])+"</b>% è <b>"+self.ita_types[elem[0]]+"</b> "
 
 
 
