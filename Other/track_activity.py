@@ -290,7 +290,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         elif param == "parole":
 
             activity = [elem['content'] for elem in activity]
-            count = self.word_count(" ".join(activity))
+            count = self.get_word_count(" ".join(activity))
             # calcola la len
             max_len = len(count)
 
@@ -381,12 +381,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
 
         elif param == "user_piu":
-            user, count=self.get_most_active_user()
+            user, count = self.get_most_active_user()
 
             if not user:
-                to_send="Non ci sono utenti nel database"
+                to_send = "Non ci sono utenti nel database"
             else:
-                to_send="L'user piu attivo è @"+user['username']+", con <b>"+str(count)+"</b> messaggi, grandioso!"
+                to_send = "L'user piu attivo è @" + user['username'] + ", con <b>" + str(
+                    count) + "</b> messaggi, grandioso!"
 
         elif param == "user_meno":
             user, count = self.get_most_active_user(piu=False)
@@ -394,7 +395,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if not user:
                 to_send = "Non ci sono utenti nel database"
             else:
-                to_send = "L'user meno attivo è @" + user['username'] + ", con <b>" + str(count) + "</b> messaggi....che pena"
+                to_send = "L'user meno attivo è @" + user['username'] + ", con <b>" + str(
+                    count) + "</b> messaggi....che pena"
 
 
 
@@ -448,7 +450,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         else:
             return False
 
-    # ============================UTILS===========================================
+    # ============================GETTER UTILS===========================================
 
     def get_most_active_user(self, piu=True):
         """Ritorna lo user piu attivo nel gruppo
@@ -457,29 +459,22 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         @:return: user"""
         activity = self.get_activity_by("all")
         if not activity: return
-        activity=[elem['id_user'] for elem in activity]
+        activity = [elem['id_user'] for elem in activity]
 
-        counter=Counter(activity)
+        counter = Counter(activity)
         if piu:
             top = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
         else:
             top = sorted(counter.items(), key=operator.itemgetter(1))
 
+        user = False
+        idx = 0
+        # se uno user non è presente nel db prendi il successivo
+        while not user and idx != len(top):
+            user = self.db.get_user(top[idx][0])
+            idx += 1
 
-        user=False
-        idx=0
-        #se uno user non è presente nel db prendi il successivo
-        while not user and idx!=len(top):
-            user=self.db.get_user(top[idx][0])
-            idx+=1
-
-        return user,top[idx][1]
-
-
-
-
-
-
+        return user, top[idx][1]
 
     def get_top_emoji(self, text, emoji_bool=True):
         """Ritorna le top emoji trovate nel testo
@@ -555,19 +550,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         return to_send
 
-    def filler(self, tot, val):
-        """Ritorna un stringa che indica il valore in percentuale"""
-        perc = math.ceil(val / tot * 10)
-
-        res = ""
-        for i in range(0, perc):
-            res += "■"
-
-        for i in range(0, 10 - perc):
-            res += "□"
-
-        return res
-
     def get_type_content(self, message):
         """Ritorna il tipo del messaggio ricevuto
         @:param message: il messaggio ricevuto
@@ -595,13 +577,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         else:
             return "unkown", message.message_id
 
-    def word_count(self, text):
+    def get_word_count(self, text):
         """Conta le ripetizioni di delle parole nel testo
         @:param text: la stringa dove cercare le parole
         @:type: str
         @:return: lista di tuple"""
 
-        text=re.sub(r":([a-z_]+):", ' ', text)
+        text = re.sub(r":([a-z_]+):", ' ', text)
         counts = dict()
         words = text.split()
 
@@ -618,9 +600,24 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         return sorted_x
 
+    # ============================OTHER UTILS===========================================
+
     def esci(self, user_data):
         """Funizione per resettare lo user data"""
         user_data['inline_main'] = None
+
+    def filler(self, tot, val):
+        """Ritorna un stringa che indica il valore in percentuale"""
+        perc = math.ceil(val / tot * 10)
+
+        res = ""
+        for i in range(0, perc):
+            res += "■"
+
+        for i in range(0, 10 - perc):
+            res += "□"
+
+        return res
 
 
 class TrackFilter(BaseFilter):
