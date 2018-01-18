@@ -381,10 +381,20 @@ In questa sezione puoi visualizzare informazioni varie tra cui:
 
 
         elif param == "user_piu":
-            to_send = "Non ancora implementato"
+            user, count=self.get_most_active_user()
+
+            if not user:
+                to_send="Non ci sono utenti nel database"
+            else:
+                to_send="L'user piu attivo è @"+user['username']+", con <b>"+str(count)+"</b> messaggi, grandioso!"
 
         elif param == "user_meno":
-            to_send = "Non ancora implementato"
+            user, count = self.get_most_active_user(piu=False)
+
+            if not user:
+                to_send = "Non ci sono utenti nel database"
+            else:
+                to_send = "L'user meno attivo è @" + user['username'] + ", con <b>" + str(count) + "</b> messaggi....che pena"
 
 
 
@@ -440,13 +450,36 @@ In questa sezione puoi visualizzare informazioni varie tra cui:
 
     # ============================UTILS===========================================
 
-    def get_most_active_user(self):
-        """Ritorna lo user piu attivo nel gruppo"""
+    def get_most_active_user(self, piu=True):
+        """Ritorna lo user piu attivo nel gruppo
+        @:param piu: bool per permettere di prendere il piu attivo o il meno
+        @:type: bool
+        @:return: user"""
         activity = self.get_activity_by("all")
         if not activity: return
         activity=[elem['id_user'] for elem in activity]
 
-        cout=Counter(activity)
+        counter=Counter(activity)
+        if piu:
+            top = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
+        else:
+            top = sorted(counter.items(), key=operator.itemgetter(1))
+
+
+        user=False
+        idx=0
+        #se uno user non è presente nel db prendi il successivo
+        while not user and idx!=len(top):
+            user=self.db.get_user(top[idx][0])
+            idx+=1
+
+        return user,top[idx][1]
+
+
+
+
+
+
 
     def get_top_emoji(self, text, emoji_bool=True):
         """Ritorna le top emoji trovate nel testo
