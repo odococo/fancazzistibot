@@ -63,7 +63,7 @@ class Track:
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
-        disp.add_handler(CommandHandler("activity",self.activity_init), pass_user_data=True)
+        disp.add_handler(CommandHandler("activity",self.activity_init, pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
 
