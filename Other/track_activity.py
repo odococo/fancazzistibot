@@ -108,7 +108,7 @@ class Track:
             top_emoji=self.get_top_emoji(" ".join(activity))
             to_send="Le 10 top emoji sono:\n"
             for idx in range(1,11):
-                to_send+=top_emoji[idx][0]+" ripetuta <b>"+top_emoji[idx][1]+"</b> volte\n"
+                to_send+=top_emoji[idx][0]+" ripetuta <b>"+str(top_emoji[idx][1])+"</b> volte\n"
 
 
         elif param == "messaggi":
