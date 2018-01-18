@@ -600,8 +600,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         @:param text: la stringa dove cercare le parole
         @:type: str
         @:return: lista di tuple"""
+
+        text=re.sub(r":([a-z_]+):", ' ', text)
         counts = dict()
         words = text.split()
+
+        emoji.get_emoji_regexp()
 
         for word in words:
             if len(word) < 4: continue
