@@ -46,6 +46,8 @@ class Track:
     def __init__(self,updater, db , filter):
         self.db=db
         self.types=["text","audio","photo","sticker","video","voice"]
+        self.ita_types={"text":"Testo","audio":"Audio","photo":"Immagini","sticker":"Stickers","video":"Video","voice":"Vocali"}
+
         self.inline_activity_main = [
             [InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
              InlineKeyboardButton("Msg Salvati", callback_data="/activity_main messaggi")],
@@ -122,7 +124,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
        # print(user_data['inline_main'])
 
         # prendi lo username
-        username = update.message.from_user.username
+        user_data['username']= username = update.message.from_user.username
         # cambia l'inline
         new_inline= copy.deepcopy(self.inline_activity_main)
 
@@ -323,7 +325,20 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
 
         elif param == "tipi":
-            to_send= "Comando non ancora implementato...sorry"
+            types=[elem['type'] for elem in activity]
+            counter = Counter(types)
+            # sorto il dizionario
+            sorted_x = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
+            tot=len(sorted_x)
+
+            sorted_x=[(elem[0],math.ceil(elem[1]/tot*100)) for elem in sorted_x]
+
+            to_send=user_data['username']+" hai inviato un totale di "+str(tot)+" messaggi... di cui:\n"
+
+            for elem in sorted_x:
+                to_send+="Il <b>"+str(elem[1])+"</b> sono <b>"+self.ita_types[elem[0]]+"</b> "
+
+
 
 
         elif param == "indietro":
@@ -510,7 +525,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         words = text.split()
 
         for word in words:
-            if len(word)<3: continue
+            if len(word)<4: continue
             if word in counts:
                 counts[word] += 1
             else:
