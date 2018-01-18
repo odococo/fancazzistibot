@@ -491,6 +491,18 @@ class DB:
 
         self.execute(TABELLE['bugs']['insert'],(bug, id_b,))
 
+    def add_activity(self,id_user, content, type):
+        """Aggiunge una riga alla tabella activity
+        @:param id_user: l'id dello user che ha inviato il messaggio
+        @:type: int
+        @:param content: il messaggio inviato
+        @:type: str
+        @:param type: il tipo di messaggio
+        @:type: str"""
+
+        id_bot=0
+        self.execute(TABELLE['activity']['insert'],(id_bot,id_user,content,type))
+
     # ============DELETE/RESET======================================
     def ban_user(self, user):
         """Banna un user dal bot

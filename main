@@ -24,6 +24,7 @@ from telegram.ext import (
 from Loot.bot_classes import *
 from Loot.comandi import new_command, videos
 from Loot.db_call import DB, developer_dicts
+from Other.track_activity import Track, TrackFilter
 from Other.utils import (is_numeric, get_pretty_json)
 
 # ==================GLOBAL VARIABLES==========================================
@@ -318,6 +319,7 @@ def main():
     Mancanti(updater, db, base_items)
     DiffSchede(updater, db)
     Alarm(updater,db)
+    Track(updater,db,TrackFilter())
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))
