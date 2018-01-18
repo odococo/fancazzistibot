@@ -74,11 +74,11 @@ class Track:
 
         ])
 
-        self.inline_activity_altro = [
+        self.inline_activity_altro = InlineKeyboardMarkup([
             [InlineKeyboardButton("Emoji +", callback_data="/activity_altro emoji"),
              InlineKeyboardButton("User +", callback_data="/activity_altro user_piu")],
             [InlineKeyboardButton("User -", callback_data="/activity_altro user_meno"),
-             InlineKeyboardButton("Indietro", callback_data="/activity_altro indietro")]]
+             InlineKeyboardButton("Indietro", callback_data="/activity_altro indietro")]])
 
         self.main_message="""
 Benvenuto caro utente in questo nuovo comando pieno di cose belle 🌈
