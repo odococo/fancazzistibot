@@ -238,8 +238,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        activity=self.db.get_activity(update.callback_query.message.from_user.id)
-        print(activity)
+        activity=self.get_activity_by(update.callback_query.message.from_user.id)
 
         if not activity and param!="indietro":
             bot.edit_message_text(
