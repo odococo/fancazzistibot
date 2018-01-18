@@ -263,9 +263,18 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             activity=[elem['content'] for elem in activity]
 
             top_emoji=self.get_top_emoji(" ".join(activity))
+
+            #se non ci sono emoi relative all'account
             if not top_emoji:
-                update.callback_query.message.reply_text("Non sono presenti emoji relative al tuo account...che tristezza")
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text="Non sono presenti emoji relative al tuo account...che tristezza",
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_user
+                )
                 return
+
             # calcola la len
             max_len = len(top_emoji)
 
