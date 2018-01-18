@@ -99,12 +99,13 @@ class TrackFilter(BaseFilter):
     """Filtro personalizzato per il track activity sul gruppo dei fancazzisti"""
     def __init__(self):
         #id del gruppo
-        self.super_group_id=-1001050402153
+        self.bot_per_i_boss=-1001284891867
+        self.fancazzisti=-1001050402153
 
     def filter(self, message):
         """Ritorna true se il messaggio proviene dal gruppo e non è un comando"""
         print(message)
-        if message.chat.id ==self.super_group_id:
+        if message.chat.id ==self.bot_per_i_boss:
             if message.text.startswith('/'): return False
             return True
         return False
