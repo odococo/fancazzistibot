@@ -102,11 +102,17 @@ class Track:
 
         elif param == "utente":
             print("utente")
+
         elif param == "emoji":
+            #prendi tutti i messaggi dal database
             activity=self.get_activity_by("all")
             activity=[elem['content'] for elem in activity]
+            #crea un'unica stringa e passala alla funzione get_top_emoji
             top_emoji=self.get_top_emoji(" ".join(activity))
+            print(top_emoji)
+            #calcola la len
             max_len=len(top_emoji)
+            #se questa
             if max_len>10: max_len=10
             to_send="Le"+str(max_len)+ " top emoji sono:\n"
             for idx in range(1,max_len+1):
@@ -117,7 +123,7 @@ class Track:
             to_send="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
 
         elif param == "esci":
-            update.callback_query.message.reply_text("Ok")
+            update.callback_query.message.reply_text("Hasta la vista, baby")
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
                 message_id=update.callback_query.message.message_id
