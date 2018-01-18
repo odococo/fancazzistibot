@@ -118,14 +118,23 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
             return
 
-        print(user_data)
+        print(user_data['inline_main'])
+
         # prendi lo username
         username = update.message.from_user.username
         # cambia l'inline
+        print(self.inline_activity_main)
         new_inline=self.inline_activity_main
+        print(new_inline)
+
         new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
+        print(new_inline)
+
         inline_new_main=InlineKeyboardMarkup(new_inline)
+        print(inline_new_main)
+
         user_data['inline_main']=inline_new_main
+        print(user_data['inline_main'])
 
 
 
