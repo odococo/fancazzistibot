@@ -80,9 +80,11 @@ class Track:
         update.message.reply_text(to_send,reply_markup=self.activity_time)
 
     def get_day_activity(self):
-        """Questa funzione ritorna gli orari di attività maggiore"""
+        """Questa funzione ritorna l'attivita giornaliera
+        @:return: stringa da inviare all'utente"""
 
         number_to_day={1:"Lunedì",2:"Martedì",3:"Mercoledì",4:"Giovedì",5:"Venerdì",6:"Sabato",7:"Domenica"}
+
         to_send="Attività giornaliera:\n"
         #prendi tutte le activity
         activity=self.get_activity_by("all")
@@ -103,7 +105,8 @@ class Track:
         return to_send
 
     def get_hour_activity(self):
-        """Questa funzione ritorna gli orari di attività maggiore"""
+        """Questa funzione ritorna l'attivita oraria
+        @:return: stringa da inviare all'utente"""
 
 
         to_send = "Attività oraira:\n"
@@ -156,7 +159,7 @@ class Track:
                 parse_mode="HTML",
                 reply_markup=self.inline_activity_time
             )
-            return 
+            return
 
         elif param == "utente":
             print("utente")
@@ -186,16 +189,13 @@ class Track:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        to_send = "Attività "
 
         if param == "giornaliera":
-            to_send+="<b>giornaliera</b>:\n"
 
-            to_send+= self.get_day_activity()
+            to_send= self.get_day_activity()
 
         elif param=="oraria":
-            to_send+="<b>oraria</b>:\n"
-            to_send+=self.get_hour_activity()
+            to_send=self.get_hour_activity()
 
         elif param == "indietro":
             bot.edit_message_text(
@@ -291,6 +291,7 @@ class TrackFilter(BaseFilter):
     def filter(self, message):
         """Ritorna true se il messaggio proviene dal gruppo e non è un comando"""
         #print(message)
+        if message.chat
         if message.chat.id ==self.fancazzisti:
             try:
                 if message.text.startswith('/'): return False
