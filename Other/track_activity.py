@@ -115,11 +115,9 @@ class Track:
         # seleziona solo le date
         activity = [elem['date'] for elem in activity]
         # aggiungi un ora
-        print(activity)
         activity = [elem + datetime.timedelta(hours=1) for elem in activity]
         # trasforma in giorni
-        print(activity)
-        activity = [elem.hour() for elem in activity]
+        activity = [elem.hour for elem in activity]
         # conta le ripetizioni
         counter = Counter(activity)
 
