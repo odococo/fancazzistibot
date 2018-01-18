@@ -60,12 +60,24 @@ class Track:
 
         ])
 
+        self.inline_activity_user = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Msg Inviati", callback_data="/activity_user msg"),
+             InlineKeyboardButton("Top emoji", callback_data="/activity_user emoji"),
+             InlineKeyboardButton("Top parole", callback_data="/activity_user parole")],
+             [InlineKeyboardButton("Analisi sentimenti", callback_data="/activity_user sentimenti"),
+             InlineKeyboardButton("Tipi inviati", callback_data="/activity_user tipi"),
+             InlineKeyboardButton("Indietro", callback_data="/activity_user indietro")],
+
+
+        ])
+
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
         disp.add_handler(CommandHandler("activity",self.activity_init, pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
+        disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
 
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
@@ -77,9 +89,8 @@ class Track:
             update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
             return
 
-        user_data.pop('inline_main', None)
 
-        
+
         #se il custom inline non è gia presente
         if "inline_main" not in user_data.keys():
             # prendi lo username
@@ -115,7 +126,15 @@ class Track:
             return
 
         elif param == "utente":
-            print("utente")
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="In questa sezione puoi visualizzare i dati relativi al tuo account",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_activity_user
+            )
+            return
+
 
         elif param == "emoji":
             #prendi tutti i messaggi dal database
@@ -137,7 +156,7 @@ class Track:
 
             #genera il resto del to send
             for idx in range(0,max_len):
-                to_send+=top_emoji[idx][0]+" ripetuta <b>"+str(top_emoji[idx][1])+"</b> volte\n"
+                to_send+=top_emoji[idx][0]+" ripetuto <b>"+str(top_emoji[idx][1])+"</b> volte\n"
 
 
         elif param == "messaggi":
@@ -192,6 +211,75 @@ class Track:
             reply_markup=self.inline_activity_time
         )
 
+    def activity_user(self, bot, update,user_data):
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        activity=self.db.get_activity(update.callback_query.message.from_user.id)
+
+        if not activity:
+            update.callback_query.message.reply_text("Non sono presenti dati relativi al tuo account...")
+            return
+
+        to_send=""
+
+        if param == "msg":
+
+            to_send= "Sono presenti <b>"+str(len(activity))+"</b> messaggi legati al tuo account"
+
+        elif param == "emoji":
+
+            #prendi il testo
+            activity=[elem['content'] for elem in activity]
+
+            top_emoji=self.get_top_emoji(" ".join(activity))
+            if not top_emoji:
+                update.callback_query.message.reply_text("Non sono presenti emoji relative al tuo account...che tristezza")
+                return
+            # calcola la len
+            max_len = len(top_emoji)
+
+            # se questa è maggiore di 10 impostala a 10
+            if max_len > 10: max_len = 10
+
+            # inizzializza il to_send
+            to_send = "Le top " + str(max_len) + " emoji sono:\n"
+
+            # genera il resto del to send
+            for idx in range(0, max_len):
+                to_send += top_emoji[idx][0] + " ripetuto <b>" + str(top_emoji[idx][1]) + "</b> volte\n"
+
+
+        elif param == "parole":
+            to_send = self.get_hour_activity()
+
+        elif param == "sentimenti":
+            to_send = self.get_hour_activity()
+
+
+        elif param == "tipi":
+            to_send = self.get_hour_activity()
+
+
+        elif param == "indietro":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Main",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=user_data['inline_main']
+            )
+            return
+
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.inline_activity_time
+        )
 
 
 #=====================DB INTERACTION======================================
