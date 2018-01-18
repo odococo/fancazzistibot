@@ -80,10 +80,12 @@ class Track:
         #prendi lo username
         username=update.message.from_user.username
         #cambia l'inline
-        new_inline=self.inline_activity_main
-        new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
-        inline_new_main=InlineKeyboardMarkup(new_inline)
-        user_data['inline_main']=inline_new_main
+        if "inline_main" not in user_data.keys():
+            new_inline=self.inline_activity_main
+            new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
+            inline_new_main=InlineKeyboardMarkup(new_inline)
+            user_data['inline_main']=inline_new_main
+        else: inline_new_main=user_data['inline_main']
 
 
         to_send="Scegli cosa vuoi visualizzare"
