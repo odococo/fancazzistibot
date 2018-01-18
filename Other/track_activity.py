@@ -71,6 +71,29 @@ class Track:
 
         ])
 
+        self.main_message="""
+Benvenuto caro utente in questo nuovo comando pieno di cose belle 🌈
+Di seguito troverai vari bottoni per poter visualizzare tutte le informazioni dei messaggi inviati sul gruppo Fancazzisti
+<b>Emoji piu usato</b> : semplicemente la lista degli emoji piu utilizzati sul gruppo
+<b>Msg Salvati</b> : il numero di messaggi salvati dentro il bot
+<b>Attività</b> : mostra varie informazioni temporali relative all'attivita presente nel gruppo
+<b>Esci</b> : per uscire dalla visualizzazione
+<b>Il tuo username</b> : qui potrai visualizzare le info relative al tuo account personale
+Alcune funzioni non sono ancora disponibili, pazienta e arriveranno"""
+
+        self.time_message="""
+In questa sezione potrai visualizzare l'attività del gruppo, intesa come quantità di messaggi inviati in un certo intervallo temporale
+<b>Oraria</b> : intervallo orario
+<b>Giornaliera</b> : intervallo giornaliero
+Con il passare del tempo saranno disponibili dei dati sempre piu precisi"""
+
+        self.user_message ="""
+In questa sezione potrai visualizzare le informazioni relative ai messaggi inviati da <b>te</b> sul gruppo dei Fancazzisti
+<b>Msg Inviati</b> : il numero di messaggi che hai inviato sul gruppo 
+<b>Top emoji</b> : le emoji che usi di piu
+<b> Analisi sentimenti </b> : una stima dei sentimenti espressi dai tuoi messaggi
+<b> Tipi inviati </b> : i diversi tipi di messaggio che hai inviato (ex: photo, video, audio....)"""
+
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
@@ -104,8 +127,7 @@ class Track:
         else: inline_new_main=user_data['inline_main']
 
 
-        to_send="Scegli cosa vuoi visualizzare"
-        update.message.reply_text(to_send,reply_markup=inline_new_main)
+        update.message.reply_text(self.main_message,reply_markup=inline_new_main)
 
     def activity_main(self, bot, update,user_data):
         """Funzione per la visualizzazione della sezione principale di activity"""
@@ -118,7 +140,7 @@ class Track:
         if param=="attivita":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="In questa sezione puoi visualizzare l'attività del gruppo nel tempo",
+                text=self.time_message,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_activity_time
@@ -128,7 +150,7 @@ class Track:
         elif param == "utente":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="In questa sezione puoi visualizzare i dati relativi al tuo account",
+                text=self.user_message,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=self.inline_activity_user
@@ -195,7 +217,7 @@ class Track:
         elif param == "indietro":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="Main",
+                text=self.main_message,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=user_data['inline_main']
@@ -218,7 +240,7 @@ class Track:
 
         activity=self.db.get_activity(update.callback_query.message.from_user.id)
 
-        if not activity:
+        if not activity and param!="indietro":
             update.callback_query.message.reply_text("Non sono presenti dati relativi al tuo account...")
             return
 
@@ -265,7 +287,7 @@ class Track:
         elif param == "indietro":
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                text="Main",
+                text=self.main_message,
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
                 reply_markup=user_data['inline_main']
