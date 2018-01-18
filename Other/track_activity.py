@@ -329,7 +329,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             counter = Counter(types)
             # sorto il dizionario
             sorted_x = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
-            tot=sum([elem[2] for elem in sorted_x])
+            tot=sum([elem[1] for elem in sorted_x])
 
             print(sorted_x)
 
