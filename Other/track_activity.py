@@ -104,5 +104,7 @@ class TrackFilter(BaseFilter):
     def filter(self, message):
         """Ritorna true se il messaggio proviene dal gruppo e non è un comando"""
         print(message)
-        if message.chat.id ==self.super_group_id and "/" not in message.text: return True
+        if message.chat.id ==self.super_group_id:
+            if message.text.startswith('/'): return False
+            return True
         return False
