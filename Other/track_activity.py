@@ -108,9 +108,11 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
     def activity_init(self,bot, update, user_data):
         """Funzione per iniziare la visualizzazione delle activity"""
-        if not self.db.is_loot_admin(update.message. from_user.id):
-            update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
-            return
+        # if not self.db.is_loot_admin(update.message. from_user.id):
+        #     update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
+        #     return
+
+
         if "private" not in update.message.chat.type:
             update.message.reply_text("Questo comando è possibile solo in privata")
 
@@ -479,7 +481,8 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
     def word_count(self, text):
         """Conta le ripetizioni di delle parole nel testo
         @:param text: la stringa dove cercare le parole
-        @:type: str"""
+        @:type: str
+        @:return: lista di tuple"""
         counts = dict()
         words = text.split()
 
