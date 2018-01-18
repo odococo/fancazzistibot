@@ -77,7 +77,7 @@ class Track:
             return
 
         to_send="Scegli cosa vuoi visualizzare"
-        update.message.reply_text(to_send,reply_markup=self.activity_time)
+        update.message.reply_text(to_send,reply_markup=self.inline_activity_main)
 
     def get_day_activity(self):
         """Questa funzione ritorna l'attivita giornaliera
