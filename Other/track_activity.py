@@ -189,6 +189,7 @@ class Track:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
+        to_send=""
 
         if param == "giornaliera":
 
@@ -291,7 +292,7 @@ class TrackFilter(BaseFilter):
     def filter(self, message):
         """Ritorna true se il messaggio proviene dal gruppo e non è un comando"""
         #print(message)
-        if message.chat
+        if message.from_user.is_bot: return False
         if message.chat.id ==self.fancazzisti:
             try:
                 if message.text.startswith('/'): return False
