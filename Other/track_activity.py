@@ -77,14 +77,19 @@ class Track:
             update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
             return
 
-        #prendi lo username
-        username=update.message.from_user.username
-        #cambia l'inline
+        user_data.pop('inline_main', None)
+
+        
+        #se il custom inline non è gia presente
         if "inline_main" not in user_data.keys():
+            # prendi lo username
+            username = update.message.from_user.username
+            # cambia l'inline
             new_inline=self.inline_activity_main
             new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
             inline_new_main=InlineKeyboardMarkup(new_inline)
             user_data['inline_main']=inline_new_main
+
         else: inline_new_main=user_data['inline_main']
 
 
