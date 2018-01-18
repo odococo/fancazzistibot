@@ -1,7 +1,7 @@
 import datetime
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import BaseFilter, MessageHandler, CommandHandler
+from telegram.ext import BaseFilter, MessageHandler, CommandHandler, CallbackQueryHandler
 import emoji
 
 
@@ -42,7 +42,7 @@ class Track:
         self.activity_main = InlineKeyboardMarkup([
             [InlineKeyboardButton("Utente più attivo", callback_data="/activity_main utente"),
              InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
-             InlineKeyboardButton("Messaggi Registarti", callback_data="/activity_main messaggi")],
+             InlineKeyboardButton("Msg Salvati", callback_data="/activity_main messaggi")],
             [InlineKeyboardButton("Attività oraria", callback_data="/activity_main attivita"),
              InlineKeyboardButton("Altro", callback_data="/activity_main altro"),
              InlineKeyboardButton("Esci", callback_data="/activity_main esci")]
@@ -54,6 +54,8 @@ class Track:
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
         disp.add_handler(CommandHandler("activity",self.activity_init))
+        disp.add_handler(CallbackQueryHandler(self.activity_choice, pattern="/activity_main"))
+
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
 
