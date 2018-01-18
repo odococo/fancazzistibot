@@ -118,8 +118,8 @@ TABELLE = {
         "select": {
             'all': """SELECT * FROM activity"""
         },
-        "insert": """INSERT INTO activity (id_bot, id_user, content, type)
-              VALUES (%s, %s, %s ,%s)""",
+        "insert": """INSERT INTO activity ( id_user, content, type)
+              VALUES (%s, %s ,%s)""",
         "update": """UPDATE activity
               SET type = %s
               WHERE id = %s""",
@@ -500,8 +500,7 @@ class DB:
         @:param type: il tipo di messaggio
         @:type: str"""
 
-        id_bot=0
-        self.execute(TABELLE['activity']['insert'],(id_bot,id_user,content,type))
+        self.execute(TABELLE['activity']['insert'],(id_user,content,type))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):
