@@ -119,6 +119,8 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             return
 
 
+        #resetta l'user data
+        user_data['inline_main']=None
         # prendi lo username
         username = update.message.from_user.username
         # cambia l'inline
@@ -167,7 +169,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
             #crea un'unica stringa e passala alla funzione get_top_emoji
             top_emoji=self.get_top_emoji(" ".join(activity))
-            print(top_emoji)
+            #print(top_emoji)
 
             #calcola la len
             max_len=len(top_emoji)
@@ -291,7 +293,24 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
 
         elif param == "parole":
-            to_send= "Comando non ancora implementato...sorry"
+            
+            activity=[elem['content'] for elem in activity]
+            count=self.word_count(" ".join(activity))
+            # calcola la len
+            max_len = len(count)
+
+            # se questa è maggiore di 10 impostala a 10
+            if max_len > 10: max_len = 10
+
+            # inizzializza il to_send
+            to_send = "Le tue top " + str(max_len) + " parole sono:\n"
+
+            # genera il resto del to send
+            for idx in range(0, max_len):
+                to_send += "<b>"+count[idx][0] + "</b> ripetuta <b>" + str(count[idx][1]) + "</b> volte\n"
+
+
+
 
 
         elif param == "sentimenti":
