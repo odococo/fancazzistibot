@@ -240,7 +240,6 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
         activity=self.db.get_activity(update.callback_query.message.from_user.id)
         print(activity)
-        print(update.callback_query.message.from_user.id)
 
         if not activity and param!="indietro":
             bot.edit_message_text(
@@ -325,11 +324,13 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
         self.db.add_activity(msg_user_id,str(msg_content),msg_type)
 
-    def get_activity_by(self, what,min=False):
+    def get_activity_by(self, what ,min=False):
         """Prendi le actiity dal db secondo what
         @:param what: puo essere un int per id_user, una str per typo o un datetime per le date
         @:param min: se è presente un datetime allora min indica che vuoi le date minori """
 
+        print(what)
+        print(isinstance(what,int))
 
         if isinstance(what,str) and what in self.types:
             return self.db.get_activity(type=what)
