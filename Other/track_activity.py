@@ -69,6 +69,7 @@ class Track:
 
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
+    # ===================LOOPS=================================
 
     def activity_init(self,bot, update):
         """Funzione per iniziare la visualizzazione delle activity"""
@@ -78,68 +79,6 @@ class Track:
 
         to_send="Scegli cosa vuoi visualizzare"
         update.message.reply_text(to_send,reply_markup=self.inline_activity_main)
-
-    def get_day_activity(self):
-        """Questa funzione ritorna l'attivita giornaliera
-        @:return: stringa da inviare all'utente"""
-
-        number_to_day={1:"Lunedì",2:"Martedì",3:"Mercoledì",4:"Giovedì",5:"Venerdì",6:"Sabato",7:"Domenica"}
-
-        to_send="Attività giornaliera:\n"
-        #prendi tutte le activity
-        activity=self.get_activity_by("all")
-        #seleziona solo le date
-        activity=[elem['date'] for elem in activity]
-        #aggiungi un ora
-        activity=[elem + datetime.timedelta(hours=1) for elem in activity]
-        #trasforma in giorni
-        activity=[elem.isoweekday() for elem in activity]
-        #conta le ripetizioni
-        counter=Counter(activity)
-
-        tot=sum(counter.values())
-
-        for elem in  counter.keys():
-            to_send+="<b>"+number_to_day[elem]+"</b> "+self.filler(tot,counter[elem])+"\n"
-
-        return to_send
-
-    def get_hour_activity(self):
-        """Questa funzione ritorna l'attivita oraria
-        @:return: stringa da inviare all'utente"""
-
-
-        to_send = "Attività oraira:\n"
-        # prendi tutte le activity
-        activity = self.get_activity_by("all")
-        # seleziona solo le date
-        activity = [elem['date'] for elem in activity]
-        # aggiungi un ora
-        activity = [elem + datetime.timedelta(hours=1) for elem in activity]
-        # trasforma in giorni
-        activity = [elem.hour for elem in activity]
-        # conta le ripetizioni
-        counter = Counter(activity)
-
-        tot = sum(counter.values())
-
-        for elem in counter.keys():
-            to_send += "<b>" + elem + "</b> " + self.filler(tot, counter[elem]) + "\n"
-
-        return to_send
-
-    def filler(self, tot, val):
-        """Ritorna un stringa che indica il valore in percentuale"""
-        perc=math.ceil(val/tot*10)
-
-        res=""
-        for i in range(0,perc):
-            res+="■"
-
-        for i in range(0,10-perc):
-            res+="□"
-
-        return res
 
     def activity_choice(self, bot, update):
         """Funzione per la visualizzazione della sezione principale di activity"""
@@ -215,6 +154,10 @@ class Track:
             reply_markup=self.inline_activity_time
         )
 
+
+
+#=====================DB INTERACTION======================================
+
     def log_activity(self, bot, update):
         """Funzione per loggare le activity dentro il db"""
 
@@ -244,11 +187,76 @@ class Track:
         else:
             return False
 
+
+#=======================================================================
+
     def get_most_active_user(self):
         """Ritorna lo user piu attivo nel gruppo"""
         activity=self.get_activity_by("all")
         if not activity: return
 
+
+    def get_day_activity(self):
+        """Questa funzione ritorna l'attivita giornaliera
+        @:return: stringa da inviare all'utente"""
+
+        number_to_day={1:"Lunedì",2:"Martedì",3:"Mercoledì",4:"Giovedì",5:"Venerdì",6:"Sabato",7:"Domenica"}
+
+        to_send="Attività giornaliera:\n"
+        #prendi tutte le activity
+        activity=self.get_activity_by("all")
+        #seleziona solo le date
+        activity=[elem['date'] for elem in activity]
+        #aggiungi un ora
+        activity=[elem + datetime.timedelta(hours=1) for elem in activity]
+        #trasforma in giorni
+        activity=[elem.isoweekday() for elem in activity]
+        #conta le ripetizioni
+        counter=Counter(activity)
+
+        tot=sum(counter.values())
+
+        for elem in  counter.keys():
+            to_send+="<b>"+number_to_day[elem]+"</b> "+self.filler(tot,counter[elem])+"\n"
+
+        return to_send
+
+    def get_hour_activity(self):
+        """Questa funzione ritorna l'attivita oraria
+        @:return: stringa da inviare all'utente"""
+
+
+        to_send = "Attività oraira:\n"
+        # prendi tutte le activity
+        activity = self.get_activity_by("all")
+        # seleziona solo le date
+        activity = [elem['date'] for elem in activity]
+        # aggiungi un ora
+        activity = [elem + datetime.timedelta(hours=1) for elem in activity]
+        # trasforma in giorni
+        activity = [elem.hour for elem in activity]
+        # conta le ripetizioni
+        counter = Counter(activity)
+
+        tot = sum(counter.values())
+
+        for elem in counter.keys():
+            to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]) + "\n"
+
+        return to_send
+
+    def filler(self, tot, val):
+        """Ritorna un stringa che indica il valore in percentuale"""
+        perc=math.ceil(val/tot*10)
+
+        res=""
+        for i in range(0,perc):
+            res+="■"
+
+        for i in range(0,10-perc):
+            res+="□"
+
+        return res
 
     def get_type_content(self, message):
         """Ritorna il tipo del messaggio ricevuto
