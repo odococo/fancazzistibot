@@ -1,8 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
-import utils
+from Other import utils
 import re
 
 API = "http://fenixweb.net:3300/api/v2/"
@@ -10,6 +9,8 @@ TOKEN = "cMeBZ7H22h8ApDho1722"
 ITEMS = API + TOKEN + "/items"
 SHOP = API + TOKEN + "/shop/"
 RICETTE=API+TOKEN+"/crafts/"
+TEAMS="/team/I%20Fancazzisti"
+PLAYERS="/players/"
 
 NEGOZI = (
     14501401327,
@@ -39,7 +40,7 @@ def use_api(url):
     try:
         return utils.get_content(url, True)['res']
     except KeyError:
-        print ( utils.get_content(url, True))
+        print (utils.get_content(url, True))
         return {}
 
 def get_ricetta(id_oggetto):
@@ -98,3 +99,9 @@ def update():
     print(LAST_UPDATE)
     set_items()
     set_prices()
+
+
+dicti=use_api(API+TOKEN+TEAMS)
+print(dicti)
+for elem in dicti:
+    print(use_api(API+TOKEN+PLAYERS+elem['nickname']))

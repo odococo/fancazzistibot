@@ -1,12 +1,10 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import operator
 import random
 import time
 
-import math
 from datetime import datetime, timedelta
-from threading import Thread, Event
+from threading import Thread
 
 from telegram import (
     InlineKeyboardButton,
@@ -14,9 +12,9 @@ from telegram import (
     ReplyKeyboardRemove)
 
 import os
-import utils
-from PokerDice import calc_score, consigliami
-from db_call import DB
+from Other import utils
+from Loot.PokerDice import calc_score, consigliami
+from Loot.db_call import DB
 
 COMANDI_PLUS = """\n
 /attacchiBoss - Ti permette di visualizzare i punteggi di tutti i membri del team in varie forme\n
@@ -229,7 +227,7 @@ Crediti: @brandimax @Odococo""")
         #todo: prendi nome dal db e formatta per bene
         """- Ottieni le informazioni riguardo il tuo account"""
         user = self.db.get_user(self.update.message.from_user.id)
-        to_send=utils.get_user(user)
+        to_send= utils.get_user(user)
         self.answer(to_send)
 
     def Upermessi(self):

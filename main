@@ -21,10 +21,10 @@ import telegram
 from telegram.ext import (
     Updater)
 
-from bot_classes import *
-from comandi import new_command, videos
-from db_call import DB, developer_dicts
-from utils import (is_numeric, get_pretty_json)
+from Loot.bot_classes import *
+from Loot.comandi import new_command, videos
+from Loot.db_call import DB, developer_dicts
+from Other.utils import (is_numeric, get_pretty_json)
 
 # ==================GLOBAL VARIABLES==========================================
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -287,11 +287,11 @@ def main():
     disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video, pattern="/helpvideo"))
 
-    with codecs.open("craftables_file", encoding='utf-8') as file:
+    with codecs.open("Resources/craftables_file", encoding='utf-8') as file:
         rea = file.read()
         oggetti = eval(rea.replace("null", "None"))
 
-    with codecs.open("base_file", encoding='utf-8') as file:
+    with codecs.open("Resources/base_file", encoding='utf-8') as file:
         rea = file.read()
         base_items = eval(rea.replace("null", "None"))
 

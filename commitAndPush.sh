@@ -7,7 +7,8 @@ if [ $# -eq 0 ]
     comment="$@"
 fi
 
-git add main bot_classes.py db_call.py utils.py comandi.py commitAndPush.sh README.md;
+git add main commitAndPush.sh;
+git add Resources/ Loot/ Other/ ;
 git commit -m "$comment";
-git push origin master;
+#git push origin master;
 git push heroku master;

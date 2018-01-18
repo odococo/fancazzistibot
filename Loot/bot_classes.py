@@ -15,8 +15,8 @@ from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMa
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
 
-from comandi import Command
-from utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
+from Loot.comandi import Command
+from Other.utils import is_numeric, catch_exception, text_splitter_bytes, pretty_time_date
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
