@@ -59,7 +59,7 @@ class Track:
         """Prendi le actiity dal db secondo what
         @:param what: puo essere un int per id_user, una str per typo o un datetime per le date"""
 
-        if type not in self.types:
+        if what not in self.types:
             return False
 
         return self.db.get_activity(type=type)
@@ -72,7 +72,7 @@ class Track:
         #:return: stringa rappresentante il tipo di messaggio ricevuto + content"""
 
         if message.text:
-            return "text",message.text
+            return "text",emoji.demojize(message.text)
         elif message.audio:
             return "audio",message.audio.file_id
         elif message.document:

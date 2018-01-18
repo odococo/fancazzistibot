@@ -278,15 +278,16 @@ def main():
     #     if not elem["id"] in bot_ids:
     #         updater.bot.send_message(elem["id"],"",reply_markup=ReplyKeyboardRemove())
 
-    disp.add_handler(MessageHandler(Filters.video, video_reciver))
     disp.add_handler(CommandHandler("sendsticker", send_stiker))
     disp.add_handler(CommandHandler("uganda", Uganda))
-    disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
-    disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
-    disp.add_handler(MessageHandler(Filters.document, document_reciver))
-    disp.add_handler(MessageHandler(Filters.reply, admin_supremo))
-    disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video, pattern="/helpvideo"))
+
+    # disp.add_handler(MessageHandler(Filters.video, video_reciver))
+    # disp.add_handler(MessageHandler(Filters.photo, photo_reciver))
+    # disp.add_handler(MessageHandler(Filters.sticker, sticker_reciver))
+    # disp.add_handler(MessageHandler(Filters.document, document_reciver))
+    # disp.add_handler(MessageHandler(Filters.reply, admin_supremo))
+    # disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(dir_path+"/Resources/")
