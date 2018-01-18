@@ -106,8 +106,10 @@ class Track:
             activity=self.get_activity_by("all")
             activity=[elem['content'] for elem in activity]
             top_emoji=self.get_top_emoji(" ".join(activity))
-            to_send="Le 10 top emoji sono:\n"
-            for idx in range(1,11):
+            max_len=len(top_emoji)
+            if max_len>10: max_len=10
+            to_send="Le"+str(max_len)+ " top emoji sono:\n"
+            for idx in range(1,max_len+1):
                 to_send+=top_emoji[idx][0]+" ripetuta <b>"+str(top_emoji[idx][1])+"</b> volte\n"
 
 
