@@ -246,7 +246,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
                 text="Non sono presenti dati relativi al tuo account...",
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
-                reply_markup=self.inline_activity_main
+                reply_markup=user_data['inline_main']
             )
             return
 
