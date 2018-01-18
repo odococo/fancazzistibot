@@ -442,7 +442,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
         user=random.choice(users)
         to_send="@"+self.update.message.from_user.username+" ti insulta\n<b>"+random.choice(self.insulti)+"</b>"
-        self.bot.sendMessage(user['id'],to_send)
+        self.bot.sendMessage(user['id'],to_send,parse_mode="HTML")
         if self.update.message.from_user.id==24978334:
             self.answer("Ho inviato l'insulto padrone")
         else:
