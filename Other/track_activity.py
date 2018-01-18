@@ -1,5 +1,9 @@
 import datetime
 
+import itertools
+from collections import Counter
+
+import math
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import BaseFilter, MessageHandler, CommandHandler, CallbackQueryHandler
 import emoji
@@ -68,6 +72,44 @@ class Track:
         to_send="Scegli cosa vuoi visualizzare"
         update.message.reply_text(to_send,reply_markup=self.activity_main)
 
+    def get_day_activity(self):
+        """Questa funzione ritorna gli orari di attività maggiore"""
+
+        number_to_day={1:"Lunedì",2:"Martedì",3:"Mercoledì",4:"Giovedì",5:"Venerdì",6:"Sabato",7:"Domenica"}
+        to_send="Attività giornaliera:\n"
+        #prendi tutte le activity
+        activity=self.get_activity_by("all")
+        #seleziona solo le date
+        activity=[elem['date'] for elem in activity]
+        #aggiungi un ora
+        activity=[elem + datetime.timedelta(hours=1) for elem in activity]
+        #trasforma in giorni
+        activity=[elem.isoweekday() for elem in activity]
+        #conta le ripetizioni
+        counter=Counter(activity)
+
+        tot=sum(counter.values())
+
+        for elem in  counter.keys():
+            to_send+="<b>"+number_to_day[elem]+"</b> "+self.filler(tot,counter[elem])+"\n"
+
+        return to_send
+
+
+    def filler(self, tot, val):
+        """Ritorna un stringa che indica il valore in percentuale"""
+        perc=math.ceil(val/tot*10)
+
+        res=""
+        for i in range(0,perc):
+            res+="■"
+
+        for i in range(0,10-perc):
+            res+="□"
+
+        return res
+
+
 
     def activity_choice(self, bot, update):
 
@@ -78,14 +120,15 @@ class Track:
         to_send="ciao"
 
         if param=="attivita":
-            print("attivita")
+            to_send=self.get_day_activity()
 
         elif param == "utente":
             print("utente")
         elif param == "emoji":
             print("emoji")
         elif param == "messaggi":
-            to_send+="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
+            to_send="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
+
         elif param == "esci":
             update.callback_query.message.reply_text("Ok")
             bot.delete_message(
