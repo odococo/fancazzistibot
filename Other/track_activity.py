@@ -239,6 +239,8 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         param = update.callback_query.data.split()[1]
 
         activity=self.db.get_activity(update.callback_query.message.from_user.id)
+        print(activity)
+        print(update.callback_query.message.from_user.id)
 
         if not activity and param!="indietro":
             bot.edit_message_text(
