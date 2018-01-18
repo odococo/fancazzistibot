@@ -117,7 +117,6 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             return
 
 
-        user_data.pop('inline_main', None)
         # prendi lo username
         username = update.message.from_user.username
         # cambia l'inline
