@@ -111,7 +111,10 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         if not self.db.is_loot_admin(update.message. from_user.id):
             update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
             return
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è possibile solo in privata")
 
+            return
 
 
         #se il custom inline non è gia presente
