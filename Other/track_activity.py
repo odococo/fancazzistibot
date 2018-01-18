@@ -37,6 +37,7 @@ class Track:
     """Classe per il track delle activity sul gruppo dei Fancazzisti"""
     def __init__(self,updater, db , filter):
         self.db=db
+        self.types=["text","audio","photo","sticker","video","voice"]
 
 
         disp = updater.dispatcher
@@ -53,6 +54,15 @@ class Track:
         msg_user_id=message.from_user.id
 
         self.db.add_activity(msg_user_id,str(msg_content),msg_type)
+
+    def get_activity_by(self, what):
+        """Prendi le actiity dal db secondo what
+        @:param what: puo essere un int per id_user, una str per typo o un datetime per le date"""
+
+        if type not in self.types:
+            return False
+
+        return self.db.get_activity(type=type)
 
 
     def get_type_content(self, message):
@@ -93,5 +103,6 @@ class TrackFilter(BaseFilter):
 
     def filter(self, message):
         """Ritorna true se il messaggio proviene dal gruppo e non è un comando"""
+        print(message)
         if message.chat.id ==self.super_group_id and "/" not in message.text: return True
         return False

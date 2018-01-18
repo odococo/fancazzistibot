@@ -109,14 +109,17 @@ TABELLE = {
     "activity": {
         "create": """CREATE TABLE IF NOT EXISTS activity(
               id serial PRIMARY KEY,
-              id_bot integer REFERENCES id_users ON DELETE CASCADE,
               id_user integer REFERENCES id_users ON DELETE CASCADE,
               content text NOT NULL,
               date timestamp DEFAULT CURRENT_TIMESTAMP,
-              type varchar(20))""",
+              type text)""",
         "drop": """DROP TABLE IF EXISTS activity CASCADE""",
         "select": {
-            'all': """SELECT * FROM activity"""
+            'all': """SELECT * FROM activity""",
+            "by_type":"""SELECT * FROM activity WHERE type=%s""",
+            "by_user": """SELECT * FROM activity WHERE id_user=%s""",
+            "by_date_min": """SELECT * FROM activity WHERE date<=%s""",
+            "by_date_max": """SELECT * FROM activity WHERE date>=%s""",
         },
         "insert": """INSERT INTO activity ( id_user, content, type)
               VALUES (%s, %s ,%s)""",
@@ -322,6 +325,28 @@ class DB:
     def get_banned(self):
         """Ritorna tutti gli id degli utenti bannati"""
         return self.execute(TABELLE['id_users']['select']['banned'])
+
+    def get_activity(self, type=False,user=False,date_min=False,date_max=False):
+        """Ritorna la lista delle activity a seconda della chiave specificata
+        @:param type: stringa rappresentante il tipo (guarda dentro track_activity)
+        @:param user: id dello user in int
+        @:param date_min: datetime object con la data
+        @:param date_max: datetime object con la data"""
+
+        if type:
+            return self.execute(TABELLE['activity']['select']['by_type'],(type,))
+        elif user:
+            return self.execute(TABELLE['activity']['select']['by_user'],(user,))
+        elif date_min:
+            return self.execute(TABELLE['activity']['select']['by_date_min'],(date_min,))
+        elif date_max:
+            return self.execute(TABELLE['activity']['select']['by_date_max'],(date_max,))
+        # se le chiavi sono tutte false allora prendo tutte le activity
+        elif not type and not user and not date_max and not date_min:
+            return self.execute(TABELLE['activity']['select']['all'])
+        else:
+            return False
+
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
