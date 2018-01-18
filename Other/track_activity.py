@@ -327,7 +327,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             to_send = user_data['username'] + " hai inviato un totale di " + str(tot) + " messaggi... di cui:\n"
 
             for elem in sorted_x:
-                to_send += "Il <b>" + str(elem[1]) + "</b>% è <b>" + self.ita_types[elem[0]] + "</b> "
+                to_send += "Il <b>" + str(elem[1]) + "</b>% è <b>" + self.ita_types[elem[0]] + "</b> \n"
 
 
 
