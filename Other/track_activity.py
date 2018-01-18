@@ -47,7 +47,7 @@ class Track:
             [InlineKeyboardButton("Utente più attivo", callback_data="/activity_main utente"),
              InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
              InlineKeyboardButton("Msg Salvati", callback_data="/activity_main messaggi")],
-            [InlineKeyboardButton("Attività oraria", callback_data="/activity_main attivita"),
+            [InlineKeyboardButton("Attività", callback_data="/activity_main attivita"),
              InlineKeyboardButton("Altro", callback_data="/activity_main altro"),
              InlineKeyboardButton("Esci", callback_data="/activity_main esci")]
 
@@ -65,7 +65,7 @@ class Track:
         disp.add_handler(MessageHandler(filter,self.log_activity))
         disp.add_handler(CommandHandler("activity",self.activity_init))
         disp.add_handler(CallbackQueryHandler(self.activity_choice, pattern="/activity_main"))
-        disp.add_handler(CallbackQueryHandler(self.activity_choice, pattern="/activity_time"))
+        disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time"))
 
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
@@ -141,10 +141,8 @@ class Track:
 
         return res
 
-
-
     def activity_choice(self, bot, update):
-
+        """Funzione per la visualizzazione della sezione principale di activity"""
 
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
