@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 import itertools
@@ -124,7 +125,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         username = update.message.from_user.username
         # cambia l'inline
         print(len(self.inline_activity_main[0]))
-        new_inline=list(self.inline_activity_main)
+        new_inline= copy.deepcopy(self.inline_activity_main)
         print(len(new_inline[0]))
 
         new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
