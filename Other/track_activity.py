@@ -123,12 +123,12 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         # prendi lo username
         username = update.message.from_user.username
         # cambia l'inline
-        print(len(self.inline_activity_main))
+        print(len(self.inline_activity_main[0]))
         new_inline=self.inline_activity_main
-        print(len(new_inline))
+        print(len(new_inline[0]))
 
         new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
-        print(len(new_inline))
+        print(len(new_inline[0]))
 
         inline_new_main=InlineKeyboardMarkup(new_inline)
         print(inline_new_main)
