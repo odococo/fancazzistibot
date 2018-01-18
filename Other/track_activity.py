@@ -49,7 +49,7 @@ class Track:
         self.ita_types={"text":"Testo","audio":"Audio","photo":"Immagini","sticker":"Stickers","video":"Video","voice":"Vocali"}
 
         self.inline_activity_main = [
-            [InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
+            [
              InlineKeyboardButton("Msg Salvati", callback_data="/activity_main messaggi")],
             [InlineKeyboardButton("Attività", callback_data="/activity_main attivita"),
              InlineKeyboardButton("Altro", callback_data="/activity_main altro"),
@@ -74,6 +74,12 @@ class Track:
 
         ])
 
+        self.inline_activity_altro = [
+            [InlineKeyboardButton("Emoji +", callback_data="/activity_altro emoji"),
+             InlineKeyboardButton("User +", callback_data="/activity_altro user_piu")],
+            [InlineKeyboardButton("User -", callback_data="/activity_altro user_meno"),
+             InlineKeyboardButton("Indietro", callback_data="/activity_altro indietro")]]
+
         self.main_message="""
 Benvenuto caro utente in questo nuovo comando pieno di cose belle 🌈
 Di seguito troverai vari bottoni per poter visualizzare tutte le informazioni dei messaggi inviati sul gruppo Fancazzisti
@@ -97,6 +103,12 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 <b> Analisi sentimenti </b> : una stima dei sentimenti espressi dai tuoi messaggi
 <b> Tipi inviati </b> : i diversi tipi di messaggio che hai inviato (ex: photo, video, audio....)"""
 
+        self.altro_message ="""
+In questa sezione puoi visualizzare informazioni varie tra cui:
+<b>Emoji piu usati (+)</b> : una classifica degli emoji piu usati sul gruppo
+<b>User più attivo (+)</b> : il nome dello user piu attivo nel gruppo 
+<b>User meno attivo (-)</b> : il nome dello user meno attivo nel gruppo """
+
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
@@ -104,8 +116,8 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
+        disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
 
-        #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
     # ===================LOOPS=================================
 
@@ -145,7 +157,6 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        to_send="ciao"
 
         if param=="attivita":
             bot.edit_message_text(
@@ -167,32 +178,25 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             )
             return
 
-
-        elif param == "emoji":
-            #prendi tutti i messaggi dal database
-            activity=self.get_activity_by("all")
-            activity=[elem['content'] for elem in activity]
-
-            #crea un'unica stringa e passala alla funzione get_top_emoji
-            top_emoji=self.get_top_emoji(" ".join(activity))
-            #print(top_emoji)
-
-            #calcola la len
-            max_len=len(top_emoji)
-
-            #se questa è maggiore di 10 impostala a 10
-            if max_len>10: max_len=10
-
-            #inizzializza il to_send
-            to_send="Le top "+str(max_len)+ " emoji sono:\n"
-
-            #genera il resto del to send
-            for idx in range(0,max_len):
-                to_send+=top_emoji[idx][0]+" ripetuto <b>"+str(top_emoji[idx][1])+"</b> volte\n"
+        elif param=="altro":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=self.altro_message,
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_activity_altro
+            )
+            return
 
 
         elif param == "messaggi":
-            to_send="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=user_data['inline_main']
+            )
 
         elif param == "esci":
             self.esci(user_data)
@@ -203,13 +207,6 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             )
             return
 
-        bot.edit_message_text(
-            chat_id=update.callback_query.message.chat_id,
-            text=to_send,
-            message_id=update.callback_query.message.message_id,
-            parse_mode="HTML",
-            reply_markup=user_data['inline_main']
-        )
 
     def activity_time(self, bot, update,user_data):
 
@@ -340,6 +337,65 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
             for elem in sorted_x:
                 to_send+="Il <b>"+str(elem[1])+"</b>% è <b>"+self.ita_types[elem[0]]+"</b> "
+
+
+
+
+        elif param == "indietro":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text=self.main_message,
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=user_data['inline_main']
+            )
+            return
+
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.inline_activity_user
+        )
+
+    def activity_altro(self, bot, update,user_data):
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        to_send=""
+
+        if param == "emoji":
+            # prendi tutti i messaggi dal database
+            activity = self.get_activity_by("all")
+            activity = [elem['content'] for elem in activity]
+
+            # crea un'unica stringa e passala alla funzione get_top_emoji
+            top_emoji = self.get_top_emoji(" ".join(activity))
+            # print(top_emoji)
+
+            # calcola la len
+            max_len = len(top_emoji)
+
+            # se questa è maggiore di 10 impostala a 10
+            if max_len > 10: max_len = 10
+
+            # inizzializza il to_send
+            to_send = "Le top " + str(max_len) + " emoji sono:\n"
+
+            # genera il resto del to send
+            for idx in range(0, max_len):
+                to_send += top_emoji[idx][0] + " ripetuto <b>" + str(top_emoji[idx][1]) + "</b> volte\n"
+
+
+        elif param == "user_piu":
+            to_send="Non ancora implementato"
+
+        elif param == "user_meno":
+            to_send="Non ancora implementato"
+
 
 
 
