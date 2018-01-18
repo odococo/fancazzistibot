@@ -1,6 +1,7 @@
 import datetime
 
-from telegram.ext import BaseFilter, MessageHandler
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import BaseFilter, MessageHandler, CommandHandler
 import emoji
 
 
@@ -38,11 +39,33 @@ class Track:
     def __init__(self,updater, db , filter):
         self.db=db
         self.types=["text","audio","photo","sticker","video","voice"]
+        self.activity_main = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Utente più attivo", callback_data="/activity_main utente"),
+             InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
+             InlineKeyboardButton("Messaggi Registarti", callback_data="/activity_main messaggi")],
+            [InlineKeyboardButton("Attività oraria", callback_data="/activity_main attivita"),
+             InlineKeyboardButton("Altro", callback_data="/activity_main altro"),
+             InlineKeyboardButton("Esci", callback_data="/activity_main esci")]
+
+        ])
 
 
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
+        disp.add_handler(CommandHandler("activity",self.activity_init))
+        #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
+
+
+    def activity_init(self,bot, update):
+        if not self.db.is_loot_admin(update.message. from_user.id):
+            update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
+            return
+
+        to_send="Scegli cosa vuoi visualizzare"
+        update.message.reply_text(to_send,reply_markup=self.activity_main)
+
+
 
 
     def log_activity(self, bot, update):
@@ -55,14 +78,29 @@ class Track:
 
         self.db.add_activity(msg_user_id,str(msg_content),msg_type)
 
-    def get_activity_by(self, what):
+    def get_activity_by(self, what,min=False):
         """Prendi le actiity dal db secondo what
-        @:param what: puo essere un int per id_user, una str per typo o un datetime per le date"""
+        @:param what: puo essere un int per id_user, una str per typo o un datetime per le date
+        @:param min: se è presente un datetime allora min indica che vuoi le date minori """
 
-        if what not in self.types:
+
+        if isinstance(what,str) and what in self.types:
+            return self.db.get_activity(type=what)
+        elif isinstance(what,str) and "all" in what:
+            return self.db.get_activity()
+        elif isinstance(what,int):
+            return self.db.get_activity(user=what)
+        elif isinstance(what,datetime) and min:
+            return self.db.get_activity(date_min=what)
+        elif isinstance(what, datetime) and not min:
+            return self.db.get_activity(date_max=what)
+        else:
             return False
 
-        return self.db.get_activity(type=type)
+    def get_most_active_user(self):
+        """Ritorna lo user piu attivo nel gruppo"""
+        activity=self.get_activity_by("all")
+        if not activity: return
 
 
     def get_type_content(self, message):
