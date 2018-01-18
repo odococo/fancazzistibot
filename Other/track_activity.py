@@ -241,7 +241,13 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         activity=self.db.get_activity(update.callback_query.message.from_user.id)
 
         if not activity and param!="indietro":
-            update.callback_query.message.reply_text("Non sono presenti dati relativi al tuo account...")
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Non sono presenti dati relativi al tuo account...",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_activity_main
+            )
             return
 
         to_send=""
@@ -300,7 +306,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             text=to_send,
             message_id=update.callback_query.message.message_id,
             parse_mode="HTML",
-            reply_markup=self.inline_activity_time
+            reply_markup=self.inline_activity_user
         )
 
 
