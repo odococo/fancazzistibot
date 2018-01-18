@@ -107,15 +107,22 @@ class Track:
             #prendi tutti i messaggi dal database
             activity=self.get_activity_by("all")
             activity=[elem['content'] for elem in activity]
+
             #crea un'unica stringa e passala alla funzione get_top_emoji
             top_emoji=self.get_top_emoji(" ".join(activity))
             print(top_emoji)
+
             #calcola la len
             max_len=len(top_emoji)
-            #se questa
+
+            #se questa è maggiore di 10 impostala a 10
             if max_len>10: max_len=10
+
+            #inizzializza il to_send
             to_send="Le"+str(max_len)+ " top emoji sono:\n"
-            for idx in range(1,max_len+1):
+
+            #genera il resto del to send
+            for idx in range(0,max_len):
                 to_send+=top_emoji[idx][0]+" ripetuta <b>"+str(top_emoji[idx][1])+"</b> volte\n"
 
 
