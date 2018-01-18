@@ -81,28 +81,28 @@ class Track:
         self.main_message = """
 Benvenuto caro utente in questo nuovo comando pieno di cose belle 🌈
 Di seguito troverai vari bottoni per poter visualizzare tutte le informazioni dei messaggi inviati sul gruppo Fancazzisti
-<b>Emoji piu usato</b> : semplicemente la lista degli emoji piu utilizzati sul gruppo
 <b>Msg Salvati</b> : il numero di messaggi salvati dentro il bot
+<b>Altro</b> : in questa sezione potrai trovare delle informazioni generali
 <b>Attività</b> : mostra varie informazioni temporali relative all'attivita presente nel gruppo
 <b>Esci</b> : per uscire dalla visualizzazione
 <b>Il tuo username</b> : qui potrai visualizzare le info relative al tuo account personale
 Alcune funzioni non sono ancora disponibili, pazienta e arriveranno"""
 
         self.time_message = """
-In questa sezione potrai visualizzare l'attività del gruppo, intesa come quantità di messaggi inviati in un certo intervallo temporale
+In questa sezione potrai visualizzare l'attività del gruppo, intesa come quantità di messaggi inviati in un certo intervallo temporale 🕰
 <b>Oraria</b> : intervallo orario
 <b>Giornaliera</b> : intervallo giornaliero
 Con il passare del tempo saranno disponibili dei dati sempre piu precisi"""
 
         self.user_message = """
-In questa sezione potrai visualizzare le informazioni relative ai messaggi inviati da <b>te</b> sul gruppo dei Fancazzisti
+In questa sezione potrai visualizzare le informazioni relative ai messaggi inviati da <b>te</b> sul gruppo dei Fancazzisti 👤
 <b>Msg Inviati</b> : il numero di messaggi che hai inviato sul gruppo 
 <b>Top emoji</b> : le emoji che usi di piu
 <b> Analisi sentimenti </b> : una stima dei sentimenti espressi dai tuoi messaggi
 <b> Tipi inviati </b> : i diversi tipi di messaggio che hai inviato (ex: photo, video, audio....)"""
 
         self.altro_message = """
-In questa sezione puoi visualizzare informazioni varie tra cui:
+In questa sezione puoi visualizzare informazioni varie 📊 tra cui: 
 <b>Emoji piu usati (+)</b> : una classifica degli emoji piu usati sul gruppo
 <b>User più attivo (+)</b> : il nome dello user piu attivo nel gruppo 
 <b>User meno attivo (-)</b> : il nome dello user meno attivo nel gruppo """
