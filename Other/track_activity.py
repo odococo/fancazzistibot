@@ -78,7 +78,7 @@ class Track:
         elif message.document:
             return "document", message.document.file_id
         elif message.photo:
-            return "photo", message.photo.file_id
+            return "photo", message.photo[0].file_id
 
         elif message.sticker:
             return "sticker",message.sticker.file_id
