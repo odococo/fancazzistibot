@@ -238,7 +238,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        activity=self.get_activity_by(update.callback_query.message.from_user.id)
+        activity=self.get_activity_by(update.callback_query.from_user.id)
 
         if not activity and param!="indietro":
             bot.edit_message_text(
@@ -338,7 +338,6 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         @:param min: se è presente un datetime allora min indica che vuoi le date minori """
 
         print(what)
-        print(isinstance(what,int))
 
         if isinstance(what,str) and what in self.types:
             return self.db.get_activity(type=what)
