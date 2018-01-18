@@ -118,7 +118,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
             return
 
-        print(user_data['inline_main'])
+       # print(user_data['inline_main'])
 
         # prendi lo username
         username = update.message.from_user.username
@@ -367,7 +367,6 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         @:param what: puo essere un int per id_user, una str per typo o un datetime per le date
         @:param min: se è presente un datetime allora min indica che vuoi le date minori """
 
-        print(what)
 
         if isinstance(what,str) and what in self.types:
             return self.db.get_activity(type=what)
