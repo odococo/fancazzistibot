@@ -287,11 +287,11 @@ def main():
     disp.add_handler(MessageHandler(Filters.sticker and Filters.document, sticker_reciver))
     disp.add_handler(CallbackQueryHandler(send_help_video, pattern="/helpvideo"))
 
-    with codecs.open("Resources/craftables_file", encoding='utf-8') as file:
+    with codecs.open("craftables_file", encoding='utf-8') as file:
         rea = file.read()
         oggetti = eval(rea.replace("null", "None"))
 
-    with codecs.open("Resources/base_file", encoding='utf-8') as file:
+    with codecs.open("base_file", encoding='utf-8') as file:
         rea = file.read()
         base_items = eval(rea.replace("null", "None"))
 
