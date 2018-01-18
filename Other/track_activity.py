@@ -118,9 +118,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
             return
 
-
-        #resetta l'user data
-        user_data['inline_main']=None
+        print(user_data)
         # prendi lo username
         username = update.message.from_user.username
         # cambia l'inline
@@ -132,6 +130,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
 
         update.message.reply_text(self.main_message,reply_markup=inline_new_main, parse_mode="HTML")
+
 
     def activity_main(self, bot, update,user_data):
         """Funzione per la visualizzazione della sezione principale di activity"""
@@ -189,6 +188,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
             to_send="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
 
         elif param == "esci":
+            self.esci(user_data)
             update.callback_query.message.reply_text("Hasta la vista, baby")
             bot.delete_message(
                 chat_id=update.callback_query.message.chat_id,
@@ -293,7 +293,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
 
         elif param == "parole":
-            
+
             activity=[elem['content'] for elem in activity]
             count=self.word_count(" ".join(activity))
             # calcola la len
@@ -517,6 +517,9 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         return sorted_x
 
 
+    def esci(self, user_data):
+        """Funizione per resettare lo user data"""
+        user_data['inline_main']=None
 
 
 class TrackFilter(BaseFilter):
