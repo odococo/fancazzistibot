@@ -282,14 +282,15 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
 
 
         elif param == "parole":
-            to_send = self.get_hour_activity()
+            to_send= "Comando non ancora implementato...sorry"
+
 
         elif param == "sentimenti":
-            to_send = self.get_hour_activity()
+            to_send= "Comando non ancora implementato...sorry"
 
 
         elif param == "tipi":
-            to_send = self.get_hour_activity()
+            to_send= "Comando non ancora implementato...sorry"
 
 
         elif param == "indietro":
