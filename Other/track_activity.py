@@ -45,15 +45,13 @@ class Track:
     def __init__(self,updater, db , filter):
         self.db=db
         self.types=["text","audio","photo","sticker","video","voice"]
-        self.inline_activity_main = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Utente più attivo", callback_data="/activity_main utente"),
-             InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
+        self.inline_activity_main = [
+            [InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
              InlineKeyboardButton("Msg Salvati", callback_data="/activity_main messaggi")],
             [InlineKeyboardButton("Attività", callback_data="/activity_main attivita"),
              InlineKeyboardButton("Altro", callback_data="/activity_main altro"),
-             InlineKeyboardButton("Esci", callback_data="/activity_main esci")]
+             InlineKeyboardButton("Esci", callback_data="/activity_main esci")]]
 
-        ])
         self.inline_activity_time = InlineKeyboardMarkup([
             [InlineKeyboardButton("Oraria", callback_data="/activity_time oraria"),
              InlineKeyboardButton("Giornaliera", callback_data="/activity_time giornaliera"),
@@ -65,24 +63,33 @@ class Track:
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
-        disp.add_handler(CommandHandler("activity",self.activity_init))
-        disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main"))
-        disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time"))
+        disp.add_handler(CommandHandler("activity",self.activity_init), pass_user_data=True)
+        disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
+        disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
 
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
     # ===================LOOPS=================================
 
-    def activity_init(self,bot, update):
+    def activity_init(self,bot, update, user_data):
         """Funzione per iniziare la visualizzazione delle activity"""
         if not self.db.is_loot_admin(update.message. from_user.id):
             update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
             return
 
-        to_send="Scegli cosa vuoi visualizzare"
-        update.message.reply_text(to_send,reply_markup=self.inline_activity_main)
+        #prendi lo username
+        username=update.message.from_user.username
+        #cambia l'inline
+        new_inline=self.inline_activity_main
+        new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
+        inline_new_main=InlineKeyboardMarkup(new_inline)
+        user_data['inline_main']=inline_new_main
 
-    def activity_main(self, bot, update):
+
+        to_send="Scegli cosa vuoi visualizzare"
+        update.message.reply_text(to_send,reply_markup=inline_new_main)
+
+    def activity_main(self, bot, update,user_data):
         """Funzione per la visualizzazione della sezione principale di activity"""
 
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
@@ -119,7 +126,7 @@ class Track:
             if max_len>10: max_len=10
 
             #inizzializza il to_send
-            to_send="Le"+str(max_len)+ " top emoji sono:\n"
+            to_send="Le top "+str(max_len)+ " emoji sono:\n"
 
             #genera il resto del to send
             for idx in range(0,max_len):
@@ -142,10 +149,10 @@ class Track:
             text=to_send,
             message_id=update.callback_query.message.message_id,
             parse_mode="HTML",
-            reply_markup=self.inline_activity_main
+            reply_markup=user_data['inline_main']
         )
 
-    def activity_time(self, bot, update):
+    def activity_time(self, bot, update,user_data):
 
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
@@ -165,7 +172,7 @@ class Track:
                 text="Main",
                 message_id=update.callback_query.message.message_id,
                 parse_mode="HTML",
-                reply_markup=self.inline_activity_main
+                reply_markup=user_data['inline_main']
             )
             return
 
