@@ -124,7 +124,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         username = update.message.from_user.username
         # cambia l'inline
         print(len(self.inline_activity_main[0]))
-        new_inline=self.inline_activity_main
+        new_inline=list(self.inline_activity_main)
         print(len(new_inline[0]))
 
         new_inline[0].insert(0,InlineKeyboardButton(username, callback_data="/activity_main utente"))
@@ -514,7 +514,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         words = text.split()
 
         for word in words:
-            if word in counts and len(word)>2:
+            if word in counts and len(word)>3:
                 counts[word] += 1
             else:
                 counts[word] = 1
