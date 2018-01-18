@@ -127,7 +127,7 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         else: inline_new_main=user_data['inline_main']
 
 
-        update.message.reply_text(self.main_message,reply_markup=inline_new_main)
+        update.message.reply_text(self.main_message,reply_markup=inline_new_main, parse_mode="HTML")
 
     def activity_main(self, bot, update,user_data):
         """Funzione per la visualizzazione della sezione principale di activity"""
