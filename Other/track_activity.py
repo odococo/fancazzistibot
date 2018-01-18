@@ -1,6 +1,8 @@
 import datetime
 
 import itertools
+import operator
+import re
 from collections import Counter
 
 import math
@@ -64,7 +66,7 @@ class Track:
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
         disp.add_handler(CommandHandler("activity",self.activity_init))
-        disp.add_handler(CallbackQueryHandler(self.activity_choice, pattern="/activity_main"))
+        disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main"))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time"))
 
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
@@ -80,7 +82,7 @@ class Track:
         to_send="Scegli cosa vuoi visualizzare"
         update.message.reply_text(to_send,reply_markup=self.inline_activity_main)
 
-    def activity_choice(self, bot, update):
+    def activity_main(self, bot, update):
         """Funzione per la visualizzazione della sezione principale di activity"""
 
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
@@ -101,7 +103,14 @@ class Track:
         elif param == "utente":
             print("utente")
         elif param == "emoji":
-            print("emoji")
+            activity=self.get_activity_by("all")
+            activity=[elem['content'] for elem in activity]
+            top_emoji=self.get_top_emoji(" ".join(activity))
+            to_send="Le 10 top emoji sono:\n"
+            for idx in range(1,11):
+                to_send+=top_emoji[idx][0]+" ripetuta <b>"+top_emoji[idx][1]+"</b> volte\n"
+
+
         elif param == "messaggi":
             to_send="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
 
@@ -188,12 +197,38 @@ class Track:
             return False
 
 
-#=======================================================================
+#============================UTILS===========================================
 
     def get_most_active_user(self):
         """Ritorna lo user piu attivo nel gruppo"""
         activity=self.get_activity_by("all")
         if not activity: return
+
+    def get_top_emoji(self, text, emoji_bool=True):
+        """Ritorna le top emoji trovate nel testo
+        @:param text: il testo in cui cercare le emoji
+        @:type: str
+        @:param emoji_bool: boolean per trasformare le emoji da testo in emoji
+        @:type:bool default true
+        @:return: lista con di tuple del tipo (emoji, ripetizioni)"""
+
+        #trovo le emoji nel testo
+        emoji_regex = re.compile(r":([a-z_]+):")
+        find=re.findall(emoji_regex,text)
+
+        counter=Counter(find)
+        # sorto il dizionario
+        sorted_x = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
+
+
+        if emoji_bool:
+            res=[]
+            for elem in sorted_x:
+                res.append((emoji.emojize(":"+elem[0]+":"),elem[1]))
+        else:
+            res=sorted_x
+
+        return res
 
 
     def get_day_activity(self):
