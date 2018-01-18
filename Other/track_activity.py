@@ -43,7 +43,7 @@ class Track:
     def __init__(self,updater, db , filter):
         self.db=db
         self.types=["text","audio","photo","sticker","video","voice"]
-        self.activity_main = InlineKeyboardMarkup([
+        self.inline_activity_main = InlineKeyboardMarkup([
             [InlineKeyboardButton("Utente più attivo", callback_data="/activity_main utente"),
              InlineKeyboardButton("Emoji piu usato", callback_data="/activity_main emoji"),
              InlineKeyboardButton("Msg Salvati", callback_data="/activity_main messaggi")],
@@ -52,13 +52,20 @@ class Track:
              InlineKeyboardButton("Esci", callback_data="/activity_main esci")]
 
         ])
+        self.inline_activity_time = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Oraria", callback_data="/activity_time oraria"),
+             InlineKeyboardButton("Giornaliera", callback_data="/activity_time giornaliera"),
+             InlineKeyboardButton("Indietro", callback_data="/activity_time indietro")],
 
+
+        ])
 
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter,self.log_activity))
         disp.add_handler(CommandHandler("activity",self.activity_init))
         disp.add_handler(CallbackQueryHandler(self.activity_choice, pattern="/activity_main"))
+        disp.add_handler(CallbackQueryHandler(self.activity_choice, pattern="/activity_time"))
 
         #disp.add_handler(CommandHandler("mostactiveuser",self.get_most_active_user))
 
@@ -70,7 +77,7 @@ class Track:
             return
 
         to_send="Scegli cosa vuoi visualizzare"
-        update.message.reply_text(to_send,reply_markup=self.activity_main)
+        update.message.reply_text(to_send,reply_markup=self.activity_time)
 
     def get_day_activity(self):
         """Questa funzione ritorna gli orari di attività maggiore"""
@@ -95,6 +102,28 @@ class Track:
 
         return to_send
 
+    def get_hour_activity(self):
+        """Questa funzione ritorna gli orari di attività maggiore"""
+
+
+        to_send = "Attività oraira:\n"
+        # prendi tutte le activity
+        activity = self.get_activity_by("all")
+        # seleziona solo le date
+        activity = [elem['date'] for elem in activity]
+        # aggiungi un ora
+        activity = [elem + datetime.timedelta(hours=1) for elem in activity]
+        # trasforma in giorni
+        activity = [elem.hour() for elem in activity]
+        # conta le ripetizioni
+        counter = Counter(activity)
+
+        tot = sum(counter.values())
+
+        for elem in counter.keys():
+            to_send += "<b>" + elem + "</b> " + self.filler(tot, counter[elem]) + "\n"
+
+        return to_send
 
     def filler(self, tot, val):
         """Ritorna un stringa che indica il valore in percentuale"""
@@ -120,7 +149,14 @@ class Track:
         to_send="ciao"
 
         if param=="attivita":
-            to_send=self.get_day_activity()
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="In questa sezione puoi visualizzare l'attività del gruppo nel tempo",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_activity_time
+            )
+            return 
 
         elif param == "utente":
             print("utente")
@@ -142,7 +178,42 @@ class Track:
             text=to_send,
             message_id=update.callback_query.message.message_id,
             parse_mode="HTML",
-            reply_markup=self.activity_main
+            reply_markup=self.inline_activity_main
+        )
+
+    def activity_time(self, bot, update):
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        to_send = "Attività "
+
+        if param == "giornaliera":
+            to_send+="<b>giornaliera</b>:\n"
+
+            to_send+= self.get_day_activity()
+
+        elif param=="oraria":
+            to_send+="<b>oraria</b>:\n"
+            to_send+=self.get_hour_activity()
+
+        elif param == "indietro":
+            bot.edit_message_text(
+                chat_id=update.callback_query.message.chat_id,
+                text="Main",
+                message_id=update.callback_query.message.message_id,
+                parse_mode="HTML",
+                reply_markup=self.inline_activity_main
+            )
+            return
+
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.inline_activity_time
         )
 
     def log_activity(self, bot, update):
