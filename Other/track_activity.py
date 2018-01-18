@@ -476,6 +476,24 @@ In questa sezione potrai visualizzare le informazioni relative ai messaggi invia
         else:
             return "unkown",message.message_id
 
+    def word_count(self, text):
+        """Conta le ripetizioni di delle parole nel testo
+        @:param text: la stringa dove cercare le parole
+        @:type: str"""
+        counts = dict()
+        words = text.split()
+
+        for word in words:
+            if word in counts and len(word)>2:
+                counts[word] += 1
+            else:
+                counts[word] = 1
+
+        sorted_x = sorted(counts.items(), key=operator.itemgetter(1), reverse=True)
+
+
+        return sorted_x
+
 
 
 
