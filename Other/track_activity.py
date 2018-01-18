@@ -58,6 +58,7 @@ class Track:
 
 
     def activity_init(self,bot, update):
+        """Funzione per iniziare la visualizzazione delle activity"""
         if not self.db.is_loot_admin(update.message. from_user.id):
             update.message.reply_text("Non hai i privilegi necessari per visualizzare queste info...schiappa")
             return
@@ -66,7 +67,38 @@ class Track:
         update.message.reply_text(to_send,reply_markup=self.activity_main)
 
 
+    def activity_choice(self, bot, update):
 
+
+        # prendi la scelta dell'user (guarda CallbackQueryHandler)
+        param = update.callback_query.data.split()[1]
+
+        to_send="ciao"
+
+        if param=="attivita":
+            print("attivita")
+
+        elif param == "utente":
+            print("utente")
+        elif param == "emoji":
+            print("emoji")
+        elif param == "messaggi":
+            to_send+="Fino ad ora ci sono stati un totale di <b>"+str(len(self.get_activity_by("all")))+"</b> messaggi registrati"
+        elif param == "esci":
+            update.callback_query.message.reply_text("Ok")
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
+            return
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=self.activity_main
+        )
 
     def log_activity(self, bot, update):
         """Funzione per loggare le activity dentro il db"""
