@@ -539,7 +539,7 @@ class DB:
 
         if sentiment not in [-1,0-1]: return
 
-        self.execute(TABELLE)
+        self.execute(TABELLE['activity']['update']['sentiment'],(sentiment,activity_id,))
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):

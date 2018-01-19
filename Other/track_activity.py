@@ -4,6 +4,7 @@ import math
 import operator
 import re
 from collections import Counter
+from time import sleep
 
 import emoji
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
@@ -111,10 +112,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
+        disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
+        disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_sentiment", pass_user_data=True))
 
     # ===================LOOPS=================================
 
@@ -603,6 +606,42 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         return sorted_x
 
+    # ============================CLASSIFICATION===========================================
+
+
+    def get_to_classify(self, bot, update,user_data):
+        """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
+        activity=self.get_activity_by("all")
+        activity=[elem for elem in activity if not isinstance(elem['sentiment'],int)]
+
+        inline= InlineKeyboardMarkup([
+            [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -"),
+             InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment ."),
+             InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +")],
+
+        ])
+
+        update.message.reply_text("Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
+        sleep(3)
+        update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
+                                  "Negativa, Neutrale e Positiva per decidere l'emozione espressa dal messaggio."
+                                  "Se ti sei stancato di questo, ti prego almeno di finire i messaggi che ti sono stati inviati.")
+        sleep(4)
+
+
+        user_data['decision']=[]
+
+        for i in range(0,10):
+            row=activity.pop()
+            to_send=str(row['id'])+"\n"+row['content']
+            message=update.message.reply_text(to_send,reply_markup=inline)
+            user_data['decision'].append((row['id'],message))
+
+
+    def classify(self,bot, update, user_data):
+        """"""
+        activity_id=update.callback_query.message.text.split("\n")[0]
+        print(activity_id)
     # ============================OTHER UTILS===========================================
 
     def esci(self, user_data):
