@@ -612,6 +612,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     def get_to_classify(self, bot, update,user_data):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
+
+        #prendi tutte le activity che non hanno la cella sentiment impostata
         activity=self.get_activity_by("all")
         activity=[elem for elem in activity if not isinstance(elem['sentiment'],int)]
 
@@ -622,40 +624,53 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         ])
 
+        #manda due messaggi di benvenuto e spiegazione
         update.message.reply_text("Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
         sleep(3)
         update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
-                                  " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio. Se "
-                                  "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>"
-                                  " Se ti sei stancato, ti prego almeno di finire i messaggi che ti sono stati inviati.",
+                                  " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
+                                  "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>",
                                   parse_mode="HTML")
-        sleep(10)
+        sleep(8)
 
 
         user_data['decision']=[]
 
+        #manda 10 messaggi random dalla lista
         for i in range(0,10):
+            #mischia la lista
             random.shuffle(activity)
+            #prendi un messaggio rimuovendolo dalla lista
             row=activity.pop()
+            #formatta il messaggio
             to_send=str(row['id'])+"\n"+row['content']
+            #salva il messaggio e mandalo
             message=update.message.reply_text(to_send,reply_markup=inline)
+            #aggiungi la tupla (id_mesg, msg)
             user_data['decision'].append((row['id'],message))
 
+        #notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         seconds=10
         sec_message=update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
+        #fiche il tempo non scade
         while seconds>0:
+            #decrementa il tempo
             seconds-=1
+            #formatta il messaggio
             to_send="<b>"+str(seconds)+"</b> secondi rimanenti"
+            #modifica quello precedente
             bot.edit_message_text(
                 chat_id=sec_message.chat_id,
                 text=to_send,
                 message_id=sec_message.message_id,
                 parse_mode="HTML"
             )
+
             sleep(1)
 
 
         for elem in user_data['decision']:
+            #a fine tempo elimina tutti i messaggi rimasti uno alla volta
             bot.delete_message(
                 chat_id=elem[1].chat_id,
                 message_id=elem[1].message_id
@@ -663,13 +678,15 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             sleep(1)
 
     def classify(self, bot, update, user_data):
-        """"""
-
-        print("********************************************************")
+        """Funzione per salvare le scelte dell'utente"""
+        #prendi l'id del messaggio e rimuovilo dallo user data
         activity_id=update.callback_query.message.text.split("\n")[0]
-        print(activity_id)
+        user_data['decision']=[elem for elem in user_data['decision'] if not elem[0]==int(activity_id)]
+        #prende la decisione dell'utente
         param = update.callback_query.data.split()[1]
-        print(param)
+        sentiment=int(param)
+
+        self.db.add_sentiment_activity(sentiment,activity_id)
 
 
     # ============================OTHER UTILS===========================================
