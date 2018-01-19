@@ -627,9 +627,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
                                   " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio. Se "
                                   "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>"
-                                  "Se ti sei stancato di questo, ti prego almeno di finire i messaggi che ti sono stati inviati.",
+                                  " Se ti sei stancato, ti prego almeno di finire i messaggi che ti sono stati inviati.",
                                   parse_mode="HTML")
-        sleep(8)
+        sleep(10)
 
 
         user_data['decision']=[]
@@ -652,6 +652,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 message_id=sec_message.message_id,
                 parse_mode="HTML"
             )
+            sleep(1)
 
 
         for elem in user_data['decision']:
