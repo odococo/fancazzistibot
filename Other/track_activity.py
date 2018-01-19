@@ -625,8 +625,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         update.message.reply_text("Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
         sleep(3)
         update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
-                                  "Negativa, Neutrale e Positiva per decidere l'emozione espressa dal messaggio."
-                                  "Se ti sei stancato di questo, ti prego almeno di finire i messaggi che ti sono stati inviati.")
+                                  " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio. Se "
+                                  "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>"
+                                  "Se ti sei stancato di questo, ti prego almeno di finire i messaggi che ti sono stati inviati.",
+                                  parse_mode="HTML")
         sleep(4)
 
 
@@ -640,7 +642,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             user_data['decision'].append((row['id'],message))
 
         update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
-        sleep(60)
+        sleep(6)
         for elem in user_data['decision']:
             bot.delete_message(
                 chat_id=elem.chat_id,
