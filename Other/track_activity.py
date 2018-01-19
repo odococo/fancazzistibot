@@ -806,7 +806,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         sorted_x = sorted(counts.items(), key=operator.itemgetter(1), reverse=True)
 
-        return sorted_x[0]
+        return sorted_x[0][0]
 
 
 
