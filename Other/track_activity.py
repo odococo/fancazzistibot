@@ -886,6 +886,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         if len(chat_data['decision']) == 0:
             job = chat_data['job']
+            job.stop()
             job.schedule_removal()
             del chat_data['job']
             punteggio = self.db.get_activity_points(job.context['user_id'])
