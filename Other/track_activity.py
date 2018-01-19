@@ -917,11 +917,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         update.message.reply_text(to_send,parse_mode="HTML")
 
 
-    def get_classified(self):
-        activity=self.db.get_activity("all")
-        sentiment=[elem for elem in activity if not isinstance(elem['sentiment',int])]
 
-        return len(activity), len(sentiment)
 
     # ============================OTHER UTILS===========================================
 
@@ -941,6 +937,14 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             res += "□"
 
         return res
+
+    def get_classified(self):
+        activity=self.db.get_activity("all")
+        sentiment=[elem for elem in activity if isinstance(elem['sentiment',int])]
+
+        print(activity)
+        print(sentiment)
+        return len(activity), len(sentiment)
 
 
 class TrackFilter(BaseFilter):
