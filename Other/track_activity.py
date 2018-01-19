@@ -129,6 +129,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         self.secondi=60
 
+        self.is_job_running=False
+
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter, self.log_activity))
@@ -859,6 +861,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(punteggio - 1) + " punti"
             self.db.update_activity_points(job.context['user_id'], -1)
 
+        self.is_job_running=False
+
         bot.sendMessage(job.context['chat_id'],to_send)
 
 
@@ -928,11 +932,17 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def classify(self, bot, update, chat_data):
         """Funzione per salvare le scelte dell'utente"""
 
+
         if "private" not in update.message.chat.type:
             update.message.reply_text("Questo comando è possibile solo in privata")
 
             return
 
+        if self.is_job_running:
+            update.message.reply_text("Qualcun'altro sta utilizzando questo comando...aspetta 1 minuto")
+            return
+
+        self.is_job_running=True
 
         #prendi l'id del messaggio e rimuovilo dallo user data
         activity_id=update.callback_query.message.text.split("\n")[0]
