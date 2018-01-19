@@ -113,12 +113,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
-        disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_user_data=True))
+        disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,
+                                            pass_chat_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
-        disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_user_data=True))
+        disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True,))
 
     # ===================LOOPS=================================
 
@@ -609,8 +610,36 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     # ============================CLASSIFICATION===========================================
 
+    def delete_messages(self, bot, job):
+        # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
 
-    def get_to_classify(self, bot, update,user_data):
+        #sec_message = update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
+        #sleep(1)
+        # fiche il tempo non scade
+        # while seconds > 0:
+        #     # decrementa il tempo
+        #     seconds -= 1
+        #     # formatta il messaggio
+        #     to_send = "<b>" + str(seconds) + "</b> secondi rimanenti"
+        #     # modifica quello precedente
+        #     bot.edit_message_text(
+        #         chat_id=sec_message.chat_id,
+        #         text=to_send,
+        #         message_id=sec_message.message_id,
+        #         parse_mode="HTML"
+        #     )
+        #
+        #     sleep(1)
+
+        for elem in job.context['decision']:
+            # a fine tempo elimina tutti i messaggi rimasti uno alla volta
+            bot.delete_message(
+                chat_id=elem[1].chat_id,
+                message_id=elem[1].message_id
+            )
+            sleep(1)
+
+    def get_to_classify(self, bot, update,job_queue, chat_data):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
 
         #prendi tutte le activity che non hanno la cella sentiment impostata
@@ -633,8 +662,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                                   parse_mode="HTML")
         sleep(8)
 
+        chat_data['decision']=[]
 
-        user_data['decision']=[]
+        seconds=10
 
         #manda 10 messaggi random dalla lista
         for i in range(0,10):
@@ -645,44 +675,22 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             #formatta il messaggio
             to_send=str(row['id'])+"\n"+row['content']
             #salva il messaggio e mandalo
+
             message=update.message.reply_text(to_send,reply_markup=inline)
+
             #aggiungi la tupla (id_mesg, msg)
-            user_data['decision'].append((row['id'],message))
+            chat_data['decision'].append((row['id'],message))
 
-        #notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
-        seconds=10
-        sec_message=update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
-        sleep(1)
-        #fiche il tempo non scade
-        while seconds>0:
-            #decrementa il tempo
-            seconds-=1
-            #formatta il messaggio
-            to_send="<b>"+str(seconds)+"</b> secondi rimanenti"
-            #modifica quello precedente
-            bot.edit_message_text(
-                chat_id=sec_message.chat_id,
-                text=to_send,
-                message_id=sec_message.message_id,
-                parse_mode="HTML"
-            )
-
-            sleep(1)
+        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision']}
+        job = job_queue.run_once(self.delete_messages, seconds, context=context_dict)
+        chat_data['job'] = job
 
 
-        for elem in user_data['decision']:
-            #a fine tempo elimina tutti i messaggi rimasti uno alla volta
-            bot.delete_message(
-                chat_id=elem[1].chat_id,
-                message_id=elem[1].message_id
-            )
-            sleep(1)
-
-    def classify(self, bot, update, user_data):
+    def classify(self, bot, update, chat_data):
         """Funzione per salvare le scelte dell'utente"""
         #prendi l'id del messaggio e rimuovilo dallo user data
         activity_id=update.callback_query.message.text.split("\n")[0]
-        user_data['decision']=[elem for elem in user_data['decision'] if not elem[0]==int(activity_id)]
+        chat_data['decision']=[elem for elem in chat_data['decision'] if not elem[0]==int(activity_id)]
         #prende la decisione dell'utente
         param = update.callback_query.data.split()[1]
         sentiment=int(param)
