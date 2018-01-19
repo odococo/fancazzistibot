@@ -777,7 +777,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         while seconds > 0:
             if not job._enabled.is_set():
                 return
-            print(job._enabled.is_set())
+            #print(job._enabled.is_set())
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
@@ -844,7 +844,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         chat_data['decision']=[]
 
-        seconds=25
+        seconds=45
 
         #manda 10 messaggi random dalla lista
         for i in range(0,10):
