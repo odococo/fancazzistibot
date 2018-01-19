@@ -982,8 +982,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         activity=self.get_activity_by("all")
         sentiment=[elem for elem in activity if isinstance(elem['sentiment'],int)]
 
-        print(activity)
-        print(sentiment)
+        #print(activity)
+        #print(sentiment)
         return len(activity), len(sentiment)
 
 
