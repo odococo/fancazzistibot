@@ -128,7 +128,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
-        disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True))
+        disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True,pass_args=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
@@ -818,8 +818,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
 
 
-    def get_to_classify(self, bot, update,job_queue, chat_data):
+    def get_to_classify(self, bot, update,job_queue, chat_data,args):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
+
+        print("A")
 
         #prendi tutte le activity che non hanno la cella sentiment impostata
         activity=self.get_activity_by("all")
@@ -832,15 +834,21 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         ])
 
-        #manda due messaggi di benvenuto e spiegazione
-        update.message.reply_text("Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
-        sleep(3)
-        update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
-                                  " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
-                                  "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
-                                  "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
-                                  parse_mode="HTML")
-        sleep(13)
+        if len(args)==0:
+            #manda due messaggi di benvenuto e spiegazione
+            update.message.reply_text("Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
+            sleep(3)
+            update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
+                                      " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
+                                      "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
+                                      "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
+                                      parse_mode="HTML")
+            sleep(13)
+
+        non_sent, sent=self.get_classified()
+
+        to_send="Per ora sono stati classificati "+str(sent)+" messaggi su "+str(non_sent)
+        update.message.reply_text(to_send)
 
         chat_data['decision']=[]
 
@@ -908,6 +916,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send="Il tuo punteggio è pari a <b>"+str(punteggio)+"</b>"
         update.message.reply_text(to_send,parse_mode="HTML")
 
+
+    def get_classified(self):
+        activity=self.db.get_activity("all")
+        sentiment=[elem for elem in activity if not isinstance(elem['sentiment',int])]
+
+        return len(activity), len(sentiment)
 
     # ============================OTHER UTILS===========================================
 
