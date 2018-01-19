@@ -223,7 +223,7 @@ TABELLE = {
                 "loose":"UPDATE activity_points SET points=points-1 where id=%s"},
         "insert":"INSERT INTO activity_points ( id, points) VALUES (%s, 0) ON CONFLICT (id) DO NOTHING",
         "select":{
-            "by_id":"SELECT * FROM activity_points WHERE id=%s ",
+            "by_id":"SELECT * FROM activity_points WHERE id=%s",
             "all":"SELECT * FROM activity_points NATURAL JOIN users"}
 
     }
@@ -365,7 +365,7 @@ class DB:
         return self.execute(TABELLE['activity_points']['select']['by_id'],(user_id,))['points']
 
     def get_activity_points_all(self):
-        return self.execute(TABELLE['activity_points']['select']['by_id'],)
+        return self.execute(TABELLE['activity_points']['select']['all'],)
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
