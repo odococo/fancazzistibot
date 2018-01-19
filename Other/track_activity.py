@@ -775,6 +775,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         sleep(1)
         #fiche il tempo non scade
         while seconds > 0:
+            if not job._enabled.is_set():
+                return
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
@@ -886,7 +888,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         if len(chat_data['decision']) == 0:
             job = chat_data['job']
-            job.stop()
             job.schedule_removal()
             del chat_data['job']
             punteggio = self.db.get_activity_points(job.context['user_id'])
