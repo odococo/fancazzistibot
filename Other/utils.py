@@ -64,6 +64,7 @@ insulta - insulta un'utente a caso
 activity - mostra informazioni relative al gruppo fancazzisti
 classify - permette di guadagnare punti per accere alle info di activity
 punteggioact - visualizza il tuo punteggio legato alle activity
+topunteggio - visualizza i top punteggi 
 
 """
 

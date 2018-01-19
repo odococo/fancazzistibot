@@ -134,7 +134,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
-        disp.add_handler(CommandHandler("toppunteggio", self.top_punteggio))
+        disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True,pass_args=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
@@ -962,8 +962,14 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def top_punteggio(self,bot,update):
         """Visualizza la top dei punteggi"""
         users=self.db.get_activity_points_all()
+        print(users)
+
         users=[(elem['username'],elem['points']) for elem in users]
+        print(users)
+
         sorted_x = sorted(users, key=lambda tup: tup[1], reverse=True)
+        print(sorted_x)
+
 
         to_send="Top punteggi\n"
         for elem in sorted_x:
