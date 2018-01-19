@@ -614,23 +614,24 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def delete_messages(self, bot, job):
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
 
-        #sec_message = update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
-        #sleep(1)
-        # fiche il tempo non scade
-        # while seconds > 0:
-        #     # decrementa il tempo
-        #     seconds -= 1
-        #     # formatta il messaggio
-        #     to_send = "<b>" + str(seconds) + "</b> secondi rimanenti"
-        #     # modifica quello precedente
-        #     bot.edit_message_text(
-        #         chat_id=sec_message.chat_id,
-        #         text=to_send,
-        #         message_id=sec_message.message_id,
-        #         parse_mode="HTML"
-        #     )
-        #
-        #     sleep(1)
+        sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
+        seconds=job.context['seconds']
+        sleep(1)
+        #fiche il tempo non scade
+        while seconds > 0:
+            # decrementa il tempo
+            seconds -= 1
+            # formatta il messaggio
+            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti"
+            # modifica quello precedente
+            bot.edit_message_text(
+                chat_id=sec_message.chat_id,
+                text=to_send,
+                message_id=sec_message.message_id,
+                parse_mode="HTML"
+            )
+
+            sleep(1)
 
         for elem in job.context['decision']:
             # a fine tempo elimina tutti i messaggi rimasti uno alla volta
@@ -685,8 +686,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             #aggiungi la tupla (id_mesg, msg)
             chat_data['decision'].append((row['id'],message))
 
-        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision']}
-        job = job_queue.run_once(self.delete_messages, seconds, context=context_dict)
+        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],'seconds':seconds}
+        job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
         chat_data['job'] = job
 
 
