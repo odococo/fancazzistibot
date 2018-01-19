@@ -127,7 +127,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
-        disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio, pass_user_data=True))
+        disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
@@ -833,7 +833,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         sleep(3)
         update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
                                   " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
-                                  "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>",
+                                  "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
+                                  "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
                                   parse_mode="HTML")
         sleep(8)
 
