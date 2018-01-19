@@ -118,7 +118,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
-        disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_sentiment", pass_user_data=True))
+        disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_user_data=True))
 
     # ===================LOOPS=================================
 
@@ -616,9 +616,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         activity=[elem for elem in activity if not isinstance(elem['sentiment'],int)]
 
         inline= InlineKeyboardMarkup([
-            [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -"),
-             InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment ."),
-             InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +")],
+            [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -1"),
+             InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment 0"),
+             InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +1")],
 
         ])
 
