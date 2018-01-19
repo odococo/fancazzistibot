@@ -89,7 +89,11 @@ Di seguito troverai vari bottoni per poter visualizzare tutte le informazioni de
 <b>Attività</b> : mostra varie informazioni temporali relative all'attivita presente nel gruppo
 <b>Esci</b> : per uscire dalla visualizzazione
 <b>Il tuo username</b> : qui potrai visualizzare le info relative al tuo account personale
-Alcune funzioni non sono ancora disponibili, pazienta e arriveranno"""
+Alcune funzioni non sono ancora disponibili, pazienta e arriveranno
+<b>NB</b> Alcune informazioni sono sbloccabili a seconda del tuo punteggio! 
+Per visualizzare il punteggio usa il comando /punteggioact.
+Per aumentarlo usa /classify e rispondi alle domande entro il tempo limite e guadagnerai un punto...
+ma attento se risponderai a cazzo oppure non farai in tempo ti verrà detratto un punto """
 
         self.time_message = """
 In questa sezione potrai visualizzare l'attività del gruppo, intesa come quantità di messaggi inviati in un certo intervallo temporale 🕰
@@ -110,12 +114,21 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 <b>User più attivo (+)</b> : il nome dello user piu attivo nel gruppo 
 <b>User meno attivo (-)</b> : il nome dello user meno attivo nel gruppo """
 
+        self.min_punteggio_attivita=10
+        self.min_punteggio_altro=20
+        self.min_punteggio_user=30
+        self.min_punteggio_altro_userM_=40
+        self.min_punteggio_altro_userP=50
+        self.min_punteggio_user_emoji=60
+        self.min_punteggio_user_parole=55
+        self.min_punteggio_user_tipi_inviati=45
+
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
-        disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,
-                                            pass_chat_data=True))
+        disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio, pass_user_data=True))
+        disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
@@ -134,6 +147,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             update.message.reply_text("Questo comando è possibile solo in privata")
 
             return
+
+
+        #salva l'utente nella tabella activity_points
+        self.db.insert_activity_points(update.message.from_user.id)
+
+
 
         # print(user_data['inline_main'])
 
@@ -156,7 +175,26 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
+        #prendi il punteggio dello user
+        user_punteggio=self.db.get_activity_points(update.callback_query.from_user.id)
+
         if param == "attivita":
+
+            #controlla che lo user possa visualizzare l'informazione
+            if user_punteggio<self.min_punteggio_attivita:
+                to_send="Devi avere un minimo di "+str(self.min_punteggio_attivita)+" punti per visualizzare questa " \
+                "informazione\nPer ora sei a "+str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=user_data['inline_main']
+                )
+                return
+
+
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=self.time_message,
@@ -167,6 +205,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             return
 
         elif param == "utente":
+
+            if user_punteggio < self.min_punteggio_user:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_attivita) + " punti per visualizzare questa " \
+                                                   "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=user_data['inline_main']
+                )
+                return
+
+
+
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=self.user_message,
@@ -177,6 +232,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             return
 
         elif param == "altro":
+
+            if user_punteggio < self.min_punteggio_altro:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_attivita) + " punti per visualizzare questa " \
+                                                   "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=user_data['inline_main']
+                )
+                return
+
+
+
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
                 text=self.altro_message,
@@ -214,6 +286,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send = ""
 
         if param == "giornaliera":
+
 
             to_send = self.get_day_activity()
 
@@ -257,11 +330,29 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         to_send = ""
 
+        user_punteggio=self.db.get_activity_points(update.callback_query.from_user.id)
+
+
         if param == "msg":
 
             to_send = "Sono presenti <b>" + str(len(activity)) + "</b> messaggi legati al tuo account"
 
         elif param == "emoji":
+            if user_punteggio < self.min_punteggio_user_emoji:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_user_emoji) + " punti per visualizzare questa " \
+                                                   "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_user
+                )
+                return
+
+
 
             # prendi il testo
             activity = [elem['content'] for elem in activity]
@@ -295,6 +386,21 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         elif param == "parole":
 
+            if user_punteggio < self.min_punteggio_user_parole:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_user_parole) + " punti per visualizzare questa " \
+                                                     "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_user
+                )
+                return
+
+
             activity = [elem['content'] for elem in activity]
             count = self.get_word_count(" ".join(activity))
             # calcola la len
@@ -319,6 +425,21 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
 
         elif param == "tipi":
+
+            if user_punteggio < self.min_punteggio_user_tipi_inviati:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_user_tipi_inviati) + " punti per visualizzare questa " \
+                                                      "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_user
+                )
+                return
+
             types = [elem['type'] for elem in activity]
             counter = Counter(types)
             # sorto il dizionario
@@ -363,6 +484,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         to_send = ""
 
+        user_punteggio=self.db.get_activity_points(update.callback_query.from_user.id)
+
         if param == "emoji":
             # prendi tutti i messaggi dal database
             activity = self.get_activity_by("all")
@@ -387,6 +510,21 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
 
         elif param == "user_piu":
+
+            if user_punteggio < self.min_punteggio_altro_userP:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_altro_userP) + " punti per visualizzare questa " \
+                                                     "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_altro
+                )
+                return
+
             user, count = self.get_most_active_user()
 
             if not user:
@@ -396,6 +534,22 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     count) + "</b> messaggi, grandioso!"
 
         elif param == "user_meno":
+
+            if user_punteggio < self.min_punteggio_altro_userM_:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_altro_userM_) + " punti per visualizzare questa " \
+                                                      "informazione\nPer ora sei a " + str(user_punteggio)
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_altro
+                )
+                return
+
+
             user, count = self.get_most_active_user(piu=False)
 
             if not user:
@@ -612,8 +766,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     # ============================CLASSIFICATION===========================================
 
     def delete_messages(self, bot, job):
-        # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
+        """Funzione per eliminare i messaggi resudi allo scadere del tempo """
 
+
+        # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
         seconds=job.context['seconds']
         sleep(1)
@@ -633,6 +789,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             sleep(1)
 
+        answered=0
         for elem in job.context['decision']:
             # a fine tempo elimina tutti i messaggi rimasti uno alla volta
             try:
@@ -641,8 +798,21 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     message_id=elem[1].message_id
                 )
             except telegram.error.BadRequest:
-                pass
+                answered+=1
             sleep(1)
+
+        punteggio=self.db.get_activity_points(job.context['user_id'])
+        if answered>=10:
+
+            to_send="Complimenti! Hai guadagnato un punto, sei arrivato a "+str(punteggio+1)+" punti"
+            self.db.update_activity_points(job.context['user_id'],1)
+        else:
+            to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(punteggio + 1) + " punti"
+            self.db.update_activity_points(job.context['user_id'], -1)
+
+        bot.sendMessage(job.context['chat_id'],to_send)
+
+
 
     def get_to_classify(self, bot, update,job_queue, chat_data):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
@@ -686,8 +856,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             #aggiungi la tupla (id_mesg, msg)
             chat_data['decision'].append((row['id'],message))
 
-        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],'seconds':seconds}
+        #crea il dizionario da passare al job
+        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],'seconds':seconds,
+                        'user_id':update.message.from_user.id}
+        #runna il job
         job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
+        #salvalo
         chat_data['job'] = job
 
 
@@ -706,6 +880,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id
         )
+
+    def visualizza_punteggio(self, bot, update):
+
+        punteggio=self.db.get_activity_points(update.message.from_user.id)
+
+        to_send="Il tuo punteggio è pari a <b>"+str(punteggio)+"</b>"
+        update.message.reply_text(to_send,parse_mode="HTML")
 
 
     # ============================OTHER UTILS===========================================

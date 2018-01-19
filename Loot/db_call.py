@@ -216,6 +216,14 @@ TABELLE = {
         "insert":"INSERT INTO bugs (bug,id) VALUES (%s, %s)",
         "delete":"DELETE FROM bugs WHERE id=%s",
         "select":"SELECT * FROM bugs"
+    },
+    "activity_points":{
+        "update":{
+                "win":"UPDATE activity_points SET points=points+1 where id=%s",
+                "loose":"UPDATE activity_points SET points=points-1 where id=%s"},
+        "insert":"INSERT INTO activity_points ( user_id, points) VALUES (%s, 0) ON CONFLICT (user_id) DO NOTHING",
+        "select":"SELECT * FROM activity_points WHERE user_id=%s "
+
     }
 }
 
@@ -350,6 +358,9 @@ class DB:
         else:
             return False
 
+    def get_activity_points(self, user_id):
+        """Ritorna i punti di uno user"""
+        return self.execute(TABELLE['activity_points']['select'],(user_id,))['points']
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
@@ -540,6 +551,26 @@ class DB:
         if sentiment not in [-1,0,-1]: return
 
         self.execute(TABELLE['activity']['update']['sentiment'],(sentiment,activity_id,))
+
+    def insert_activity_points(self, user_id):
+        """Inserisce uno user dentro la tabella activity points con punteggio zero
+        @:param user_id: ide dello user
+        @:type: int"""
+
+        self.execute(TABELLE['activity_points']['insert'],(user_id,))
+
+    def update_activity_points(self, user_id,score):
+        """Aggiorna lo score di uno user enlla tabella activity_points
+        @:param user_id: ide dello user
+        @:type: int
+        @:param score: punteggio {-1,1}
+        @:type: int"""
+
+        if score<0:
+            self.execute(TABELLE['activity_points']['update']['loose'],(user_id,))
+        else:
+            self.execute(TABELLE['activity_points']['update']['win'],(user_id,))
+
 
     # ============DELETE/RESET======================================
     def ban_user(self, user):
