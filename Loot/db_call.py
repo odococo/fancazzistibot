@@ -219,10 +219,12 @@ TABELLE = {
     },
     "activity_points":{
         "update":{
-                "win":"UPDATE activity_points SET points=points+1 where user_id=%s",
-                "loose":"UPDATE activity_points SET points=points-1 where user_id=%s"},
-        "insert":"INSERT INTO activity_points ( user_id, points) VALUES (%s, 0) ON CONFLICT (user_id) DO NOTHING",
-        "select":"SELECT * FROM activity_points WHERE user_id=%s "
+                "win":"UPDATE activity_points SET points=points+1 where id=%s",
+                "loose":"UPDATE activity_points SET points=points-1 where id=%s"},
+        "insert":"INSERT INTO activity_points ( id, points) VALUES (%s, 0) ON CONFLICT (id) DO NOTHING",
+        "select":{
+            "by_id":"SELECT * FROM activity_points WHERE id=%s ",
+            "all":"SELECT * FROM activity_points NATURAL JOIN users"}
 
     }
 }
@@ -358,9 +360,12 @@ class DB:
         else:
             return False
 
-    def get_activity_points(self, user_id):
+    def get_activity_points_by_id(self, user_id):
         """Ritorna i punti di uno user"""
-        return self.execute(TABELLE['activity_points']['select'],(user_id,))['points']
+        return self.execute(TABELLE['activity_points']['select']['by_id'],(user_id,))['points']
+
+    def get_activity_points_all(self):
+        return self.execute(TABELLE['activity_points']['select']['by_id'],)
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):

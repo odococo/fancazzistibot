@@ -134,6 +134,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
+        disp.add_handler(CommandHandler("toppunteggio", self.top_punteggio))
         disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True,pass_args=True))
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
@@ -182,7 +183,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         param = update.callback_query.data.split()[1]
 
         #prendi il punteggio dello user
-        user_punteggio=self.db.get_activity_points(update.callback_query.from_user.id)
+        user_punteggio=self.db.get_activity_points_by_id(update.callback_query.from_user.id)
 
         if param == "attivita":
 
@@ -336,7 +337,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         to_send = ""
 
-        user_punteggio=self.db.get_activity_points(update.callback_query.from_user.id)
+        user_punteggio=self.db.get_activity_points_by_id(update.callback_query.from_user.id)
 
 
         if param == "msg":
@@ -510,7 +511,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         to_send = ""
 
-        user_punteggio=self.db.get_activity_points(update.callback_query.from_user.id)
+        user_punteggio=self.db.get_activity_points_by_id(update.callback_query.from_user.id)
 
         if param == "emoji":
             # prendi tutti i messaggi dal database
@@ -810,7 +811,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def delete_messages(self, bot, job):
         """Funzione per eliminare i messaggi resudi allo scadere del tempo """
 
-        punteggio=self.db.get_activity_points(job.context['user_id'])
+        punteggio=self.db.get_activity_points_by_id(job.context['user_id'])
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
@@ -847,7 +848,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             except telegram.error.BadRequest:
                 answered+=1
-        punteggio=self.db.get_activity_points(job.context['user_id'])
+        punteggio=self.db.get_activity_points_by_id(job.context['user_id'])
 
         if answered>=10:
 
@@ -865,6 +866,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
 
         print("A")
+
+        # salva l'utente nella tabella activity_points
+        self.db.insert_activity_points(update.message.from_user.id)
 
         #prendi tutte le activity che non hanno la cella sentiment impostata
         activity=self.get_activity_by("all")
@@ -941,22 +945,34 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             pass
 
         if len(chat_data['decision']) == 0:
-            job = chat_data['job']
-            job.schedule_removal()
-            del chat_data['job']
-            punteggio = self.db.get_activity_points(job.context['user_id'])
 
-            to_send = "Complimenti! Hai guadagnato un punto, sei arrivato a " + str(punteggio + 1) + " punti"
-            self.db.update_activity_points(job.context['user_id'], 1)
+            to_send = "Complimenti! Attendi la fine del timer per ricevere il punto"
+            self.db.update_activity_points(update.callback_query.from_user.id, 1)
             update.callback_query.message.reply_text(to_send)
 
     def visualizza_punteggio(self, bot, update):
 
-        punteggio=self.db.get_activity_points(update.message.from_user.id)
+        punteggio=self.db.get_activity_points_by_id(update.message.from_user.id)
         #print(punteggio)
 
         to_send="Il tuo punteggio è pari a <b>"+str(punteggio)+"</b>"
         update.message.reply_text(to_send,parse_mode="HTML")
+
+
+    def top_punteggio(self,bot,update):
+        """Visualizza la top dei punteggi"""
+        users=self.db.get_activity_points_all()
+        users=[(elem['username'],elem['points']) for elem in users]
+        sorted_x = sorted(users, key=lambda tup: tup[1], reverse=True)
+
+        to_send="Top punteggi\n"
+        for elem in sorted_x:
+            to_send+="@"+elem[0]+" con <b>"+str(elem[1])+"</b>\n"
+
+        update.message.reply_text(to_send,parse_mode="HTML")
+
+
+
 
 
 
