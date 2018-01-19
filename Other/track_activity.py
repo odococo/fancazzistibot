@@ -546,7 +546,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         tot = sum(counter.values())
 
         for elem in counter.keys():
-            to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]) + "\n"
+            if len(elem)==5:
+                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*2.4) + "\n"
+            else:
+                to_send += "<b>" + str(elem) + ":00 </b> " + self.filler(tot, counter[elem]*2.4) + "\n"
 
         return to_send
 
