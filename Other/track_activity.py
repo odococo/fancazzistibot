@@ -127,6 +127,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         self.min_punteggio_user_tipi_inviati=45
         self.min_punteggio_user_sticker=50
 
+        self.secondi=45
+
         disp = updater.dispatcher
 
         disp.add_handler(MessageHandler(filter, self.log_activity))
@@ -808,10 +810,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def delete_messages(self, bot, job):
         """Funzione per eliminare i messaggi resudi allo scadere del tempo """
 
+        punteggio=self.db.get_activity_points(job.context['user_id'])
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds=job.context['seconds']
+        seconds=self.secondi-punteggio
         sleep(1)
         #fiche il tempo non scade
         while seconds > 0:
@@ -845,7 +848,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             except telegram.error.BadRequest:
                 answered+=1
 
-        punteggio=self.db.get_activity_points(job.context['user_id'])
         if answered>=10:
 
             to_send="Complimenti! Hai guadagnato un punto, sei arrivato a "+str(punteggio+1)+" punti"
@@ -892,7 +894,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         chat_data['decision']=[]
 
-        seconds=45
 
         #manda 10 messaggi random dalla lista
         for i in range(0,10):
@@ -910,7 +911,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             chat_data['decision'].append((row['id'],message))
 
         #crea il dizionario da passare al job
-        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],'seconds':seconds,
+        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],
                         'user_id':update.message.from_user.id}
         #runna il job
         job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
