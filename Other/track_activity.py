@@ -71,6 +71,7 @@ class Track:
              InlineKeyboardButton("Top parole", callback_data="/activity_user parole")],
             [InlineKeyboardButton("Analisi sentimenti", callback_data="/activity_user sentimenti"),
              InlineKeyboardButton("Tipi inviati", callback_data="/activity_user tipi"),
+             InlineKeyboardButton("Sticker preferito", callback_data="/activity_user sticker"),
              InlineKeyboardButton("Indietro", callback_data="/activity_user indietro")],
 
         ])
@@ -117,11 +118,14 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         self.min_punteggio_attivita=10
         self.min_punteggio_altro=20
         self.min_punteggio_user=30
+
         self.min_punteggio_altro_userM_=40
         self.min_punteggio_altro_userP=50
+
         self.min_punteggio_user_emoji=60
         self.min_punteggio_user_parole=55
         self.min_punteggio_user_tipi_inviati=45
+        self.min_punteggio_user_sticker=50
 
         disp = updater.dispatcher
 
@@ -457,6 +461,26 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 to_send += "Il <b>" + str(elem[1]) + "</b>% è <b>" + self.ita_types[elem[0]] + "</b> \n"
 
 
+        elif param == "sticker":
+
+            if user_punteggio < self.min_punteggio_user_sticker:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_user_sticker) + " punti per visualizzare questa " \
+                                                            "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
+
+                bot.edit_message_text(
+                    chat_id=update.callback_query.message.chat_id,
+                    text=to_send,
+                    message_id=update.callback_query.message.message_id,
+                    parse_mode="HTML",
+                    reply_markup=self.inline_activity_user
+                )
+                return
+
+            stcker_id=self.get_preferred_sticker(activity)
+            to_send="Il tuo sticker preferito è "
+            bot.sendSticker(update.callback_query.message.chat_id,stcker_id)
 
 
         elif param == "indietro":
@@ -763,6 +787,22 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         return sorted_x
 
+    def get_preferred_sticker(self, user_activity):
+        """Funzione per prendere lo sticker utilizzato piu volte dall'utente
+        @:param user_activity: le attività dell'utente in questione
+        @:type: list of dict
+        @:return: str rappresentant l'id dello sticker"""
+
+        user_activity=[elem['sticker'] for elem in user_activity]
+
+        counts=Counter(user_activity)
+
+        sorted_x = sorted(counts.items(), key=operator.itemgetter(1), reverse=True)
+
+        return sorted_x[0]
+
+
+
     # ============================CLASSIFICATION===========================================
 
     def delete_messages(self, bot, job):
@@ -861,7 +901,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             #prendi un messaggio rimuovendolo dalla lista
             row=activity.pop()
             #formatta il messaggio
-            to_send=str(row['id'])+"\n"+row['content']
+            to_send=str(row['id'])+"\n"+emoji.emojize(row['content'])
             #salva il messaggio e mandalo
 
             message=update.message.reply_text(to_send,reply_markup=inline)
