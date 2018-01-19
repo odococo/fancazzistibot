@@ -815,7 +815,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds=self.secondi-punteggio
+        plus=math.ceil(punteggio/10)
+        seconds=self.secondi-punteggio+plus
         sleep(1)
         #fiche il tempo non scade
         while seconds > 0:
@@ -926,6 +927,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     def classify(self, bot, update, chat_data):
         """Funzione per salvare le scelte dell'utente"""
+
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è possibile solo in privata")
+
+            return
+
+
         #prendi l'id del messaggio e rimuovilo dallo user data
         activity_id=update.callback_query.message.text.split("\n")[0]
         chat_data['decision']=[elem for elem in chat_data['decision'] if not elem[0]==int(activity_id)]
@@ -962,13 +970,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def top_punteggio(self,bot,update):
         """Visualizza la top dei punteggi"""
         users=self.db.get_activity_points_all()
-        print(users)
 
         users=[(elem['username'],elem['points']) for elem in users]
-        print(users)
 
         sorted_x = sorted(users, key=lambda tup: tup[1], reverse=True)
-        print(sorted_x)
 
 
         to_send="Top punteggi\n"

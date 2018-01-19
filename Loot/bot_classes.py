@@ -1838,6 +1838,8 @@ class Help:
         user.append("/activity - Mostra varie informazioni del gruppo Fancazzisti")
         user.append("/punteggioact - Visualizza il tuo punteggio, con punteggio maggiore sblocchi diverse funzionalità di activity")
         user.append("/classify - Permette di classificare i vari messaggi")
+        user.append("/topunteggio - visualizza i punteggi della classifica di activity")
+
         return user, admin, developer
 
     def get_forward_commands(self):
