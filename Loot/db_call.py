@@ -530,6 +530,17 @@ class DB:
 
         self.execute(TABELLE['activity']['insert'],(id_user,content,type))
 
+    def add_sentiment_activity(self, sentiment, activity_id):
+        """Aggiunge un sentimento a una riga della tabella activity
+        @:param: sentiment {-1,0,1} = {negativa, neutrale, positiva}
+        @:type: int
+        @:param activity_id: id dell'attività
+        @:type: int"""
+
+        if sentiment not in [-1,0-1]: return
+
+        self.execute(TABELLE)
+
     # ============DELETE/RESET======================================
     def ban_user(self, user):
         """Banna un user dal bot
