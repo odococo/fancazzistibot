@@ -884,7 +884,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             message_id=update.callback_query.message.message_id
         )
 
-        if len(chat_data['decision'] == 0):
+        if len(chat_data['decision']) == 0:
             job = chat_data['job']
             job.schedule_removal()
             del chat_data['job']

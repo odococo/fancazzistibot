@@ -62,6 +62,9 @@ unban - unbanna uno user dal bot tramite id (usa /banned per avere la lista dei 
 banned - Ritorna una lista di tutti gli utenti bannati dal bot
 insulta - insulta un'utente a caso
 activity - mostra informazioni relative al gruppo fancazzisti
+classify - permette di guadagnare punti per accere alle info di activity
+punteggioact - visualizza il tuo punteggio legato alle activity
+
 """
 
 
