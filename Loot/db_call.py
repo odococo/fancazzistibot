@@ -123,9 +123,12 @@ TABELLE = {
         },
         "insert": """INSERT INTO activity ( id_user, content, type)
               VALUES (%s, %s ,%s)""",
-        "update": """UPDATE activity
-              SET type = %s
-              WHERE id = %s""",
+        "update": {
+            "type":""""UPDATE activity SET type = %s WHERE id = %s""",
+            "sentiment":"""UPDATE activity SET sentiment =%s WHERE id=%s"""
+
+        },
+
         "delete": """DELETE FROM activity
               WHERE id = %s"""
     },
