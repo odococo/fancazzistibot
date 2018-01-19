@@ -652,6 +652,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         #notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         seconds=10
         sec_message=update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
+        sleep(1)
         #fiche il tempo non scade
         while seconds>0:
             #decrementa il tempo
@@ -687,6 +688,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         sentiment=int(param)
 
         self.db.add_sentiment_activity(sentiment,activity_id)
+
+        bot.delete_message(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id
+        )
 
 
     # ============================OTHER UTILS===========================================
