@@ -8,6 +8,7 @@ from collections import Counter
 from time import sleep
 
 import emoji
+import telegram
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import BaseFilter, MessageHandler, CommandHandler, CallbackQueryHandler
 
@@ -633,10 +634,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         for elem in job.context['decision']:
             # a fine tempo elimina tutti i messaggi rimasti uno alla volta
-            bot.delete_message(
-                chat_id=elem[1].chat_id,
-                message_id=elem[1].message_id
-            )
+            try:
+                bot.delete_message(
+                    chat_id=elem[1].chat_id,
+                    message_id=elem[1].message_id
+                )
+            except telegram.error.BadRequest:
+                pass
             sleep(1)
 
     def get_to_classify(self, bot, update,job_queue, chat_data):
