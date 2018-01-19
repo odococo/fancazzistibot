@@ -873,6 +873,18 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
 
         print("A")
+        if "private" not in update.callback_query.message.chat.type:
+            update.message.reply_text("Questo comando è possibile solo in privata")
+
+            return
+
+
+
+        if self.is_job_running:
+            update.message.reply_text("Qualcun'altro sta utilizzando questo comando...aspetta 1 minuto")
+            return
+
+        self.is_job_running=True
 
         # salva l'utente nella tabella activity_points
         self.db.insert_activity_points(update.message.from_user.id)
@@ -935,16 +947,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         """Funzione per salvare le scelte dell'utente"""
 
 
-        if "private" not in update.message.chat.type:
-            update.message.reply_text("Questo comando è possibile solo in privata")
 
-            return
-
-        if self.is_job_running:
-            update.message.reply_text("Qualcun'altro sta utilizzando questo comando...aspetta 1 minuto")
-            return
-
-        self.is_job_running=True
 
         #prendi l'id del messaggio e rimuovilo dallo user data
         activity_id=update.callback_query.message.text.split("\n")[0]
