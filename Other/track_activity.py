@@ -814,7 +814,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds=self.secondi-punteggio
+        seconds=self.secondi-punteggio*0.5
         sleep(1)
         #fiche il tempo non scade
         while seconds > 0:
