@@ -1835,6 +1835,9 @@ class Help:
         user.append("/diffschede - Visualizza la differenza in pc tra due schede 'Dettaglio Membri' in 'Team'")
         user.append("/timerset hh:mm msg - setta un timer tra <b>hh</b> ore e <b>mm</b> minuti (si possono anche specificare solo le ore) e allo scadere del tempo invia il messaggio <b>msg</b>")
         user.append("/timerunset - Rimuove il timer precedentemente settato")
+        user.append("/activity - Mostra varie informazioni del gruppo Fancazzisti")
+        user.append("/punteggioact - Visualizza il tuo punteggio, con punteggio maggiore sblocchi diverse funzionalità di activity")
+        user.append("/classify - Permette di classificare i vari messaggi")
         return user, admin, developer
 
     def get_forward_commands(self):

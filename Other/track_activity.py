@@ -882,10 +882,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         self.db.add_sentiment_activity(sentiment,activity_id)
 
-        bot.delete_message(
-            chat_id=update.callback_query.message.chat_id,
-            message_id=update.callback_query.message.message_id
-        )
+        try:
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
+        except telegram.error.BadRequest:
+            pass
 
         if len(chat_data['decision']) == 0:
             job = chat_data['job']
