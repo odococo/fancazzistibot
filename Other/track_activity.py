@@ -841,7 +841,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         chat_data['decision']=[]
 
-        seconds=10
+        seconds=60
 
         #manda 10 messaggi random dalla lista
         for i in range(0,10):

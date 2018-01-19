@@ -219,8 +219,8 @@ TABELLE = {
     },
     "activity_points":{
         "update":{
-                "win":"UPDATE activity_points SET points=points+1 where id=%s",
-                "loose":"UPDATE activity_points SET points=points-1 where id=%s"},
+                "win":"UPDATE activity_points SET points=points+1 where user_id=%s",
+                "loose":"UPDATE activity_points SET points=points-1 where user_id=%s"},
         "insert":"INSERT INTO activity_points ( user_id, points) VALUES (%s, 0) ON CONFLICT (user_id) DO NOTHING",
         "select":"SELECT * FROM activity_points WHERE user_id=%s "
 
