@@ -797,9 +797,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     chat_id=elem[1].chat_id,
                     message_id=elem[1].message_id
                 )
+                sleep(1)
+
             except telegram.error.BadRequest:
                 answered+=1
-            sleep(1)
 
         punteggio=self.db.get_activity_points(job.context['user_id'])
         if answered>=10:
@@ -807,7 +808,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             to_send="Complimenti! Hai guadagnato un punto, sei arrivato a "+str(punteggio+1)+" punti"
             self.db.update_activity_points(job.context['user_id'],1)
         else:
-            to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(punteggio + 1) + " punti"
+            to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(punteggio - 1) + " punti"
             self.db.update_activity_points(job.context['user_id'], -1)
 
         bot.sendMessage(job.context['chat_id'],to_send)
