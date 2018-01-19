@@ -661,7 +661,7 @@ Qua sono presenti tutti i drop per le stanze del tipo:
 
         users=self.db.get_id_users()
 
-        if not users:
+        if id not in [elem['id'] for elem in users]:
             self.answer("Non sono presneti users nel database")
             return
 
