@@ -980,7 +980,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     def get_classified(self):
         activity=self.get_activity_by("all")
-        sentiment=[elem for elem in activity if isinstance(elem['sentiment',int])]
+        sentiment=[elem for elem in activity if isinstance(elem['sentiment'],int)]
 
         print(activity)
         print(sentiment)
