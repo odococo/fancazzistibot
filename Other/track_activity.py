@@ -2,6 +2,7 @@ import copy
 import datetime
 import math
 import operator
+import random
 import re
 from collections import Counter
 from time import sleep
@@ -632,6 +633,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         user_data['decision']=[]
 
         for i in range(0,10):
+            random.shuffle(activity)
             row=activity.pop()
             to_send=str(row['id'])+"\n"+row['content']
             message=update.message.reply_text(to_send,reply_markup=inline)
@@ -642,6 +644,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         """"""
         activity_id=update.callback_query.message.text.split("\n")[0]
         print(activity_id)
+        param = update.callback_query.data.split()[1]
+        print(param)
+
+
     # ============================OTHER UTILS===========================================
 
     def esci(self, user_data):
