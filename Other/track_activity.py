@@ -738,9 +738,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         for elem in counter.keys():
             if elem<10:
-                to_send += "  <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*2.4) + "\n"
+                to_send += "  <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*5) + "\n"
             else:
-                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*2.4) + "\n"
+                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*5) + "\n"
 
         return to_send
 
@@ -800,7 +800,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         @:type: list of dict
         @:return: str rappresentant l'id dello sticker"""
 
-        user_activity=[elem['type'] for elem in user_activity if elem['type']=="sticker"]
+        user_activity=[elem['content'] for elem in user_activity if elem['type']=="sticker"]
 
         counts=Counter(user_activity)
 
