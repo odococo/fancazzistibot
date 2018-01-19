@@ -873,7 +873,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
 
         print("A")
-        if "private" not in update.callback_query.message.chat.type:
+        if "private" not in update.message.chat.type:
             update.message.reply_text("Questo comando è possibile solo in privata")
 
             return
