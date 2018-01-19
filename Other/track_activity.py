@@ -127,7 +127,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         self.min_punteggio_user_tipi_inviati=45
         self.min_punteggio_user_sticker=50
 
-        self.secondi=45
+        self.secondi=60
 
         disp = updater.dispatcher
 
@@ -814,7 +814,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds=self.secondi-punteggio*0.5
+        seconds=self.secondi-punteggio
         sleep(1)
         #fiche il tempo non scade
         while seconds > 0:
@@ -847,6 +847,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             except telegram.error.BadRequest:
                 answered+=1
+        punteggio=self.db.get_activity_points(job.context['user_id'])
 
         if answered>=10:
 
