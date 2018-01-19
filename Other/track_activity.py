@@ -798,7 +798,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         @:type: list of dict
         @:return: str rappresentant l'id dello sticker"""
 
-        user_activity=[elem['sticker'] for elem in user_activity]
+        user_activity=[elem['type'] for elem in user_activity if elem['type']=="sticker"]
 
         counts=Counter(user_activity)
 
