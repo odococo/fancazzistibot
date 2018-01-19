@@ -93,6 +93,7 @@ Di seguito troverai vari bottoni per poter visualizzare tutte le informazioni de
 Alcune funzioni non sono ancora disponibili, pazienta e arriveranno
 <b>NB</b> Alcune informazioni sono sbloccabili a seconda del tuo punteggio! 
 Per visualizzare il punteggio usa il comando /punteggioact.
+Per visualizzare tutti i punteggi usa /topunteggio.
 Per aumentarlo usa /classify e rispondi alle domande entro il tempo limite e guadagnerai un punto...
 ma attento se risponderai a cazzo oppure non farai in tempo ti verrà detratto un punto """
 
@@ -484,6 +485,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 return
 
             stcker_id=self.get_preferred_sticker(activity)
+            print(stcker_id)
             to_send="Il tuo sticker preferito è "
             bot.sendSticker(update.callback_query.message.chat_id,stcker_id)
 
