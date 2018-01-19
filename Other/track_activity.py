@@ -887,7 +887,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         punteggio=self.db.get_activity_points(update.message.from_user.id)
         print(punteggio)
 
-        to_send="Il tuo punteggio è pari a <b>"+str(punteggio[0])+"</b>"
+        to_send="Il tuo punteggio è pari a <b>"+str(punteggio)+"</b>"
         update.message.reply_text(to_send,parse_mode="HTML")
 
 

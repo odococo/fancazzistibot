@@ -360,7 +360,7 @@ class DB:
 
     def get_activity_points(self, user_id):
         """Ritorna i punti di uno user"""
-        return self.execute(TABELLE['activity_points']['select'],(user_id,))
+        return self.execute(TABELLE['activity_points']['select'],(user_id,))['points']
 
     # ============ADDER/UPDATER======================================
     def add_user(self, user, id_bot=None):
