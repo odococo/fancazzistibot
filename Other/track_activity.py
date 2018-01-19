@@ -939,7 +939,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         return res
 
     def get_classified(self):
-        activity=self.db.get_activity("all")
+        activity=self.get_activity_by("all")
         sentiment=[elem for elem in activity if isinstance(elem['sentiment',int])]
 
         print(activity)
