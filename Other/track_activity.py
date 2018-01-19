@@ -639,6 +639,14 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             message=update.message.reply_text(to_send,reply_markup=inline)
             user_data['decision'].append((row['id'],message))
 
+        update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
+        sleep(60)
+        for elem in user_data['decision']:
+            bot.delete_message(
+                chat_id=elem.chat_id,
+                message_id=elem.message_id
+            )
+            sleep(1)
 
     def classify(self,bot, update, user_data):
         """"""
