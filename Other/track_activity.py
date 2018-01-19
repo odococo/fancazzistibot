@@ -183,7 +183,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             #controlla che lo user possa visualizzare l'informazione
             if user_punteggio<self.min_punteggio_attivita:
                 to_send="Devi avere un minimo di "+str(self.min_punteggio_attivita)+" punti per visualizzare questa " \
-                "informazione\nPer ora sei a "+str(user_punteggio)
+                "informazione\nPer ora sei a "+str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -208,8 +208,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             if user_punteggio < self.min_punteggio_user:
                 to_send = "Devi avere un minimo di " + str(
-                    self.min_punteggio_attivita) + " punti per visualizzare questa " \
-                                                   "informazione\nPer ora sei a " + str(user_punteggio)
+                    self.min_punteggio_user) + " punti per visualizzare questa " \
+                                                   "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -235,8 +235,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             if user_punteggio < self.min_punteggio_altro:
                 to_send = "Devi avere un minimo di " + str(
-                    self.min_punteggio_attivita) + " punti per visualizzare questa " \
-                                                   "informazione\nPer ora sei a " + str(user_punteggio)
+                    self.min_punteggio_altro) + " punti per visualizzare questa " \
+                                                   "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -341,7 +341,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_emoji:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_emoji) + " punti per visualizzare questa " \
-                                                   "informazione\nPer ora sei a " + str(user_punteggio)
+                                                   "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -389,7 +389,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_parole:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_parole) + " punti per visualizzare questa " \
-                                                     "informazione\nPer ora sei a " + str(user_punteggio)
+                                                     "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -429,7 +429,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_tipi_inviati:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_tipi_inviati) + " punti per visualizzare questa " \
-                                                      "informazione\nPer ora sei a " + str(user_punteggio)
+                                                      "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -514,7 +514,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_altro_userP:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_altro_userP) + " punti per visualizzare questa " \
-                                                     "informazione\nPer ora sei a " + str(user_punteggio)
+                                                     "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -538,7 +538,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_altro_userM_:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_altro_userM_) + " punti per visualizzare questa " \
-                                                      "informazione\nPer ora sei a " + str(user_punteggio)
+                                                      "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
