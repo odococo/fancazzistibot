@@ -837,7 +837,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                                   "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
                                   "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
                                   parse_mode="HTML")
-        sleep(8)
+        sleep(13)
 
         chat_data['decision']=[]
 
@@ -872,6 +872,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         #prendi l'id del messaggio e rimuovilo dallo user data
         activity_id=update.callback_query.message.text.split("\n")[0]
         chat_data['decision']=[elem for elem in chat_data['decision'] if not elem[0]==int(activity_id)]
+
         #prende la decisione dell'utente
         param = update.callback_query.data.split()[1]
         sentiment=int(param)
@@ -883,10 +884,20 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             message_id=update.callback_query.message.message_id
         )
 
+        if len(chat_data['decision'] == 0):
+            job = chat_data['job']
+            job.schedule_removal()
+            del chat_data['job']
+            punteggio = self.db.get_activity_points(job.context['user_id'])
+
+            to_send = "Complimenti! Hai guadagnato un punto, sei arrivato a " + str(punteggio + 1) + " punti"
+            self.db.update_activity_points(job.context['user_id'], 1)
+            update.callback_query.message.reply_text(to_send)
+
     def visualizza_punteggio(self, bot, update):
 
         punteggio=self.db.get_activity_points(update.message.from_user.id)
-        print(punteggio)
+        #print(punteggio)
 
         to_send="Il tuo punteggio è pari a <b>"+str(punteggio)+"</b>"
         update.message.reply_text(to_send,parse_mode="HTML")
