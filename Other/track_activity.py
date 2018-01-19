@@ -629,7 +629,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                                   "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>"
                                   "Se ti sei stancato di questo, ti prego almeno di finire i messaggi che ti sono stati inviati.",
                                   parse_mode="HTML")
-        sleep(4)
+        sleep(8)
 
 
         user_data['decision']=[]
@@ -641,8 +641,19 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             message=update.message.reply_text(to_send,reply_markup=inline)
             user_data['decision'].append((row['id'],message))
 
-        update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
-        sleep(6)
+        seconds=10
+        sec_message=update.message.reply_text("Hai 1 minuto per rispondere a tutti i messaggi")
+        while seconds>0:
+            seconds-=1
+            to_send="<b>"+str(seconds)+"</b> secondi rimanenti"
+            bot.edit_message_text(
+                chat_id=sec_message.chat_id,
+                text=to_send,
+                message_id=sec_message.message_id,
+                parse_mode="HTML"
+            )
+
+
         for elem in user_data['decision']:
             bot.delete_message(
                 chat_id=elem[1].chat_id,
@@ -650,8 +661,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             )
             sleep(1)
 
-    def classify(self,bot, update, user_data):
+    def classify(self, bot, update, user_data):
         """"""
+
+        print("********************************************************")
         activity_id=update.callback_query.message.text.split("\n")[0]
         print(activity_id)
         param = update.callback_query.data.split()[1]
