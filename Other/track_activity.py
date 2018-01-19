@@ -547,9 +547,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         for elem in counter.keys():
             if elem<10:
-                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*2.4) + "\n"
+                to_send += " <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*2.4) + "\n"
             else:
-                to_send += " <b>" + str(elem) + ":00 </b> " + self.filler(tot, counter[elem]*2.4) + "\n"
+                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*2.4) + "\n"
 
         return to_send
 
