@@ -645,8 +645,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         sleep(6)
         for elem in user_data['decision']:
             bot.delete_message(
-                chat_id=elem.chat_id,
-                message_id=elem.message_id
+                chat_id=elem[1].chat_id,
+                message_id=elem[1].message_id
             )
             sleep(1)
 
