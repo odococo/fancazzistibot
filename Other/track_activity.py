@@ -152,7 +152,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True, ))
 
         #train del modello
+        print("Training del modello....")
         self.train_model()
+        print("Training completo")
+
 
     # ===================LOOPS=================================
 
