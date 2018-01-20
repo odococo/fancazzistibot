@@ -142,6 +142,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
+        disp.add_handler(CommandHandler("classified", self.classified, pass_job_queue=True, pass_chat_data=True, pass_args=True))
         #disp.add_handler(CommandHandler("predict", self.predict))
 
 
@@ -1024,6 +1025,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         msg=" ".join(args)
         pred=self.classifier.predict(msg)
         update.message.reply_text(str(pred))
+
+    def classified(self,bot,update):
+        classified=self.get_activity_by("all")
+        all_len=len(classified)
+        classified=[elem['sentiment'] for elem in classified if isinstance(elem['sentiment'],int)]
+        classified_len=len(classified)
+        neutral_len=len([elem for elem in classified if elem==0])
+        positive_len=len([elem for elem in classified if elem==1])
+        negative_len=len([elem for elem in classified if elem==-1])
+
+        to_send="Sono stati classificati "+str(classified_len)+" messaggi su "+str(all_len)+", di cui:\n" \
+                "Positivi "+str(positive_len)+"("+str(math.ceil(positive_len/classified_len*100))+\
+                "%)\nNegativi "+str(negative_len)+"("+str(math.ceil(positive_len/classified_len*100))+\
+                "%)\nNeutrali "+str(neutral_len) +"("+str(math.ceil(positive_len/classified_len*100))+"%)"
+
+        update.message.reply_text(to_send)
+
 
 
     # ============================OTHER UTILS===========================================
