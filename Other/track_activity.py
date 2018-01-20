@@ -876,7 +876,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def get_to_classify(self, bot, update, job_queue, chat_data, args):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
 
-        print("A")
         if "private" not in update.message.chat.type:
             update.message.reply_text("Questo comando è possibile solo in privata")
 

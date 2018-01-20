@@ -6,3 +6,4 @@ psycopg2
 matplotlib
 pandas
 python-dotenv
+empythy
