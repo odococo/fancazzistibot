@@ -1036,9 +1036,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         negative_len=len([elem for elem in classified if elem==-1])
 
         to_send="Sono stati classificati "+str(classified_len)+" messaggi su "+str(all_len)+", di cui:\n" \
-                "Positivi "+str(positive_len)+"("+str(math.ceil(positive_len/classified_len*100))+\
-                "%)\nNegativi "+str(negative_len)+"("+str(math.ceil(positive_len/classified_len*100))+\
-                "%)\nNeutrali "+str(neutral_len) +"("+str(math.ceil(positive_len/classified_len*100))+"%)"
+                "Positivi "+str(positive_len)+" ("+str(math.ceil(positive_len/classified_len*100))+\
+                "%)\nNegativi "+str(negative_len)+" ("+str(math.ceil(negative_len/classified_len*100))+\
+                "%)\nNeutrali "+str(neutral_len) +" ("+str(math.ceil(neutral_len/classified_len*100))+"%)"
 
         update.message.reply_text(to_send)
 
