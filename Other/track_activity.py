@@ -1000,12 +1000,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         activity=[elem for elem in activity if isinstance(elem['sentiment'],int)]
         #togli le neutrali
         activity=[elem for elem in activity if elem['sentiment']!=0]
-
+        print(activity)
         new_dict_list=[]
         #prendi solo i valori di sentiment e content, cambiando nome in text
         for elem in activity:
             prov_dict={'text':elem['content'],'sentiment':elem['sentiment']}
             new_dict_list.append(prov_dict)
+        print(activity)
 
 
         #allena il calssificatore
