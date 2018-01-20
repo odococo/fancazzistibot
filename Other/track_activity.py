@@ -142,7 +142,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
-        disp.add_handler(CommandHandler("classified", self.classified, pass_job_queue=True, pass_chat_data=True, pass_args=True))
+        disp.add_handler(CommandHandler("classified", self.classified))
         #disp.add_handler(CommandHandler("predict", self.predict))
 
 
