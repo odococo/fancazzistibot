@@ -6,7 +6,7 @@ import random
 import re
 from collections import Counter
 from time import sleep
-
+from empythy import EmpathyMachines
 import emoji
 import telegram
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
@@ -107,6 +107,7 @@ Con il passare del tempo saranno disponibili dei dati sempre piu precisi"""
 In questa sezione potrai visualizzare le informazioni relative ai messaggi inviati da <b>te</b> sul gruppo dei Fancazzisti 👤
 <b>Msg Inviati</b> : il numero di messaggi che hai inviato sul gruppo 
 <b>Top emoji</b> : le emoji che usi di piu
+<b>Sticker Preferito</b> : Invia lo sticker che hai usato di piu
 <b> Analisi sentimenti </b> : una stima dei sentimenti espressi dai tuoi messaggi
 <b> Tipi inviati </b> : i diversi tipi di messaggio che hai inviato (ex: photo, video, audio....)"""
 
@@ -116,21 +117,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 <b>User più attivo (+)</b> : il nome dello user piu attivo nel gruppo 
 <b>User meno attivo (-)</b> : il nome dello user meno attivo nel gruppo """
 
-        self.min_punteggio_attivita=10
-        self.min_punteggio_altro=20
-        self.min_punteggio_user=30
+        self.min_punteggio_attivita = 10
+        self.min_punteggio_altro = 20
+        self.min_punteggio_user = 30
 
-        self.min_punteggio_altro_userM_=40
-        self.min_punteggio_altro_userP=50
+        self.min_punteggio_altro_userM_ = 40
+        self.min_punteggio_altro_userP = 50
 
-        self.min_punteggio_user_emoji=60
-        self.min_punteggio_user_parole=55
-        self.min_punteggio_user_tipi_inviati=45
-        self.min_punteggio_user_sticker=50
+        self.min_punteggio_user_emoji = 60
+        self.min_punteggio_user_parole = 55
+        self.min_punteggio_user_tipi_inviati = 45
+        self.min_punteggio_user_sticker = 50
 
-        self.secondi=60
+        self.secondi = 60
 
-        self.is_job_running=False
+        self.is_job_running = False
+
+        self.classifier= EmpathyMachines()
 
         disp = updater.dispatcher
 
@@ -138,12 +141,18 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
-        disp.add_handler(CommandHandler("classify", self.get_to_classify,pass_job_queue=True,pass_chat_data=True,pass_args=True))
+        disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
+        disp.add_handler(CommandHandler("predict", self.predict))
+
+
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_user, pattern="/activity_user", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
-        disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True,))
+        disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True, ))
+
+        #train del modello
+        self.train_model()
 
     # ===================LOOPS=================================
 
@@ -158,11 +167,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             return
 
-
-        #salva l'utente nella tabella activity_points
+        # salva l'utente nella tabella activity_points
         self.db.insert_activity_points(update.message.from_user.id)
-
-
 
         # print(user_data['inline_main'])
 
@@ -185,15 +191,17 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         # prendi la scelta dell'user (guarda CallbackQueryHandler)
         param = update.callback_query.data.split()[1]
 
-        #prendi il punteggio dello user
-        user_punteggio=self.db.get_activity_points_by_id(update.callback_query.from_user.id)
+        # prendi il punteggio dello user
+        user_punteggio = self.db.get_activity_points_by_id(update.callback_query.from_user.id)
 
         if param == "attivita":
 
-            #controlla che lo user possa visualizzare l'informazione
-            if user_punteggio<self.min_punteggio_attivita:
-                to_send="Devi avere un minimo di "+str(self.min_punteggio_attivita)+" punti per visualizzare questa " \
-                "informazione\nPer ora sei a "+str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+            # controlla che lo user possa visualizzare l'informazione
+            if user_punteggio < self.min_punteggio_attivita:
+                to_send = "Devi avere un minimo di " + str(
+                    self.min_punteggio_attivita) + " punti per visualizzare questa " \
+                                                   "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -203,7 +211,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     reply_markup=user_data['inline_main']
                 )
                 return
-
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
@@ -219,7 +226,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user) + " punti per visualizzare questa " \
-                                                   "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                               "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -229,8 +237,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     reply_markup=user_data['inline_main']
                 )
                 return
-
-
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
@@ -246,7 +252,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_altro:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_altro) + " punti per visualizzare questa " \
-                                                   "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                                "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -256,8 +263,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     reply_markup=user_data['inline_main']
                 )
                 return
-
-
 
             bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
@@ -296,7 +301,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send = ""
 
         if param == "giornaliera":
-
 
             to_send = self.get_day_activity()
 
@@ -340,8 +344,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         to_send = ""
 
-        user_punteggio=self.db.get_activity_points_by_id(update.callback_query.from_user.id)
-
+        user_punteggio = self.db.get_activity_points_by_id(update.callback_query.from_user.id)
 
         if param == "msg":
 
@@ -351,7 +354,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_emoji:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_emoji) + " punti per visualizzare questa " \
-                                                   "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                                     "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -361,8 +365,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     reply_markup=self.inline_activity_user
                 )
                 return
-
-
 
             # prendi il testo
             activity = [elem['content'] for elem in activity]
@@ -399,7 +401,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_parole:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_parole) + " punti per visualizzare questa " \
-                                                     "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                                      "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -409,7 +412,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     reply_markup=self.inline_activity_user
                 )
                 return
-
 
             activity = [elem['content'] for elem in activity]
             count = self.get_word_count(" ".join(activity))
@@ -439,7 +441,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_tipi_inviati:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_tipi_inviati) + " punti per visualizzare questa " \
-                                                      "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                                            "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -472,7 +475,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_user_sticker:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_user_sticker) + " punti per visualizzare questa " \
-                                                            "informazione\nPer ora sei a " + str(
+                                                       "informazione\nPer ora sei a " + str(
                     user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
@@ -484,10 +487,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 )
                 return
 
-            stcker_id=self.get_preferred_sticker(activity)
+            stcker_id = self.get_preferred_sticker(activity)
             print(stcker_id)
-            to_send="Il tuo sticker preferito è "
-            bot.sendSticker(update.callback_query.message.chat_id,stcker_id)
+            to_send = "Il tuo sticker preferito è "
+            bot.sendSticker(update.callback_query.message.chat_id, stcker_id)
 
 
         elif param == "indietro":
@@ -515,7 +518,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         to_send = ""
 
-        user_punteggio=self.db.get_activity_points_by_id(update.callback_query.from_user.id)
+        user_punteggio = self.db.get_activity_points_by_id(update.callback_query.from_user.id)
 
         if param == "emoji":
             # prendi tutti i messaggi dal database
@@ -545,7 +548,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_altro_userP:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_altro_userP) + " punti per visualizzare questa " \
-                                                     "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                                      "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -569,7 +573,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             if user_punteggio < self.min_punteggio_altro_userM_:
                 to_send = "Devi avere un minimo di " + str(
                     self.min_punteggio_altro_userM_) + " punti per visualizzare questa " \
-                                                      "informazione\nPer ora sei a " + str(user_punteggio)+" punti, usa /classify per guadagnarne altri"
+                                                       "informazione\nPer ora sei a " + str(
+                    user_punteggio) + " punti, usa /classify per guadagnarne altri"
 
                 bot.edit_message_text(
                     chat_id=update.callback_query.message.chat_id,
@@ -579,7 +584,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                     reply_markup=self.inline_activity_altro
                 )
                 return
-
 
             user, count = self.get_most_active_user(piu=False)
 
@@ -737,10 +741,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         tot = sum(counter.values())
 
         for elem in counter.keys():
-            if elem<10:
-                to_send += "  <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*5) + "\n"
+            if elem < 10:
+                to_send += "  <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem] * 5) + "\n"
             else:
-                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem]*5) + "\n"
+                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem] * 5) + "\n"
 
         return to_send
 
@@ -800,33 +804,31 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         @:type: list of dict
         @:return: str rappresentant l'id dello sticker"""
 
-        user_activity=[elem['content'] for elem in user_activity if elem['type']=="sticker"]
+        user_activity = [elem['content'] for elem in user_activity if elem['type'] == "sticker"]
 
-        counts=Counter(user_activity)
+        counts = Counter(user_activity)
 
         sorted_x = sorted(counts.items(), key=operator.itemgetter(1), reverse=True)
 
         return sorted_x[0][0]
-
-
 
     # ============================CLASSIFICATION===========================================
 
     def delete_messages(self, bot, job):
         """Funzione per eliminare i messaggi resudi allo scadere del tempo """
 
-        punteggio=self.db.get_activity_points_by_id(job.context['user_id'])
+        punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
-        sec_message=bot.sendMessage(job.context['chat_id'],"Hai 1 minuto per rispondere a tutti i messaggi")
-        plus=math.ceil(punteggio/5)
-        seconds=self.secondi-punteggio+plus
+        sec_message = bot.sendMessage(job.context['chat_id'], "Hai 1 minuto per rispondere a tutti i messaggi")
+        plus = math.ceil(punteggio / 5)
+        seconds = self.secondi - punteggio + plus
         sleep(1)
-        #fiche il tempo non scade
+        # fiche il tempo non scade
         while seconds > 0:
             if not job._enabled.is_set():
                 return
-            #print(job._enabled.is_set())
+            # print(job._enabled.is_set())
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
@@ -841,7 +843,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             sleep(1)
 
-        answered=0
+        answered = 0
         for elem in job.context['decision']:
             # a fine tempo elimina tutti i messaggi rimasti uno alla volta
             try:
@@ -852,24 +854,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 sleep(1)
 
             except telegram.error.BadRequest:
-                answered+=1
-        punteggio=self.db.get_activity_points_by_id(job.context['user_id'])
+                answered += 1
+        punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        if answered>=10:
+        if answered >= 10:
 
-            to_send="Complimenti! Hai guadagnato un punto, sei arrivato a "+str(punteggio+1)+" punti"
-            self.db.update_activity_points(job.context['user_id'],1)
+            to_send = "Complimenti! Hai guadagnato un punto, sei arrivato a " + str(punteggio + 1) + " punti"
+            self.db.update_activity_points(job.context['user_id'], 1)
         else:
-            to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(punteggio - 1) + " punti"
+            to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(
+                punteggio - 1) + " punti"
             self.db.update_activity_points(job.context['user_id'], -1)
 
-        self.is_job_running=False
+        self.is_job_running = False
 
-        bot.sendMessage(job.context['chat_id'],to_send)
+        bot.sendMessage(job.context['chat_id'], to_send)
 
-
-
-    def get_to_classify(self, bot, update,job_queue, chat_data,args):
+    def get_to_classify(self, bot, update, job_queue, chat_data, args):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
 
         print("A")
@@ -878,86 +879,81 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             return
 
-
-
         if self.is_job_running:
             update.message.reply_text("Qualcun'altro sta utilizzando questo comando...aspetta 1 minuto")
             return
 
-        self.is_job_running=True
+        self.is_job_running = True
 
         # salva l'utente nella tabella activity_points
         self.db.insert_activity_points(update.message.from_user.id)
 
-        #prendi tutte le activity che non hanno la cella sentiment impostata
-        activity=self.get_activity_by("all")
-        activity=[elem for elem in activity if not isinstance(elem['sentiment'],int)]
+        # prendi tutte le activity che non hanno la cella sentiment impostata
+        activity = self.get_activity_by("all")
+        activity = [elem for elem in activity if not isinstance(elem['sentiment'], int)]
 
-        inline= InlineKeyboardMarkup([
+        inline = InlineKeyboardMarkup([
             [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -1"),
              InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment 0"),
              InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +1")],
 
         ])
 
-        if len(args)==0:
-            #manda due messaggi di benvenuto e spiegazione
-            update.message.reply_text("Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
+        if len(args) == 0:
+            # manda due messaggi di benvenuto e spiegazione
+            update.message.reply_text(
+                "Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
             sleep(3)
-            update.message.reply_text("Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
-                                      " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
-                                      "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
-                                      "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
-                                      parse_mode="HTML")
+            update.message.reply_text(
+                "Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
+                " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
+                "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
+                "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
+                parse_mode="HTML")
             sleep(13)
 
-        non_sent, sent=self.get_classified()
+        non_sent, sent = self.get_classified()
 
-        to_send="Per ora sono stati classificati "+str(sent)+" messaggi su "+str(non_sent)
+        to_send = "Per ora sono stati classificati " + str(sent) + " messaggi su " + str(non_sent)
         update.message.reply_text(to_send)
 
-        chat_data['decision']=[]
+        chat_data['decision'] = []
 
-
-        #manda 10 messaggi random dalla lista
-        for i in range(0,10):
-            #mischia la lista
+        # manda 10 messaggi random dalla lista
+        for i in range(0, 10):
+            # mischia la lista
             random.shuffle(activity)
-            #prendi un messaggio rimuovendolo dalla lista
-            row=activity.pop()
-            #formatta il messaggio
-            to_send=str(row['id'])+"\n"+emoji.emojize(row['content'])
-            #salva il messaggio e mandalo
+            # prendi un messaggio rimuovendolo dalla lista
+            row = activity.pop()
+            # formatta il messaggio
+            to_send = str(row['id']) + "\n" + emoji.emojize(row['content'])
+            # salva il messaggio e mandalo
 
-            message=update.message.reply_text(to_send,reply_markup=inline)
+            message = update.message.reply_text(to_send, reply_markup=inline)
 
-            #aggiungi la tupla (id_mesg, msg)
-            chat_data['decision'].append((row['id'],message))
+            # aggiungi la tupla (id_mesg, msg)
+            chat_data['decision'].append((row['id'], message))
 
-        #crea il dizionario da passare al job
+        # crea il dizionario da passare al job
         context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],
-                        'user_id':update.message.from_user.id}
-        #runna il job
+                        'user_id': update.message.from_user.id}
+        # runna il job
         job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
-        #salvalo
+        # salvalo
         chat_data['job'] = job
-
 
     def classify(self, bot, update, chat_data):
         """Funzione per salvare le scelte dell'utente"""
 
+        # prendi l'id del messaggio e rimuovilo dallo user data
+        activity_id = update.callback_query.message.text.split("\n")[0]
+        chat_data['decision'] = [elem for elem in chat_data['decision'] if not elem[0] == int(activity_id)]
 
-
-
-        #prendi l'id del messaggio e rimuovilo dallo user data
-        activity_id=update.callback_query.message.text.split("\n")[0]
-        chat_data['decision']=[elem for elem in chat_data['decision'] if not elem[0]==int(activity_id)]
-
-        #prende la decisione dell'utente
+        # prende la decisione dell'utente
         param = update.callback_query.data.split()[1]
-        sentiment=int(param)
+        sentiment = int(param)
 
-        self.db.add_sentiment_activity(sentiment,activity_id)
+        self.db.add_sentiment_activity(sentiment, activity_id)
 
         try:
             bot.delete_message(
@@ -968,39 +964,62 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             pass
 
         if len(chat_data['decision']) == 0:
-
             to_send = "Complimenti! Attendi la fine del timer per ricevere il punto"
             self.db.update_activity_points(update.callback_query.from_user.id, 1)
             update.callback_query.message.reply_text(to_send)
 
     def visualizza_punteggio(self, bot, update):
 
-        punteggio=self.db.get_activity_points_by_id(update.message.from_user.id)
-        #print(punteggio)
+        punteggio = self.db.get_activity_points_by_id(update.message.from_user.id)
+        # print(punteggio)
 
-        to_send="Il tuo punteggio è pari a <b>"+str(punteggio)+"</b>"
-        update.message.reply_text(to_send,parse_mode="HTML")
+        to_send = "Il tuo punteggio è pari a <b>" + str(punteggio) + "</b>"
+        update.message.reply_text(to_send, parse_mode="HTML")
 
-
-    def top_punteggio(self,bot,update):
+    def top_punteggio(self, bot, update):
         """Visualizza la top dei punteggi"""
-        users=self.db.get_activity_points_all()
+        users = self.db.get_activity_points_all()
 
-        users=[(elem['username'],elem['points']) for elem in users]
+        users = [(elem['username'], elem['points']) for elem in users]
 
         sorted_x = sorted(users, key=lambda tup: tup[1], reverse=True)
 
-
-        to_send="Top punteggi\n"
+        to_send = "Top punteggi\n"
         for elem in sorted_x:
-            to_send+="@"+elem[0]+" con <b>"+str(elem[1])+"</b>\n"
+            to_send += "@" + elem[0] + " con <b>" + str(elem[1]) + "</b>\n"
 
-        update.message.reply_text(to_send,parse_mode="HTML")
+        update.message.reply_text(to_send, parse_mode="HTML")
+
+    def train_model(self):
+
+        #prendi .e activity
+        activity=self.get_activity_by("all")
+        #togli quelle non classificate
+        activity=[elem for elem in activity if isinstance(elem['sentiment'],int)]
+        #togli le neutrali
+        activity=[elem for elem in activity if elem['sentiment']!=0]
+
+        new_dict_list=[]
+        #prendi solo i valori di sentiment e content, cambiando nome in text
+        for elem in activity:
+            prov_dict={'text':elem['content'],'sentiment':elem['sentiment']}
+            new_dict_list.append(prov_dict)
 
 
+        #allena il calssificatore
+        self.classifier.train(corpus='custom', corpus_array=new_dict_list)
 
 
+    def predict(self, bot, update,args):
+        """Predice il sentimento di un messaggio"""
 
+        if len(args)<1:
+            update.message.reply_text("Non hai inserito alcun messaggio su cui effettuare la predizione")
+            return
+
+        msg=" ".join(args)
+        pred=self.classifier.predict(msg)
+        update.message.reply_text(str(pred))
 
 
     # ============================OTHER UTILS===========================================
@@ -1023,11 +1042,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         return res
 
     def get_classified(self):
-        activity=self.get_activity_by("all")
-        sentiment=[elem for elem in activity if isinstance(elem['sentiment'],int)]
+        activity = self.get_activity_by("all")
+        sentiment = [elem for elem in activity if isinstance(elem['sentiment'], int)]
 
-        #print(activity)
-        #print(sentiment)
+        # print(activity)
+        # print(sentiment)
         return len(activity), len(sentiment)
 
 
