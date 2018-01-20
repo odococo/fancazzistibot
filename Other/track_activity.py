@@ -863,7 +863,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         if answered >= 10:
 
             to_send = "Complimenti! Hai guadagnato un punto, sei arrivato a " + str(punteggio + 1) + " punti"
-            self.db.update_activity_points(job.context['user_id'], 1)
         else:
             to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(
                 punteggio - 1) + " punti"
