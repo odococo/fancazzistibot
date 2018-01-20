@@ -553,7 +553,8 @@ class DB:
         @:param activity_id: id dell'attività
         @:type: int"""
 
-        if sentiment not in [-1,0,-1]: return
+        print(sentiment)
+        if sentiment not in [-1,0,1]: return
 
         self.execute(TABELLE['activity']['update']['sentiment'],(sentiment,activity_id,))
 
