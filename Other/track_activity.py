@@ -913,7 +913,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 parse_mode="HTML")
             sleep(13)
 
-        non_sent, sent = self.get_classified()
+        non_sent, sent = self.get_classified_len()
 
         to_send = "Per ora sono stati classificati " + str(sent) + " messaggi su " + str(non_sent)
         update.message.reply_text(to_send)
@@ -970,6 +970,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             update.callback_query.message.reply_text(to_send)
 
     def visualizza_punteggio(self, bot, update):
+        """Invia all'user il suo punteggio"""
 
         punteggio = self.db.get_activity_points_by_id(update.message.from_user.id)
         # print(punteggio)
@@ -992,6 +993,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         update.message.reply_text(to_send, parse_mode="HTML")
 
     def train_model(self):
+        """Esegue il train del modello sui messaggi gia classificati"""
 
         #prendi .e activity
         activity=self.get_activity_by("all")
@@ -1043,7 +1045,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         return res
 
-    def get_classified(self):
+    def get_classified_len(self):
+        """ritorna la lunghezza dei messaggi classificati e totali"""
         activity = self.get_activity_by("all")
         sentiment = [elem for elem in activity if isinstance(elem['sentiment'], int)]
 
