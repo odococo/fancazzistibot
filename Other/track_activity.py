@@ -840,7 +840,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
-            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti"
+            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>"+job.context['answered']+"<b> messaggi"
             # modifica quello precedente
             bot.edit_message_text(
                 chat_id=sec_message.chat_id,
@@ -876,6 +876,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             self.db.update_activity_points(job.context['user_id'], punti)
         bot.sendMessage(job.context['chat_id'], to_send)
 
+        #dai la possibilità di usare il comando ad altre persone
         self.is_job_running = False
 
 
@@ -924,6 +925,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send = "Per ora sono stati classificati " + str(sent) + " messaggi su " + str(non_sent)
         update.message.reply_text(to_send)
 
+        #inizzializza acluni parametri
         chat_data['activity']=activity
         chat_data['answered']=0
         chat_data['msg']=None
@@ -1098,7 +1100,10 @@ class TrackFilter(BaseFilter):
         if message.from_user.is_bot: return False
         if message.chat.id == self.fancazzisti:
 
-            if "forward_from" in message.keys(): return False
+            try:
+                if message.forward_from: return False
+            except KeyError:
+                pass
 
             try:
                 if message.text.startswith('/'): return False
