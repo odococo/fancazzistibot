@@ -865,6 +865,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
         punti=math.ceil(self.answered/10)
+        print(punti)
 
         if punteggio/punti>2:
             to_send = "Purtroppo non hai guadagnato piu della metà dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
@@ -926,7 +927,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         #inizzializza acluni parametri
         chat_data['activity']=activity
-        self.answered0
+        self.answered=0
         chat_data['msg']=None
 
 
