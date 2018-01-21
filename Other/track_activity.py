@@ -832,8 +832,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message = bot.sendMessage(job.context['chat_id'], "Hai 1 minuto per rispondere a tutti i messaggi")
-        plus = math.ceil(punteggio / 5)
-        seconds = self.secondi - punteggio + plus
+        seconds = self.secondi
         sleep(1)
         # fiche il tempo non scade
         while seconds > 0:
@@ -867,11 +866,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         punti=math.ceil(self.answered/10)
         print(punti)
 
-        if punteggio/punti>2:
-            to_send = "Purtroppo non hai guadagnato piu della metà dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
+        if self.answered-punteggio>0:
+            to_send = "Purtroppo non hai risposto a piu domande dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
             self.db.update_activity_points(job.context['user_id'], -punti)
         else:
-            to_send = "Sei riuscito a guadagnare piu della metà dei tuoi punti...accumoli " + str(
+            to_send = "Sei riuscito a rispondere a piu domande dei tuoi punti..accumoli " + str(
                 punti) + " punti\nSei arrivato a " + str(punteggio + punti)
             self.db.update_activity_points(job.context['user_id'], punti)
         bot.sendMessage(job.context['chat_id'], to_send)
