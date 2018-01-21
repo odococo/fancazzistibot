@@ -840,7 +840,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
-            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>"+str(job.context['answered'])+"<b> messaggi"
+            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>"+str(job.context['answered'])+"</b> messaggi"
             # modifica quello precedente
             bot.edit_message_text(
                 chat_id=sec_message.chat_id,
