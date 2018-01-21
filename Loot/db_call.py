@@ -219,8 +219,8 @@ TABELLE = {
     },
     "activity_points":{
         "update":{
-                "win":"UPDATE activity_points SET points=points+1 where id=%s",
-                "loose":"UPDATE activity_points SET points=points-1 where id=%s"},
+                "win":"UPDATE activity_points SET points=%s where id=%s",
+                "loose":"UPDATE activity_points SET points=%s where id=%s"},
         "insert":"INSERT INTO activity_points ( id, points) VALUES (%s, 0) ON CONFLICT (id) DO NOTHING",
         "select":{
             "by_id":"SELECT * FROM activity_points WHERE id=%s",
@@ -573,9 +573,9 @@ class DB:
         @:type: int"""
 
         if score<0:
-            self.execute(TABELLE['activity_points']['update']['loose'],(user_id,))
+            self.execute(TABELLE['activity_points']['update']['loose'],(score,user_id,))
         else:
-            self.execute(TABELLE['activity_points']['update']['win'],(user_id,))
+            self.execute(TABELLE['activity_points']['update']['win'],(score, user_id,))
 
 
     # ============DELETE/RESET======================================

@@ -82,6 +82,13 @@ class Track:
             [InlineKeyboardButton("User -", callback_data="/activity_altro user_meno"),
              InlineKeyboardButton("Indietro", callback_data="/activity_altro indietro")]])
 
+        self.inline_cat= InlineKeyboardMarkup([
+            [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -1"),
+             InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment 0"),
+             InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +1")],
+
+        ])
+
         self.main_message = """
 Benvenuto caro utente in questo nuovo comando pieno di cose belle 🌈
 Di seguito troverai vari bottoni per poter visualizzare tutte le informazioni dei messaggi inviati sul gruppo Fancazzisti
@@ -830,9 +837,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         sleep(1)
         # fiche il tempo non scade
         while seconds > 0:
-            if not job._enabled.is_set():
-                return
-            # print(job._enabled.is_set())
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
@@ -848,30 +852,33 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             sleep(1)
 
         answered = 0
-        for elem in job.context['decision']:
-            # a fine tempo elimina tutti i messaggi rimasti uno alla volta
-            try:
-                bot.delete_message(
-                    chat_id=elem[1].chat_id,
-                    message_id=elem[1].message_id
-                )
-                sleep(1)
 
-            except telegram.error.BadRequest:
-                answered += 1
+        try:
+            bot.delete_message(
+                chat_id= job.context['last_msg'].chat_id,
+                message_id=job.context['last_msg'].message_id
+            )
+            sleep(1)
+
+        except telegram.error.BadRequest:
+           pass
+
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        if answered >= 10:
+        punti=math.floor(job.context['answered']/15)
 
-            to_send = "Complimenti! Hai guadagnato un punto, sei arrivato a " + str(punteggio) + " punti"
+        if punteggio/punti>2:
+            to_send = "Purtroppo non hai guadagnato piu della metà dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
+            self.db.update_activity_points(job.context['user_id'], -punti)
         else:
-            to_send = "Purtroppo non hai fatto in tempo a rispondere a tutti i messaggi....perdi un punto\nSei arrivato a " + str(
-                punteggio - 1) + " punti"
-            self.db.update_activity_points(job.context['user_id'], -1)
-
-        self.is_job_running = False
-
+            to_send = "Sei riuscito a guadagnare piu della metà dei tuoi punti...accumoli " + str(
+                punti) + " punti\nSei arrivato a " + str(punteggio + punti)
+            self.db.update_activity_points(job.context['user_id'], punti)
         bot.sendMessage(job.context['chat_id'], to_send)
+
+
+
+        
 
     def get_to_classify(self, bot, update, job_queue, chat_data, args):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
@@ -894,12 +901,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         activity = self.get_activity_by("all")
         activity = [elem for elem in activity if not isinstance(elem['sentiment'], int)]
 
-        inline = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -1"),
-             InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment 0"),
-             InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +1")],
 
-        ])
 
         if len(args) == 0:
             # manda due messaggi di benvenuto e spiegazione
@@ -919,26 +921,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send = "Per ora sono stati classificati " + str(sent) + " messaggi su " + str(non_sent)
         update.message.reply_text(to_send)
 
-        chat_data['decision'] = []
+        chat_data['activity']=activity
+        chat_data['answered']=0
+        chat_data['msg']=None
 
-        # manda 10 messaggi random dalla lista
-        for i in range(0, 10):
-            # mischia la lista
-            random.shuffle(activity)
-            # prendi un messaggio rimuovendolo dalla lista
-            row = activity.pop()
-            # formatta il messaggio
-            to_send = str(row['id']) + "\n" + emoji.emojize(row['content'])
-            # salva il messaggio e mandalo
 
-            message = update.message.reply_text(to_send, reply_markup=inline)
-
-            # aggiungi la tupla (id_mesg, msg)
-            chat_data['decision'].append((row['id'], message))
+        #seleziona un messaggio random
+        row=random.choice(activity)
+        # formatta il messaggio
+        to_send = str(row['id']) + "\n" + emoji.emojize(row['content'])
+        # salva il messaggio e mandalo
+        message = update.message.reply_text(to_send, reply_markup=self.inline_cat)
+        # salva il messaggio
+        chat_data['msg']=message
 
         # crea il dizionario da passare al job
-        context_dict = {'chat_id': update.message.chat_id, 'decision': chat_data['decision'],
-                        'user_id': update.message.from_user.id}
+        context_dict = {'chat_id': update.message.chat_id,'last_msg':chat_data['msg'],
+                        'user_id': update.message.from_user.id, 'answered':chat_data['answered']}
         # runna il job
         job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
         # salvalo
@@ -947,28 +946,37 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def classify(self, bot, update, chat_data):
         """Funzione per salvare le scelte dell'utente"""
 
-        # prendi l'id del messaggio e rimuovilo dallo user data
+
+        #incrementa le risposte
+        chat_data['answered']+=1
+
+        # prendi l'id del messaggio
         activity_id = update.callback_query.message.text.split("\n")[0]
-        chat_data['decision'] = [elem for elem in chat_data['decision'] if not elem[0] == int(activity_id)]
 
         # prende la decisione dell'utente
         param = update.callback_query.data.split()[1]
         sentiment = int(param)
 
+        #aggiungi il sentimento nel db
         self.db.add_sentiment_activity(sentiment, activity_id)
 
+        #prendi un altro messaggio
+        row=random.choice(chat_data['activity'])
+        to_send = str(row['id']) + "\n" + emoji.emojize(row['content'])
+
+
         try:
-            bot.delete_message(
+
+            bot.edit_message_text(
                 chat_id=update.callback_query.message.chat_id,
-                message_id=update.callback_query.message.message_id
+                text=to_send,
+                message_id=update.callback_query.message.message_id,
+                reply_markup=self.inline_cat
+
             )
         except telegram.error.BadRequest:
             pass
 
-        if len(chat_data['decision']) == 0:
-            to_send = "Complimenti! Attendi la fine del timer per ricevere il punto"
-            self.db.update_activity_points(update.callback_query.from_user.id, 1)
-            update.callback_query.message.reply_text(to_send)
 
     def visualizza_punteggio(self, bot, update):
         """Invia all'user il suo punteggio"""
