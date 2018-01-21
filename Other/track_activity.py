@@ -151,7 +151,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
         disp.add_handler(CommandHandler("classified", self.classified))
-        #disp.add_handler(CommandHandler("predict", self.predict))
+        disp.add_handler(CommandHandler("predict", self.predict))
 
 
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
@@ -162,7 +162,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         #train del modello
         print("Training del modello....")
-        #self.train_model()
+        self.train_model()
         print("Training completo")
 
 
