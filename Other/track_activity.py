@@ -865,7 +865,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        punti=math.floor(job.context['answered']/15)
+        punti=math.ceil(job.context['answered']/15)
 
         if punteggio/punti>2:
             to_send = "Purtroppo non hai guadagnato piu della metà dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
@@ -954,6 +954,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         #incrementa le risposte
         chat_data['answered']+=1
+
+        print(chat_data['answered'])
 
         # prendi l'id del messaggio
         activity_id = update.callback_query.message.text.split("\n")[0]
