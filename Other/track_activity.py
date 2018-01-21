@@ -863,7 +863,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        punti=math.floor(self.answered/10)
+        punti=math.floor(self.answered/5)
         print(punti)
 
         if self.answered-punteggio<0:
