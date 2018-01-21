@@ -136,7 +136,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         self.min_punteggio_user_tipi_inviati = 45
         self.min_punteggio_user_sticker = 50
 
-        self.secondi = 60
+        self.secondi = 10
         self.is_job_running = False
         self.answered=0
 
@@ -832,7 +832,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message = bot.sendMessage(job.context['chat_id'], "Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds = self.secondi -punteggio +math.ceil(punteggio/5)
+        seconds = self.secondi +punteggio +math.ceil(punteggio/5)
         sleep(1)
         # fiche il tempo non scade
         while seconds > 0:
