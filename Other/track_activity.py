@@ -1086,8 +1086,12 @@ class TrackFilter(BaseFilter):
         # print(message)
         if message.from_user.is_bot: return False
         if message.chat.id == self.fancazzisti:
+
+            if "forward_from" in message.keys(): return False
+
             try:
                 if message.text.startswith('/'): return False
+
             finally:
                 return True
         return False
