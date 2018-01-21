@@ -137,8 +137,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         self.min_punteggio_user_sticker = 50
 
         self.secondi = 60
-
         self.is_job_running = False
+        self.answered=0
 
         self.classifier= EmpathyMachines()
 
@@ -840,7 +840,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
-            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>"+str(job.context['answered'])+"</b> messaggi"
+            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>"+str(self.answered)+"</b> messaggi"
             # modifica quello precedente
             bot.edit_message_text(
                 chat_id=sec_message.chat_id,
@@ -851,7 +851,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             sleep(1)
 
-        answered = 0
 
         try:
             bot.delete_message(
@@ -865,7 +864,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        punti=math.ceil(job.context['answered']/15)
+        punti=math.ceil(self.answered/10)
 
         if punteggio/punti>2:
             to_send = "Purtroppo non hai guadagnato piu della metà dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
@@ -927,7 +926,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         #inizzializza acluni parametri
         chat_data['activity']=activity
-        chat_data['answered']=0
+        self.answered0
         chat_data['msg']=None
 
 
@@ -942,7 +941,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # crea il dizionario da passare al job
         context_dict = {'chat_id': update.message.chat_id,'last_msg':chat_data['msg'],
-                        'user_id': update.message.from_user.id, 'answered':chat_data['answered']}
+                        'user_id': update.message.from_user.id}
         # runna il job
         job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
         # salvalo
@@ -953,9 +952,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
 
         #incrementa le risposte
-        chat_data['answered']+=1
+        self.answered+=1
 
-        print(chat_data['answered'])
 
         # prendi l'id del messaggio
         activity_id = update.callback_query.message.text.split("\n")[0]
