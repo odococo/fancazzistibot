@@ -866,7 +866,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         punti=math.floor(self.answered/10)
         print(punti)
 
-        if self.answered-punteggio>0:
+        if self.answered-punteggio<0:
             to_send = "Purtroppo non hai risposto a piu domande dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
             self.db.update_activity_points(job.context['user_id'], -punti)
         else:
@@ -912,9 +912,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 "Grazie per la tua partecipazione! Il tuo contributo è di fondamentale importanza per il nostro bot")
             sleep(3)
             update.message.reply_text(
-                "Ti invierò 10 messaggi con la possibilità di scegliere cosa esprimono!\n Usa i bottoni"
+                "Ti invierò un messaggio alla volta!\n Usa i bottoni"
                 " <b>Negativa, Neutrale e Positiva</b> per decidere l'emozione espressa dal messaggio.\nSe "
-                "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a tutti i messaggi in tempo guadagnerai un punto!\n"
+                "non capisci un messaggio ricorda di classificarlo come <b>Neutrale</b>\nSe risponderai a piu messaggi del tuo punteggio corrente guadagnerai un punto\n"
                 "Ma se rispondi a cazzo o non fai in tempo ne perderai uno",
                 parse_mode="HTML")
             sleep(13)
