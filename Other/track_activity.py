@@ -832,7 +832,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message = bot.sendMessage(job.context['chat_id'], "Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds = self.secondi
+        seconds = self.secondi -punteggio +math.ceil(punteggio/5)
         sleep(1)
         # fiche il tempo non scade
         while seconds > 0:
@@ -863,7 +863,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        punti=math.ceil(self.answered/10)
+        punti=math.floor(self.answered/10)
         print(punti)
 
         if self.answered-punteggio>0:
