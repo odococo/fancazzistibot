@@ -572,7 +572,7 @@ class DB:
         @:param score: punteggio {-1,1}
         @:type: int"""
         
-        print(score)
+        print("score :"+str(score))
 
         if score<0:
             self.execute(TABELLE['activity_points']['update']['loose'],(score,user_id,))

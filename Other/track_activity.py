@@ -1,3 +1,4 @@
+import collections
 import copy
 import datetime
 import math
@@ -750,8 +751,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         counter = Counter(activity)
 
         tot = sum(counter.values())
+        od = collections.OrderedDict(sorted(counter.keys()))
 
-        for elem in counter.keys():
+        for elem in od.keys():
             if elem < 10:
                 to_send += "  <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem] * 5) + "\n"
             else:
@@ -864,7 +866,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
         punti=math.floor(self.answered/5)
-        print(punti)
+        print("punti : "+str(punti))
+        print("answered  : "+str(self.answered))
 
         if self.answered-punteggio<0:
             punti=math.floor((punteggio-self.answered)/5)
