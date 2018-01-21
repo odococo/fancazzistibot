@@ -876,9 +876,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             self.db.update_activity_points(job.context['user_id'], punti)
         bot.sendMessage(job.context['chat_id'], to_send)
 
+        self.is_job_running = False
 
 
-        
+
+
+
 
     def get_to_classify(self, bot, update, job_queue, chat_data, args):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
