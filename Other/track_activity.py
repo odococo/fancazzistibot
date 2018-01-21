@@ -867,10 +867,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         print(punti)
 
         if self.answered-punteggio<0:
+            punti=math.floor((punteggio-self.answered)/5)
             to_send = "Purtroppo non hai risposto a piu domande dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
             self.db.update_activity_points(job.context['user_id'], -punti)
         else:
-            to_send = "Sei riuscito a rispondere a piu domande dei tuoi punti..accumoli " + str(
+            to_send = "Sei riuscito a rispondere a piu domande dei tuoi punti..guadagni " + str(
                 punti) + " punti\nSei arrivato a " + str(punteggio + punti)
             self.db.update_activity_points(job.context['user_id'], punti)
         bot.sendMessage(job.context['chat_id'], to_send)
