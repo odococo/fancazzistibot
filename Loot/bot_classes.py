@@ -2510,7 +2510,11 @@ Inoltre è presente la voce <b>Giorni rimanenti</b> che specifica il numero di g
                 idx = 1
                 to_send = ""
                 for elem in sorted_x:
-                    to_send += str(idx) + ") <b>" + elem[0] + "</b> superabile in <b>" +str(elem[1])+"</b> giorni"
+                    if elem[1]<0:
+                        to_send += str(idx) + ") <b>" + elem[0] + "</b> non superabile\n"
+
+                    else:
+                        to_send += str(idx) + ") <b>" + elem[0] + "</b> superabile in <b>" +str(elem[1])+"</b> giorni\n"
                     idx += 1
 
 
