@@ -50,7 +50,7 @@ class Track:
         self.db = db
         self.types = ["text", "audio", "photo", "sticker", "video", "voice"]
         self.ita_types = {"text": "Testo", "audio": "Audio", "photo": "Immagini", "sticker": "Stickers",
-                          "video": "Video", "voice": "Vocali", "document":"File"}
+                          "video": "Video", "voice": "Vocali", "document":"File","unkown":"Altro"}
 
         self.inline_activity_main = [
             [
