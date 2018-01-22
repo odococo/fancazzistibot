@@ -1540,12 +1540,12 @@ class Top:
 
         disp = updater.dispatcher
         if DEBUG:
-            disp.add_handler(RegexHandler("^Giocat ", self.add_player))
+            disp.add_handler(RegexHandler("^Giocat", self.add_player))
             disp.add_handler(CommandHandler("top", self.top_command))
         else:
             add_player_decor = self.db.elegible_loot_user(self.add_player)
             top_command_decor = self.db.elegible_loot_user(self.top_command)
-            disp.add_handler(RegexHandler("^Giocat ", add_player_decor))
+            disp.add_handler(RegexHandler("^Giocat", add_player_decor))
             disp.add_handler(CommandHandler("top", top_command_decor))
 
         disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top",pass_job_queue=True))
@@ -2174,7 +2174,8 @@ class Team:
              InlineKeyboardButton("Scalata giornaliera", callback_data="/team_scala giornaliero")],
             [InlineKeyboardButton("Scalata settimanale", callback_data="/team_scala settimanale"),
              InlineKeyboardButton("Scalata mensile", callback_data="/team_scala mensile")],
-            [InlineKeyboardButton("Indietro", callback_data="/team_scala indietro")]
+            [InlineKeyboardButton("Giorni rimanenti", callback_data="/team_scala rimanenti"),
+             InlineKeyboardButton("Indietro", callback_data="/team_scala indietro")]
 
         ])
 
@@ -2204,7 +2205,8 @@ Quindi quali informazioni vuoi?"""
 <b>Scalata</b> : Qui puoi visualizzare i pc che servono al team Fancazzisti (in un'unità di tempo) per superare gli altri teams in classifica\n
 La sintassi è questa: 
 NomeTeamDaSuperare : pcTotali (pcIndividuali)
-Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servono al tuo team (in un ora, giorno, settimana, mese) complessivi e a testa"""
+Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servono al tuo team (in un ora, giorno, settimana, mese) complessivi e a testa
+Inoltre è presente la voce <b>Giorni rimanenti</b> che specifica il numero di giorni rimanenti per raggiungere un determinato team"""
 
         self.inc_init_msg = """
 <b>Incrementi</b>
@@ -2499,6 +2501,17 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             res_dict = self.get_scalata(self.data_dict, "", 3)
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n", scala=True)
+
+        elif param =="rimanenti":
+            res_dict=self.get_temp_remaning(self.data_dict)
+            if res_dict:
+                sorted_x = sorted(res_dict.items(), key=operator.itemgetter(1), reverse=True)
+
+                idx = 1
+                to_send = ""
+                for elem in sorted_x:
+                    to_send += str(idx) + ") <b>" + elem[0] + "</b> superabile in <b>" +str(elem[1])+"</b> giorni"
+                    idx += 1
 
 
         elif param == "indietro":
@@ -2887,6 +2900,68 @@ Quindi verranno visualizzati i teams con piu pc e ti sarà detto quanti ne servo
             # incr = incr / math.ceil(idx)
             # e lo aggiungo al dizionario
             res_dict[key] = incr
+
+        return res_dict
+
+    def get_temp_remaning(self, data_dict):
+        """Restituisce il tempo che serve per raggiungere un determinato team"""
+        # guarda se il nome digitato è presente tra le chiavi (minuscole e maiuscole)
+        found = False
+        # todo: chiedi il nome del team all'utente
+        team_name = "I Fancazzisti"
+        for name in data_dict.keys():
+            # print(name)
+            # se hai trovato il nome cambialo con la chiave
+            if team_name in name:
+                found = True
+                team_name = name
+                break
+            elif team_name in name.lower():
+                found = True
+                team_name = name
+                break
+
+        if not found:
+            print("not found")
+            return False
+
+        # prendi l'incremento temporale
+        temporal_inc = self.get_temporal_increment(data_dict, 1)
+
+        if not temporal_inc:
+            print("no temporal")
+            return False
+
+        # prendi l'ultimo toto_pc
+        last_pc = {}
+        for key in data_dict.keys():
+            last_pc[key] = data_dict[key][-1:][0][0]
+
+        # unisci i due dizionari
+        union_dict = {}
+        for key in temporal_inc.keys():
+            union_dict[key] = (last_pc[key], temporal_inc[key])
+
+        # prendi il team d'interesse in formato tupla
+        team = union_dict[team_name]
+
+        # rimuovi tutti quelli sotto
+        filter_dict = {}
+        for key in union_dict.keys():
+            # salta la scelta dell'utente
+            if key == team_name:
+                continue
+            elif union_dict[key][0] > team[0]:
+                filter_dict[key] = union_dict[key]
+
+        res_dict = {}
+
+        for key in filter_dict.keys():
+            val = filter_dict[key]
+            tot_diff=val[0]-team[0]
+            inc_diff=team[1]-val[1]
+            restante = math.ceil(tot_diff/inc_diff)
+            res_dict[key] = (restante)
 
         return res_dict
 
