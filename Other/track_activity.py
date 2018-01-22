@@ -750,6 +750,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         # conta le ripetizioni
         counter = Counter(activity)
 
+        print(counter)
+
         tot = sum(counter.values())
         od = collections.OrderedDict(sorted(counter.keys()))
 
