@@ -750,16 +750,16 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         # conta le ripetizioni
         counter = Counter(activity)
 
-        print(counter)
+        #print(counter)
 
         tot = sum(counter.values())
-        od = collections.OrderedDict(sorted(counter.keys()))
+        od =sorted(counter.items())
 
-        for elem in od.keys():
-            if elem < 10:
-                to_send += "  <b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem] * 5) + "\n"
+        for elem in od:
+            if elem[0] < 10:
+                to_send += "  <b>" + str(elem[0]) + ":00</b> " + self.filler(tot, elem[1] * 5) + "\n"
             else:
-                to_send += "<b>" + str(elem) + ":00</b> " + self.filler(tot, counter[elem] * 5) + "\n"
+                to_send += "<b>" + str(elem[0]) + ":00</b> " + self.filler(tot, elem[1] * 5) + "\n"
 
         return to_send
 
