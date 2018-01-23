@@ -1045,14 +1045,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send=""
 
         for user in all:
-            to_send+="@"+ self.db.get_user(user['id_user'])['username']+"\n"
+            to_send="@"+ self.db.get_user(user['id_user'])['username']+"\n"
             pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user['id_user']])
             pred = numpy.array(pred)
             mean = pred.mean()
             std = pred.std()
             to_send += "SVC - Mean: " + "{:,}".format(mean) + "\nstd:  " + "{:,}".format(std) + "\n \n"
-
-        update.message.reply_text(to_send)
+            update.message.reply_text(to_send)
 
 
 
