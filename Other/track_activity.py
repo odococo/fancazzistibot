@@ -1044,9 +1044,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         all= self.get_activity_by("all")
         to_send=""
 
-        for user in all:
-            to_send="@"+ self.db.get_user(user['id_user'])['username']+"\n"
-            pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user['id_user']])
+        all=set([elem['id_user'] for elem in all if elem['type']=="text"])
+
+        for user_id in all:
+            to_send="@"+ self.db.get_user(user_id)['username']+"\n"
+            pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
             pred = numpy.array(pred)
             mean = pred.mean()
             std = pred.std()
