@@ -12,3 +12,4 @@ sklearn
 nltk
 numpy
 gensim
+statsmodels

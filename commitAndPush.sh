@@ -7,7 +7,7 @@ if [ $# -eq 0 ]
     comment="$@"
 fi
 
-git add main commitAndPush.sh;
+git add main commitAndPush.sh requirements.txt;
 git add Resources/ Loot/ Other/ Sentiment_analisys/ ;
 git commit -m "$comment";
 git push origin master;
