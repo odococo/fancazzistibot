@@ -79,13 +79,10 @@ def SGDC(train_set_labled, train_set_unlabled, test_set):
         # prediction
         pred_forest = sgdc.predict(xtest_vec)
         print(pred_forest)
-        scoring(pred_forest,test_set["sentiment"],"Test set",svc)
+        scoring(pred_forest,test_set["sentiment"],"Test set",sgdc)
 
 
 
-    if(TO_SAVE_WRONG):
-     #saving wrong prediction for analysis
-        save_wrong_answer(pred_forest,names,xtest_vec)
 
     return sgdc
 
