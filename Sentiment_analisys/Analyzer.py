@@ -32,6 +32,7 @@ class Analyzer:
 
         print("predicting")
         text=[{'review':elem['content']} for elem in text]
+        text=pd.DataFrame(text)
         pred_svc=predict(self.svc,self.TRAIN_SET_LABLED,text,self.TEST_SET)
         pred_forest=predict(self.forest,self.TRAIN_SET_LABLED,text,self.TEST_SET)
 
