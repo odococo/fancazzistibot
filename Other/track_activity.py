@@ -152,7 +152,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(
             CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
         disp.add_handler(CommandHandler("classified", self.classified))
-        # disp.add_handler(CommandHandler("predict", self.predict))
 
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
@@ -160,10 +159,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True, ))
 
-        # train del modello
-        print("Training del modello....")
-        # self.train_model()
-        print("Training completo")
+
 
     # ===================LOOPS=================================
 
@@ -1000,38 +996,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
-    def train_model(self):
-        """Esegue il train del modello sui messaggi gia classificati"""
-
-        # prendi .e activity
-        activity = self.get_activity_by("all")
-        # togli quelle non classificate
-        activity = [elem for elem in activity if isinstance(elem['sentiment'], int)]
-        # togli le neutrali
-        activity = [elem for elem in activity if elem['sentiment'] != 0]
-        # print(activity)
-        new_dict_list = []
-        # prendi solo i valori di sentiment e content, cambiando nome in text
-        for elem in activity:
-            prov_dict = {'text': elem['content'], 'sentiment': elem['sentiment']}
-            new_dict_list.append(prov_dict)
-        # print(activity)
-
-        # allena il calssificatore
-        self.classified()
-        self.classifier.train(corpus='custom', corpus_array=new_dict_list)
-
-    def predict(self, bot, update, args):
-        """Predice il sentimento di un messaggio"""
-
-        if len(args) < 1:
-            update.message.reply_text("Non hai inserito alcun messaggio su cui effettuare la predizione")
-            return
-
-        msg = " ".join(args)
-        pred = self.classifier.predict(msg)
-        update.message.reply_text(str(pred))
-
     def classified(self, bot, update):
         classified = self.get_activity_by("all")
         all_len = len(classified)
@@ -1040,6 +1004,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         neutral_len = len([elem for elem in classified if elem == 0])
         positive_len = len([elem for elem in classified if elem == 1])
         negative_len = len([elem for elem in classified if elem == -1])
+
+        print([elem for elem in classified if elem == 1])
+        print([elem for elem in classified if elem == -1])
 
         to_send = "Sono stati classificati " + str(classified_len) + " messaggi su " + str(all_len) + ", di cui:\n" \
                                                                                                       "Positivi " + str(

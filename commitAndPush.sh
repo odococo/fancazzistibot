@@ -8,7 +8,7 @@ if [ $# -eq 0 ]
 fi
 
 git add main commitAndPush.sh;
-git add Resources/ Loot/ Other/ ;
+git add Resources/ Loot/ Other/ Sentiment_analisys/ ;
 git commit -m "$comment";
 git push origin master;
 git push heroku master;
