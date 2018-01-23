@@ -22,6 +22,7 @@ def scoring(prediction, true, what, clf):
     #printing score
     print("=================SCORE=================")
     print("Score for "+what+" is: " + pred)
+    print("=================END_SCORE=================")
 
 
 
