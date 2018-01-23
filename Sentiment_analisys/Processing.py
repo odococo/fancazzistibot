@@ -3,6 +3,7 @@ from os import system
 
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import SGDClassifier
 from sklearn.svm import LinearSVC, SVC
 
 from Sentiment_analisys.util import *
@@ -39,7 +40,7 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
     if TO_PRED:
         # prediction
         pred_forest = svc.predict(xtest_vec)
-        print(pred_forest)
+        print("=========PREDICTION=============\n"+str(pred_forest))
         scoring(pred_forest,test_set["sentiment"],"Test set",svc)
 
 
@@ -49,6 +50,44 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
         save_wrong_answer(pred_forest,names,xtest_vec)
 
     return svc
+
+
+def SGDC(train_set_labled, train_set_unlabled, test_set):
+    # Data pre processing
+    xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
+
+    print("Executing classification......")
+    start = time.time()
+
+    # classifier initialization and fitting
+    #svc = LinearSVC(verbose=True, penalty="l2", loss="hinge",multi_class="ovr",C=1)
+    #svc = SVC(verbose=True, kernel="linear",decision_function_shape="ovr",C=1)
+    sgdc = SGDClassifier(loss="hinge", penalty="l2")
+    sgdc = sgdc.fit(xtrain_vec, ytrain)
+
+    end = time.time()
+    tot = end - start
+    print("fitting completed\nTotal time: " + str(int(tot / 60)) + "' " + str(int(tot % 60)) + "''\n")
+
+    if TO_PLOT:
+        #plot_svm_dataset(xtrain_vec, ytrain, svc)
+        # plot_svm_vect(svc)
+        plot_svm_decision_boundary(svc,xtest_vec,test_set["sentiment"])
+
+
+    if TO_PRED:
+        # prediction
+        pred_forest = sgdc.predict(xtest_vec)
+        print(pred_forest)
+        scoring(pred_forest,test_set["sentiment"],"Test set",svc)
+
+
+
+    if(TO_SAVE_WRONG):
+     #saving wrong prediction for analysis
+        save_wrong_answer(pred_forest,names,xtest_vec)
+
+    return sgdc
 
 def predict(classfier, train_set_labled, train_set_unlabled, test_set):
     # Data pre processing
