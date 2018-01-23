@@ -477,10 +477,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             sorted_x = sorted(counter.items(), key=operator.itemgetter(1), reverse=True)
             tot = sum([elem[1] for elem in sorted_x])
 
-            print(sorted_x)
+            #print(sorted_x)
 
             sorted_x = [(elem[0], math.ceil(elem[1] / tot * 100)) for elem in sorted_x]
-            print(sorted_x)
+            #print(sorted_x)
 
             to_send = user_data['username'] + " hai inviato un totale di " + str(tot) + " messaggi... di cui:\n"
 
@@ -506,7 +506,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 return
 
             stcker_id = self.get_preferred_sticker(activity)
-            print(stcker_id)
+            #print(stcker_id)
             to_send = "Il tuo sticker preferito è "
             bot.sendSticker(update.callback_query.message.chat_id, stcker_id)
 
@@ -1009,8 +1009,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     def classified(self, bot, update):
         classified = self.get_activity_by("all")
-        print([(elem['content'],elem['sentiment']) for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == 1])
-        print([(elem['content'],elem['sentiment']) for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == -1])
+       # print([(elem['content'],elem['sentiment']) for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == 1])
+        #print([(elem['content'],elem['sentiment']) for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == -1])
 
         all_len = len(classified)
         classified = [elem['sentiment'] for elem in classified if isinstance(elem['sentiment'], int)]
