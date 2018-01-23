@@ -23,7 +23,7 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
     # classifier initialization and fitting
     #svc = LinearSVC(verbose=True, penalty="l2", loss="hinge",multi_class="ovr",C=1)
     #svc = SVC(verbose=True, kernel="linear",decision_function_shape="ovr",C=1)
-    svc = SVC(verbose=True, kernel="rbf",decision_function_shape="ovr",C=1,gamma=1)
+    svc = SVC(verbose=True, kernel="sigmoid",decision_function_shape="ovr",C=1,gamma=2)
     svc = svc.fit(xtrain_vec, ytrain)
 
     end = time.time()
