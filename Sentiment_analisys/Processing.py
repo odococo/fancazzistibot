@@ -40,7 +40,6 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
     if TO_PRED:
         # prediction
         pred_forest = svc.predict(xtest_vec)
-        print("=========PREDICTION=============\n"+str(pred_forest))
         scoring(pred_forest,test_set["sentiment"],"SVC",svc)
 
 
@@ -61,7 +60,7 @@ def SGDC(train_set_labled, train_set_unlabled, test_set):
 
     # classifier initialization and fitting
 
-    sgdc = SGDClassifier(loss="log", penalty="l2")
+    sgdc = SGDClassifier(loss="squared_loss", penalty="l2")
     sgdc = sgdc.fit(xtrain_vec, ytrain)
 
     end = time.time()
