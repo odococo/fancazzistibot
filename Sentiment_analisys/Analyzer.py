@@ -26,11 +26,11 @@ class Analyzer:
         self.forest=forest_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
 
 
-    def predict(self, text):
+    def predict(self,classifier, text):
 
         print("predicting")
         text=[{'review':elem['content']} for elem in text]
         text=pd.DataFrame(text)
         xtrain_vec, xtest_vec, ytrain, names=polish_tfidf_kbest(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,text)
-        pred=self.svc.predict(xtest_vec)
+        pred=classifier.predict(xtest_vec)
         return pred

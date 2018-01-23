@@ -170,7 +170,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         unlabled=[elem for elem in classified if elem['sentiment']==0]
         self.analyzer=Analyzer(labled,unlabled)
         self.analyzer.train_models()
-        self.analyzer.predict([elem for elem in self.get_activity_by(24978334) if elem['type']=="text"])
+        #self.analyzer.predict([elem for elem in self.get_activity_by(24978334) if elem['type']=="text"])
 
 
 
@@ -454,11 +454,19 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         elif param == "sentimenti":
             #prendi la predizione dei sentimenti
-            pred=self.analyzer.predict([elem for elem in self.get_activity_by(update.callback_query.from_user.id) if elem['type']=="text"])
+            pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in self.get_activity_by(update.callback_query.from_user.id) if elem['type']=="text"])
             pred=numpy.array(pred)
             mean=pred.mean()
             std=pred.std()
-            to_send="Mean: "+"{:,}".format(mean)+"\nstd:  "+"{:,}".format(std)
+            to_send="SVC - Mean: "+"{:,}".format(mean)+"\nstd:  "+"{:,}".format(std)+"\n"
+            pred = self.analyzer.predict(self.analyzer.forest,
+                                         [elem for elem in self.get_activity_by(update.callback_query.from_user.id) if
+                                          elem['type'] == "text"])
+            pred = numpy.array(pred)
+            mean = pred.mean()
+            std = pred.std()
+            to_send+= "FOREST - Mean: " + "{:,}".format(mean) + "\nstd:  " + "{:,}".format(std)
+
 
 
         elif param == "tipi":
