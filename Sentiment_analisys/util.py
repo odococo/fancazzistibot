@@ -22,14 +22,8 @@ def scoring(prediction, true, what, clf):
     #printing score
     print("Score for "+what+" is: " + pred)
     string = "Score is " + pred + " percent"
-    system('say ' + string)
+    print(string)
 
-    with open (os.getcwd() + "/src/best_score.txt") as file:
-        best_score=file.readline().split(",")[0]
-
-    if(pred>best_score):
-        with open(os.getcwd() + "/src /best_score.txt","w") as file:
-            file.write(pred+", "+clf.__str__())
 
 def polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set):
     # splitting  train test

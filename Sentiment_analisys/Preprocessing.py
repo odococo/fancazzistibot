@@ -114,7 +114,6 @@ def string2vecTFIDF(x_train_str_labled, x_train_str_unlabled, x_test_str):
 
     print("Cleaning and transformation for  test dataset done\nTotal time: " + str(int(tot / 60)) + "' " + str(
         int(tot % 60)) + "''\n")
-    system('say "Cleaning for dataset done"')
 
     # freeing memory
     gc.collect()
@@ -136,7 +135,6 @@ def dimensionality_reductionKB(xtrain, ytrain, xtest, names, percentage=15):
     #spot_differences(xtrain,new_xtrain,"xtrain for chi2",names)
 
     print("xtest reduced!\nTotal time: " + str(int(tot / 60)) + "' " + str(int(tot % 60)) + "''\n")
-    system('say "Ki square test completed"')
 
     # freeing memory
     gc.collect()
