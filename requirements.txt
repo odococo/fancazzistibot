@@ -8,3 +8,7 @@ pandas
 python-dotenv
 empythy
 scipy
+sklearn
+nltk
+numpy
+gensim
