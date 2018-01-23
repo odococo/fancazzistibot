@@ -56,7 +56,7 @@ class Preprocessing():
             pool = Pool(processes=10)
 
             # for every review, apply function and save result
-            words_lst = pool.map(stopWords, words_lst)
+            words_lst = pool.map(self.stopWords, words_lst)
             pool.close()
             pool.join()
 
