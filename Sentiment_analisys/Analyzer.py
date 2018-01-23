@@ -27,7 +27,7 @@ class Analyzer:
 
 
     def predict(self, text):
-        if not self.svc or self.forest:
+        if not self.svc or not self.forest:
             return None
 
         print("predicting")
