@@ -7,6 +7,8 @@ import random
 import re
 from collections import Counter
 from time import sleep
+
+import numpy
 from empythy import EmpathyMachines
 import emoji
 import telegram
@@ -451,7 +453,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
 
         elif param == "sentimenti":
-            to_send = "Comando non ancora implementato...sorry"
+            #prendi la predizione dei sentimenti
+            pred=self.analyzer.predict([elem for elem in self.get_activity_by(update.callback_query.from_user.id) if elem['type']=="text"])
+            pred=numpy.array(pred)
+            mean=pred.mean()
+            std=pred.std()
+            to_send="Mean: "+"{:,}".format(mean)+"\nstd:  "+"{:,}".format(std)
 
 
         elif param == "tipi":

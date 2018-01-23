@@ -33,5 +33,4 @@ class Analyzer:
         text=pd.DataFrame(text)
         xtrain_vec, xtest_vec, ytrain, names=polish_tfidf_kbest(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,text)
         pred=self.svc.predict(xtest_vec)
-        print(pred)
-        print(sum(pred)/len(pred))
+        return pred
