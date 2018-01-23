@@ -1055,6 +1055,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             to_send += "SVC - Mean: " + "{:,}".format(mean) + "\nstd:  " + "{:,}".format(std) + "\n \n"
             update.message.reply_text(to_send)
 
+        #usa mediana e std con meadin absolute deviation
 
 
 
