@@ -892,6 +892,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                 punti) + " punti\nSei arrivato a " + str(punteggio - punti)
             self.db.update_activity_points(job.context['user_id'], -punti)
         else:
+            punti = abs(math.floor((punteggio - self.answered) / 5))
+
             to_send = "Sei riuscito a rispondere a piu domande dei tuoi punti..guadagni " + str(
                 punti) + " punti\nSei arrivato a " + str(punteggio + punti)
             self.db.update_activity_points(job.context['user_id'], punti)
@@ -1043,7 +1045,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send=""
 
         for user in all:
-            to_send+="@"+user['username']+"\n"
+            to_send+="@"+ self.db.get_user(user['id_user'])['username']+"\n"
             pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user['id_user']])
             pred = numpy.array(pred)
             mean = pred.mean()
