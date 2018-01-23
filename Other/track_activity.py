@@ -1050,9 +1050,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             to_send="@"+ self.db.get_user(user_id)['username']+"\n"
             pred=self.analyzer.predict(self.analyzer.sgdc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
             pred = numpy.array(pred)
+            median=pred.mean()
+            std=pred.std()
             mad=robust.mad(pred)
             mean = numpy.median(pred)
-            to_send += "SVC - Median: " + "{:,}".format(mean) + "\nMad:  " + "{:,}".format(mad) + "\n \n"
+            to_send += "SVC - Median: " + "{:,}".format(mean) + "\nMad:  " + "{:,}".format(mad) + "\nMean: "+ "{:,}".format(mean)+"\nStd: "+ "{:,}".format(std)+" \n"
             update.message.reply_text(to_send)
 
         #usa mediana e std con meadin absolute deviation
