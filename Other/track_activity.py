@@ -998,6 +998,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     def classified(self, bot, update):
         classified = self.get_activity_by("all")
+        print([elem for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == 1])
+        print([elem for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == -1])
+
         all_len = len(classified)
         classified = [elem['sentiment'] for elem in classified if isinstance(elem['sentiment'], int)]
         classified_len = len(classified)
@@ -1005,8 +1008,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         positive_len = len([elem for elem in classified if elem == 1])
         negative_len = len([elem for elem in classified if elem == -1])
 
-        print([elem for elem in classified if elem == 1])
-        print([elem for elem in classified if elem == -1])
 
         to_send = "Sono stati classificati " + str(classified_len) + " messaggi su " + str(all_len) + ", di cui:\n" \
                                                                                                       "Positivi " + str(
