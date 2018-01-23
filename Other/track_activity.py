@@ -146,12 +146,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         self.is_job_running = False
         self.answered = 0
 
-        self.classifier = EmpathyMachines()
 
         disp = updater.dispatcher
 
         #disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
+        disp.add_handler(CommandHandler("getallpred", self.get_all_pred, pass_user_data=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(
@@ -459,13 +459,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             mean=pred.mean()
             std=pred.std()
             to_send="SVC - Mean: "+"{:,}".format(mean)+"\nstd:  "+"{:,}".format(std)+"\n"
-            pred = self.analyzer.predict(self.analyzer.forest,
-                                         [elem for elem in self.get_activity_by(update.callback_query.from_user.id) if
-                                          elem['type'] == "text"])
-            pred = numpy.array(pred)
-            mean = pred.mean()
-            std = pred.std()
-            to_send+= "FOREST - Mean: " + "{:,}".format(mean) + "\nstd:  " + "{:,}".format(std)
+
 
 
 
@@ -1042,6 +1036,24 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
                   "%)\nNeutrali " + str(neutral_len) + " (" + str(math.ceil(neutral_len / classified_len * 100)) + "%)"
 
         update.message.reply_text(to_send)
+
+    def get_all_pred(self, bot, update):
+
+        all= self.get_activity_by("all")
+        to_send=""
+
+        for user in all:
+            to_send+="@"+user['username']+"\n"
+            pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user['id_user']])
+            pred = numpy.array(pred)
+            mean = pred.mean()
+            std = pred.std()
+            to_send += "SVC - Mean: " + "{:,}".format(mean) + "\nstd:  " + "{:,}".format(std) + "\n \n"
+
+        update.message.reply_text(to_send)
+
+
+
 
     # ============================OTHER UTILS===========================================
 
