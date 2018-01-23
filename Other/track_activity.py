@@ -151,7 +151,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         #disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
-        disp.add_handler(CommandHandler("getallpred", self.get_all_pred, pass_user_data=True))
+        disp.add_handler(CommandHandler("getallpred", self.get_all_pred))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(
