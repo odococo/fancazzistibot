@@ -50,7 +50,7 @@ class Track:
         self.db = db
         self.types = ["text", "audio", "photo", "sticker", "video", "voice"]
         self.ita_types = {"text": "Testo", "audio": "Audio", "photo": "Immagini", "sticker": "Stickers",
-                          "video": "Video", "voice": "Vocali", "document":"File","unkown":"Altro"}
+                          "video": "Video", "voice": "Vocali", "document": "File", "unkown": "Altro"}
 
         self.inline_activity_main = [
             [
@@ -83,7 +83,7 @@ class Track:
             [InlineKeyboardButton("User -", callback_data="/activity_altro user_meno"),
              InlineKeyboardButton("Indietro", callback_data="/activity_altro indietro")]])
 
-        self.inline_cat= InlineKeyboardMarkup([
+        self.inline_cat = InlineKeyboardMarkup([
             [InlineKeyboardButton("Negativa", callback_data="/activity_sentiment -1"),
              InlineKeyboardButton("Neutrale", callback_data="/activity_sentiment 0"),
              InlineKeyboardButton("Positiva", callback_data="/activity_sentiment +1")],
@@ -139,20 +139,20 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         self.secondi = 10
         self.is_job_running = False
-        self.answered=0
+        self.answered = 0
 
-        self.classifier= EmpathyMachines()
+        self.classifier = EmpathyMachines()
 
         disp = updater.dispatcher
 
-        disp.add_handler(MessageHandler(filter, self.log_activity))
+        #disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
-        disp.add_handler(CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
+        disp.add_handler(
+            CommandHandler("classify", self.get_to_classify, pass_job_queue=True, pass_chat_data=True, pass_args=True))
         disp.add_handler(CommandHandler("classified", self.classified))
-        #disp.add_handler(CommandHandler("predict", self.predict))
-
+        # disp.add_handler(CommandHandler("predict", self.predict))
 
         disp.add_handler(CallbackQueryHandler(self.activity_main, pattern="/activity_main", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.activity_time, pattern="/activity_time", pass_user_data=True))
@@ -160,11 +160,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True, ))
 
-        #train del modello
+        # train del modello
         print("Training del modello....")
-        #self.train_model()
+        # self.train_model()
         print("Training completo")
-
 
     # ===================LOOPS=================================
 
@@ -750,10 +749,10 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         # conta le ripetizioni
         counter = Counter(activity)
 
-        #print(counter)
+        # print(counter)
 
         tot = sum(counter.values())
-        od =sorted(counter.items())
+        od = sorted(counter.items())
 
         for elem in od:
             if elem[0] < 10:
@@ -836,14 +835,15 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         # notifica l'utente di quanto tempo gli è rimasto per ripondere alle domande
         sec_message = bot.sendMessage(job.context['chat_id'], "Hai 1 minuto per rispondere a tutti i messaggi")
-        seconds = self.secondi +punteggio +math.ceil(punteggio/5)
+        seconds = self.secondi + punteggio + math.ceil(punteggio / 5)
         sleep(1)
         # fiche il tempo non scade
         while seconds > 0:
             # decrementa il tempo
             seconds -= 1
             # formatta il messaggio
-            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>"+str(self.answered)+"</b> messaggi"
+            to_send = "<b>" + str(seconds) + "</b> secondi rimanenti, hai risposto a <b>" + str(
+                self.answered) + "</b> messaggi"
             # modifica quello precedente
             bot.edit_message_text(
                 chat_id=sec_message.chat_id,
@@ -854,26 +854,26 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
             sleep(1)
 
-
         try:
             bot.delete_message(
-                chat_id= job.context['last_msg'].chat_id,
+                chat_id=job.context['last_msg'].chat_id,
                 message_id=job.context['last_msg'].message_id
             )
             sleep(1)
 
         except telegram.error.BadRequest:
-           pass
+            pass
 
         punteggio = self.db.get_activity_points_by_id(job.context['user_id'])
 
-        punti=math.floor(self.answered/5)
-        print("punti : "+str(punti))
-        print("answered  : "+str(self.answered))
+        punti = math.floor(self.answered / 5)
+        print("punti : " + str(punti))
+        print("answered  : " + str(self.answered))
 
-        if self.answered-punteggio<0:
-            punti=math.floor((punteggio-self.answered)/5)
-            to_send = "Purtroppo non hai risposto a piu domande dei punti che hai...perdi "+str(punti)+" punti\nSei arrivato a " + str(punteggio-punti)
+        if self.answered - punteggio < 0:
+            punti = math.floor((punteggio - self.answered) / 5)
+            to_send = "Purtroppo non hai risposto a piu domande dei punti che hai...perdi " + str(
+                punti) + " punti\nSei arrivato a " + str(punteggio - punti)
             self.db.update_activity_points(job.context['user_id'], -punti)
         else:
             to_send = "Sei riuscito a rispondere a piu domande dei tuoi punti..guadagni " + str(
@@ -881,13 +881,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             self.db.update_activity_points(job.context['user_id'], punti)
         bot.sendMessage(job.context['chat_id'], to_send)
 
-        #dai la possibilità di usare il comando ad altre persone
+        # dai la possibilità di usare il comando ad altre persone
         self.is_job_running = False
-
-
-
-
-
 
     def get_to_classify(self, bot, update, job_queue, chat_data, args):
         """Funzione per inviare un tot di messaggi random con la possibilità di classificarli"""
@@ -910,8 +905,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         activity = self.get_activity_by("all")
         activity = [elem for elem in activity if not isinstance(elem['sentiment'], int)]
 
-
-
         if len(args) == 0:
             # manda due messaggi di benvenuto e spiegazione
             update.message.reply_text(
@@ -930,23 +923,22 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         to_send = "Per ora sono stati classificati " + str(sent) + " messaggi su " + str(non_sent)
         update.message.reply_text(to_send)
 
-        #inizzializza acluni parametri
-        chat_data['activity']=activity
-        self.answered=0
-        chat_data['msg']=None
+        # inizzializza acluni parametri
+        chat_data['activity'] = activity
+        self.answered = 0
+        chat_data['msg'] = None
 
-
-        #seleziona un messaggio random
-        row=random.choice(activity)
+        # seleziona un messaggio random
+        row = random.choice(activity)
         # formatta il messaggio
         to_send = str(row['id']) + "\n" + emoji.emojize(row['content'])
         # salva il messaggio e mandalo
         message = update.message.reply_text(to_send, reply_markup=self.inline_cat)
         # salva il messaggio
-        chat_data['msg']=message
+        chat_data['msg'] = message
 
         # crea il dizionario da passare al job
-        context_dict = {'chat_id': update.message.chat_id,'last_msg':chat_data['msg'],
+        context_dict = {'chat_id': update.message.chat_id, 'last_msg': chat_data['msg'],
                         'user_id': update.message.from_user.id}
         # runna il job
         job = job_queue.run_once(self.delete_messages, 0, context=context_dict)
@@ -956,10 +948,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def classify(self, bot, update, chat_data):
         """Funzione per salvare le scelte dell'utente"""
 
-
-        #incrementa le risposte
-        self.answered+=1
-
+        # incrementa le risposte
+        self.answered += 1
 
         # prendi l'id del messaggio
         activity_id = update.callback_query.message.text.split("\n")[0]
@@ -968,13 +958,12 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         param = update.callback_query.data.split()[1]
         sentiment = int(param)
 
-        #aggiungi il sentimento nel db
+        # aggiungi il sentimento nel db
         self.db.add_sentiment_activity(sentiment, activity_id)
 
-        #prendi un altro messaggio
-        row=random.choice(chat_data['activity'])
+        # prendi un altro messaggio
+        row = random.choice(chat_data['activity'])
         to_send = str(row['id']) + "\n" + emoji.emojize(row['content'])
-
 
         try:
 
@@ -987,7 +976,6 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             )
         except telegram.error.BadRequest:
             pass
-
 
     def visualizza_punteggio(self, bot, update):
         """Invia all'user il suo punteggio"""
@@ -1015,54 +1003,51 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
     def train_model(self):
         """Esegue il train del modello sui messaggi gia classificati"""
 
-        #prendi .e activity
-        activity=self.get_activity_by("all")
-        #togli quelle non classificate
-        activity=[elem for elem in activity if isinstance(elem['sentiment'],int)]
-        #togli le neutrali
-        activity=[elem for elem in activity if elem['sentiment']!=0]
-        #print(activity)
-        new_dict_list=[]
-        #prendi solo i valori di sentiment e content, cambiando nome in text
+        # prendi .e activity
+        activity = self.get_activity_by("all")
+        # togli quelle non classificate
+        activity = [elem for elem in activity if isinstance(elem['sentiment'], int)]
+        # togli le neutrali
+        activity = [elem for elem in activity if elem['sentiment'] != 0]
+        # print(activity)
+        new_dict_list = []
+        # prendi solo i valori di sentiment e content, cambiando nome in text
         for elem in activity:
-            prov_dict={'text':elem['content'],'sentiment':elem['sentiment']}
+            prov_dict = {'text': elem['content'], 'sentiment': elem['sentiment']}
             new_dict_list.append(prov_dict)
-        #print(activity)
+        # print(activity)
 
-
-        #allena il calssificatore
+        # allena il calssificatore
         self.classified()
         self.classifier.train(corpus='custom', corpus_array=new_dict_list)
 
-
-    def predict(self, bot, update,args):
+    def predict(self, bot, update, args):
         """Predice il sentimento di un messaggio"""
 
-        if len(args)<1:
+        if len(args) < 1:
             update.message.reply_text("Non hai inserito alcun messaggio su cui effettuare la predizione")
             return
 
-        msg=" ".join(args)
-        pred=self.classifier.predict(msg)
+        msg = " ".join(args)
+        pred = self.classifier.predict(msg)
         update.message.reply_text(str(pred))
 
-    def classified(self,bot,update):
-        classified=self.get_activity_by("all")
-        all_len=len(classified)
-        classified=[elem['sentiment'] for elem in classified if isinstance(elem['sentiment'],int)]
-        classified_len=len(classified)
-        neutral_len=len([elem for elem in classified if elem==0])
-        positive_len=len([elem for elem in classified if elem==1])
-        negative_len=len([elem for elem in classified if elem==-1])
+    def classified(self, bot, update):
+        classified = self.get_activity_by("all")
+        all_len = len(classified)
+        classified = [elem['sentiment'] for elem in classified if isinstance(elem['sentiment'], int)]
+        classified_len = len(classified)
+        neutral_len = len([elem for elem in classified if elem == 0])
+        positive_len = len([elem for elem in classified if elem == 1])
+        negative_len = len([elem for elem in classified if elem == -1])
 
-        to_send="Sono stati classificati "+str(classified_len)+" messaggi su "+str(all_len)+", di cui:\n" \
-                "Positivi "+str(positive_len)+" ("+str(math.ceil(positive_len/classified_len*100))+\
-                "%)\nNegativi "+str(negative_len)+" ("+str(math.ceil(negative_len/classified_len*100))+\
-                "%)\nNeutrali "+str(neutral_len) +" ("+str(math.ceil(neutral_len/classified_len*100))+"%)"
+        to_send = "Sono stati classificati " + str(classified_len) + " messaggi su " + str(all_len) + ", di cui:\n" \
+                                                                                                      "Positivi " + str(
+            positive_len) + " (" + str(math.ceil(positive_len / classified_len * 100)) + \
+                  "%)\nNegativi " + str(negative_len) + " (" + str(math.ceil(negative_len / classified_len * 100)) + \
+                  "%)\nNeutrali " + str(neutral_len) + " (" + str(math.ceil(neutral_len / classified_len * 100)) + "%)"
 
         update.message.reply_text(to_send)
-
-
 
     # ============================OTHER UTILS===========================================
 
