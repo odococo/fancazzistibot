@@ -29,6 +29,8 @@ class Analyzer:
     def predict(self, text):
         if not self.svc or self.forest:
             return None
+
+        print("predicting")
         text=[{'review':elem['content']} for elem in text]
         pred_svc=predict(self.svc,self.TRAIN_SET_LABLED,text,self.TEST_SET)
         pred_forest=predict(self.forest,self.TRAIN_SET_LABLED,text,self.TEST_SET)
