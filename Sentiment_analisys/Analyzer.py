@@ -27,14 +27,9 @@ class Analyzer:
 
 
     def predict(self, text):
-        if not self.svc or not self.forest:
-            return None
+
 
         print("predicting")
         text=[{'review':elem['content']} for elem in text]
         text=pd.DataFrame(text)
-        pred_svc=predict(self.svc,self.TRAIN_SET_LABLED,text,self.TEST_SET)
-        pred_forest=predict(self.forest,self.TRAIN_SET_LABLED,text,self.TEST_SET)
-
-        print(pred_svc)
-        print(pred_forest)
+        self.svc = SVC_classifier(self.TRAIN_SET_LABLED, text, self.TEST_SET)

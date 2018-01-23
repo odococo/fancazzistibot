@@ -38,6 +38,7 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
     if TO_PRED:
         # prediction
         pred_forest = svc.predict(xtest_vec)
+        print(pred_forest)
         scoring(pred_forest,test_set["sentiment"],"Test set",svc)
 
 
