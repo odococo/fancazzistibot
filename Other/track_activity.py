@@ -998,8 +998,8 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
     def classified(self, bot, update):
         classified = self.get_activity_by("all")
-        print([elem for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == 1])
-        print([elem for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == -1])
+        print([(elem['content'],elem['sentiment']) for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == 1])
+        print([(elem['content'],elem['sentiment']) for elem in classified if isinstance(elem['sentiment'], int) and elem['sentiment'] == -1])
 
         all_len = len(classified)
         classified = [elem['sentiment'] for elem in classified if isinstance(elem['sentiment'], int)]
