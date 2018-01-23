@@ -168,6 +168,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         unlabled=[elem for elem in classified if elem['sentiment']==0]
         self.analyzer=Analyzer(labled,unlabled)
         self.analyzer.train_models()
+        self.analyzer.predict([elem for elem in self.get_activity_by(24978334) if elem['type']=="text"])
 
 
 

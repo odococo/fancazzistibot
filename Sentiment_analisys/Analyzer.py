@@ -1,7 +1,7 @@
 import math
 import pandas as pd
 
-from Sentiment_analisys.Processing import SVC_classifier, forest_classifier
+from Sentiment_analisys.Processing import SVC_classifier, forest_classifier, predict
 
 
 class Analyzer:
@@ -26,8 +26,12 @@ class Analyzer:
         self.forest=forest_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
 
 
-    def predict(self, msg):
+    def predict(self, text):
         if not self.svc or self.forest:
             return None
+        text=[{'review':elem['content']} for elem in text]
+        pred_svc=predict(self.svc,self.TRAIN_SET_LABLED,text,self.TEST_SET)
+        pred_forest=predict(self.forest,self.TRAIN_SET_LABLED,text,self.TEST_SET)
 
-        self.svc.predict()
+        print(pred_svc)
+        print(pred_forest)

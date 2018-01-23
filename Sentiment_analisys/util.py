@@ -21,8 +21,6 @@ def scoring(prediction, true, what, clf):
     pred = str(np.mean(prediction == true) * 100)
     #printing score
     print("Score for "+what+" is: " + pred)
-    string = "Score is " + pred + " percent"
-    print(string)
 
 
 def polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set):

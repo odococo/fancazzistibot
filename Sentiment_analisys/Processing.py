@@ -48,6 +48,11 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
 
     return svc
 
+def predict(classfier, train_set_labled, train_set_unlabled, test_set):
+    # Data pre processing
+    xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
+    pred=classfier.predict(xtest_vec)
+    return pred
 
 # def multiple_classifier(*models):
 #     xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(TRAIN_DATASET_LABLED,
