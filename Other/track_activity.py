@@ -14,7 +14,7 @@ import emoji
 import telegram
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import BaseFilter, MessageHandler, CommandHandler, CallbackQueryHandler
-
+from statsmodels import robust
 
 # def track(type, id_bot, id_user, activity_content, date):
 #     execute("""INSERT INTO activity(
@@ -1050,9 +1050,9 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
             to_send="@"+ self.db.get_user(user_id)['username']+"\n"
             pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
             pred = numpy.array(pred)
-            mean = pred.mean()
-            std = pred.std()
-            to_send += "SVC - Mean: " + "{:,}".format(mean) + "\nstd:  " + "{:,}".format(std) + "\n \n"
+            mad=robust.mad(pred)
+            mean = numpy.median(pred)
+            to_send += "SVC - Median: " + "{:,}".format(mean) + "\nMad:  " + "{:,}".format(mad) + "\n \n"
             update.message.reply_text(to_send)
 
         #usa mediana e std con meadin absolute deviation
