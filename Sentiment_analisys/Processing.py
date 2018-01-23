@@ -60,19 +60,13 @@ def SGDC(train_set_labled, train_set_unlabled, test_set):
     start = time.time()
 
     # classifier initialization and fitting
-    #svc = LinearSVC(verbose=True, penalty="l2", loss="hinge",multi_class="ovr",C=1)
-    #svc = SVC(verbose=True, kernel="linear",decision_function_shape="ovr",C=1)
-    sgdc = SGDClassifier(loss="hinge", penalty="l2")
+
+    sgdc = SGDClassifier(loss="log", penalty="l2")
     sgdc = sgdc.fit(xtrain_vec, ytrain)
 
     end = time.time()
     tot = end - start
     print("fitting completed\nTotal time: " + str(int(tot / 60)) + "' " + str(int(tot % 60)) + "''\n")
-
-    if TO_PLOT:
-        #plot_svm_dataset(xtrain_vec, ytrain, svc)
-        # plot_svm_vect(svc)
-        plot_svm_decision_boundary(svc,xtest_vec,test_set["sentiment"])
 
 
     if TO_PRED:
