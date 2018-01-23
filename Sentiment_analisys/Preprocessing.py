@@ -120,13 +120,13 @@ class Preprocessing():
         clean_x_test = self.sentences_polishing(list(x_test_str), "XTest")
 
         # fitting train labled and unlabled into tfidf
-        vect = self.vectorizer.fit(clean_x_trainL + clean_x_trainU)
+        self.vectorizer = self.vectorizer.fit(clean_x_trainL + clean_x_trainU)
         # transforming train dataset
-        x_train_vec = vect.transform(clean_x_trainL).toarray()
-        print("Train dataset transformed, created dictionary with " + str(len(vect.vocabulary_)) + " words")
+        x_train_vec = self.vectorizer.transform(clean_x_trainL).toarray()
+        print("Train dataset transformed, created dictionary with " + str(len(self.vectorizer.vocabulary_)) + " words")
 
         # transforming test dataset
-        x_test_vec = vect.transform(clean_x_test).toarray()
+        x_test_vec = self.vectorizer.transform(clean_x_test).toarray()
 
         # taking time and printing result
         end = time.time()
@@ -138,7 +138,7 @@ class Preprocessing():
         # freeing memory
         gc.collect()
 
-        return x_train_vec, x_test_vec, vect
+        return x_train_vec, x_test_vec, self.vectorizer
 
     def dimensionality_reductionKB(self, xtrain, ytrain, xtest, names, percentage=15):
         print("Starting reduction...")

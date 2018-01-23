@@ -43,7 +43,6 @@ class Processing:
         if TO_PRED:
             # prediction
             pred_forest = self.svc.predict(xtest_vec)
-            print("=========PREDICTION=============\n"+str(pred_forest))
             scoring(pred_forest,test_set["sentiment"],"SVC",self.svc)
 
 
