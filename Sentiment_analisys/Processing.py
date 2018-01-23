@@ -11,7 +11,7 @@ from Sentiment_analisys.Data_analisys import *
 
 TO_PLOT = False
 TO_SAVE_WRONG=False
-TO_PRED=True
+TO_PRED=False
 
 def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
     # Data pre processing

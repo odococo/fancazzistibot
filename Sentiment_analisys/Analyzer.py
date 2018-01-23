@@ -1,7 +1,7 @@
 import math
 import pandas as pd
 
-from Sentiment_analisys.Processing import SVC_classifier, forest_classifier, predict
+from Sentiment_analisys.Processing import SVC_classifier, forest_classifier, predict, polish_tfidf_kbest
 
 
 class Analyzer:
@@ -28,8 +28,10 @@ class Analyzer:
 
     def predict(self, text):
 
-
         print("predicting")
         text=[{'review':elem['content']} for elem in text]
         text=pd.DataFrame(text)
-        self.svc = SVC_classifier(self.TRAIN_SET_LABLED, text, self.TEST_SET)
+        xtrain_vec, xtest_vec, ytrain, names=polish_tfidf_kbest(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,text)
+        pred=self.svc.predict(xtest_vec)
+        print(pred)
+        print(sum(pred)/len(pred))
