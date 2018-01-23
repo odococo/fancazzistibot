@@ -3,7 +3,7 @@ from os import system
 
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import SGDClassifier
+from sklearn.linear_model import SGDClassifier, SGDRegressor
 from sklearn.svm import LinearSVC, SVC
 
 from Sentiment_analisys.util import *
@@ -60,7 +60,35 @@ def SGDC(train_set_labled, train_set_unlabled, test_set):
 
     # classifier initialization and fitting
 
-    sgdc = SGDClassifier(loss="squared_loss", penalty="l2")
+    sgdc = SGDClassifier(loss="huber", penalty="l2")
+    sgdc = sgdc.fit(xtrain_vec, ytrain)
+
+    end = time.time()
+    tot = end - start
+    print("fitting completed\nTotal time: " + str(int(tot / 60)) + "' " + str(int(tot % 60)) + "''\n")
+
+
+    if TO_PRED:
+        # prediction
+        pred_forest = sgdc.predict(xtest_vec)
+        scoring(pred_forest,test_set["sentiment"],"SGDC",sgdc)
+
+
+
+
+    return sgdc
+
+
+def SGDR(train_set_labled, train_set_unlabled, test_set):
+    # Data pre processing
+    xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
+
+    print("Executing classification......")
+    start = time.time()
+
+    # classifier initialization and fitting
+
+    sgdc = SGDRegressor(loss="huber", penalty="l2")
     sgdc = sgdc.fit(xtrain_vec, ytrain)
 
     end = time.time()

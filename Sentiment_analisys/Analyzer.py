@@ -19,16 +19,18 @@ class Analyzer:
         self.svc=None
         self.forest=None
         self.sgdc=None
+        self.sgdr=None
 
 
     def train_models(self):
 
         self.svc=SVC_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
         self.sgdc=SGDC(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
-        #self.forest=forest_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
+        self.sgdr=SGDR(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
+        self.forest=forest_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
 
 
-    def predict(self,classifier, text):
+    def predict(self, classifier, text):
 
         print("predicting")
         text=[{'review':elem['content']} for elem in text]

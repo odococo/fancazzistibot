@@ -151,7 +151,7 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         #disp.add_handler(MessageHandler(filter, self.log_activity))
         disp.add_handler(CommandHandler("activity", self.activity_init, pass_user_data=True))
-        disp.add_handler(CommandHandler("getallpred", self.get_all_pred))
+        disp.add_handler(CommandHandler("getallpred", self.get_all_pred,pass_args=True))
         disp.add_handler(CommandHandler("punteggioact", self.visualizza_punteggio))
         disp.add_handler(CommandHandler("topunteggio", self.top_punteggio))
         disp.add_handler(
@@ -1039,7 +1039,11 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         update.message.reply_text(to_send)
 
-    def get_all_pred(self, bot, update):
+    def get_all_pred(self, bot, update,args):
+
+        which_class=0
+        if len(args)!=0:
+            which_class=int(args[0])
 
         all= self.get_activity_by("all")
         to_send=""
@@ -1048,13 +1052,23 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
 
         for user_id in users_id:
             to_send+="@"+ self.db.get_user(user_id)['username']+"\n"
-            pred=self.analyzer.predict(self.analyzer.sgdc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
+            if which_class==0:
+                pred=self.analyzer.predict(self.analyzer.sgdr,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
+            elif which_class==1:
+                pred=self.analyzer.predict(self.analyzer.sgdc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
+            elif which_class==2:
+                pred=self.analyzer.predict(self.analyzer.svc,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
+            else:
+                pred=self.analyzer.predict(self.analyzer.forest,[elem for elem in all if elem['type']=="text" and elem['id_user']==user_id])
+
+
+
             pred = numpy.array(pred)
             mean=pred.mean()
             std=pred.std()
             mad=robust.mad(pred)
             median = numpy.median(pred)
-            to_send += "SVC - Median: " + "{:,}".format(median) + "\nMad:  " + "{:,}".format(mad) + "\nMean: "+ "{:,}".format(mean)+"\nStd: "+ "{:,}".format(std)+" \n"
+            to_send += "SVC - Median: " + "{:,}".format(median) + "\nMad:  " + "{:,}".format(mad) + "\nMean: "+ "{:,}".format(mean)+"\nStd: "+ "{:,}".format(std)+" \n\n"
         update.message.reply_text(to_send)
 
         #usa mediana e std con meadin absolute deviation
