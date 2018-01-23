@@ -34,13 +34,13 @@ def polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set):
     print("Starting trasformation from string to vector...")
 
     # transforming to vector
-    xtrain_vec, xtest_vec, vect = string2vecTFIDF(xtrainL, xtrainU, xtest)
+    xtrain_vec, xtest_vec, vect = Preprocessing.string2vecTFIDF(xtrainL, xtrainU, xtest)
 
     feature_names = vect.get_feature_names()
 
     print("Executing chi2 test...")
 
-    reduced_xtrain_vec, reduced_xtest_vec = dimensionality_reductionKB(xtrain_vec, ytrain, xtest_vec,feature_names)
+    reduced_xtrain_vec, reduced_xtest_vec = Preprocessing.dimensionality_reductionKB(xtrain_vec, ytrain, xtest_vec,feature_names)
     return reduced_xtrain_vec, reduced_xtest_vec, ytrain, feature_names
 
 def grid(xtrain, ytrain):
