@@ -60,7 +60,7 @@ class Processing:
 
     def SGDC(self,train_set_labled, train_set_unlabled, test_set):
         # Data pre processing
-        xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
+        xtrain_vec, xtest_vec, ytrain, names = self.preprocessing.polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
 
         print("Executing classification......")
         start = time.time()
@@ -91,7 +91,7 @@ class Processing:
 
     def predict(self,classfier, train_set_labled, train_set_unlabled, test_set):
         # Data pre processing
-        xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
+        xtrain_vec, xtest_vec, ytrain, names =  self.preprocessing.polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
         pred=classfier.predict(xtest_vec)
         return pred
 
@@ -108,7 +108,7 @@ class Processing:
 
     def forest_classifier(self,train_set_labled, train_set_unlabled, test_set):
         # Data pre processing
-        xtrain_vec, xtest_vec, ytrain, names = polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
+        xtrain_vec, xtest_vec, ytrain, names =  self.preprocessing.polish_tfidf_kbest(train_set_labled, train_set_unlabled, test_set)
 
         print("Executing classification......")
         start = time.time()
