@@ -16,22 +16,23 @@ class Analyzer:
         self.TEST_SET=pd.DataFrame(data_list_labled[train_size+1:])
         self.TRAIN_SET_UNLABLED=pd.DataFrame(data_list_unlabled)
 
-
-        self.processing=Processing()
+        self.svc=None
+        self.forest=None
+        self.sgdc=None
 
 
     def train_models(self):
 
-        self.processing.SVC_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
-        self.processing.SGDC(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
+        self.svc=SVC_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
+        self.sgdc=SGDC(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
         #self.forest=forest_classifier(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,self.TEST_SET)
 
 
-    def predict(self, classfier, text):
-        # Data pre processing
+    def predict(self,classifier, text):
+
         print("predicting")
-        text = [{'review': elem['content']} for elem in text]
-        text = pd.DataFrame(text)
-        vect=self.processing.preprocessing.vectorizer.transform(text)
-        pred=classfier.predict(vect)
+        text=[{'review':elem['content']} for elem in text]
+        text=pd.DataFrame(text)
+        xtrain_vec, xtest_vec, ytrain, names=polish_tfidf_kbest(self.TRAIN_SET_LABLED,self.TRAIN_SET_UNLABLED,text)
+        pred=classifier.predict(xtest_vec)
         return pred
