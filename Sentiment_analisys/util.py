@@ -20,6 +20,7 @@ def scoring(prediction, true, what, clf):
     #using mean square error for calculating accurancy
     pred = str(np.mean(prediction == true) * 100)
     #printing score
+    print("=================SCORE=================")
     print("Score for "+what+" is: " + pred)
 
 

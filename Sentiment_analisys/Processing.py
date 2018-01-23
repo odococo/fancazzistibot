@@ -41,7 +41,7 @@ def SVC_classifier(train_set_labled, train_set_unlabled, test_set):
         # prediction
         pred_forest = svc.predict(xtest_vec)
         print("=========PREDICTION=============\n"+str(pred_forest))
-        scoring(pred_forest,test_set["sentiment"],"Test set",svc)
+        scoring(pred_forest,test_set["sentiment"],"SVC",svc)
 
 
 
@@ -78,8 +78,7 @@ def SGDC(train_set_labled, train_set_unlabled, test_set):
     if TO_PRED:
         # prediction
         pred_forest = sgdc.predict(xtest_vec)
-        print(pred_forest)
-        scoring(pred_forest,test_set["sentiment"],"Test set",sgdc)
+        scoring(pred_forest,test_set["sentiment"],"SGDC",sgdc)
 
 
 
