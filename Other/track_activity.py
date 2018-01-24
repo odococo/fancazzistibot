@@ -164,13 +164,13 @@ In questa sezione puoi visualizzare informazioni varie 📊 tra cui:
         disp.add_handler(CallbackQueryHandler(self.activity_altro, pattern="/activity_altro", pass_user_data=True))
         disp.add_handler(CallbackQueryHandler(self.classify, pattern="/activity_sentiment", pass_chat_data=True, ))
 
-        classified = self.get_activity_by("all")
-        classified=[{'review':elem['content'],'sentiment':elem['sentiment']} for elem in classified if isinstance(elem['sentiment'], int)]
-        labled=[elem for elem in classified if elem['sentiment']!=0]
-        unlabled=[elem for elem in classified if elem['sentiment']==0]
-        self.analyzer=Analyzer(labled,unlabled)
-        self.analyzer.train_models()
-        #self.analyzer.predict([elem for elem in self.get_activity_by(24978334) if elem['type']=="text"])
+        # classified = self.get_activity_by("all")
+        # classified=[{'review':elem['content'],'sentiment':elem['sentiment']} for elem in classified if isinstance(elem['sentiment'], int)]
+        # labled=[elem for elem in classified if elem['sentiment']!=0]
+        # unlabled=[elem for elem in classified if elem['sentiment']==0]
+        # self.analyzer=Analyzer(labled,unlabled)
+        # self.analyzer.train_models()
+        # self.analyzer.predict([elem for elem in self.get_activity_by(24978334) if elem['type']=="text"])
 
 
 

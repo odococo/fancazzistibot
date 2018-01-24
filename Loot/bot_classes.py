@@ -3573,7 +3573,7 @@ class Most_convinient_pc:
                     1: [MessageHandler(Filters.text, self.get_zaino, pass_user_data=True)],
 
                 },
-                fallbacks=[CommandHandler('Fine', self.annulla)]
+                fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
             )
 
         else:
@@ -3604,7 +3604,7 @@ class Most_convinient_pc:
         # se il messaggio è quello dello zaino
         if ">" in text:
             user_data['zaino'] += text
-            return 2
+            return 1
 
         # se l'utente vuole annullare
         elif "annulla" in text.lower():
