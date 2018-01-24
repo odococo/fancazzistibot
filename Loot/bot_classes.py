@@ -3565,7 +3565,7 @@ class Most_convinient_pc:
         disp = updater.dispatcher
 
         if not DEBUG:
-            eleg = self.db.elegible_loot_user(self.init_most_convenient)
+            eleg = self.db.elegible_loot_user(self.init_most_convenient, pass_user_data=True)
             # crea conversazione
             conversation = ConversationHandler(
                 [CommandHandler("checrafto", eleg)],
@@ -3579,7 +3579,7 @@ class Most_convinient_pc:
         else:
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("checrafto", self.init_most_convenient)],
+                [CommandHandler("checrafto", self.init_most_convenient, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.get_zaino, pass_user_data=True)],
 
@@ -3589,12 +3589,13 @@ class Most_convinient_pc:
 
         disp.add_handler(conversation)
 
-    def init_most_convenient(self, bot, update):
+    def init_most_convenient(self, bot, update, user_data):
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
         update.message.reply_text("Mandami il tuo zaino, un messaggio alla votla (fai passare un secondo tra"
                                   " i messaggi).\nClicca Fine quando hai finito altrimenti annulla",
                                   reply_markup=reply_markup)
+        user_data['zaino']=""
         return 1
 
     def get_zaino(self, bot, update, user_data):
