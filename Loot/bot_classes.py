@@ -3565,10 +3565,10 @@ class Most_convinient_pc:
         disp = updater.dispatcher
 
         if not DEBUG:
-            eleg = self.db.elegible_loot_user(self.init_most_convenient, pass_user_data=True)
+            eleg = self.db.elegible_loot_user(self.init_most_convenient)
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("checrafto", eleg)],
+                [CommandHandler("checrafto", eleg, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.get_zaino, pass_user_data=True)],
 
