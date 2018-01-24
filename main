@@ -295,11 +295,15 @@ def main():
 
     with codecs.open("craftables_file", encoding='utf-8') as file:
         rea = file.read()
-        oggetti = eval(rea.replace("null", "None"))
+        craftable = eval(rea.replace("null", "None"))
 
     with codecs.open("base_file", encoding='utf-8') as file:
         rea = file.read()
         base_items = eval(rea.replace("null", "None"))
+
+    with codecs.open("oggetti_dipendenze", encoding='utf-8') as file:
+        rea = file.read()
+        dipendenze = eval(rea.replace("null", "None"))
 
     os.chdir("../")
 
@@ -308,7 +312,7 @@ def main():
 
     Loot(updater, db)
     Boss(updater, db)
-    Cerca(updater, db, oggetti)
+    Cerca(updater, db, craftable)
     Compra(updater, db)
     # EasterEggs(updater)
     Top(updater, db)
@@ -321,6 +325,7 @@ def main():
     DiffSchede(updater, db)
     Alarm(updater,db)
     Track(updater,db,TrackFilter())
+    Most_convinient_pc(updater, db, dipendenze)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

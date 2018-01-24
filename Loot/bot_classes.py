@@ -1,3 +1,4 @@
+import copy
 import inspect
 import math
 import operator
@@ -11,6 +12,7 @@ from datetime import timedelta, datetime
 
 import emoji
 import matplotlib as mpl
+from scipy.optimize import minimize
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
     CallbackQueryHandler
@@ -116,16 +118,16 @@ class Loot:
             user_data['stima_flag'] = True
             return 1
         elif "negozi" in param:
-            to_send_list=[]
+            to_send_list = []
             to_send = "/negozio "
-            idx=0
+            idx = 0
             for elem in user_data['quantita']:
                 to_send += elem[1] + "::" + elem[0] + ","
-                idx+=1
-                if idx==9:
+                idx += 1
+                if idx == 9:
                     to_send_list.append(to_send.rstrip(","))
-                    to_send="/negozio "
-                    idx=0
+                    to_send = "/negozio "
+                    idx = 0
 
             to_send = to_send.rstrip(",")
             to_send_list.append(to_send)
@@ -194,7 +196,7 @@ class Loot:
             if (len(top_ten) > 3):
                 if not len(top_ten) <= 10: top_ten = top_ten[:9]
 
-                to_print = "I "+str(len(top_ten))+" oggetti piu costosi sono:\n"
+                to_print = "I " + str(len(top_ten)) + " oggetti piu costosi sono:\n"
                 for elem in top_ten:
                     to_print += "<b>" + elem[0] + "</b> : " + str(elem[3]) + "§ "
                     if int(elem[2]) != 1:
@@ -510,8 +512,6 @@ class Boss:
 
         user_data['lista_boss'] = self.cerca_boss(update.message.text)
 
-
-
         # genera e invia risposta
 
         if self.db.is_loot_admin(update.message.from_user.id):
@@ -520,10 +520,12 @@ class Boss:
                 reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],
                                                    one_time_keyboard=True)
 
-                update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato",reply_markup=reply_markup)
+                update.message.reply_text("Hai gia mandato questo messaggio... il database non verrà aggiornato",
+                                          reply_markup=reply_markup)
                 return 1
 
-            reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],one_time_keyboard=True)
+            reply_markup = ReplyKeyboardMarkup([["Phoenix", "Titan"], ["Sveglia", "Annulla"], ["Visualizza"]],
+                                               one_time_keyboard=True)
             update.message.reply_text(
                 "Scegli un boss per salvare il punteggio, clicca sveglia per mandare un messaggio a chi non ha attaccato, Visualizza per vedere le info senza salvare i punteggi, oppure annulla.",
                 reply_markup=reply_markup)
@@ -531,7 +533,7 @@ class Boss:
             reply_markup = ReplyKeyboardMarkup([["Visualizza"]],
                                                one_time_keyboard=True)
             update.message.reply_text("Clicca su visualizza per proseguire",
-                reply_markup=reply_markup)
+                                      reply_markup=reply_markup)
         return 1
 
     @catch_exception
@@ -1548,7 +1550,7 @@ class Top:
             disp.add_handler(RegexHandler("^Giocat", add_player_decor))
             disp.add_handler(CommandHandler("top", top_command_decor))
 
-        disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top",pass_job_queue=True))
+        disp.add_handler(CallbackQueryHandler(self.get_top, pattern="/top", pass_job_queue=True))
 
     @catch_exception
     def add_player(self, bot, update):
@@ -1635,8 +1637,9 @@ class Top:
 
         )
         # starta un timer per eliminare il messaggio dopo un ora
-        job_queue.run_once(self.delete_message, timedelta(hours=1), context={'chat_id':update.callback_query.message.chat_id,
-                                                                     'message_id':update.callback_query.message.message_id})
+        job_queue.run_once(self.delete_message, timedelta(hours=1),
+                           context={'chat_id': update.callback_query.message.chat_id,
+                                    'message_id': update.callback_query.message.message_id})
 
     def delete_message(self, bot, job):
         try:
@@ -1645,7 +1648,7 @@ class Top:
                 message_id=job.context['message_id']
             )
         finally:
-            return 
+            return
 
     def pretty_user(self, user, idx, sort_key):
         """Formatta messaggio di user da inviare
@@ -1831,12 +1834,15 @@ class Help:
         user.append("/top - Ti permette di visualizzare la classifica dei top player in base a [pc totali, pc "
                     "settimanali, edosoldi, abilità, rango]")
         user.append("/teams - Visualizza i pc dei team presenti nella Hall of Fame e il relativo incremento")
-        user.append("/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
+        user.append(
+            "/mancanti - Mostra tutti gli oggetti nel tuo zaino (non craftabili) che hanno una quantità inferiore a quella specificata")
         user.append("/diffschede - Visualizza la differenza in pc tra due schede 'Dettaglio Membri' in 'Team'")
-        user.append("/timerset hh:mm msg - setta un timer tra <b>hh</b> ore e <b>mm</b> minuti (si possono anche specificare solo le ore) e allo scadere del tempo invia il messaggio <b>msg</b>")
+        user.append(
+            "/timerset hh:mm msg - setta un timer tra <b>hh</b> ore e <b>mm</b> minuti (si possono anche specificare solo le ore) e allo scadere del tempo invia il messaggio <b>msg</b>")
         user.append("/timerunset - Rimuove il timer precedentemente settato")
         user.append("/activity - Mostra varie informazioni del gruppo Fancazzisti")
-        user.append("/punteggioact - Visualizza il tuo punteggio, con punteggio maggiore sblocchi diverse funzionalità di activity")
+        user.append(
+            "/punteggioact - Visualizza il tuo punteggio, con punteggio maggiore sblocchi diverse funzionalità di activity")
         user.append("/classify - Permette di classificare i vari messaggi")
         user.append("/topunteggio - visualizza i punteggi della classifica di activity")
 
@@ -2502,19 +2508,20 @@ Inoltre è presente la voce <b>Giorni rimanenti</b> che specifica il numero di g
             if res_dict:
                 to_send = self.pretty_increment(res_dict, "<b>Scalata mensile</b>:\n", scala=True)
 
-        elif param =="rimanenti":
-            res_dict=self.get_temp_remaning(self.data_dict)
+        elif param == "rimanenti":
+            res_dict = self.get_temp_remaning(self.data_dict)
             if res_dict:
                 sorted_x = sorted(res_dict.items(), key=operator.itemgetter(1), reverse=True)
 
                 idx = 1
                 to_send = ""
                 for elem in sorted_x:
-                    if elem[1]<0:
+                    if elem[1] < 0:
                         to_send += str(idx) + ") <b>" + elem[0] + "</b> non superabile\n"
 
                     else:
-                        to_send += str(idx) + ") <b>" + elem[0] + "</b> superabile in <b>" +str(elem[1])+"</b> giorni\n"
+                        to_send += str(idx) + ") <b>" + elem[0] + "</b> superabile in <b>" + str(
+                            elem[1]) + "</b> giorni\n"
                     idx += 1
 
 
@@ -2962,9 +2969,9 @@ Inoltre è presente la voce <b>Giorni rimanenti</b> che specifica il numero di g
 
         for key in filter_dict.keys():
             val = filter_dict[key]
-            tot_diff=val[0]-team[0]
-            inc_diff=team[1]-val[1]
-            restante = math.ceil(tot_diff/inc_diff)
+            tot_diff = val[0] - team[0]
+            inc_diff = team[1] - val[1]
+            restante = math.ceil(tot_diff / inc_diff)
             res_dict[key] = (restante)
 
         return res_dict
@@ -3462,30 +3469,29 @@ class Alarm:
 
         if DEBUG:
             disp.add_handler(CommandHandler("timerset", self.set_timer,
-                                          pass_args=True,
-                                          pass_job_queue=True,
-                                          pass_chat_data=True))
+                                            pass_args=True,
+                                            pass_job_queue=True,
+                                            pass_chat_data=True))
             disp.add_handler(CommandHandler("timerunset", self.unset, pass_chat_data=True))
         else:
             # crea conversazione
-            set_el=db.elegible_loot_user(self.set_timer)
-            unset_el=db.elegible_loot_user(self.unset)
+            set_el = db.elegible_loot_user(self.set_timer)
+            unset_el = db.elegible_loot_user(self.unset)
             disp.add_handler(CommandHandler("timerset", set_el,
                                             pass_args=True,
                                             pass_job_queue=True,
                                             pass_chat_data=True))
             disp.add_handler(CommandHandler("timerunset", unset_el, pass_chat_data=True))
 
-
-    def alarm(self,bot, job):
+    def alarm(self, bot, job):
         """Send the alarm message."""
-        bot.send_message(job.context['chat_id'], text="<b>TIMER SCADUTO</b>\n"+job.context['msg'],parse_mode="HTML")
+        bot.send_message(job.context['chat_id'], text="<b>TIMER SCADUTO</b>\n" + job.context['msg'], parse_mode="HTML")
 
     @catch_exception
     def set_timer(self, bot, update, args, job_queue, chat_data):
         """Add a job to the queue."""
         chat_id = update.message.chat_id
-        if len(args)!=2:
+        if len(args) != 2:
             update.message.reply_text("Non hai inviato i parametri corretti!\n"
                                       "/timerset hh:mm msg")
             return
@@ -3493,28 +3499,29 @@ class Alarm:
             # args[0] should contain the time for the timer in seconds
             print(args)
             if ":" in args[0]:
-                ore=int(args[0].split(":")[0])
+                ore = int(args[0].split(":")[0])
                 minuti = int(args[0].split(":")[1])
             else:
-                ore=int(args[0])
-                minuti=0
-            when=datetime.now() + timedelta(hours=ore,minutes=minuti)
-            chat_data['when']=when
+                ore = int(args[0])
+                minuti = 0
+            when = datetime.now() + timedelta(hours=ore, minutes=minuti)
+            chat_data['when'] = when
 
-            msg=args[1]
-            context_dict={'chat_id':chat_id, 'msg':msg}
+            msg = args[1]
+            context_dict = {'chat_id': chat_id, 'msg': msg}
             # Add job to queue
             job = job_queue.run_once(self.alarm, when, context=context_dict)
             chat_data['job'] = job
-            ora,data=pretty_time_date(when)
-            to_send="Hai settato il timer correttamente!\nIl timer scadrà alle <b>"+ora+"</b> del <i>"+data+"</i>"
-            update.message.reply_text(to_send,parse_mode="HTML")
+            ora, data = pretty_time_date(when)
+            to_send = "Hai settato il timer correttamente!\nIl timer scadrà alle <b>" + ora + "</b> del <i>" + data + "</i>"
+            update.message.reply_text(to_send, parse_mode="HTML")
 
         except (IndexError, ValueError) as e:
             update.message.reply_text(str(e))
             update.message.reply_text("Non hai inviato i parametri corretti!\n"
-           
+
                                       "/timerset hh:mm msg")
+
     @catch_exception
     def unset(self, bot, update, chat_data):
         """Remove the job if the user changed their mind."""
@@ -3526,18 +3533,192 @@ class Alarm:
         job.schedule_removal()
         del chat_data['job']
 
-        rimanente=chat_data['when']-datetime.now()
+        rimanente = chat_data['when'] - datetime.now()
         del chat_data['when']
-        giorni=rimanente.days
-        ore=abs(giorni*24 -divmod(rimanente.days * 86400 + rimanente.seconds, 3600)[0])
-        minuti=abs(ore*60 -divmod(rimanente.seconds, 60)[0])
+        giorni = rimanente.days
+        ore = abs(giorni * 24 - divmod(rimanente.days * 86400 + rimanente.seconds, 3600)[0])
+        minuti = abs(ore * 60 - divmod(rimanente.seconds, 60)[0])
 
-        to_send="Hai eliminato il timer a "
-        if giorni: to_send+=str(giorni)+" giorni, "
-        if ore: to_send+=str(ore)+" ore , "
-        if minuti: to_send+=str(minuti)+" minuti, "
-        if minuti or ore or giorni: to_send+=" dalla fine"
-        else: to_send+=" qualche secondo dalla fine"
+        to_send = "Hai eliminato il timer a "
+        if giorni: to_send += str(giorni) + " giorni, "
+        if ore: to_send += str(ore) + " ore , "
+        if minuti: to_send += str(minuti) + " minuti, "
+        if minuti or ore or giorni:
+            to_send += " dalla fine"
+        else:
+            to_send += " qualche secondo dalla fine"
 
         update.message.reply_text(to_send)
+
+
+class Most_convinient_pc:
+
+    def __init__(self, updater, db, dipenzende):
+        self.db = db
+        self.dipendenze = dipenzende
+
+        self.item_perc_to_consume=0.2 #20%
+        self.max_missing_items=2
+
+
+
+        disp = updater.dispatcher
+
+        if not DEBUG:
+            eleg = self.db.elegible_loot_user(self.init_most_convenient)
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("checrafto", eleg)],
+                states={
+                    1: [MessageHandler(Filters.text, self.get_zaino, pass_user_data=True)],
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla)]
+            )
+
+        else:
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("checrafto", self.init_most_convenient)],
+                states={
+                    1: [MessageHandler(Filters.text, self.get_zaino, pass_user_data=True)],
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
+            )
+
+        disp.add_handler(conversation)
+
+    def init_most_convenient(self, bot, update):
+        reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
+
+        update.message.reply_text("Mandami il tuo zaino, un messaggio alla votla (fai passare un secondo tra"
+                                  " i messaggi).\nClicca Fine quando hai finito altrimenti annulla",
+                                  reply_markup=reply_markup)
+        return 1
+
+    def get_zaino(self, bot, update, user_data):
+
+        text = update.message.text
+
+        # se il messaggio è quello dello zaino
+        if ">" in text:
+            user_data['zaino'] += text
+            return 2
+
+        # se l'utente vuole annullare
+        elif "annulla" in text.lower():
+            return self.annulla(bot, update, user_data, "Annullo")
+
+        # se ha finito di mandare lo zaino
+        elif "fine" in text.lower():
+            update.message.reply_text("Calcolo oggetti mancanti...")
+            # se lo zaino è vuoto annulla
+            if not user_data['zaino']:
+                return self.annulla(bot, update, user_data, "Non hai inviato mesaggi zaino")
+
+            res = self.get_res(user_data['zaino'])
+
+            return self.annulla(bot, update, user_data, "Fine")
+
+        # non ho capito cosa ha mandato e quindi annullo
+        else:
+            return self.annulla(bot, update, user_data, "Non ho capito...annullo")
+
+    def annulla(self, bot, update, user_data, msg=""):
+        """Annulla la conversazione e inizzializza lo user data"""
+        if msg:
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+
+        if "quantita" in user_data.keys():
+            user_data['quantita'] = []
+
+        if "zaino" in user_data.keys():
+            user_data['zaino'] = ""
+
+        if 'rarita' in user_data.keys():
+            user_data['rarita'] = []
+
+        return ConversationHandler.END
+
+    # crea la lista di craft  totale (quella con le dipendenze dagli altri oggetti)
+    # converti lo zaino in id
+    # prendi tutti gli oggetti che puo craftare (lasciando un margine di massimo 2 oggetti mancanti)
+    # rimuovi gli X, e quelli che usano i materiali finali
+    # ordinali per pc
+    # inizzializza una lista di oggetti (dove salvi quelli che hai scelto di craftare)
+    # prendi un oggetto random nel 40% di quelli con piu pc e aggiugilo alla lista
+    # esegui un loop per consumare il 20% dello zaino, partendo dagli oggetti con piu pc
+    # dal secondo in poi verifica che non ci siano piu di tot ripetizioni dello stesso id
+    # decidi il tot in base alla minima ripetizione degli oggetti C NC R
+    # termina il loop se ci sono piu di tot ripetizioni dello stesso id oppure se ho consumato il 20% dello zaino
+    # invia la lista all'utente
+
+    def get_res(self, zaino):
+        print("zaino")
+
+        # creo il regex
+        regex = re.compile(r"> (.*) \(([0-9]+)")
+        # cerco gli oggetti
+        all = re.findall(regex, zaino)
+
+        #una lista contenente tutti gli id degli oggetti ripetutti per la quantità trovata
+        zaino_id=[]
+
+        #converto gli oggetti in id
+        for elem in all:
+            oggetto = next((item for item in self.dipendenze if item["name"] == elem[0]))
+            zaino_id+=[oggetto['id']]*elem[0]
+
+        print(zaino_id)
+
+        #copia la lista dei craft
+        possible_crafts=copy.deepcopy(self.dipendenze)
+        print("Possible craft len 1 "+str(len(possible_crafts)))
+
+        #rimuovi gli eleemnti che non sono craftabili
+        possible_crafts=[elem for elem in possible_crafts if elem['craftable']]
+        print("Possible craft len 2 "+str(len(possible_crafts)))
+
+        #rimuovi le rarità X
+        possible_crafts=[elem for elem in possible_crafts if elem['rarity']!='X']
+        print("Possible craft len 3 "+str(len(possible_crafts)))
+
+        #rimuovi i craft dipendenti dai materiali finali
+        possible_crafts=[elem for elem in possible_crafts if [635, 636, 637] not in elem['dipendenze']]
+        print("Possible craft len 4 "+str(len(possible_crafts)))
+
+
+        #rimuovi i craft che non possono essere fatti dall'user
+        c1=Counter(zaino_id)
+        for elem in possible_crafts:
+            c2=Counter(elem['dipendenze'])
+            diff=c2-c1
+            if len(list(diff.elements()))>self.max_missing_items:
+                possible_crafts.pop(elem)
+
+        print("Possible craft len 5 " + str(len(possible_crafts)))
+
+        #ordina la lista per pc
+        #possible_crafts = sorted(possible_crafts, key=operator.itemgetter('craft_pnt'), reverse=True)
+
+        craft_vector=[(elem['id'],elem['dipendenze'],elem['craft_points']) for elem in possible_crafts]
+        cons={
+
+        }
+        max_item_to_consume=math.floor(len(zaino_id)*self.item_perc_to_consume)
+
+        res = minimize(self.cost_function, craft_vector, args=(max_item_to_consume,),
+        constraints = cons,options = {'disp': True})
+
+
+        print(res)
+
+    def cost_function(self, craft_vector, max_item_to_consume, sign=-1.0):
+        print(2)
+
+
+
+
+
 

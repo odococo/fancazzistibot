@@ -99,7 +99,7 @@ def SGDR(train_set_labled, train_set_unlabled, test_set):
     if TO_PRED:
         # prediction
         pred_forest = sgdc.predict(xtest_vec)
-        scoring(pred_forest,test_set["sentiment"],"SGDC",sgdc)
+        scoring(pred_forest,test_set["sentiment"],"SGDR",sgdc)
 
 
 
@@ -138,20 +138,14 @@ def forest_classifier(train_set_labled, train_set_unlabled, test_set):
     tot = end - start
     print("fitting completed\nTotal time: " + str(int(tot / 60)) + "' " + str(int(tot % 60)) + "''\n")
 
-    if TO_PLOT:
-        #plot_forest_vect(forest)
-        plot_trees(forest.estimators_,names)
-        #plot_top_forest(forest, names, 20)
+
 
     if TO_PRED:
         # prediction
         pred_forest = forest.predict(xtest_vec)
-        scoring(pred_forest,test_set["sentiment"],"Test Set",forest)
+        scoring(pred_forest,test_set["sentiment"],"forest",forest)
 
 
 
-
-    if TO_SAVE_WRONG:
-        save_wrong_answer(pred_forest,names,xtest_vec)
 
     return forest

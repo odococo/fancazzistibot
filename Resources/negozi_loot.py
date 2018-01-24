@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+import codecs
 
 from Other import utils
 import re
@@ -101,7 +102,67 @@ def update():
     set_prices()
 
 
-dicti=use_api(API+TOKEN+TEAMS)
-print(dicti)
-for elem in dicti:
-    print(use_api(API+TOKEN+PLAYERS+elem['nickname']))
+def create_complete_item_file(file_name):
+    with open(file_name,"w+") as file:
+        file.writelines(str(use_api(ITEMS)))
+
+
+def get_dipendenze():
+
+
+    idx=0
+    while True:
+        with codecs.open("oggetti_dipendenze", encoding='utf-8') as file:
+            rea = file.read()
+            oggetti = eval(rea.replace("null", "None"))
+
+        try:
+            oggetto=oggetti[idx]
+            print(str(idx)+"/"+str(len(oggetti)))
+            idx+=1
+
+            if oggetto['craftable'] and 'dipendenze' not in oggetto.keys():
+                dipendenze=use_api(RICETTE+str(oggetto['id'])+"/needed")
+                oggetto['dipendenze']=oggetti_inner(dipendenze)
+                with open("oggetti_dipendenze","w+") as file:
+                    file.writelines(str(oggetti))
+        except IndexError:
+            break
+
+def oggetti_inner(dipendenze_list):
+
+    res=[]
+
+    #aggiungi lettura deigli oggetti aggiornata
+    with codecs.open("oggetti_dipendenze", encoding='utf-8') as file:
+        rea = file.read()
+        oggetti = eval(rea.replace("null", "None"))
+
+    for oggetto in dipendenze_list:
+        oggetto = next((item for item in oggetti if item["id"] == oggetto['id']))
+
+        if oggetto['craftable'] and "dipendenze" not in oggetto.keys():
+            dipendenze=use_api(RICETTE+str(oggetto['id'])+"/needed")
+            oggetto['dipendenze']=oggetti_inner(dipendenze)
+
+            oggetti[oggetti.index(oggetto)]=oggetto
+            with open("oggetti_dipendenze", "w+") as file:
+                file.writelines(str(oggetti))
+
+        elif "dipendenze" in oggetto.keys():
+            res+=oggetto['dipendenze']
+            #res.append(oggetto['id'])
+
+
+        else:
+            res.append(oggetto['id'])
+
+    return res
+
+
+
+
+
+
+create_complete_item_file("oggetti_dipendenze")
+get_dipendenze()
