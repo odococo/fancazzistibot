@@ -3669,7 +3669,7 @@ class Most_convinient_pc:
         #converto gli oggetti in id
         for elem in all:
             oggetto = next((item for item in self.dipendenze if item["name"] == elem[0]))
-            zaino_id+=[oggetto['id']]*elem[0]
+            zaino_id+=[oggetto['id']]*elem[1]
 
         print(zaino_id)
 
