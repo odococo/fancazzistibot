@@ -3482,6 +3482,7 @@ class Negozi:
         to_send = "/negozio "
         idx = 0
         for elem in perc_all:
+            if not elem[1]: continue
             to_send +=f"{elem[0]}::{int(elem[1])},"
             idx += 1
             if idx == 9:
