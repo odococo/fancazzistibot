@@ -3482,7 +3482,7 @@ class Negozi:
         to_send = "/negozio "
         idx = 0
         for elem in perc_all:
-            to_send +=f"{elem[0]}::{int(elem[1])}"
+            to_send +=f"{elem[0]}::{int(elem[1])},"
             idx += 1
             if idx == 9:
                 to_send_list.append(to_send.rstrip(","))
