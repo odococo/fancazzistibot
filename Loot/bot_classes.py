@@ -3473,10 +3473,33 @@ class Negozi:
         # creo il regex
         regex = re.compile(r"> (.*) \(([0-9]+)")
         # cerco gli oggetti
-        all = re.findall(regex, user_data['zaino'])
+        all_c=re.findall(regex,user_data['zaino'].split("Comuni")[-1])
+        all_nc=re.findall(regex,user_data['zaino'].split("Non Comuni")[-1].split("\n")[0])
+        all_r=re.findall(regex,user_data['zaino'].split("Rari")[-1].split("\n")[0])
+        all_ur=re.findall(regex,user_data['zaino'].split("Ultra Rari")[-1].split("\n")[0])
+        all_l=re.findall(regex,user_data['zaino'].split("Leggendari")[-1].split("\n")[0])
+        all_e=re.findall(regex,user_data['zaino'].split("Epici")[-1].split("\n")[0])
+
+        # filtro per quantita e rarità
+        filter_list_C = [elem for elem in all_c if
+                      elem[1]<= user_data['quantita'][0]]
+        filter_list_NC = [elem for elem in all_nc if
+                      elem[1]<= user_data['quantita'][0]]
+        filter_list_R = [elem for elem in all_r if
+                      elem[1]<= user_data['quantita'][0]]
+        filter_list_UR = [elem for elem in all_ur if
+                      elem[1]<= user_data['quantita'][0]]
+        filter_list_L = [elem for elem in all_l if
+                      elem[1]<= user_data['quantita'][0]]
+        filter_list_E = [elem for elem in all_e if
+                      elem[1]<= user_data['quantita'][0]]
+
+
+        all_list=filter_list_C+filter_list_NC+filter_list_R+filter_list_UR+filter_list_L+filter_list_E
+
 
         # nomi dgli oggetti trovati nello zaino
-        perc_all = [(elem[0],math.floor(int(elem[1])/user_data['perc'])) for elem in all]
+        perc_all = [(elem[0],math.floor(int(elem[1])/user_data['perc'])) for elem in all_list]
 
         to_send_list = []
         to_send = "/negozio "
