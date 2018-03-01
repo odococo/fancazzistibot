@@ -3473,26 +3473,27 @@ class Negozi:
         # creo il regex
         regex = re.compile(r"> (.*) \(([0-9]+)")
         # cerco gli oggetti
-        all_c=re.findall(regex,user_data['zaino'].split("Comuni")[-1])
-        all_nc=re.findall(regex,user_data['zaino'].split("Non Comuni")[-1].split("\n")[0])
-        all_r=re.findall(regex,user_data['zaino'].split("Rari")[-1].split("\n")[0])
-        all_ur=re.findall(regex,user_data['zaino'].split("Ultra Rari")[-1].split("\n")[0])
-        all_l=re.findall(regex,user_data['zaino'].split("Leggendari")[-1].split("\n")[0])
-        all_e=re.findall(regex,user_data['zaino'].split("Epici")[-1].split("\n")[0])
+
+        all_c = re.findall(regex, user_data['zaino'].split("Comuni:")[-1])
+        all_nc = re.findall(regex, user_data['zaino'].split("Non Comuni:")[-1].split("\n\n")[0])
+        all_r = re.findall(regex, user_data['zaino'].split("Rari:")[-1].split("\n\n")[0])
+        all_ur = re.findall(regex, user_data['zaino'].split("Ultra Rari:")[-1].split("\n\n")[0])
+        all_l = re.findall(regex, user_data['zaino'].split("Leggendari:")[-1].split("\n\n")[0])
+        all_e = re.findall(regex, user_data['zaino'].split("Epici:")[-1].split("\n\n")[0])
 
         # filtro per quantita e rarità
         filter_list_C = [elem for elem in all_c if
-                      elem[1]>= user_data['quantita'][0]]
+                         int(elem[1]) >= user_data['quantita'][0] and not user_data['quantita'][0]]
         filter_list_NC = [elem for elem in all_nc if
-                      elem[1]>= user_data['quantita'][1]]
+                          int(elem[1]) >= user_data['quantita'][1] and not user_data['quantita'][1]]
         filter_list_R = [elem for elem in all_r if
-                      elem[1]>= user_data['quantita'][2]]
+                         int(elem[1]) >= user_data['quantita'][2] and not user_data['quantita'][2]]
         filter_list_UR = [elem for elem in all_ur if
-                      elem[1]>= user_data['quantita'][3]]
+                          int(elem[1]) >= user_data['quantita'][3] and not user_data['quantita'][3]]
         filter_list_L = [elem for elem in all_l if
-                      elem[1]>= user_data['quantita'][4]]
+                         int(elem[1]) >= user_data['quantita'][4] and not user_data['quantita'][4]]
         filter_list_E = [elem for elem in all_e if
-                      elem[1]>= user_data['quantita'][5]]
+                         int(elem[1]) >= user_data['quantita'][5] and not user_data['quantita'][5]]
 
 
         all_list=filter_list_C+filter_list_NC+filter_list_R+filter_list_UR+filter_list_L+filter_list_E
