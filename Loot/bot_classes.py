@@ -3493,7 +3493,7 @@ class Negozi:
         to_send_list.append(to_send)
 
 
-        return to_send
+        return to_send_list
 
     def annulla(self, bot, update, user_data, msg=""):
         """Annulla la conversazione e inizzializza lo user data"""
