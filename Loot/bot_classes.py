@@ -3482,17 +3482,17 @@ class Negozi:
 
         # filtro per quantita e rarità
         filter_list_C = [elem for elem in all_c if
-                      elem[1]<= user_data['quantita'][0]]
+                      elem[1]>= user_data['quantita'][0]]
         filter_list_NC = [elem for elem in all_nc if
-                      elem[1]<= user_data['quantita'][0]]
+                      elem[1]>= user_data['quantita'][1]]
         filter_list_R = [elem for elem in all_r if
-                      elem[1]<= user_data['quantita'][0]]
+                      elem[1]>= user_data['quantita'][2]]
         filter_list_UR = [elem for elem in all_ur if
-                      elem[1]<= user_data['quantita'][0]]
+                      elem[1]>= user_data['quantita'][3]]
         filter_list_L = [elem for elem in all_l if
-                      elem[1]<= user_data['quantita'][0]]
+                      elem[1]>= user_data['quantita'][4]]
         filter_list_E = [elem for elem in all_e if
-                      elem[1]<= user_data['quantita'][0]]
+                      elem[1]>= user_data['quantita'][5]]
 
 
         all_list=filter_list_C+filter_list_NC+filter_list_R+filter_list_UR+filter_list_L+filter_list_E
