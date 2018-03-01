@@ -3395,7 +3395,9 @@ class Negozi:
         to_send = "Verranno usate le rarità [C NC R UR L E] con le rispettive quanità minime ["
         for elem in quantita_num:
             to_send += str(elem) + " "
-        to_send += "]\nOra inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>"
+        to_send += "]\nOra inviami la percentuale di oggetti che vuoi usare.\nPer esempio scegliendo 10 userai il " \
+                   "10% degli oggetti (per ogni rarità) del tuo zaino.\n" \
+                   "Ricorda di inviare un numero compreso da 0 a 100"
 
         update.message.reply_text(to_send, parse_mode="HTML")
 
