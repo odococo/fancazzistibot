@@ -3456,7 +3456,7 @@ class Negozi:
 
 
             for elem in to_send_list:
-                bot.sendMessage(update.callback_query.message.chat.id, elem)
+                bot.sendMessage(update.message.chat.id, elem)
 
             return self.annulla(bot, update, user_data, "Fine")
 
