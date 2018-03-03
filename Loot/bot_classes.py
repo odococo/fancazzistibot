@@ -3801,7 +3801,7 @@ class NegoziPlus:
         except ValueError:
             return self.annulla(bot, update, user_data, msg="Non hai inviato un numero corretto!")
 
-        res_list = [(oggetto, quantita, math.ceil(prezzo - prezzo * perc/100)) for
+        res_list = [(oggetto, quantita, math.ceil((prezzo - prezzo * perc/100)/10)*10) for
                     (oggetto, quantita, prezzo) in user_data['all_list']]
 
         to_send_list = []
