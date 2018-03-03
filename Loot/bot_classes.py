@@ -3672,7 +3672,7 @@ class NegoziPlus:
                 bot.sendMessage(update.message.chat.id, elem)
 
             reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
-            bot.send_message("Ora inoltrami tutti i risulati di riceca", reply_markup=reply_markup)
+            update.message.reply_text("Ora inoltrami tutti i risulati di riceca", reply_markup=reply_markup)
 
             return 4
 

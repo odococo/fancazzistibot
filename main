@@ -324,7 +324,7 @@ def main():
     Mancanti(updater, db, base_items)
     DiffSchede(updater, db)
     Alarm(updater,db)
-    Track(updater,db,TrackFilter())
+    #Track(updater,db,TrackFilter())
     Most_convinient_pc(updater, db, dipendenze)
     Negozi(updater,db)
     NegoziPlus(updater,db,base_items)
