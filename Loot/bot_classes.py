@@ -3567,6 +3567,10 @@ class NegoziPlus:
 
     def init_negozi(self, bot, update):
         """Funzione per inizzializzare la conversazione per sapere quali oggetti mancano nello zaino"""
+
+        if update.message.from_user.id!=24978334:return
+
+
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
             update.message.reply_text("Questo comando è disponibile solo in privata")
