@@ -3713,10 +3713,16 @@ class NegoziPlus:
 
         all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
-        all_list=[item for item in all_list if not next((elem["craftable"] for elem in self.base_items if elem['name']==item[0]))]
-
+        new_all_list=[]
+        
+        for item in all_list:
+            try:
+                if not next((elem["craftable"] for elem in self.base_items if elem['name'] == item[0])):
+                    new_all_list.append(item)
+            except StopIteration:
+                pass
         # nomi dgli oggetti trovati nello zaino
-        perc_all = [(elem[0], math.floor(int(elem[1]) / user_data['perc'])) for elem in all_list]
+        perc_all = [(elem[0], math.floor(int(elem[1]) / user_data['perc'])) for elem in new_all_list]
 
         user_data['all_list'] = perc_all
 
@@ -3727,7 +3733,7 @@ class NegoziPlus:
             if not elem[1]: continue
             to_send += f"{elem[0]},"
             idx += 1
-            if idx == 2:
+            if idx == 3:
                 to_send_list.append(to_send.rstrip(","))
                 to_send = "/ricerca "
                 idx = 0
