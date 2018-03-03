@@ -162,12 +162,6 @@ Crediti: @brandimax @Odococo""")
             "Seleziona il numero di facce:",
             reply_markup=reply_markup)
 
-    def Uhelplink(self):
-        """- Ti conduce alla pagina in cui sono scritte le operazioni del bot in forma completa"""
-        # todo: usa messageEntity per una migliore foramttazione
-
-        self.answer("https://github.com/odococo/fancazzistibot/blob/master/README.md")
-
     def Udice(self):
         """numFacce numLanci - Lancia un dado specificando numero di facce e lanci"""
         if (len(self.params) == 2
