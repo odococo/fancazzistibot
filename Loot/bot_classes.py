@@ -3543,8 +3543,9 @@ class NegoziPlus:
     all_list : lista di elemnti (nome_oggetto,quantità,id_oggetto)
     """
 
-    def __init__(self, updater, db):
+    def __init__(self, updater, db,base_item):
         self.db = db
+        self.base_items=base_item
 
         disp = updater.dispatcher
 
@@ -3712,6 +3713,8 @@ class NegoziPlus:
 
         all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
+        all_list=[item for item in all_list if not next((elem["craftable"] for elem in self.base_items if elem['name']==item[0]))]
+
         # nomi dgli oggetti trovati nello zaino
         perc_all = [(elem[0], math.floor(int(elem[1]) / user_data['perc'])) for elem in all_list]
 
@@ -3724,7 +3727,7 @@ class NegoziPlus:
             if not elem[1]: continue
             to_send += f"{elem[0]},"
             idx += 1
-            if idx == 9:
+            if idx == 2:
                 to_send_list.append(to_send.rstrip(","))
                 to_send = "/ricerca "
                 idx = 0
