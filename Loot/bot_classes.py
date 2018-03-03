@@ -3818,7 +3818,7 @@ class NegoziPlus:
         to_send = to_send.rstrip(",")
         to_send_list.append(to_send)
 
-        for msg in to_send:
+        for msg in to_send_list:
             update.message.reply_text(msg)
 
         return self.annulla(bot, update, user_data, msg="Fine")
