@@ -9,29 +9,11 @@ API = "http://fenixweb.net:3300/api/v2/"
 TOKEN = "cMeBZ7H22h8ApDho1722"
 ITEMS = API + TOKEN + "/items"
 SHOP = API + TOKEN + "/shop/"
+MARKET=API+TOKEN+"/history/market_direct"
 RICETTE=API+TOKEN+"/crafts/"
 TEAMS="/team/I%20Fancazzisti"
 PLAYERS="/players/"
 
-NEGOZI = (
-    14501401327,
-    18164013683,
-    26214958953,
-    27710823262,
-    31437794971,
-    36268311737,
-    37065414168,
-    45796402190,
-    50778334988,
-    55605058279,
-    68873282471,
-    71938314999,
-    82265422713,
-    84499506942,
-    90104392404,
-    92780022131,
-    97210686305,
-)
 
 OGGETTI = {}
 OGGETTI_DB = {}
@@ -40,7 +22,7 @@ LAST_UPDATE = None
 def use_api(url):
     try:
         return utils.get_content(url, True)['res']
-    except KeyError:
+    except (KeyError , TypeError):
         print (utils.get_content(url, True))
         return {}
 
@@ -162,7 +144,4 @@ def oggetti_inner(dipendenze_list):
 
 
 
-
-
-create_complete_item_file("oggetti_dipendenze")
-get_dipendenze()
+print(use_api(MARKET))

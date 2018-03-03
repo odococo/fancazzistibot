@@ -3546,6 +3546,332 @@ class Negozi:
         user_data['perc'] = 0
 
 
+class NegoziPlus:
+
+    """
+
+    all_list : lista di elemnti (nome_oggetto,quantità,id_oggetto)
+    """
+    def __init__(self, updater, db,base_items):
+        self.db = db
+
+        disp = updater.dispatcher
+        self.base_items=base_items
+
+        eleg = self.db.elegible_tester(self.init_negozi)
+        # crea conversazione
+        conversation = ConversationHandler(
+            [CommandHandler("negozip", eleg)],
+            states={
+                1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
+                2: [MessageHandler(Filters.text, self.ask_perc, pass_user_data=True)],
+                3: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)],
+                4: [MessageHandler(Filters.text, self.ask_ricerca, pass_user_data=True)],
+                5: [MessageHandler(Filters.text, self.get_perc, pass_user_data=True)],
+
+            },
+            fallbacks=[CommandHandler('Fine', self.annulla)]
+        )
+
+
+
+        disp.add_handler(conversation)
+
+    def init_negozi(self, bot, update):
+        """Funzione per inizzializzare la conversazione per sapere quali oggetti mancano nello zaino"""
+        # controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
+
+        update.message.reply_text("Prima di iniziare inviami le quantità minime.\n"
+                                  "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale\n"
+                                  "Usa il valore 0 se non vuoi usare una specifica rarità\n"
+                                  "Le quantità devono essere 6 numeri separati da spazio che andranno a ricorpire le rispettive 6 rarità:\n"
+                                  "[C NC R UR L E]")
+
+        return 1
+
+    def conferma_quantita(self, bot, update, user_data):
+        """Funzione per confermare la quantità scelta dall'utente e chiedere lo zaino"""
+        # prendi cio che ha scritto l'utente
+        quantita = update.message.text
+
+        # controlla che non sia vuoto
+        if not quantita:
+            return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
+
+        # controllo che siano sei numeri
+        if len(quantita.split()) != 6:
+            return self.annulla(bot, update, user_data,
+                                msg="Non hai inserito il numero corretto di parametri (devono essere sei numeri)...annullo")
+
+        quantita_num = []
+        # controlla che siano tutti numeri
+        try:
+            for elem in quantita.split():
+                quantita_num.append(int(elem))
+        except ValueError:
+            return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
+        # salva la quantita e inizzializza la chiave zaino
+        self.init_userdata(user_data)
+        user_data['quantita'] = quantita_num
+
+
+
+        to_send = "Verranno usate le rarità [C NC R UR L E] con le rispettive quanità minime ["
+        for elem in quantita_num:
+            to_send += str(elem) + " "
+        to_send += "]\nOra inviami la percentuale di oggetti che vuoi usare.\nPer esempio scegliendo 10 userai il " \
+                   "10% degli oggetti (per ogni rarità) del tuo zaino.\n" \
+                   "Ricorda di inviare un numero compreso da 0 a 100"
+
+        update.message.reply_text(to_send, parse_mode="HTML")
+
+        return 2
+
+    def ask_perc(self, bot, update, user_data):
+        perc = update.message.text
+
+        try:
+            perc=int(perc)
+        except ValueError:
+            return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
+
+        except TypeError:
+            return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
+
+
+
+        user_data['perc']=perc
+
+        to_send = "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>"
+        reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
+
+        update.message.reply_text(to_send,
+                                  parse_mode="HTML",
+                                  reply_markup=reply_markup)
+        return 3
+
+
+    # @catch_exception
+    def ask_zaino(self, bot, update, user_data):
+
+        text = update.message.text
+
+        # se il messaggio è quello dello zaino
+        if ">" in text:
+            user_data['zaino'] += text
+            return 3
+
+        # se l'utente vuole annullare
+        elif "annulla" in text.lower():
+            return self.annulla(bot, update, user_data, "Annullo")
+
+        # se ha finito di mandare lo zaino
+        elif "fine" in text.lower():
+            update.message.reply_text("Calcolo oggetti negozi...")
+            # se lo zaino è vuoto annulla
+            if not user_data['zaino']:
+                return self.annulla(bot, update, user_data, "Non hai inviato mesaggi zaino")
+
+            # altrimenti calcola cio che devi mandare
+            to_send_list = self.negozi(user_data)
+            if len(to_send_list)==0:
+                return self.annulla(bot, update, user_data,
+                                    "Non hai tutti questi oggetti")
+
+
+            for elem in to_send_list:
+                bot.sendMessage(update.message.chat.id, elem)
+
+            reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
+            bot.send_message("Ora inoltrami tutti i risulati di riceca",reply_markup=reply_markup)
+
+            return 4
+
+        # non ho capito cosa ha mandato e quindi annullo
+        else:
+            return self.annulla(bot, update, user_data, "Non ho capito...annullo")
+
+    def negozi(self, user_data):
+        """Funzione per calcolare gli oggetti mancanti
+        @:param user_data: dizionario contentete le chiavi zaino e quantita
+        @:type: dict
+        @:return: stringa da mandare allo user"""
+
+        # creo il regex
+        regex = re.compile(r"> (.*) \(([0-9]+)")
+        # cerco gli oggetti
+
+        all_c = re.findall(regex, user_data['zaino'].split("Comuni:")[-1])
+        all_nc = re.findall(regex, user_data['zaino'].split("Non Comuni:")[-1].split("\n\n")[0])
+        all_r = re.findall(regex, user_data['zaino'].split("Rari:")[-1].split("\n\n")[0])
+        all_ur = re.findall(regex, user_data['zaino'].split("Ultra Rari:")[-1].split("\n\n")[0])
+        all_l = re.findall(regex, user_data['zaino'].split("Leggendari:")[-1].split("\n\n")[0])
+        all_e = re.findall(regex, user_data['zaino'].split("Epici:")[-1].split("\n\n")[0])
+
+        # filtro per quantita e rarità
+        filter_list_C = [elem for elem in all_c if
+                         int(elem[1]) >= user_data['quantita'][0] and not user_data['quantita'][0]]
+        filter_list_NC = [elem for elem in all_nc if
+                          int(elem[1]) >= user_data['quantita'][1] and not user_data['quantita'][1]]
+        filter_list_R = [elem for elem in all_r if
+                         int(elem[1]) >= user_data['quantita'][2] and not user_data['quantita'][2]]
+        filter_list_UR = [elem for elem in all_ur if
+                          int(elem[1]) >= user_data['quantita'][3] and not user_data['quantita'][3]]
+        filter_list_L = [elem for elem in all_l if
+                         int(elem[1]) >= user_data['quantita'][4] and not user_data['quantita'][4]]
+        filter_list_E = [elem for elem in all_e if
+                         int(elem[1]) >= user_data['quantita'][5] and not user_data['quantita'][5]]
+
+
+        all_list=filter_list_C+filter_list_NC+filter_list_R+filter_list_UR+filter_list_L+filter_list_E
+
+
+
+        # nomi dgli oggetti trovati nello zaino
+        perc_all = [(elem[0],math.floor(int(elem[1])/user_data['perc'])) for elem in all_list]
+
+        user_data['all_list']=perc_all
+
+
+        to_send_list = []
+        to_send = "/ricerca "
+        idx = 0
+        for elem in perc_all:
+            if not elem[1]: continue
+            to_send +=f"{elem[0]},"
+            idx += 1
+            if idx == 9:
+                to_send_list.append(to_send.rstrip(","))
+                to_send = "/ricerca "
+                idx = 0
+
+        to_send = to_send.rstrip(",")
+        to_send_list.append(to_send)
+
+
+        return to_send_list
+
+
+
+    def ask_ricerca(self,bot,update,user_data):
+        text = update.message.text
+
+        # se il messaggio è quello dello zaino
+        if "Risultati ricerca" in text:
+            user_data['ricerca'] += text
+            return 4
+
+        # se l'utente vuole annullare
+        elif "annulla" in text.lower():
+            return self.annulla(bot, update, user_data, "Annullo")
+
+        # se ha finito di mandare lo zaino
+        elif "fine" in text.lower():
+            update.message.reply_text("Calcolo oggetti negozi...")
+            # se lo zaino è vuoto annulla
+            if not user_data['ricerca']:
+                return self.annulla(bot, update, user_data, "Non hai inviato mesaggi zaino")
+
+            # altrimenti calcola cio che devi mandare
+            user_data['all_list'] = self.merge_list(user_data)
+
+            update.message.reply_text("Ora inviami la percentuale di prezzo in piu o in meno da adottare (-100 -> +100)")
+
+            return 5
+
+        # non ho capito cosa ha mandato e quindi annullo
+        else:
+            return self.annulla(bot, update, user_data, "Non ho capito...annullo")
+
+
+
+    def merge_list(self, user_data):
+
+        negozi_re=re.compile(r"Negozi per ([A-z ]+):\n> .*\(([0-9 .]+)")
+
+        finds=re.findall(negozi_re,user_data['ricerca'])
+
+        new_list=[]
+
+        for (oggetto,quantita) in user_data['all_list']:
+            prezzo=next((item[1] for item in finds if item[0]==oggetto))
+            prezzo=prezzo.replace(".","")
+            prezzo=int(prezzo)
+            new_list.append((oggetto,quantita,prezzo))
+
+        return new_list
+
+    def get_perc(self, bot,update,user_data):
+        text = update.message.text
+
+        try:
+            perc=int(text)
+
+        except ValueError:
+            return self.annulla(bot,update,user_data,msg="Non hai inviato un numero corretto!")
+
+
+        res_list=[(oggetto, quantita,math.ceil(prezzo -prezzo*perc)) for
+                  (oggetto, quantita, prezzo) in user_data['all_list']]
+
+        to_send_list = []
+        to_send = "/negozio "
+        idx = 0
+        for elem in res_list:
+            to_send += f"{elem[0]}:{elem[2]}:{int(elem[1])},"
+            idx += 1
+            if idx == 9:
+                to_send_list.append(to_send.rstrip(","))
+                to_send = "/negozio "
+                idx = 0
+
+        to_send = to_send.rstrip(",")
+        to_send_list.append(to_send)
+
+        for msg in to_send:
+            update.message.reply_text(msg)
+
+        return self.annulla(bot,update,user_data,msg="Fine")
+
+
+    def annulla(self, bot, update, user_data, msg=""):
+        """Annulla la conversazione e inizzializza lo user data"""
+        if msg:
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+
+        if "quantita" in user_data.keys():
+            user_data['quantita'] = []
+
+        if "zaino" in user_data.keys():
+            user_data['zaino'] = ""
+
+        if 'rarita' in user_data:
+            user_data['rarita'] = []
+
+        if 'perc' in user_data:
+            user_data['perc'] = 0
+
+        if 'all_list' in user_data:
+            user_data['all_list'] = []
+
+        if 'ricerca' in user_data:
+            user_data['ricerca'] = ""
+
+        return ConversationHandler.END
+
+    def init_userdata(self,user_data):
+        user_data['quantita'] = 0
+        user_data['zaino'] = ""
+        user_data['rarita'] = []
+        user_data['perc'] = 0
+        user_data['all_list']=[]
+        user_data['ricerca']=""
+
+
+
 class DiffSchede:
     def __init__(self, updater, db):
         self.db = db

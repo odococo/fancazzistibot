@@ -267,7 +267,10 @@ def get_proxy():
 def get_content(url, parse_json=False, proxies=None):
     request = requests.get(url, allow_redirects=False, proxies=proxies)
     if parse_json:
-        return request.json()
+        try:
+            return request.json()
+        except json.JSONDecodeError: return None
+
     else:
         return BeautifulSoup(request.content, "html.parser")
 
