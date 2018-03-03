@@ -3714,7 +3714,7 @@ class NegoziPlus:
         all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
         new_all_list=[]
-        
+
         for item in all_list:
             try:
                 if not next((elem["craftable"] for elem in self.base_items if elem['name'] == item[0])):
@@ -3783,10 +3783,12 @@ class NegoziPlus:
         new_list = []
 
         for (oggetto, quantita) in user_data['all_list']:
-            prezzo = next((item[1] for item in finds if item[0] == oggetto))
-            prezzo = prezzo.replace(".", "")
-            prezzo = int(prezzo)
-            new_list.append((oggetto, quantita, prezzo))
+            try:
+                prezzo = next((item[1] for item in finds if item[0] == oggetto))
+                prezzo = prezzo.replace(".", "")
+                prezzo = int(prezzo)
+                new_list.append((oggetto, quantita, prezzo))
+            except StopIteration:pass
 
         return new_list
 
