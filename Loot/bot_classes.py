@@ -3548,10 +3548,9 @@ class NegoziPlus:
 
         disp = updater.dispatcher
 
-        eleg = self.db.elegible_tester(self.init_negozi)
         # crea conversazione
         conversation = ConversationHandler(
-            [CommandHandler("negozip", eleg)],
+            [CommandHandler("negozip", self.init_negozi)],
             states={
                 1: [MessageHandler(Filters.text, self.conferma_quantita, pass_user_data=True)],
                 2: [MessageHandler(Filters.text, self.ask_perc, pass_user_data=True)],
