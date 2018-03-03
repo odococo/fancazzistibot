@@ -327,6 +327,7 @@ def main():
     Track(updater,db,TrackFilter())
     Most_convinient_pc(updater, db, dipendenze)
     Negozi(updater,db)
+    NegoziPlus(updater,db)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

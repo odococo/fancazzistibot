@@ -3390,8 +3390,6 @@ class Negozi:
         self.init_userdata(user_data)
         user_data['quantita'] = quantita_num
 
-
-
         to_send = "Verranno usate le rarità [C NC R UR L E] con le rispettive quanità minime ["
         for elem in quantita_num:
             to_send += str(elem) + " "
@@ -3407,16 +3405,14 @@ class Negozi:
         perc = update.message.text
 
         try:
-            perc=int(perc)
+            perc = int(perc)
         except ValueError:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
 
         except TypeError:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
 
-
-
-        user_data['perc']=perc
+        user_data['perc'] = perc
 
         to_send = "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>"
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
@@ -3425,7 +3421,6 @@ class Negozi:
                                   parse_mode="HTML",
                                   reply_markup=reply_markup)
         return 3
-
 
     # @catch_exception
     def ask_zaino(self, bot, update, user_data):
@@ -3450,10 +3445,9 @@ class Negozi:
 
             # altrimenti calcola cio che devi mandare
             to_send_list = self.negozi(user_data)
-            if len(to_send_list)==0:
+            if len(to_send_list) == 0:
                 return self.annulla(bot, update, user_data,
                                     "Non hai tutti questi oggetti")
-
 
             for elem in to_send_list:
                 bot.sendMessage(update.message.chat.id, elem)
@@ -3495,19 +3489,17 @@ class Negozi:
         filter_list_E = [elem for elem in all_e if
                          int(elem[1]) >= user_data['quantita'][5] and not user_data['quantita'][5]]
 
-
-        all_list=filter_list_C+filter_list_NC+filter_list_R+filter_list_UR+filter_list_L+filter_list_E
-
+        all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
         # nomi dgli oggetti trovati nello zaino
-        perc_all = [(elem[0],math.floor(int(elem[1])/user_data['perc'])) for elem in all_list]
+        perc_all = [(elem[0], math.floor(int(elem[1]) / user_data['perc'])) for elem in all_list]
 
         to_send_list = []
         to_send = "/negozio "
         idx = 0
         for elem in perc_all:
             if not elem[1]: continue
-            to_send +=f"{elem[0]}::{int(elem[1])},"
+            to_send += f"{elem[0]}::{int(elem[1])},"
             idx += 1
             if idx == 9:
                 to_send_list.append(to_send.rstrip(","))
@@ -3516,7 +3508,6 @@ class Negozi:
 
         to_send = to_send.rstrip(",")
         to_send_list.append(to_send)
-
 
         return to_send_list
 
@@ -3539,7 +3530,7 @@ class Negozi:
 
         return ConversationHandler.END
 
-    def init_userdata(self,user_data):
+    def init_userdata(self, user_data):
         user_data['quantita'] = 0
         user_data['zaino'] = ""
         user_data['rarita'] = []
@@ -3547,16 +3538,15 @@ class Negozi:
 
 
 class NegoziPlus:
-
     """
 
     all_list : lista di elemnti (nome_oggetto,quantità,id_oggetto)
     """
-    def __init__(self, updater, db,base_items):
+
+    def __init__(self, updater, db):
         self.db = db
 
         disp = updater.dispatcher
-        self.base_items=base_items
 
         eleg = self.db.elegible_tester(self.init_negozi)
         # crea conversazione
@@ -3572,8 +3562,6 @@ class NegoziPlus:
             },
             fallbacks=[CommandHandler('Fine', self.annulla)]
         )
-
-
 
         disp.add_handler(conversation)
 
@@ -3617,8 +3605,6 @@ class NegoziPlus:
         self.init_userdata(user_data)
         user_data['quantita'] = quantita_num
 
-
-
         to_send = "Verranno usate le rarità [C NC R UR L E] con le rispettive quanità minime ["
         for elem in quantita_num:
             to_send += str(elem) + " "
@@ -3634,16 +3620,14 @@ class NegoziPlus:
         perc = update.message.text
 
         try:
-            perc=int(perc)
+            perc = int(perc)
         except ValueError:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
 
         except TypeError:
             return self.annulla(bot, update, user_data, "Non hai inviato un numero corretto...annullo")
 
-
-
-        user_data['perc']=perc
+        user_data['perc'] = perc
 
         to_send = "Ora inviami il tuo zaino, quando hai finito clicca <b>Fine</b>, altrimenti <b>Annulla</b>"
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
@@ -3652,7 +3636,6 @@ class NegoziPlus:
                                   parse_mode="HTML",
                                   reply_markup=reply_markup)
         return 3
-
 
     # @catch_exception
     def ask_zaino(self, bot, update, user_data):
@@ -3677,16 +3660,15 @@ class NegoziPlus:
 
             # altrimenti calcola cio che devi mandare
             to_send_list = self.negozi(user_data)
-            if len(to_send_list)==0:
+            if len(to_send_list) == 0:
                 return self.annulla(bot, update, user_data,
                                     "Non hai tutti questi oggetti")
-
 
             for elem in to_send_list:
                 bot.sendMessage(update.message.chat.id, elem)
 
             reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
-            bot.send_message("Ora inoltrami tutti i risulati di riceca",reply_markup=reply_markup)
+            bot.send_message("Ora inoltrami tutti i risulati di riceca", reply_markup=reply_markup)
 
             return 4
 
@@ -3725,23 +3707,19 @@ class NegoziPlus:
         filter_list_E = [elem for elem in all_e if
                          int(elem[1]) >= user_data['quantita'][5] and not user_data['quantita'][5]]
 
-
-        all_list=filter_list_C+filter_list_NC+filter_list_R+filter_list_UR+filter_list_L+filter_list_E
-
-
+        all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
         # nomi dgli oggetti trovati nello zaino
-        perc_all = [(elem[0],math.floor(int(elem[1])/user_data['perc'])) for elem in all_list]
+        perc_all = [(elem[0], math.floor(int(elem[1]) / user_data['perc'])) for elem in all_list]
 
-        user_data['all_list']=perc_all
-
+        user_data['all_list'] = perc_all
 
         to_send_list = []
         to_send = "/ricerca "
         idx = 0
         for elem in perc_all:
             if not elem[1]: continue
-            to_send +=f"{elem[0]},"
+            to_send += f"{elem[0]},"
             idx += 1
             if idx == 9:
                 to_send_list.append(to_send.rstrip(","))
@@ -3751,12 +3729,9 @@ class NegoziPlus:
         to_send = to_send.rstrip(",")
         to_send_list.append(to_send)
 
-
         return to_send_list
 
-
-
-    def ask_ricerca(self,bot,update,user_data):
+    def ask_ricerca(self, bot, update, user_data):
         text = update.message.text
 
         # se il messaggio è quello dello zaino
@@ -3778,7 +3753,8 @@ class NegoziPlus:
             # altrimenti calcola cio che devi mandare
             user_data['all_list'] = self.merge_list(user_data)
 
-            update.message.reply_text("Ora inviami la percentuale di prezzo in piu o in meno da adottare (-100 -> +100)")
+            update.message.reply_text(
+                "Ora inviami la percentuale di prezzo in piu o in meno da adottare (-100 -> +100)")
 
             return 5
 
@@ -3786,36 +3762,33 @@ class NegoziPlus:
         else:
             return self.annulla(bot, update, user_data, "Non ho capito...annullo")
 
-
-
     def merge_list(self, user_data):
 
-        negozi_re=re.compile(r"Negozi per ([A-z ]+):\n> .*\(([0-9 .]+)")
+        negozi_re = re.compile(r"Negozi per ([A-z ]+):\n> .*\(([0-9 .]+)")
 
-        finds=re.findall(negozi_re,user_data['ricerca'])
+        finds = re.findall(negozi_re, user_data['ricerca'])
 
-        new_list=[]
+        new_list = []
 
-        for (oggetto,quantita) in user_data['all_list']:
-            prezzo=next((item[1] for item in finds if item[0]==oggetto))
-            prezzo=prezzo.replace(".","")
-            prezzo=int(prezzo)
-            new_list.append((oggetto,quantita,prezzo))
+        for (oggetto, quantita) in user_data['all_list']:
+            prezzo = next((item[1] for item in finds if item[0] == oggetto))
+            prezzo = prezzo.replace(".", "")
+            prezzo = int(prezzo)
+            new_list.append((oggetto, quantita, prezzo))
 
         return new_list
 
-    def get_perc(self, bot,update,user_data):
+    def get_perc(self, bot, update, user_data):
         text = update.message.text
 
         try:
-            perc=int(text)
+            perc = int(text)
 
         except ValueError:
-            return self.annulla(bot,update,user_data,msg="Non hai inviato un numero corretto!")
+            return self.annulla(bot, update, user_data, msg="Non hai inviato un numero corretto!")
 
-
-        res_list=[(oggetto, quantita,math.ceil(prezzo -prezzo*perc)) for
-                  (oggetto, quantita, prezzo) in user_data['all_list']]
+        res_list = [(oggetto, quantita, math.ceil(prezzo - prezzo * perc)) for
+                    (oggetto, quantita, prezzo) in user_data['all_list']]
 
         to_send_list = []
         to_send = "/negozio "
@@ -3834,8 +3807,7 @@ class NegoziPlus:
         for msg in to_send:
             update.message.reply_text(msg)
 
-        return self.annulla(bot,update,user_data,msg="Fine")
-
+        return self.annulla(bot, update, user_data, msg="Fine")
 
     def annulla(self, bot, update, user_data, msg=""):
         """Annulla la conversazione e inizzializza lo user data"""
@@ -3862,14 +3834,13 @@ class NegoziPlus:
 
         return ConversationHandler.END
 
-    def init_userdata(self,user_data):
+    def init_userdata(self, user_data):
         user_data['quantita'] = 0
         user_data['zaino'] = ""
         user_data['rarita'] = []
         user_data['perc'] = 0
-        user_data['all_list']=[]
-        user_data['ricerca']=""
-
+        user_data['all_list'] = []
+        user_data['ricerca'] = ""
 
 
 class DiffSchede:
@@ -4115,10 +4086,8 @@ class Most_convinient_pc:
         self.db = db
         self.dipendenze = dipenzende
 
-        self.item_perc_to_consume=0.2 #20%
-        self.max_missing_items=2
-
-
+        self.item_perc_to_consume = 0.2  # 20%
+        self.max_missing_items = 2
 
         disp = updater.dispatcher
 
@@ -4153,7 +4122,7 @@ class Most_convinient_pc:
         update.message.reply_text("Mandami il tuo zaino, un messaggio alla votla (fai passare un secondo tra"
                                   " i messaggi).\nClicca Fine quando hai finito altrimenti annulla",
                                   reply_markup=reply_markup)
-        user_data['zaino']=""
+        user_data['zaino'] = ""
         return 1
 
     def get_zaino(self, bot, update, user_data):
@@ -4221,63 +4190,55 @@ class Most_convinient_pc:
         # cerco gli oggetti
         all = re.findall(regex, zaino)
 
-        #una lista contenente tutti gli id degli oggetti ripetutti per la quantità trovata
-        zaino_id=[]
+        # una lista contenente tutti gli id degli oggetti ripetutti per la quantità trovata
+        zaino_id = []
 
-        #converto gli oggetti in id
+        # converto gli oggetti in id
         for elem in all:
             oggetto = next((item for item in self.dipendenze if item["name"] == elem[0]))
-            zaino_id+=[oggetto['id']]*int(elem[1])
+            zaino_id += [oggetto['id']] * int(elem[1])
 
         print(zaino_id)
 
-        #copia la lista dei craft
-        possible_crafts=copy.deepcopy(self.dipendenze)
-        print("Possible craft len 1 "+str(len(possible_crafts)))
+        # copia la lista dei craft
+        possible_crafts = copy.deepcopy(self.dipendenze)
+        print("Possible craft len 1 " + str(len(possible_crafts)))
 
-        #rimuovi gli eleemnti che non sono craftabili
-        possible_crafts=[elem for elem in possible_crafts if elem['craftable']]
-        print("Possible craft len 2 "+str(len(possible_crafts)))
+        # rimuovi gli eleemnti che non sono craftabili
+        possible_crafts = [elem for elem in possible_crafts if elem['craftable']]
+        print("Possible craft len 2 " + str(len(possible_crafts)))
 
-        #rimuovi le rarità X
-        possible_crafts=[elem for elem in possible_crafts if elem['rarity']!='X']
-        print("Possible craft len 3 "+str(len(possible_crafts)))
+        # rimuovi le rarità X
+        possible_crafts = [elem for elem in possible_crafts if elem['rarity'] != 'X']
+        print("Possible craft len 3 " + str(len(possible_crafts)))
 
-        #rimuovi i craft dipendenti dai materiali finali
-        possible_crafts=[elem for elem in possible_crafts if [635, 636, 637] not in elem['dipendenze']]
-        print("Possible craft len 4 "+str(len(possible_crafts)))
+        # rimuovi i craft dipendenti dai materiali finali
+        possible_crafts = [elem for elem in possible_crafts if [635, 636, 637] not in elem['dipendenze']]
+        print("Possible craft len 4 " + str(len(possible_crafts)))
 
-
-        #rimuovi i craft che non possono essere fatti dall'user
-        c1=Counter(zaino_id)
+        # rimuovi i craft che non possono essere fatti dall'user
+        c1 = Counter(zaino_id)
         for elem in possible_crafts:
-            c2=Counter(elem['dipendenze'])
-            diff=c2-c1
-            if len(list(diff.elements()))>self.max_missing_items:
+            c2 = Counter(elem['dipendenze'])
+            diff = c2 - c1
+            if len(list(diff.elements())) > self.max_missing_items:
                 possible_crafts.pop(elem)
 
         print("Possible craft len 5 " + str(len(possible_crafts)))
 
-        #ordina la lista per pc
-        #possible_crafts = sorted(possible_crafts, key=operator.itemgetter('craft_pnt'), reverse=True)
+        # ordina la lista per pc
+        # possible_crafts = sorted(possible_crafts, key=operator.itemgetter('craft_pnt'), reverse=True)
 
-        craft_vector=[(elem['id'],elem['dipendenze'],elem['craft_points']) for elem in possible_crafts]
-        cons={
+        craft_vector = [(elem['id'], elem['dipendenze'], elem['craft_points']) for elem in possible_crafts]
+        cons = {
 
         }
-        max_item_to_consume=math.floor(len(zaino_id)*self.item_perc_to_consume)
+        max_item_to_consume = math.floor(len(zaino_id) * self.item_perc_to_consume)
 
         res = minimize(self.cost_function, craft_vector, args=(max_item_to_consume,),
-        constraints = cons,options = {'disp': True})
-
+                       constraints=cons, options={'disp': True})
 
         print(res)
 
     def cost_function(self, craft_vector, max_item_to_consume, sign=-1.0):
         print(2)
-
-
-
-
-
-
