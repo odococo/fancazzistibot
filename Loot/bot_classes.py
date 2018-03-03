@@ -3477,17 +3477,17 @@ class Negozi:
 
         # filtro per quantita e rarità
         filter_list_C = [elem for elem in all_c if
-                         int(elem[1]) >= user_data['quantita'][0] and not user_data['quantita'][0]]
+                         int(elem[1]) >= user_data['quantita'][0] and  user_data['quantita'][0]]
         filter_list_NC = [elem for elem in all_nc if
-                          int(elem[1]) >= user_data['quantita'][1] and not user_data['quantita'][1]]
+                          int(elem[1]) >= user_data['quantita'][1] and  user_data['quantita'][1]]
         filter_list_R = [elem for elem in all_r if
-                         int(elem[1]) >= user_data['quantita'][2] and not user_data['quantita'][2]]
+                         int(elem[1]) >= user_data['quantita'][2] and  user_data['quantita'][2]]
         filter_list_UR = [elem for elem in all_ur if
-                          int(elem[1]) >= user_data['quantita'][3] and not user_data['quantita'][3]]
+                          int(elem[1]) >= user_data['quantita'][3] and  user_data['quantita'][3]]
         filter_list_L = [elem for elem in all_l if
-                         int(elem[1]) >= user_data['quantita'][4] and not user_data['quantita'][4]]
+                         int(elem[1]) >= user_data['quantita'][4] and  user_data['quantita'][4]]
         filter_list_E = [elem for elem in all_e if
-                         int(elem[1]) >= user_data['quantita'][5] and not user_data['quantita'][5]]
+                         int(elem[1]) >= user_data['quantita'][5] and  user_data['quantita'][5]]
 
         all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
@@ -3699,17 +3699,17 @@ class NegoziPlus:
 
         # filtro per quantita e rarità
         filter_list_C = [elem for elem in all_c if
-                         int(elem[1]) >= user_data['quantita'][0] and not user_data['quantita'][0]]
+                         int(elem[1]) >= user_data['quantita'][0] and  user_data['quantita'][0]]
         filter_list_NC = [elem for elem in all_nc if
-                          int(elem[1]) >= user_data['quantita'][1] and not user_data['quantita'][1]]
+                          int(elem[1]) >= user_data['quantita'][1] and  user_data['quantita'][1]]
         filter_list_R = [elem for elem in all_r if
-                         int(elem[1]) >= user_data['quantita'][2] and not user_data['quantita'][2]]
+                         int(elem[1]) >= user_data['quantita'][2] and  user_data['quantita'][2]]
         filter_list_UR = [elem for elem in all_ur if
-                          int(elem[1]) >= user_data['quantita'][3] and not user_data['quantita'][3]]
+                          int(elem[1]) >= user_data['quantita'][3] and  user_data['quantita'][3]]
         filter_list_L = [elem for elem in all_l if
-                         int(elem[1]) >= user_data['quantita'][4] and not user_data['quantita'][4]]
+                         int(elem[1]) >= user_data['quantita'][4] and  user_data['quantita'][4]]
         filter_list_E = [elem for elem in all_e if
-                         int(elem[1]) >= user_data['quantita'][5] and not user_data['quantita'][5]]
+                         int(elem[1]) >= user_data['quantita'][5] and  user_data['quantita'][5]]
 
         all_list = filter_list_C + filter_list_NC + filter_list_R + filter_list_UR + filter_list_L + filter_list_E
 
