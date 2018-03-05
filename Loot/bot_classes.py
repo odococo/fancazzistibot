@@ -4301,7 +4301,11 @@ class Stats:
             update.message.reply_text("Questo comando è disponibile solo in privata")
             return
 
-        update.message.reply_text("Inviami il tuo zaino un messaggio alla volta. Fai passare un secondo tra un messaggio e l'altro")
+
+        reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
+
+        update.message.reply_text("Inviami il tuo zaino un messaggio alla volta. Fai passare un secondo tra un messaggio e l'altro. Quando "
+                                  "hai finito clicca FINE altrimenti ANNULLA", reply_markup=reply_markup)
 
         return 1
 
