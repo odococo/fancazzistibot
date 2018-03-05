@@ -4301,11 +4301,7 @@ class Stats:
             update.message.reply_text("Questo comando è disponibile solo in privata")
             return
 
-        update.message.reply_text("Prima di iniziare inviami le quantità minime.\n"
-                                  "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale\n"
-                                  "Usa il valore 0 se non vuoi usare una specifica rarità\n"
-                                  "Le quantità devono essere 6 numeri separati da spazio che andranno a ricorpire le rispettive 6 rarità:\n"
-                                  "[C NC R UR L E]")
+        update.message.reply_text("Inviami il tuo zaino un messaggio alla volta. Fai passare un secondo tra un messaggio e l'altro")
 
         return 1
 
@@ -4317,7 +4313,7 @@ class Stats:
         # se il messaggio è quello dello zaino
         if ">" in text:
             user_data['zaino'] += text
-            return 3
+            return 1
 
         # se l'utente vuole annullare
         elif "annulla" in text.lower():
