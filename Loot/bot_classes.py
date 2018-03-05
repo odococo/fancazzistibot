@@ -4386,6 +4386,12 @@ class Stats:
         if param=="mancanti":
 
             mancanti=user_data['mancanti']
+
+            if len(mancanti) == 0:
+                update.callback_query.message.reply_text("Non ti manca niente...sbucione")
+                return
+
+            
             file_name=f"mancanti_{update.callback_query.from_user.id}.txt"
 
             with open(file_name,"w+") as file:
@@ -4403,6 +4409,10 @@ class Stats:
         elif param=="possibili":
 
             craftables=user_data['possibili']
+
+            if len(craftables)==0:
+                update.callback_query.message.reply_text("Non puoi fare nulla...sfigato")
+                return
 
             file_name=f"possibili_{update.callback_query.from_user.id}.txt"
 
