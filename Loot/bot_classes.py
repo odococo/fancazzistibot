@@ -4302,6 +4302,7 @@ class Stats:
             return
 
 
+
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
         update.message.reply_text("Inviami il tuo zaino un messaggio alla volta. Fai passare un secondo tra un messaggio e l'altro. Quando "
@@ -4311,6 +4312,8 @@ class Stats:
 
     # @catch_exception
     def ask_zaino(self, bot, update, user_data):
+        self.init_userdata(user_data)
+
 
         text = update.message.text
 
@@ -4326,12 +4329,13 @@ class Stats:
         # se ha finito di mandare lo zaino
         elif "fine" in text.lower():
             update.message.reply_text("Calcolo oggetti negozi...")
-            # se lo zaino è vuoto annulla
-            if not user_data['zaino']:
-                return self.annulla(bot, update, user_data, "Non hai inviato mesaggi zaino")
 
             # altrimenti calcola cio che devi mandare
-            rarities = self.stats(user_data['zaino'])
+            try:
+                rarities = self.stats(user_data['zaino'])
+            except KeyError:
+                return self.annulla(bot,update,user_data,"Non hai inviato uno zaino")
+
             pretty_rts = self.pretty_rarity_stats(rarities)
             pretty_gen = self.pretty_general_stats(rarities)
 
@@ -4576,23 +4580,12 @@ class Stats:
         if msg:
             update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
 
-        if "quantita" in user_data.keys():
-            user_data['quantita'] = []
 
         if "zaino" in user_data.keys():
             user_data['zaino'] = ""
 
-        if 'rarita' in user_data:
-            user_data['rarita'] = []
-
-        if 'perc' in user_data:
-            user_data['perc'] = 0
-
         return ConversationHandler.END
 
     def init_userdata(self, user_data):
-        user_data['quantita'] = 0
         user_data['zaino'] = ""
-        user_data['rarita'] = []
-        user_data['perc'] = 0
 
