@@ -4450,6 +4450,8 @@ class Stats:
         rarities = {'c': all_c, 'nc': all_nc, 'r': all_r, 'ur': all_ur, 'l': all_l, 'e': all_e,
                     'ue': all_ue, 's': all_s, 'un': all_un, 'mt': all_mt, 'd': all_d}
 
+        print(rarities)
+
         # per ogni rarità crea un dizzionario
         tot_elem = 0
         all_rarity = []
