@@ -4306,7 +4306,8 @@ class Stats:
         reply_markup = ReplyKeyboardMarkup([["Annulla", "Fine"]], one_time_keyboard=False)
 
         update.message.reply_text("Inviami il tuo zaino un messaggio alla volta. Fai passare un secondo tra un messaggio e l'altro. Quando "
-                                  "hai finito clicca FINE altrimenti ANNULLA", reply_markup=reply_markup)
+                                  "hai finito clicca FINE altrimenti ANNULLA\nRicorda anche di mandare i messaggi IN ORDINE"
+                                  , reply_markup=reply_markup)
 
         return 1
 
@@ -4320,6 +4321,7 @@ class Stats:
         # se il messaggio è quello dello zaino
         if ">" in text:
             user_data['zaino'] += text
+            print(user_data['zaino'])
             return 1
 
         # se l'utente vuole annullare
