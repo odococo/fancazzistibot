@@ -4271,7 +4271,7 @@ class Stats:
             eleg = self.db.elegible_loot_user(self.init_negozi)
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("stats", eleg)],
+                [CommandHandler("stats", eleg, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)],
 
@@ -4283,7 +4283,7 @@ class Stats:
         else:
             # crea conversazione
             conversation = ConversationHandler(
-                [CommandHandler("stats", self.init_negozi)],
+                [CommandHandler("stats", self.init_negozi, pass_user_data=True)],
                 states={
                     1: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)],
 
@@ -4294,7 +4294,7 @@ class Stats:
 
         disp.add_handler(conversation)
 
-    def init_negozi(self, bot, update):
+    def init_negozi(self, bot, update,user_data):
         """Funzione per inizzializzare la conversazione per sapere quali oggetti mancano nello zaino"""
         # controlla che il messaggio sia mandato in privato
         if "private" not in update.message.chat.type:
@@ -4309,11 +4309,13 @@ class Stats:
                                   "hai finito clicca FINE altrimenti ANNULLA\nRicorda anche di mandare i messaggi IN ORDINE"
                                   , reply_markup=reply_markup)
 
+        self.init_userdata(user_data)
+
         return 1
 
     # @catch_exception
     def ask_zaino(self, bot, update, user_data):
-        self.init_userdata(user_data)
+
 
 
         text = update.message.text
@@ -4321,7 +4323,6 @@ class Stats:
         # se il messaggio è quello dello zaino
         if ">" in text:
             user_data['zaino'] += text
-            print(user_data['zaino'])
             return 1
 
         # se l'utente vuole annullare
@@ -4337,6 +4338,9 @@ class Stats:
                 rarities = self.stats(user_data['zaino'])
             except KeyError:
                 return self.annulla(bot,update,user_data,"Non hai inviato uno zaino")
+
+            if rarities is None:
+                return self.annulla(bot, update,user_data,"Si è verificato un problema...sicuro di aver inviato lo zaino nell'ordine giusto?")
 
             pretty_rts = self.pretty_rarity_stats(rarities)
             pretty_gen = self.pretty_general_stats(rarities)
@@ -4433,6 +4437,7 @@ class Stats:
 
     def stats(self,zaino):
 
+        print(zaino)
         regex = re.compile(r"> (.*) \(([0-9]+)")
         # cerco gli oggetti
 
@@ -4451,6 +4456,8 @@ class Stats:
         # unisco gli oggetti in un dizionario
         rarities = {'c': all_c, 'nc': all_nc, 'r': all_r, 'ur': all_ur, 'l': all_l, 'e': all_e,
                     'ue': all_ue, 's': all_s, 'un': all_un, 'mt': all_mt, 'd': all_d}
+
+        if all(len(x)==0 for x in rarities.values()): return None
 
         print(rarities)
 
