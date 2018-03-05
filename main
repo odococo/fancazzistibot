@@ -305,6 +305,11 @@ def main():
         rea = file.read()
         dipendenze = eval(rea.replace("null", "None"))
 
+
+    with codecs.open("all_obj", encoding='utf-8') as file:
+        rea = file.read()
+        all_obj = eval(rea.replace("null", "None"))
+
     os.chdir("../")
 
 
@@ -328,6 +333,7 @@ def main():
     Most_convinient_pc(updater, db, dipendenze)
     Negozi(updater,db)
     NegoziPlus(updater,db,base_items)
+    Stats(updater,db, all_obj, dipendenze)
 
     # handler per richiedere accesso al bot
     disp.add_handler(CallbackQueryHandler(db.grant_deny_access, pattern="/consentiAccesso"))

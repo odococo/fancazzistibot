@@ -144,4 +144,4 @@ def oggetti_inner(dipendenze_list):
 
 
 
-print(use_api(MARKET))
+print(use_api(ITEMS))

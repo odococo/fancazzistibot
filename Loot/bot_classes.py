@@ -12,6 +12,7 @@ from datetime import timedelta, datetime
 
 import emoji
 import matplotlib as mpl
+import sys
 from scipy.optimize import minimize
 from telegram import ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler, RegexHandler, MessageHandler, Filters, CommandHandler, \
@@ -4256,3 +4257,342 @@ class Most_convinient_pc:
 
     def cost_function(self, craft_vector, max_item_to_consume, sign=-1.0):
         print(2)
+
+
+class Stats:
+    def __init__(self, updater, db,all_obj,dipendenze):
+        self.db = db
+
+        disp = updater.dispatcher
+        self.all_obj=all_obj,
+        self.dipendenze=dipendenze
+
+        if not DEBUG:
+            eleg = self.db.elegible_loot_user(self.init_negozi)
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("stats", eleg)],
+                states={
+                    1: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)],
+
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla)]
+            )
+
+        else:
+            # crea conversazione
+            conversation = ConversationHandler(
+                [CommandHandler("stats", self.init_negozi)],
+                states={
+                    1: [MessageHandler(Filters.text, self.ask_zaino, pass_user_data=True)],
+
+
+                },
+                fallbacks=[CommandHandler('Fine', self.annulla, pass_user_data=True)]
+            )
+
+        disp.add_handler(conversation)
+
+    def init_negozi(self, bot, update):
+        """Funzione per inizzializzare la conversazione per sapere quali oggetti mancano nello zaino"""
+        # controlla che il messaggio sia mandato in privato
+        if "private" not in update.message.chat.type:
+            update.message.reply_text("Questo comando è disponibile solo in privata")
+            return
+
+        update.message.reply_text("Prima di iniziare inviami le quantità minime.\n"
+                                  "Se la quantità di un oggetto nel tuo zaino non raggiunge questo numero allora verrà mostrato nel risultato finale\n"
+                                  "Usa il valore 0 se non vuoi usare una specifica rarità\n"
+                                  "Le quantità devono essere 6 numeri separati da spazio che andranno a ricorpire le rispettive 6 rarità:\n"
+                                  "[C NC R UR L E]")
+
+        return 1
+
+    # @catch_exception
+    def ask_zaino(self, bot, update, user_data):
+
+        text = update.message.text
+
+        # se il messaggio è quello dello zaino
+        if ">" in text:
+            user_data['zaino'] += text
+            return 3
+
+        # se l'utente vuole annullare
+        elif "annulla" in text.lower():
+            return self.annulla(bot, update, user_data, "Annullo")
+
+        # se ha finito di mandare lo zaino
+        elif "fine" in text.lower():
+            update.message.reply_text("Calcolo oggetti negozi...")
+            # se lo zaino è vuoto annulla
+            if not user_data['zaino']:
+                return self.annulla(bot, update, user_data, "Non hai inviato mesaggi zaino")
+
+            # altrimenti calcola cio che devi mandare
+            rarities = self.stats(user_data['zaino'])
+            pretty_rts = self.pretty_rarity_stats(rarities)
+            pretty_gen = self.pretty_general_stats(rarities)
+
+            for elem in pretty_rts:
+                update.message.reply_text(elem,parse_mode="HTML")
+
+
+            update.message.reply_text(pretty_gen,parse_mode="HTML")
+
+            to_send="Puoi anche visualizzare gli oggetti mancanti e i craft possibili cliccando sui bottoni"
+
+            inline = InlineKeyboardMarkup([
+                [InlineKeyboardButton("Mancanti", callback_data="/stat mancanti")],
+                [InlineKeyboardButton("Possibili", callback_data="/stat possibili")],
+                [InlineKeyboardButton("Annulla", callback_data="/stat annulla")]
+
+            ])
+
+            user_data['mancanti']=rarities['general']['mancanti']
+            user_data['craftables']=rarities['general']['craftables']
+
+            update.message.reply_text(to_send,reply_markup=inline)
+
+            return self.annulla(bot, update, user_data)
+
+        # non ho capito cosa ha mandato e quindi annullo
+        else:
+            return self.annulla(bot, update, user_data, "Non ho capito...annullo")
+
+
+    def callback(self,bot,update,user_data):
+
+        param = update.callback_query.data.split()[1]
+        to_send = "Puoi anche visualizzare gli oggetti mancanti e i craft possibili cliccando sui bottoni"
+        inline = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Mancanti", callback_data="/stat mancanti")],
+            [InlineKeyboardButton("Possibili", callback_data="/stat possibili")],
+            [InlineKeyboardButton("Annulla", callback_data="/stat annulla")]
+
+        ])
+        if param=="mancanti":
+
+            mancanti=user_data['mancanti']
+            file_name="mancanti_"+update.callback_query.from_user.id+".txt"
+
+            with open(file_name,"w+") as file:
+                for elem in mancanti:
+                    file.write(elem+'\n')
+
+            with open(file_name,"rb") as file:
+                bot.sendDocument(update.callback_query.message.chat_id,file,caption="Oggetti mancanti")
+
+
+            os.remove(file_name)
+
+
+
+        elif param=="possibili":
+
+            craftables=user_data['possibili']
+
+            file_name="possibili_"+update.callback_query.from_user.id+".txt"
+
+
+            with open(file_name, "w+") as file:
+
+                file.write("Oggetto, Punti craft, Quantità Possibili, Punti craft totali\n")
+                for elem in craftables:
+                    for item in elem:
+                        file.write(str(item) + ",")
+                    file.write("\n")
+
+            with open(file_name, "rb") as file:
+                bot.sendDocument(update.callback_query.message.chat_id, file, caption="Oggetti mancanti")
+
+            os.remove(file_name)
+
+
+
+        else:
+            bot.delete_message(
+                chat_id=update.callback_query.message.chat_id,
+                message_id=update.callback_query.message.message_id
+            )
+
+        bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            text=to_send,
+            message_id=update.callback_query.message.message_id,
+            parse_mode="HTML",
+            reply_markup=inline
+        )
+
+    def stats(self,zaino):
+
+        regex = re.compile(r"> (.*) \(([0-9]+)")
+        # cerco gli oggetti
+
+        all_c = re.findall(regex, zaino.split("Comuni:")[-1])
+        all_nc = re.findall(regex, zaino.split("Non Comuni:")[-1].split("\n\n")[0])
+        all_r = re.findall(regex, zaino.split("Rari:")[-1].split("\n\n")[0])
+        all_ur = re.findall(regex, zaino.split("Ultra Rari:")[-1].split("\n\n")[0])
+        all_l = re.findall(regex, zaino.split("Leggendari:")[-1].split("\n\n")[0])
+        all_e = re.findall(regex, zaino.split("Epici:")[-1].split("\n\n")[0])
+        all_ue = re.findall(regex, zaino.split("Ultra Epici:")[-1].split("\n\n")[0])
+        all_s = re.findall(regex, zaino.split("Speciali:")[-1].split("\n\n")[0])
+        all_un = re.findall(regex, zaino.split("Unici:")[-1].split("\n\n")[0])
+        all_mt = re.findall(regex, zaino.split("Mutaforma:")[-1].split("\n\n")[0])
+        all_d = re.findall(regex, zaino.split("Draconici:")[-1].split("\n\n")[0])
+
+        # unisco gli oggetti in un dizionario
+        rarities = {'c': all_c, 'nc': all_nc, 'r': all_r, 'ur': all_ur, 'l': all_l, 'e': all_e,
+                    'ue': all_ue, 's': all_s, 'un': all_un, 'mt': all_mt, 'd': all_d}
+
+        # per ogni rarità crea un dizzionario
+        tot_elem = 0
+        all_rarity = []
+        for rarity in rarities.keys():
+            list_ = [(name, int(quantity)) for (name, quantity) in rarities[rarity]]
+            tot_elem += sum(quantity[1] for quantity in list_)
+            all_rarity += list_
+            rarities[rarity] = {"list": list_}
+
+        rarities = self.rarity_stats(rarities, tot_elem)
+
+        rarities['general'] = {'tot_elem': tot_elem, 'list': all_rarity}
+
+        rarities = self.generl_stats(rarities)
+
+        return rarities
+
+    def rarity_stats(self,rarities, tot_elem):
+        # prendo il numero degli oggetti nello zaino
+
+        for rarity in rarities.keys():
+            rar_list = rarities[rarity]['list']
+
+            num = sum(item[1] for item in rar_list)
+            perc_zaino = round(num / tot_elem * 100, 2)
+            mean = math.ceil(num / len(rar_list))
+            min_v = min([elem[1] for elem in rar_list])
+            max_v = max([elem[1] for elem in rar_list])
+            min_v = next(elem for elem in rar_list if elem[1] == min_v)
+            max_v = next(elem for elem in rar_list if elem[1] == max_v)
+            base = sum([elem[1] for elem in rar_list if
+                        not next((item['craftable'] for item in self.all_obj if elem[0] in item['name']))])
+            non_base = num - base
+            base = round(base / num * 100, 2)
+            non_base = round(non_base / num * 100, 2)
+
+            rarities[rarity]['num'] = num
+            rarities[rarity]['perc_zaino'] = perc_zaino
+            rarities[rarity]['mean'] = mean
+            rarities[rarity]['min_v'] = min_v
+            rarities[rarity]['max_v'] = max_v
+            rarities[rarity]['base'] = base
+            rarities[rarity]['non_base'] = non_base
+
+        return rarities
+
+    def generl_stats(self,rarities):
+
+        tot_elem = rarities['general']["tot_elem"]
+        all_rarity = rarities['general']['list']
+        base = sum([elem[1] for elem in all_rarity if
+                    not next((item['craftable'] for item in self.all_obj if elem[0] in item['name']))])
+        non_base = tot_elem - base
+        base = round(base / tot_elem * 100, 2)
+        non_base = round(non_base / tot_elem * 100, 2)
+
+        estimate_val = sum(
+            next((item['estimate'] for item in self.all_obj if elem[0] in item['name'])) * elem[1] for elem in all_rarity)
+        value_val = sum(
+            next((item['value'] for item in self.all_obj if elem[0] in item['name'])) * elem[1] for elem in all_rarity)
+        tot_crft_pnt = sum(
+            next((item['craft_pnt'] for item in self.all_obj if elem[0] in item['name'])) * elem[1] for elem in all_rarity)
+
+        id_list = [[next((item['id'] for item in self.dipendenze if elem[0] in item['name']))] * elem[1] for elem in
+                   all_rarity]
+        id_list = [item for sublist in id_list for item in sublist]
+        id_list = Counter(id_list)
+        craftables = []
+        for item in self.dipendenze:
+            if item['craftable'] and item['craft_pnt']:
+                prov = id_list.copy()
+                item_dip = Counter(item['dipendenze'])
+                min_craft = sys.maxsize
+
+                for elem in item_dip.items():
+
+                    min_prov = math.floor(prov[elem[0]] / elem[1])
+                    if min_prov < min_craft: min_craft = min_prov
+
+                if min_craft != sys.maxsize and min_craft: craftables.append(
+                    (item['name'], item['craft_pnt'], min_craft, item['craft_pnt'] * min_craft))
+
+        base_obj = [elem for elem in self.all_obj if not elem['craftable']]
+
+        mancanti = [elem['name'] for elem in base_obj if
+                    elem['name'] not in [item[0] for item in all_rarity] and not elem['craftable'] and elem[
+                        'rarity'] in ['C', 'NC', 'R', 'UR', 'L', 'E']]
+
+        rarities['general']['base'] = base
+        rarities['general']['non_base'] = non_base
+        rarities['general']['estimate_val'] = estimate_val
+        rarities['general']['value_val'] = value_val
+        rarities['general']['tot_crft_pnt'] = tot_crft_pnt
+        rarities['general']['craftables'] = craftables
+        rarities['general']['mancanti'] = mancanti
+
+        return rarities
+
+    def pretty_general_stats(self,rarities):
+
+        to_send = f"""
+    Possiedi in totale <b>{rarities['general']['tot_elem']:,}</b> oggetti di cui il <i>{rarities['general']['base']}%</i> base e il restante <i>{rarities['general']['non_base']}%</i> craftati.
+    Il valore <b>stimato</b> del tuo zaino è di <i>{rarities['general']['estimate_val']:,}</i>, mentre quello <b>reale</b> è di <i>{rarities['general']['value_val']:,}</i>.
+    Inoltre il tuo zaino è composto da un totale di <b>{rarities['general']['tot_crft_pnt']}</b> punti craft.
+    """
+        return to_send
+
+    def pretty_rarity_stats(self, rarities):
+
+        to_send_list = []
+
+        for key in rarities.keys():
+            if key == "general": continue
+
+            to_send = f"""
+    Statistiche per rarità <b>{key.upper()}</b>:
+    Possiedi <i>{rarities[key]['num']:,}</i> oggetti di questo tipo, equivalenti al <b>{rarities[key]['perc_zaino']}%</b> del tuo zaino.
+    Di questi oggetti il <b>{rarities[key]['base']}%</b> sono base mentre i restanti <b>{rarities[key]['non_base']}</b> sono craftati.
+    In media hai <i>{rarities[key]['mean']:,}</i> oggetti con un massimo di <b>{rarities[key]["max_v"][1]:,}</b> per <i>{rarities[key]['max_v'][0]}</i>, e un minimo di <b>{rarities[key]["min_v"][1]:,}</b> per <i>{rarities[key]['min_v'][0]}</i>.
+    """
+
+            to_send_list.append(to_send)
+
+        return to_send_list
+
+    def annulla(self, bot, update, user_data, msg=""):
+        """Annulla la conversazione e inizzializza lo user data"""
+        if msg:
+            update.message.reply_text(msg, reply_markup=ReplyKeyboardRemove())
+
+        if "quantita" in user_data.keys():
+            user_data['quantita'] = []
+
+        if "zaino" in user_data.keys():
+            user_data['zaino'] = ""
+
+        if 'rarita' in user_data:
+            user_data['rarita'] = []
+
+        if 'perc' in user_data:
+            user_data['perc'] = 0
+
+        return ConversationHandler.END
+
+    def init_userdata(self, user_data):
+        user_data['quantita'] = 0
+        user_data['zaino'] = ""
+        user_data['rarita'] = []
+        user_data['perc'] = 0
+
