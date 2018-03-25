@@ -46,7 +46,7 @@ def get_item(oggetto):
     }
   
 def set_prices():
-    negozi = [use_api(SHOP + str(codice)) for codice in NEGOZI]
+    negozi = [use_api(SHOP + str(codice)) for codice in []]
     global OGGETTI
     for negozio in negozi:
         for oggetto in negozio:
@@ -89,12 +89,12 @@ def create_complete_item_file(file_name):
         file.writelines(str(use_api(ITEMS)))
 
 
-def get_dipendenze():
+def get_dipendenze(file_name):
 
 
     idx=0
     while True:
-        with codecs.open("oggetti_dipendenze", encoding='utf-8') as file:
+        with codecs.open(file_name, encoding='utf-8') as file:
             rea = file.read()
             oggetti = eval(rea.replace("null", "None"))
 
@@ -105,18 +105,18 @@ def get_dipendenze():
 
             if oggetto['craftable'] and 'dipendenze' not in oggetto.keys():
                 dipendenze=use_api(RICETTE+str(oggetto['id'])+"/needed")
-                oggetto['dipendenze']=oggetti_inner(dipendenze)
-                with open("oggetti_dipendenze","w+") as file:
+                oggetto['dipendenze']=oggetti_inner(dipendenze,file_name)
+                with open(file_name,"w+") as file:
                     file.writelines(str(oggetti))
         except IndexError:
             break
 
-def oggetti_inner(dipendenze_list):
+def oggetti_inner(dipendenze_list,file_name):
 
     res=[]
 
     #aggiungi lettura deigli oggetti aggiornata
-    with codecs.open("oggetti_dipendenze", encoding='utf-8') as file:
+    with codecs.open(file_name, encoding='utf-8') as file:
         rea = file.read()
         oggetti = eval(rea.replace("null", "None"))
 
@@ -125,11 +125,15 @@ def oggetti_inner(dipendenze_list):
 
         if oggetto['craftable'] and "dipendenze" not in oggetto.keys():
             dipendenze=use_api(RICETTE+str(oggetto['id'])+"/needed")
-            oggetto['dipendenze']=oggetti_inner(dipendenze)
+            oggetto['dipendenze']=oggetti_inner(dipendenze,file_name)
+
+
+            res+=oggetto['dipendenze']
 
             oggetti[oggetti.index(oggetto)]=oggetto
-            with open("oggetti_dipendenze", "w+") as file:
-                file.writelines(str(oggetti))
+            with open(file_name, "w+") as file:
+                 file.writelines(str(oggetti))
+
 
         elif "dipendenze" in oggetto.keys():
             res+=oggetto['dipendenze']
@@ -142,6 +146,8 @@ def oggetti_inner(dipendenze_list):
     return res
 
 
+file_name="Resources/oggetti_dipendenze"
 
 
-print(use_api(ITEMS))
+#create_complete_item_file(file_name)
+get_dipendenze(file_name)

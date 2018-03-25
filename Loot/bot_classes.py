@@ -3812,11 +3812,11 @@ class NegoziPlus:
             to_send += f"{elem[0]}:{elem[2]}:{int(elem[1])},"
             idx += 1
             if idx == 9:
-                to_send_list.append(to_send.rstrip(","))
+                to_send_list.append(to_send.rstrip(",")+" #")
                 to_send = "/negozio "
                 idx = 0
 
-        to_send = to_send.rstrip(",")
+        to_send = to_send.rstrip(",")+" #"
         to_send_list.append(to_send)
 
         for msg in to_send_list:
@@ -4391,7 +4391,7 @@ class Stats:
                 update.callback_query.message.reply_text("Non ti manca niente...sbucione")
                 return
 
-            
+
             file_name=f"mancanti_{update.callback_query.from_user.id}.txt"
 
             with open(file_name,"w+") as file:
@@ -4580,8 +4580,8 @@ class Stats:
 
         to_send = f"""
 Possiedi in totale <b>{rarities['general']['tot_elem']:,}</b> oggetti di cui il <i>{rarities['general']['base']}%</i> base e il restante <i>{rarities['general']['non_base']}%</i> craftati.
-Il valore <b>stimato</b> del tuo zaino è di <i>{rarities['general']['estimate_val']:,}</i>, mentre quello <b>reale</b> è di <i>{rarities['general']['value_val']:,}%s</i>.
-Inoltre il tuo zaino è composto da un totale di <b>{rarities['general']['tot_crft_pnt']}</b> punti craft.
+Il valore <b>stimato</b> del tuo zaino è di <i>{rarities['general']['estimate_val']:,}</i>, mentre quello <b>reale</b> è di <i>{rarities['general']['value_val']:,}</i>.
+Inoltre il tuo zaino è composto da un totale di <b>{rarities['general']['tot_crft_pnt']:,}</b> punti craft.
     """
         return to_send
 
