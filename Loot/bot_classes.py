@@ -3812,11 +3812,11 @@ class NegoziPlus:
             to_send += f"{elem[0]}:{elem[2]}:{int(elem[1])},"
             idx += 1
             if idx == 9:
-                to_send_list.append(to_send.rstrip(",")+" #")
+                to_send_list.append(to_send+" #")
                 to_send = "/negozio "
                 idx = 0
 
-        to_send = to_send.rstrip(",")+" #"
+        to_send = to_send+ " #"
         to_send_list.append(to_send)
 
         for msg in to_send_list:
