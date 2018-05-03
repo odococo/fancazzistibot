@@ -1083,8 +1083,8 @@ class Compra:
     def __init__(self, updater, db):
         self.db = db
         self.scrigni = OrderedDict(
-            [('Legno', 600), ('Ferro', 1200), ('Prezioso', 2400), ('Diamante', 3600), ('Leggendario', 7000),
-             ('Epico', 15000)])  # dizionario ordinato per mantenere la relazione quantità-tipo scrigno
+            [('Legno', 1200), ('Ferro', 2400), ('Prezioso', 4800), ('Diamante', 7200), ('Leggendario', 14000),
+             ('Epico', 30000)])  # dizionario ordinato per mantenere la relazione quantità-tipo scrigno
 
         disp = updater.dispatcher
 
