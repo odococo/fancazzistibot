@@ -231,7 +231,7 @@ TABELLE = {
 
 COMANDO_CONNESSIONE_HEROKU_DB = "heroku pg:psql"  # comando per connettersi al db
 
-developer_dicts = {"brandimax": 24978334, "odococo": 89675136, "marcolino":337640177, "osho":241317532}
+developer_dicts = {"brandimax": 24978334, "odococo": 89675136, "marcolino":337640177, "osho":241317532,"mayo":107839625}
 developer_message = []  # usata per salvare i messaggi di richiesta accesso
 
 
