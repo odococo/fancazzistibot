@@ -675,6 +675,11 @@ Qua sono presenti tutti i drop per le stanze del tipo:
         self.bot.sendMessage(id, "Sei stato sbannato! Premi /start per accedere alle funzionalità del bot")
         self.answer("L'id "+str(id)+" è stato sbannato")
 
+    def Aresettop(self):
+        """resetta la classifica in top"""
+        self.db.delete_top()
+        self.answer("Classifica resettata!")
+
 
     # developer comands ----------------------------------------
 

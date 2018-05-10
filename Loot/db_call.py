@@ -187,6 +187,9 @@ TABELLE = {
                        rango=EXCLUDED.rango, agg=CURRENT_TIMESTAMP""",
         "select": {
             "all": "SELECT * FROM top NATURAL JOIN users;"
+        },
+        "delete":{
+            "all":"DELETE FROM top"
         }
     },
     "teams": {
@@ -658,6 +661,9 @@ class DB:
         @:param id: l'id del bug
         @:type: int"""
         self.execute(TABELLE['bugs']['delete'],(id,))
+
+    def delete_top(self):
+        self.execute(TABELLE['top']['delete']['all'])
 
     #============================UTILS======================================
     def is_loot_admin(self, id):
