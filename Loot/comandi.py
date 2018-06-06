@@ -356,12 +356,12 @@ Ti permette di accedere alla trasmogrificazione
 <b>DIVINATORIO</b>
 Per ottenere questo artefatto devi:
 > Raggiungere il livello 1000
-> Aver raggiunto rango 350
-> Aver completato 20 scalate complete nello stesso team
+> Aver raggiunto rango 200
+> Aver completato 300 incarichi
+> Aver completato 50 scalate complete nello stesso team
 > Aver venduto almeno 500 oggetti al Contrabbandiere
 > Aver partecipato e aiutato a vincere 5 imprese globali
 Una volta ottenuto potrai accedere al potenziamento flaridion
-
 """
         self.answer(msg)
 
