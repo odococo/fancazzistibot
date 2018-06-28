@@ -350,7 +350,8 @@ Una volta ottenuti i primi due potrai accedere alla rinascita r4
 Per ottenere questo artefatto devi portare al livello 10 almeno 5 Talenti, possedere 20 Gemme (verranno consumate) e raggiungere le 200 Imprese completate.
 
 <b>BUIO</b>
-Per ottenere questo artefatto devi aver completato 1000 missioni, vinto 500 ispezioni (effettuate o respinte), e ottenuto 2000 Polvere (S).
+Per ottenere questo artefatto devi aver completato 2000 missioni, vinto 500 ispezioni (effettuate o respinte), e ottenuto 2000 Polvere (S).
+(Consumata)
 Ti permette di accedere alla trasmogrificazione
 
 <b>DIVINATORIO</b>
