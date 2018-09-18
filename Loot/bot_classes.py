@@ -1702,12 +1702,12 @@ class PietreDrago:
 
         msg = update.message.text
         # compila il pattern
-        regex_legno = re.compile(r"Pietra Anima di Legno \(([0-9]+)")
-        regex_ferro = re.compile(r"Pietra Anima di Ferro \(([0-9]+)")
-        regex_preziosa = re.compile(r"Pietra Anima Preziosa \(([0-9]+)")
-        regex_diamante = re.compile(r"Pietra Cuore di Diamante \(([0-9]+)")
-        regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+)")
-        regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+)")
+        regex_legno = re.compile(r"Pietra Anima di Legno \(([0-9]+\.?[0-9]*)")
+        regex_ferro = re.compile(r"Pietra Anima di Ferro \(([0-9]+\.?[0-9]*)")
+        regex_preziosa = re.compile(r"Pietra Anima Preziosa \(([0-9]+\.?[0-9]*)")
+        regex_diamante = re.compile(r"Pietra Cuore di Diamante \(([0-9]+\.?[0-9]*)")
+        regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+\.?[0-9]*)")
+        regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+\.?[0-9]*)")
 
         # cerca dentro il messaggio
         legno = re.findall(regex_legno, msg)
