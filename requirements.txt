@@ -1,5 +1,4 @@
 emoji
-python-telegram-bot
 requests
 bs4
 psycopg2
@@ -13,3 +12,4 @@ nltk
 numpy
 gensim
 statsmodels
+python-telegram-bot
