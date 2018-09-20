@@ -112,6 +112,3 @@ Boss apparte ci sono altri comandi riservati ai soli admin:
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉
 
-## TODO
-* Messaggio ti teams
-* pinboss con timer
