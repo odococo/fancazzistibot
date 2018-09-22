@@ -6,3 +6,7 @@ Controlla gli
 
 ## Crediti
 Tanti applausi per Odococo e brandimax per aver creato questo fantastico bot! 🎉🎉🎉
+
+## TODO
+* Messaggio ti teams
+* pinboss con timer
