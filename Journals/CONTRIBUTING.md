@@ -1,4 +1,10 @@
 Questo bot è diviso in 5 parti fondamentali.
+Si richiedono conoscenze molto buone di python e uno studio approfondito della libreria
+[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot).
+Possono anche risultare utili conoscenze delle regular expressions [regex](https://www.tutorialspoint.com/python/python_reg_expressions.htm)
+e un po si [sql](https://www.postgresql.org/) (non indispensabile).
+
+
 
 # Comandi base
 In questa sezione tratterò solo dei comandi piu semplici del bot, quelli che vengono
