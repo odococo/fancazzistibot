@@ -44,3 +44,21 @@ Una volta implementato un comando bisogna aggiungere la sua firma in modo tale c
 Questo puo essere fatto andando nel file [comandi](Loot/comandi.py) e aggiungere una riga dentro la varaiblie *COMANDI_PLUS*
 rispettando la formattazione. Infine va aggiunta anche dentro la varaiblie *COMANDI_BOT_FATHER* [qui](Other/utils.py) rispettando la formattazione e
 avvertendo brandimax per farla aggiungere alla schermata del bot.
+
+# Database
+Il bot si appoggia al database di heroku [postgress](https://devcenter.heroku.com/articles/heroku-postgresql) per salvare informazioni varie.
+Tutte queste interazioni sono (e devono rimanere) dentro [db_call](Loot/db_call.py).
+Qui è presente sia la variabile *TABELLE*, un dizionario che contiene tutti i comandi SQL per
+salvare/cancellare/modificare informazioni dalla varie tabelle del database.
+Sia la classe *DB* che usa la variabile *TABELLE* per effettuare diverse funzioni.
+
+Tutte queste funzioni sono divise in :
+* getter : prendere info dal database
+* adder/updater: per aggiungere o modificare informazioni
+* deleter/resetter : per cancellare o resettare una tabella
+
+Inoltre contiene anche le funzioni per verificare la possibilità di accede al bot, sotto
+la classe *Access to bot*
+
+# Sentiment Analysis
+Cose in piu che non centrano nulla e possono essere trascurate.
