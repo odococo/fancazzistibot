@@ -16,7 +16,7 @@ bot.
 from subprocess import call
 
 # forzo l'installazione delle dipendenze
-call("pip install -r requirements", shell=True)
+call("pip install -r requirements.txt", shell=True)
 
 import codecs
 import logging
