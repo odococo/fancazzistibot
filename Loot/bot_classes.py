@@ -1709,42 +1709,42 @@ class PietreDrago:
         regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+\.?[0-9]*)")
         regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+\.?[0-9]*)")
 
-        # cerca dentro il messaggio e se è presente un . delle migliaia, lo ignora
-        legno = re.findall(regex_legno, msg).replace('.', '')
-        ferro = re.findall(regex_ferro, msg).replace('.', '')
-        preziosa = re.findall(regex_preziosa, msg).replace('.', '')
-        diamante = re.findall(regex_diamante, msg).replace('.', '')
-        leggendario = re.findall(regex_leggendario, msg).replace('.', '')
-        epico = re.findall(regex_epico, msg).replace('.', '')
+        # cerca dentro il messaggio
+        legno = re.findall(regex_legno, msg)
+        ferro = re.findall(regex_ferro, msg)
+        preziosa = re.findall(regex_preziosa, msg)
+        diamante = re.findall(regex_diamante, msg)
+        leggendario = re.findall(regex_leggendario, msg)
+        epico = re.findall(regex_epico, msg)
 
         # se è presente casta a int e moltiplica, altrimenti setta a zero
         if len(legno) > 0:
-            legno = int(legno[0])
+            legno = int(legno[0].replace('.', ''))
         else:
             legno = 0
 
         if len(ferro) > 0:
-            ferro = int(ferro[0]) * 2
+            ferro = int(ferro[0].replace('.', '')) * 2
         else:
             ferro = 0
 
         if len(preziosa) > 0:
-            preziosa = int(preziosa[0]) * 3
+            preziosa = int(preziosa[0].replace('.', '')) * 3
         else:
             preziosa = 0
 
         if len(diamante) > 0:
-            diamante = int(diamante[0]) * 4
+            diamante = int(diamante[0].replace('.', '')) * 4
         else:
             diamante = 0
 
         if len(leggendario) > 0:
-            leggendario = int(leggendario[0]) * 5
+            leggendario = int(leggendario[0].replace('.', '')) * 5
         else:
             leggendario = 0
 
         if len(epico) > 0:
-            epico = int(epico[0]) * 6
+            epico = int(epico[0].replace('.', '')) * 6
         else:
             epico = 0
 
