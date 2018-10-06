@@ -170,14 +170,14 @@ Crediti: @brandimax @Odococo""")
             for counter in range(int(self.params[1])):
                 text += "L'esito n {} è {}\n".format(
                     counter + 1, random.randint(1, int(self.params[0])))
-                if self.update.message:
-                    self.answer(text)
-                else:
-                    self.bot.edit_message_text(
-                        chat_id=self.update.callback_query.message.chat_id,
-                        text=text,
-                        message_id=self.update.callback_query.message.message_id
-                    )
+            if self.update.message:
+                self.answer(text)
+            else:
+                self.bot.edit_message_text(
+                    chat_id=self.update.callback_query.message.chat_id,
+                    text=text,
+                    message_id=self.update.callback_query.message.message_id
+                )
         elif (len(self.params) == 1
               and utils.is_numeric(self.params[0])):
             actual_dice = "/dice " + self.params[0]
