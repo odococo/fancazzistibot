@@ -1709,13 +1709,13 @@ class PietreDrago:
         regex_leggendario = re.compile(r"Pietra Cuore Leggendario \(([0-9]+\.?[0-9]*)")
         regex_epico = re.compile(r"Pietra Spirito Epico \(([0-9]+\.?[0-9]*)")
 
-        # cerca dentro il messaggio
-        legno = re.findall(regex_legno, msg)
-        ferro = re.findall(regex_ferro, msg)
-        preziosa = re.findall(regex_preziosa, msg)
-        diamante = re.findall(regex_diamante, msg)
-        leggendario = re.findall(regex_leggendario, msg)
-        epico = re.findall(regex_epico, msg)
+        # cerca dentro il messaggio e se è presente un . delle migliaia, lo ignora
+        legno = re.findall(regex_legno, msg).replace('.', '')
+        ferro = re.findall(regex_ferro, msg).replace('.', '')
+        preziosa = re.findall(regex_preziosa, msg).replace('.', '')
+        diamante = re.findall(regex_diamante, msg).replace('.', '')
+        leggendario = re.findall(regex_leggendario, msg).replace('.', '')
+        epico = re.findall(regex_epico, msg).replace('.', '')
 
         # se è presente casta a int e moltiplica, altrimenti setta a zero
         if len(legno) > 0:
