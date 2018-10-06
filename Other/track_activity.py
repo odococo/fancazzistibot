@@ -9,7 +9,7 @@ from collections import Counter
 from time import sleep
 
 import numpy
-from empythy import EmpathyMachines
+#from empythy import EmpathyMachines
 import emoji
 import telegram
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
