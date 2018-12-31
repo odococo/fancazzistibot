@@ -2,7 +2,7 @@ python-telegram-bot
 emoji
 requests
 bs4
-psycopg2
+psycopg2-binary
 matplotlib
 pandas
 python-dotenv
